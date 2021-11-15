@@ -1,0 +1,172 @@
+// Copyright (c) 2020 IndyKite
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+syntax = "proto3";
+
+package indykite.identity.v1beta1;
+
+option csharp_namespace = "Id.Indykite.Jarvis.Services.Identity";
+option go_package = "github.com/indykite/jarvis/pkg/proto-gen/identity/v1;identity";
+option java_multiple_files = true;
+option java_outer_classname = "PropertyProto";
+option java_package = "com.id.indykite.jarvis.services.identity";
+option objc_class_prefix = "IIJSI";
+option php_namespace = "Id\\Indykite\\Jarvis\\Services\\Identity";
+option ruby_package = "Id::Indykite::Jarvis::Services::Identity";
+
+import "google/protobuf/timestamp.proto";
+import "indykite/objects/v1beta1/struct.proto";
+import "validate/validate.proto";
+
+message Schema {
+  //context
+  map<string, string> context = 4;
+  string schema = 1;
+  string schema_version = 2;
+  string attribute_name = 3;
+}
+
+
+
+// PropertyDefinition ...
+message PropertyDefinition {
+  //http://schema.org/
+  string context = 1 [(validate.rules).string = {
+    uri: true,
+    ignore_empty: true
+  }];
+  //Person
+  string type = 2;
+  //email
+  string property = 3 [(validate.rules).string = {
+    pattern:   "^[a-zA-Z_][a-zA-Z0-9_]+$",
+    max_bytes: 256,
+  }];
+}
+
+// PropertyConstraint represent a conditions to find the property with expected meta-data.
+message PropertyConstraint {
+  // Issuers used to limit the source of property.
+  repeated string issuers = 1;
+  // Subset used to specify which property to return if value is an object.
+  repeated string subset = 2;
+  // Get on primary properties
+  bool only_primary = 3;
+}
+
+// PropertyMask used to define which property to read.
+message PropertyMask {
+  PropertyDefinition definition = 1 [(validate.rules).message.required = true];
+  PropertyConstraint constraint = 2;
+}
+
+//AssuranceLevel of Identity Proofing Requirements (NIST 800-63)
+enum AssuranceLevel {
+  ASSURANCE_LEVEL_INVALID = 0;
+  // Little or no confidence exists in the asserted identity; usually self-asserted; essentially a persistent identifier
+  // ASSURANCE_LEVEL_NONE = 1;
+  // Confidence exists that the asserted identity is accurate; used frequently for self service applications
+  // if any, are self-asserted or should be treated as self-asserted; there is no proofing process.
+  ASSURANCE_LEVEL_LOW = 1;
+  // High confidence in the asserted identity’s accuracy; used to access restricted data
+  // Either remote or in-person identity proofing is required using, at a minimum, the procedures given in SP 800-63A.
+  ASSURANCE_LEVEL_SUBSTANTIAL = 2;
+  // Very high confidence in the asserted identity’s accuracy; used to access highly restricted data.
+  // In-person or supervised-remote identity proofing is required. Identifying attributes must be verified through
+  // examination of physical documentation as described in SP 800-63A.
+  ASSURANCE_LEVEL_HIGH = 3;
+}
+
+message PropertyMetadata {
+  // Primary is true if this instance of a multi-value property is the default to pick from array at first.
+  bool primary = 1;
+  // AssuranceLevel shows the level of assurance of the property value.
+  AssuranceLevel assurance_level = 2;
+  // Issuer is the identifier of the source of property value.
+  //
+  // Example: ["indykite.id", "aW5keWtpRGWAAAIPAAAAAA"]
+  string issuer = 3;
+
+  // VerificationTime represent the time when AssuranceLevel was changed for Verifier.
+  google.protobuf.Timestamp verification_time = 4;
+
+  // Verifier is the identifier of provider carried out the verification process.
+  //
+  // Example: ["indykite.id", "aW5keWtpRGWAAAIPAAAAAA"]
+  string verifier = 5;
+}
+
+// Property represents a property stored in database.
+//
+// It contains the ID, Definition, Metadata and Value together.
+message Property {
+  // Id represents the identifier of this property in hex
+  // max value is 7FFFFFFFFFFFFFFF in case of signed in64
+  string id = 1 [(validate.rules).string = {ignore_empty: true, pattern: "^[0-9a-f]{1,16}$"}];
+  // Definition represents the property type definition.
+  PropertyDefinition definition = 2;
+  // Meta represent the meta-information of this property.
+  // One of Meta or Value must be set
+  PropertyMetadata meta = 3;
+  oneof value {
+    // ObjectValue is the actual value of the property.
+    //
+    // This can have many different types and it can also be encrypted and clear as well.
+    indykite.objects.v1beta1.Value object_value = 4;
+    // ReferenceValue used to set the value reference to a document.
+    //
+    // Format: `databases/{application_id}/documents/{document_path}`.
+    string reference_value = 5;
+  }
+}
+
+// PropertyBatchOperation represents a single Property value operation.
+message PropertyBatchOperation {
+  oneof operation {
+    option (validate.required) = true;
+
+    Property add = 1 [(validate.rules).message.required = true];
+    Property replace = 2 [(validate.rules).message.required = true];
+    Property remove = 3 [(validate.rules).message.required = true];
+  }
+}
+
+// BatchPropertyOperationResult represents the result of an BatchUpdate call.
+message BatchOperationResult {
+  uint64 index = 4;
+  oneof result {
+    option (validate.required) = true;
+    BatchOperationResultSuccess success = 5;
+    BatchOperationResultError error = 6;
+  }
+}
+
+// BatchOperationResultSuccess represents the result of an successful BatchOperation call.
+message BatchOperationResultSuccess {
+  string property_id = 1 [(validate.rules).string = {pattern: "^[0-9a-f]{1,16}$"}];
+}
+
+// BatchOperationResultError represents an error encountered while executing a batch operation.
+message BatchOperationResultError {
+  repeated string message = 1;
+}
+// BatchError represents an error encountered while executing a batch operation.
+//
+// The Index field corresponds to the index of the failed operation in the operations array that was passed
+// to batch operation.
+message BatchError {
+  int64 index = 1;
+  //google.rpc.Status status = 2;
+  repeated string message = 2;
+}

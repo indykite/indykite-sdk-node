@@ -1,0 +1,16 @@
+{
+    "app_space_id": "",
+    "app_agent_id": "",
+    "endpoint": "",
+    "local_endpoint": "",
+    "private_key_jwk": {
+        "kty": "",
+        "d": "",
+        "use": "sig",
+        "crv": "P-256",
+        "kid": "",
+        "x": "",
+        "y": "",
+        "alg": "ES256"
+    }
+}

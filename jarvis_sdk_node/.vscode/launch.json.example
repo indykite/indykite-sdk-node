@@ -1,0 +1,77 @@
+{
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Launch Identity Example (using token)",
+      "type": "node",
+      "request": "launch",
+      "runtimeArgs": [
+        "--nolazy",
+        "-r",
+        "${workspaceFolder}/node_modules/ts-node/register"
+      ],
+      "args": ["./src/examples/identity_token.ts", "--transpile-only"],
+      "cwd": "${workspaceFolder}",
+      "internalConsoleOptions": "openOnSessionStart",
+      "skipFiles": [
+        "<node_internals>/**",
+        "${workspaceFolder}/node_modules/**"
+      ],
+      "env": {
+        "TS_NODE_PROJECT": "${workspaceFolder}/tsconfig.json",
+        "GRPC_DEFAULT_SSL_ROOTS_FILE_PATH": "${workspaceFolder}/../../jarvis-proto/ca.pem",
+        "INDYKITE_APPLICATION_CREDENTIALS_FILE": "${workspaceFolder}/.vscode/app_credentials.json",
+        "USER_TOKEN": ""
+      }
+    },
+    {
+      "name": "Launch Identity Example (using ids)",
+      "type": "node",
+      "request": "launch",
+      "runtimeArgs": [
+        "--nolazy",
+        "-r",
+        "${workspaceFolder}/node_modules/ts-node/register"
+      ],
+      "args": ["./src/examples/identity_ids.ts", "--transpile-only"],
+      "cwd": "${workspaceFolder}",
+      "internalConsoleOptions": "openOnSessionStart",
+      "skipFiles": [
+        "<node_internals>/**",
+        "${workspaceFolder}/node_modules/**"
+      ],
+      "env": {
+        "TS_NODE_PROJECT": "${workspaceFolder}/tsconfig.json",
+        "GRPC_DEFAULT_SSL_ROOTS_FILE_PATH": "${workspaceFolder}/../../jarvis-proto/ca.pem",
+        "INDYKITE_APPLICATION_CREDENTIALS_FILE": "${workspaceFolder}/.vscode/app_credentials.json",
+        "USER_TOKEN": ""
+      }
+    },
+    {
+      "name": "Email Configuration Example",
+      "type": "node",
+      "request": "launch",
+      "runtimeArgs": [
+        "--nolazy",
+        "-r",
+        "${workspaceFolder}/node_modules/ts-node/register"
+      ],
+      "args": ["./src/examples/emailcfg.ts", "--transpile-only"],
+      "cwd": "${workspaceFolder}",
+      "internalConsoleOptions": "openOnSessionStart",
+      "skipFiles": [
+        "<node_internals>/**",
+        "${workspaceFolder}/node_modules/**"
+      ],
+      "env": {
+        "TS_NODE_PROJECT": "${workspaceFolder}/tsconfig.json",
+        "GRPC_DEFAULT_SSL_ROOTS_FILE_PATH": "${workspaceFolder}/../../jarvis-proto/ca.pem",
+        "INDYKITE_APPLICATION_CREDENTIALS_FILE": "${workspaceFolder}/.vscode/app_credentials.json",
+        "USER_TOKEN": ""
+      }    
+    }  
+  ]
+}

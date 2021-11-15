@@ -1,0 +1,324 @@
+// Copyright (c) 2020 IndyKite
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+//Model contains the messages used in RPC.
+syntax = "proto3";
+
+package indykite.identity.v1beta1;
+
+option csharp_namespace = "Id.Indykite.Jarvis.Services.Identity";
+option go_package = "github.com/indykite/jarvis/pkg/proto-gen/identity/v1;identity";
+option java_multiple_files = true;
+option java_outer_classname = "ModelProto";
+option java_package = "com.id.indykite.jarvis.services.identity";
+option objc_class_prefix = "IIJSI";
+option php_namespace = "Id\\Indykite\\Jarvis\\Services\\Identity";
+option ruby_package = "Id::Indykite::Jarvis::Services::Identity";
+
+import "google/protobuf/struct.proto";
+import "google/protobuf/timestamp.proto";
+import "indykite/identity/v1beta1/attributes.proto";
+import "indykite/objects/v1beta1/struct.proto";
+import "validate/validate.proto";
+
+// DigitalTwinState represents the state of an digital entity record.
+enum DigitalTwinState {
+  // Default unset state.
+  DIGITAL_TWIN_STATE_INVALID = 0;
+  // Active entity state.
+  DIGITAL_TWIN_STATE_ACTIVE = 1;
+  // Temporarily suspended entity state.
+  DIGITAL_TWIN_STATE_DISABLED = 2;
+  // Deleted entity state, left in the system for auditing purpose only.
+  DIGITAL_TWIN_STATE_TOMBSTONE = 4;
+}
+
+// DigitalTwinKind represents the kind of digital entity.
+enum DigitalTwinKind {
+  // Default unset value.
+  DIGITAL_TWIN_KIND_INVALID = 0;
+  // This is a Person.
+  DIGITAL_TWIN_KIND_PERSON = 1;
+  // This is a Service Account.
+  DIGITAL_TWIN_KIND_SERVICE = 2;
+  // This is a non living thing.
+  DIGITAL_TWIN_KIND_THING = 3;
+}
+
+// DigitalTwin represents a digital entity.
+message DigitalTwin {
+  //Id the unique credential identifier.
+  bytes id = 1 [(validate.rules).bytes.len = 16];
+  //TenantId the unique identifier of the tenant of Credential.
+  bytes tenant_id = 2 [(validate.rules).bytes.len = 16];
+  // Kind ..
+  DigitalTwinKind kind = 3  [(validate.rules).enum = {
+    defined_only: true,
+    //not_in: [0],
+  }];
+  // State ..
+  DigitalTwinState state = 4 [(validate.rules).enum = {
+    defined_only: true,
+    //not_in: [0],
+  }];
+}
+message DigitalEntity {
+  DigitalTwin digital_twin = 1;
+  // DigitalTwin created at property
+  google.protobuf.Timestamp create_time = 2;
+  // Properties contains the requested property values.
+  repeated Property properties = 3;
+}
+
+//ErrorCode ...
+enum ErrorCode {
+  ERROR_CODE_INVALID = 0;
+  ERROR_CODE_INVALID_REQUEST = 1;
+  ERROR_CODE_UNAUTHORIZED = 2;
+}
+
+// ErrorMessage see [Problem Details for HTTP APIs](https://tools.ietf.org/html/rfc7807) ...
+message ErrorMessage {
+  ErrorCode code = 1;
+  string message = 2;
+  google.protobuf.Value detail = 3;
+}
+
+//Invitation represents a user invitation object.
+message Invitation {
+  //Globally unique identifier.
+  bytes id = 1;
+  //External reference identifier to correlate the lifecycle events with.
+  string reference_id = 2;
+  //Human readable name of invitee.
+  string display_name = 3;
+  indykite.objects.v1beta1.MapValue attributes = 4;
+  google.protobuf.Timestamp create_time = 5;
+  google.protobuf.Timestamp expire_time = 6;
+  //Unique name of tenant. It's not globally unique only unique in scope of subscription.
+  //string environment=?;
+  //The name value is immutable.
+  // Must have a value set.
+  oneof invitee {
+    // Address where email will be sent.
+    string email = 7;
+    // Mobile number where sms will be sent.
+    string mobile = 8;
+  }
+}
+
+// WellKnown represents important OpenID Connect discovery metadata
+//
+// It includes links to several endpoints (e.g. /oauth2/token) and exposes information on supported signature algorithms
+// among others.
+message WellKnown {
+  // URL using the https scheme with no query or fragment component that the OP asserts as its IssuerURL Identifier.
+  // If IssuerURL discovery is supported , this value MUST be identical to the issuer value returned
+  // by WebFinger. This also MUST be identical to the iss Claim value in ID Tokens issued from this IssuerURL.
+  //
+  // required: true
+  string issuer = 1;
+  // URL of the OP's OAuth 2.0 Authorization Endpoint.
+  //
+  // required: true
+  string authorization_endpoint = 2;
+  // URL of the OP's Dynamic Client Registration Endpoint.
+  string registration_endpoint = 3;
+  // URL of the OP's OAuth 2.0 Token Endpoint
+  //
+  // required: true
+  string token_endpoint = 4;
+  // URL of the OP's JSON Web Key Set [JWK] document. This contains the signing key(s) the RP uses to validate
+  // signatures from the OP. The JWK Set MAY also contain the Server's encryption key(s), which are used by RPs
+  // to encrypt requests to the Server. When both signing and encryption keys are made available, a use (Key Use)
+  // parameter value is REQUIRED for all keys in the referenced JWK Set to indicate each key's intended usage.
+  // Although some algorithms allow the same key to be used for both signatures and encryption, doing so is
+  // NOT RECOMMENDED, as it is less secure. The JWK x5c parameter MAY be used to provide X.509 representations of
+  // keys provided. When used, the bare key values MUST still be present and MUST match those in the certificate.
+  //
+  // required: true
+  string jwks_uri = 5;
+  // JSON array containing a list of the Subject Identifier types that this OP supports. Valid types include
+  // pairwise and public.
+  //
+  // required: true
+  // example:
+  //   - public
+  //   - pairwise
+  repeated string subject_types_supported = 6;
+  // JSON array containing a list of the OAuth 2.0 response_type values that this OP supports. Dynamic OpenID
+  // Providers MUST support the code, id_token, and the token id_token Response Type values.
+  //
+  // required: true
+  repeated string response_types_supported = 7;
+  // JSON array containing a list of the Claim Names of the Claims that the OpenID Provider MAY be able to supply
+  // values for. Note that for privacy or other reasons, this might not be an exhaustive list.
+  repeated string claims_supported = 8;
+  // JSON array containing a list of the OAuth 2.0 Grant Type values that this OP supports.
+  repeated string grant_types_supported = 9;
+  // JSON array containing a list of the OAuth 2.0 response_mode values that this OP supports.
+  repeated string response_modes_supported = 10;
+  // URL of the OP's UserInfo Endpoint.
+  string userinfo_endpoint = 11;
+  // SON array containing a list of the OAuth 2.0 [RFC6749] scope values that this server supports. The server MUST
+  // support the openid scope value. Servers MAY choose not to advertise some supported scope values even when this parameter is used
+  repeated string scopes_supported = 12;
+  // JSON array containing a list of Client Authentication methods supported by this Token Endpoint. The options are
+  // client_secret_post, client_secret_basic, client_secret_jwt, and private_key_jwt, as described in Section 9 of OpenID Connect Core 1.0
+  repeated string token_endpoint_auth_methods_supported = 13;
+  // 	JSON array containing a list of the JWS [JWS] signing algorithms (alg values) [JWA] supported by the UserInfo Endpoint to encode the Claims in a JWT [JWT].
+  repeated string userinfo_signing_alg_values_supported = 14;
+  // JSON array containing a list of the JWS signing algorithms (alg values) supported by the OP for the ID Token
+  // to encode the Claims in a JWT.
+  //
+  // required: true
+  repeated string id_token_signing_alg_values_supported = 15;
+  // 	Boolean value specifying whether the OP supports use of the request parameter, with true indicating support.
+  bool request_parameter_supported = 16;
+  // Boolean value specifying whether the OP supports use of the request_uri parameter, with true indicating support.
+  bool request_uri_parameter_supported = 17;
+  // Boolean value specifying whether the OP requires any request_uri values used to be pre-registered
+  // using the request_uris registration parameter.
+  bool require_request_uri_registration = 18;
+  // Boolean value specifying whether the OP supports use of the claims parameter, with true indicating support.
+  bool claims_parameter_supported = 19;
+  // URL of the authorization server's OAuth 2.0 revocation endpoint.
+  string revocation_endpoint = 20;
+  // Boolean value specifying whether the OP supports back-channel logout, with true indicating support.
+  bool backchannel_logout_supported = 21;
+  // Boolean value specifying whether the OP can pass a sid (session ID) Claim in the Logout Token to identify the RP
+  // session with the OP. If supported, the sid Claim is also included in ID Tokens issued by the OP
+  bool backchannel_logout_session_supported = 22;
+  // Boolean value specifying whether the OP supports HTTP-based logout, with true indicating support.
+  bool frontchannel_logout_supported = 23;
+  // Boolean value specifying whether the OP can pass iss (issuer) and sid (session ID) query parameters to identify
+  // the RP session with the OP when the frontchannel_logout_uri is used. If supported, the sid Claim is also
+  // included in ID Tokens issued by the OP.
+  bool frontchannel_logout_session_supported = 24;
+  // URL at the OP to which an RP can perform a redirect to request that the End-User be logged out at the OP.
+  string end_session_endpoint = 25;
+}
+
+// The token response
+//[Assertion Spec](https://mattrglobal.github.io/oidc-client-bound-assertions-spec/)
+message OAuth2TokenResponse {
+  // The lifetime in seconds of the access token.  For
+  //  example, the value "3600" denotes that the access token will
+  // expire in one hour from the time the response was generated.
+  int64 expires_in = 1;
+  // The scope of the access token
+  string scope = 2;
+  // To retrieve a refresh token request the id_token scope.
+  string id_token = 3;
+  // The access token issued by the authorization server.
+  string access_token = 4;
+  // The refresh token, which can be used to obtain new
+  // access tokens. To retrieve it add the scope "offline" to your access token request.
+  string refresh_token = 5;
+  // The type of the token issued
+  string token_type = 6;
+}
+
+// FlushInactiveOAuth2TokensRequest ...
+message FlushInactiveOAuth2TokensRequest {
+  // NotAfter sets after which point tokens should not be flushed. This is useful when you want to keep a history
+  // of recently issued tokens for auditing.
+  int64 not_after = 1;
+}
+
+// IdentityTokenInfo ...
+message IdentityTokenInfo {
+  //UUID of the top level Customer.
+  bytes customer_id = 1;
+  //UUID of Application Space in Customer.
+  bytes app_space_id = 2;
+  //UUID of Application in Application Space.
+  bytes application_id = 3;
+  //UUID of the Subject in Application Space.
+  DigitalTwin subject = 4;
+  //DigitalTwin of impersonated subject in Application Space.
+  DigitalTwin impersonated = 5;
+  //IssueTime indicating when this token was originally issued.
+  google.protobuf.Timestamp issue_time = 6;
+  //Expiration time of token
+  google.protobuf.Timestamp expire_time = 7;
+  // AuthenticatedAtTime represents the time of authentication
+  google.protobuf.Timestamp authentication_time = 8;
+  // ProviderInfo is the collection of credential providers used to prove.
+  repeated ProviderInfo provider_info = 9;
+}
+
+enum ProviderType {
+  PROVIDER_TYPE_INVALID = 0;
+  PROVIDER_TYPE_PASSWORD = 1;
+  PROVIDER_TYPE_OIDC = 2;
+  PROVIDER_TYPE_WEBAUTHN = 3;
+  PROVIDER_TYPE_EMAIL = 4;
+  PROVIDER_TYPE_SMS = 5;
+}
+
+message ProviderInfo {
+  // Type represent the Provider type:
+  //
+  // Example: ["password", "oidc", "webauthn", "email", "sms"]
+  ProviderType type = 1;
+  // Issuer is the identifier if available of Provider who verified the possession of credentials and issued a grant.
+  //
+  // Example: ["indykite.id", "google.com"]
+  //
+  // [did registries](https://w3c.github.io/did-spec-registries/)
+  string issuer = 2;
+}
+
+//UserInfoResponsePayload ...
+message UserInfoResponsePayload {
+  // Subject - Identifier for the End-User at the IssuerURL.
+  string sub = 1;
+  // End-User's full name in displayable form including all name parts, possibly including titles and suffixes, ordered according to the End-User's locale and preferences.
+  string name = 2;
+  // Given name(s) or first name(s) of the End-User. Note that in some cultures, people can have multiple given names; all can be present, with the names being separated by space characters.
+  string given_name = 3;
+  // Surname(s) or last name(s) of the End-User. Note that in some cultures, people can have multiple family names or no family name; all can be present, with the names being separated by space characters.
+  string family_name = 4;
+  // Middle name(s) of the End-User. Note that in some cultures, people can have multiple middle names; all can be present, with the names being separated by space characters. Also note that in some cultures, middle names are not used.
+  string middle_name = 5;
+  // Casual name of the End-User that may or may not be the same as the given_name. For instance, a nickname value of Mike might be returned alongside a given_name value of Michael.
+  string nickname = 6;
+  // Non-unique shorthand name by which the End-User wishes to be referred to at the RP, such as janedoe or j.doe. This value MAY be any valid JSON string including special characters such as @, /, or whitespace.
+  string preferred_username = 7;
+  // URL of the End-User's profile page. The contents of this Web page SHOULD be about the End-User.
+  string profile = 8;
+  // URL of the End-User's profile picture. This URL MUST refer to an image file (for example, a PNG, JPEG, or GIF image file), rather than to a Web page containing an image. Note that this URL SHOULD specifically reference a profile photo of the End-User suitable for displaying when describing the End-User, rather than an arbitrary photo taken by the End-User.
+  string picture = 9;
+  // URL of the End-User's Web page or blog. This Web page SHOULD contain information published by the End-User or an organization that the End-User is affiliated with.
+  string website = 10;
+  // End-User's preferred e-mail address. Its value MUST conform to the RFC 5322 [RFC5322] addr-spec syntax. The RP MUST NOT rely upon this value being unique, as discussed in Section 5.7.
+  string email = 11;
+  // True if the End-User's e-mail address has been verified; otherwise false. When this Claim Value is true, this means that the OP took affirmative steps to ensure that this e-mail address was controlled by the End-User at the time the verification was performed. The means by which an e-mail address is verified is context-specific, and dependent upon the trust framework or contractual agreements within which the parties are operating.
+  bool email_verified = 12;
+  // End-User's gender. Values defined by this specification are female and male. Other values MAY be used when neither of the defined values are applicable.
+  string gender = 13;
+  // End-User's birthday, represented as an ISO 8601:2004 [ISO8601‑2004] YYYY-MM-DD format. The year MAY be 0000, indicating that it is omitted. To represent only the year, YYYY format is allowed. Note that depending on the underlying platform's date related function, providing just year can result in varying month and day, so the implementers need to take this factor into account to correctly process the dates.
+  string birthdate = 14;
+  // String from zoneinfo [zoneinfo] time zone database representing the End-User's time zone. For example, Europe/Paris or America/Los_Angeles.
+  string zoneinfo = 15;
+  // End-User's locale, represented as a BCP47 [RFC5646] language tag. This is typically an ISO 639-1 Alpha-2 [ISO639‑1] language code in lowercase and an ISO 3166-1 Alpha-2 [ISO3166‑1] country code in uppercase, separated by a dash. For example, en-US or fr-CA. As a compatibility note, some implementations have used an underscore as the separator rather than a dash, for example, en_US; Relying Parties MAY choose to accept this locale syntax as well.
+  string locale = 16;
+  // End-User's preferred telephone number. E.164 [E.164] is RECOMMENDED as the format of this Claim, for example, +1 (425) 555-1212 or +56 (2) 687 2400. If the phone number contains an extension, it is RECOMMENDED that the extension be represented using the RFC 3966 [RFC3966] extension syntax, for example, +1 (604) 555-1234;ext=5678.
+  string phone_number = 17;
+  // True if the End-User's phone number has been verified; otherwise false. When this Claim Value is true, this means that the OP took affirmative steps to ensure that this phone number was controlled by the End-User at the time the verification was performed. The means by which a phone number is verified is context-specific, and dependent upon the trust framework or contractual agreements within which the parties are operating. When true, the phone_number Claim MUST be in E.164 format and any extensions MUST be represented in RFC 3966 format.
+  bool phone_number_verified = 18;
+  // Time the End-User's information was last updated. Its value is a JSON number representing the number of seconds from 1970-01-01T0:0:0Z as measured in UTC until the date/time.
+  int64 updated_at = 19;
+}

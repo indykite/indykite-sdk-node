@@ -1,0 +1,4 @@
+# Ignore all Workspace settings in this folder except example files
+*
+!.gitignore
+!*.example

@@ -1,0 +1,147 @@
+// Copyright (c) 2021 IndyKite
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+syntax = "proto3";
+
+package indykite.identity.v1beta1;
+
+option csharp_namespace = "Id.Indykite.Jarvis.Services.Identity";
+option go_package = "github.com/indykite/jarvis/pkg/proto-gen/identity/v1;identity";
+option java_multiple_files = true;
+option java_outer_classname = "DocumentProto";
+option java_package = "com.id.indykite.jarvis.services.identity";
+option objc_class_prefix = "IIJSI";
+option php_namespace = "Id\\Indykite\\Jarvis\\Services\\Identity";
+option ruby_package = "Id::Indykite::Jarvis::Services::Identity";
+
+import "google/protobuf/timestamp.proto";
+import "indykite/objects/v1beta1/struct.proto";
+
+// Document is an IndyKite document object.
+message Document {
+  // Name of the document resource.
+  // Format: `databases/{application_id}/documents/{document_path}`.
+  string name = 1;
+
+  // Fields are the key/value pairs of the document.
+  //
+  // The map keys represent field names.
+  map<string, indykite.objects.v1beta1.Value> fields = 2;
+
+  // CreateTime when the document was created.
+  google.protobuf.Timestamp create_time = 3;
+
+  // UpdateTime when the document was last changed.
+  google.protobuf.Timestamp update_time = 4;
+}
+
+// DocumentMask used to restrict a get or update operation on a document to a subset of its fields.
+message DocumentMask {
+  // FieldPaths is a list of fields in the mask.
+  repeated string field_paths = 1;
+}
+
+// Precondition used for conditional operations on a Document.
+message Precondition {
+  oneof condition_type {
+    // Exists set to `true` when the target document must exist else set to `false`.
+    bool exists = 1;
+
+    // UpdateTime when set, the target document must exist and have been last updated at that time.
+    google.protobuf.Timestamp update_time = 2;
+  }
+}
+
+// Write is a single operation on a document.
+message Write {
+  // Operation to execute.
+  oneof operation {
+    // Document to write.
+    Document update = 1;
+
+    // Delete is a document name to delete.
+    //
+    // Format: `databases/{application_id}/documents/{document_path}`.
+    string delete = 2;
+
+    // Transform represent a transformation to a document.
+    DocumentTransform transform = 6;
+  }
+
+  // UpdateMask is the fields to update in this write.
+  //
+  // This field can be set only when the operation is `update`.
+  // If the mask is not set for an `update` and the document exists, any
+  // existing data will be overwritten.
+  // If the mask is set and the document on the server has fields not covered by
+  // the mask, they are left unchanged.
+  // Fields referenced in the mask, but not present in the input document, are
+  // deleted from the document on the server.
+  DocumentMask update_mask = 3;
+
+  // UpdateTransforms represents the transforms to perform after update.
+  //
+  // This field can be set only when the operation is `update`.
+  repeated DocumentTransform.FieldTransform update_transforms = 7;
+
+  // CurrentDocument is an optional precondition on the document.
+  //
+  // The write will fail if this is set and not met by the target document.
+  Precondition current_document = 4;
+}
+
+// WriteResult represents the result of applying a write.
+message WriteResult {
+  // UpdateTime is the last update time of the document after applying the write.
+  google.protobuf.Timestamp update_time = 1;
+}
+
+// DocumentTransform represents the transformation of a document.
+message DocumentTransform {
+  // FieldTransform represents the transformation of a field of the document.
+  message FieldTransform {
+
+    // FieldPath is the path of the field.
+    string field_path = 1;
+
+    // The transformation to apply on the field.
+    oneof transform_type {
+
+      // AppendMissingElements transforms the field by appending the given elements in order
+      // if they are not already present in the current field value.
+      // If the field is not an array, or if the field does not yet exist, it is
+      // first set to the empty array.
+      //
+      // Equivalent numbers of different types (e.g. 3L and 3.0) are
+      // considered equal when checking if a value is missing.
+      // NaN is equal to NaN, and Null is equal to Null.
+      // If the input contains multiple equivalent values, only the first will
+      // be considered.
+      //
+      // The corresponding transform_result will be the null value.
+      indykite.objects.v1beta1.ArrayValue append_missing_elements = 6;
+
+      // remove_all_from_array Removes all of the given elements from the array in the field.
+      // If the field is not an array, or if the field does not yet exist, it is
+      // set to the empty array.
+      indykite.objects.v1beta1.ArrayValue remove_all_from_array = 7;
+    }
+  }
+
+  // Document is the name of the document to transform.
+  string document = 1;
+
+  // FieldTransforms is the list of transformations to apply to the fields of the document.
+  repeated FieldTransform field_transforms = 2;
+}

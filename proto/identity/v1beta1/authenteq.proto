@@ -1,0 +1,63 @@
+// Copyright (c) 2021 IndyKite
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+syntax = "proto3";
+
+package indykite.identity.v1beta1;
+
+option csharp_namespace = "Id.Indykite.Jarvis.Services.Identity";
+option go_package = "github.com/indykite/jarvis/pkg/proto-gen/identity/v1;identity";
+option java_multiple_files = true;
+option java_outer_classname = "AuthenteqDetails";
+option java_package = "com.id.indykite.jarvis.services.identity";
+option objc_class_prefix = "IIJSI";
+option php_namespace = "Id\\Indykite\\Jarvis\\Services\\Identity";
+option ruby_package = "Id::Indykite::Jarvis::Services::Identity";
+
+message AuthenteqDetails {
+  string id = 1;
+  AuthenteqDocumentData document_data = 4 [json_name="documentData"];
+}
+message AuthenteqDocumentData {
+  string document_type = 1 [json_name="documentType"];
+  string document_number = 2 [json_name="documentNumber"];
+  string issuing_country = 3 [json_name="issuingCountry"];
+  string jurisdiction = 4;
+  string nationality = 5;
+  string surname_and_given_names = 6 [json_name="surnameAndGivenNames"];
+  string surname = 7;
+  string given_names = 8 [json_name="givenNames"];
+  string name_suffixes = 9 [json_name="nameSuffixes"];
+  string name_prefixes = 10 [json_name="namePrefixes"];
+  string sex = 11;
+  string date_of_birth = 12 [json_name="dateOfBirth"];
+  string date_of_expiry = 13 [json_name="dateOfExpiry"];
+  string date_of_issue = 14 [json_name="dateOfIssue"];
+  string license_class = 15 [json_name="licenseClass"];
+
+  map<string, LicenseClassDetails> license_class_details = 16 [json_name="licenseClassDetails"];
+
+  WebImage cropped_front_image = 17 [json_name="croppedFrontImage"];
+  WebImage cropped_back_image = 18 [json_name="croppedBackImage"];
+  WebImage face_image = 19 [json_name="faceImage"];
+}
+message LicenseClassDetails {
+  string from = 1;
+  string to = 2;
+  string notes = 3;
+}
+message WebImage {
+  string content_type = 1 [json_name="contentType"];
+  string content = 2;
+}

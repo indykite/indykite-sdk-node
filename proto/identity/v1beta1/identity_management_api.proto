@@ -1,0 +1,736 @@
+// Copyright (c) 2020-2021 IndyKite
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+// Identity Management Service Description.
+syntax = "proto3";
+
+package indykite.identity.v1beta1;
+
+option csharp_namespace = "Id.Indykite.Jarvis.Services.Identity";
+option go_package = "github.com/indykite/jarvis/pkg/proto-gen/identity/v1;identity";
+option java_multiple_files = true;
+option java_outer_classname = "IdentityManagementApiProto";
+option java_package = "com.id.indykite.jarvis.services.identity";
+option objc_class_prefix = "IIJSI";
+option php_namespace = "Id\\Indykite\\Jarvis\\Services\\Identity";
+option ruby_package = "Id::Indykite::Jarvis::Services::Identity";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/wrappers.proto";
+import "indykite/identity/v1beta1/attributes.proto";
+import "indykite/identity/v1beta1/document.proto";
+import "indykite/identity/v1beta1/model.proto";
+import "indykite/objects/v1beta1/struct.proto";
+import "validate/validate.proto";
+
+
+// IdentityManagementAPI represents the service interface to manage the Identities and their data.
+service IdentityManagementAPI {
+
+  // TokenIntrospect function validates the token and returns information about it.
+  //
+  // This is a protected operation and it can be accessed only with valid agent credentials!
+  rpc TokenIntrospect(TokenIntrospectRequest) returns (TokenIntrospectResponse);
+
+  // StartForgottenPasswordFlow function initiates the flow where systems sends a notification to DigitalTwin
+  // with a link to set the new password.
+  //
+  // The flow checks if the DigitalTwin has primary contact information and if so it sends a message with a link.
+  // By opening the link the UI SDK guides the User-Agent through the Authentication Flow where the user is
+  // allowed to set a new Password credential.
+  //
+  // This is a protected operation and it can be accessed only with valid agent credentials!
+  rpc StartForgottenPasswordFlow(StartForgottenPasswordFlowRequest) returns (StartForgottenPasswordFlowResponse);
+
+  // ChangePassword function allows the Application to replace the Password credential of a DigitalTwin.
+  //
+  // This is a protected operation and it can be accessed only with valid agent credentials!
+  rpc ChangePassword(ChangePasswordRequest) returns (ChangePasswordResponse);
+
+  // StartDigitalTwinEmailVerification function initiates the flow where Indykite systems sends a
+  // notification to DigitalTwin with a link to verify the control over
+  // the notification channel (email only for now).
+  //
+  // This is a protected operation and it can be accessed only with valid agent credentials!
+  rpc StartDigitalTwinEmailVerification(StartDigitalTwinEmailVerificationRequest) returns (StartDigitalTwinEmailVerificationResponse);
+
+  // VerifyDigitalTwinEmail function confirms to IndyKite system that the message from
+  // StartDigitalTwinEmailVerification function was sent and user visited the link.
+  //
+  // This is a protected operation and it can be accessed only with valid agent credentials!
+  rpc VerifyDigitalTwinEmail(VerifyDigitalTwinEmailRequest) returns (VerifyDigitalTwinEmailResponse);
+
+  // SelfServiceTerminateSession function terminates and invalidates a login session.
+  //
+  // This is a protected operation and it can be accessed by both credentials,
+  // with valid agent or DigitalTwin credential.
+  rpc SelfServiceTerminateSession(SelfServiceTerminateSessionRequest) returns (SelfServiceTerminateSessionResponse);
+
+  // DigitalTwin Management
+
+  // GetDigitalTwin gets a DigitalTwin and requested properties.
+  //
+  // This is a protected operation and it can be accessed only with valid agent credentials!
+  rpc GetDigitalTwin(GetDigitalTwinRequest) returns (GetDigitalTwinResponse);
+
+  // ListDigitalTwins lists DigitalTwins matching the filter.
+  //
+  // This is a protected operation and it can be accessed only with valid agent credentials!
+  rpc ListDigitalTwins(ListDigitalTwinsRequest) returns (ListDigitalTwinsResponse);
+
+  // PatchDigitalTwin updates the properties of a DigitalTwin.
+  //
+  // This is a protected operation and it can be accessed only with valid agent credentials!
+  rpc PatchDigitalTwin(PatchDigitalTwinRequest) returns (PatchDigitalTwinResponse);
+  // DeleteDigitalTwin deletes the given DigitalTwin entirely from the system.
+  //
+  // This operation can't be restored.
+  //
+  // This is a protected operation and it can be accessed only with valid agent credentials!
+  rpc DeleteDigitalTwin(DeleteDigitalTwinRequest) returns (DeleteDigitalTwinResponse);
+
+
+  // Document Management
+
+  // GetDocument gets a single document.
+  //
+  // This is a protected operation and it can be accessed only with valid agent credentials!
+  rpc GetDocument(GetDocumentRequest) returns (GetDocumentResponse);
+
+  // BatchGetDocuments gets multiple documents.
+  //
+  // This is a protected operation and it can be accessed only with valid agent credentials!
+  rpc BatchGetDocuments(BatchGetDocumentsRequest) returns (stream BatchGetDocumentsResponse);
+
+  // ListDocuments lists documents.
+  //
+  // This is a protected operation and it can be accessed only with valid agent credentials!
+  rpc ListDocuments(ListDocumentsRequest) returns (ListDocumentsResponse);
+
+  // MutateDocuments in single transaction creates, updates and deletes the requested documents.
+  //
+  // This is a protected operation and it can be accessed only with valid agent credentials!
+  rpc MutateDocuments(MutateDocumentsRequest) returns (MutateDocumentsResponse);
+
+  // RunQuery runs a query. NOT YET SUPPORTED!
+  //
+  // This is a protected operation and it can be accessed only with valid agent credentials!
+  rpc RunQuery(RunQueryRequest) returns (stream RunQueryResponse);
+
+  // CheckConsentChallenge read the Consent Challenge from DB.
+  rpc CheckConsentChallenge(CheckConsentChallengeRequest) returns (CheckConsentChallengeResponse);
+
+  // CreateConsentVerifier invalidates the Consent Challenge and creates a new Consent Verifier.
+  rpc CreateConsentVerifier(CreateConsentVerifierRequest) returns (CreateConsentVerifierResponse);
+
+  //
+  // Experimental Functions.
+  //
+
+  //TODO Password Management
+  rpc GetPasswordCredential(GetPasswordCredentialRequest) returns (GetPasswordCredentialResponse);
+  rpc UpdatePasswordCredential(UpdatePasswordCredentialRequest) returns (UpdatePasswordCredentialResponse);
+
+  // CreateInvitation.
+  rpc CreateInvitation(CreateInvitationRequest) returns (CreateInvitationResponse);
+
+  //    rpc CreateInvitation (UpdateInvitationRequest) returns (UpdateInvitationResponse) {
+  //    }
+  //    rpc ListInvitation (ListInvitationRequest) returns (stream ListInvitationResponse) {
+  //    }
+  //    rpc DeleteInvitation (DeleteInvitationRequest) returns (DeleteInvitationResponse) {
+  //    }
+  // GetAccessToken get a new active access_token for requested provider.
+  rpc GetAccessToken(GetAccessTokenRequest) returns (GetAccessTokenResponse);
+
+  // SessionIntrospect ...
+  rpc SessionIntrospect(SessionIntrospectRequest) returns (SessionIntrospectResponse);
+
+  //  rpc SelfServiceChangePassword(SelfServiceChangePasswordRequest) returns (SelfServiceChangePasswordResponse){
+  //    option (google.api.http) = {
+  //      post: "/identity/self-service/change-password"
+  //      body: "*"
+  //    };
+  //  }
+}
+
+// TokenIntrospectRequest ...
+message TokenIntrospectRequest {
+  bytes tenant_id = 1;
+  // The string value of the token. For access tokens, this
+  // is the "access_token" value returned from the token endpoint
+  // defined in OAuth 2.0. For refresh tokens, this is the "refresh_token"
+  // value returned.
+  //
+  string token = 2;
+  // An optional, space separated list of required scopes. If the access token was not granted one of the
+  // scopes, the result of active will be false.
+  //string scope = 3;
+}
+
+// TokenIntrospectResponse ...
+message TokenIntrospectResponse {
+  bool active = 1;
+  IdentityTokenInfo token_info = 2;
+  //UserInfoResponsePayload payload = 2;
+}
+
+message StartForgottenPasswordFlowRequest {
+  DigitalTwin digital_twin = 1;
+}
+
+message StartForgottenPasswordFlowResponse {
+  //Empty response ?= Success
+}
+
+// ChangePasswordRequest ...
+message ChangePasswordRequest {
+  oneof uid {
+    string token = 1;
+    DigitalTwin digital_twin = 2;
+  }
+  string password = 3;
+  bool ignore_policy = 4;
+}
+
+// ChangePasswordResponse ...
+message ChangePasswordResponse {
+  Error error = 1;
+}
+
+message StartDigitalTwinEmailVerificationRequest {
+  DigitalTwin digital_twin = 1 [(validate.rules).message.required = true];
+  string email = 2 [(validate.rules).string.email = true];
+
+  indykite.objects.v1beta1.MapValue attributes = 7;
+}
+
+message StartDigitalTwinEmailVerificationResponse {
+}
+
+message VerifyDigitalTwinEmailRequest {
+  string token = 1;
+}
+
+message VerifyDigitalTwinEmailResponse {
+  DigitalTwin digital_twin = 1;
+}
+
+message SelfServiceTerminateSessionRequest {
+  //Once protoc-gen-grpc-gateway plugin supports enable it
+  /*optional*/ string refresh_token = 1;
+}
+
+message SelfServiceTerminateSessionResponse {
+  //Empty response ?= Success
+}
+
+message DigitalTwinIdentifier {
+  oneof filter {
+    option (validate.required) = true;
+
+    DigitalTwin digital_twin = 1 [(validate.rules).message.required = true];
+    // Property + tenantId not yet supported
+    Property property = 2 [(validate.rules).message.required = true];
+    string access_token = 3 [(validate.rules).string = {min_len: 20}];
+  }
+}
+
+message GetDigitalTwinRequest {
+  DigitalTwinIdentifier id = 1 [(validate.rules).message.required = true];
+  // Properties defines the list of requested properties to get.
+  repeated PropertyMask properties = 2 [(validate.rules).repeated = {
+    ignore_empty: true,
+    items: {message:{required: true}},
+  }];
+}
+
+message GetDigitalTwinResponse {
+  DigitalEntity digital_twin = 1;
+  IdentityTokenInfo token_info = 2;
+}
+
+message ListDigitalTwinsRequest {
+  bytes tenant_id = 1 [(validate.rules).bytes.len = 16];
+
+  // CollectionId, relative to `parent`, to list.
+  // Required.
+  string collection_id = 2;
+
+  // PageSize is the maximum number of documents to return.
+  int32 page_size = 3;
+
+  // PageToken is the `next_page_token` value returned from a previous List request.
+  string page_token = 4;
+
+  // OrderBy to sort results by. For example: `priority desc, name`.
+  string order_by = 5;
+
+  // Properties contains the requested property values.
+  repeated Property properties = 6;
+}
+
+message ListDigitalTwinsResponse {
+  repeated DigitalEntity digital_twin = 1;
+  // NextPageToken is `page_token` value for the next ListDocumentsRequest.
+  string next_page_token = 2;
+}
+
+message PatchDigitalTwinRequest {
+  DigitalTwinIdentifier id = 1 [(validate.rules).message.required = true];
+  repeated PropertyBatchOperation  operations = 2 [(validate.rules).repeated = {
+    min_items: 1,
+    items: {message: {required: true}}
+  }];
+  // AdminToken must be set when id contains only the DigitalTwin.
+  string admin_token = 3;
+
+  // ForceDelete must be set to true to delete primary property
+  bool force_delete = 4;
+}
+
+message PatchDigitalTwinResponse {
+  repeated BatchOperationResult result = 1;
+}
+
+message DeleteDigitalTwinRequest {
+  DigitalTwinIdentifier id = 1 [(validate.rules).message.required = true];
+  // AdminToken must be set when id contains only the DigitalTwin.
+  string admin_token = 2;
+}
+
+message DeleteDigitalTwinResponse {
+  DigitalTwin digital_twin = 1;
+}
+
+// GetDocumentRequest ...
+message GetDocumentRequest {
+  // Name of the document resource.
+  // Format: `databases/{application_id}/documents/{document_path}`.
+  // Format: `databases/{application_id}/documents/plans/free`.
+  string name = 1;
+
+  // Mask is the fields to return. If not set, returns all fields.
+  DocumentMask mask = 2;
+}
+
+// GetDocumentResponse ...
+message GetDocumentResponse {
+  // Document is the result of the get.
+  Document document = 1;
+}
+
+// BatchGetDocumentsRequest ...
+message BatchGetDocumentsRequest {
+  // Database is the name of the database.
+  // Format: `databases/{application_id}`.
+  string database = 1;
+
+  // Documents is the names of the documents to retrieve.
+  // Format: `databases/{application_id}/documents/{document_path}`.
+  repeated string documents = 2;
+
+  // Mask is the fields to return. If not set, returns all fields.
+  DocumentMask mask = 3;
+}
+
+// BatchGetDocumentsResponse ...
+message BatchGetDocumentsResponse {
+  // Result is a single result.
+  oneof result {
+    // A document that was requested.
+    Document found = 1;
+
+    // Missing is a document name that was requested but does not exist.
+    // Format: `databases/{application_id}/documents/{document_path}`.
+    string missing = 2;
+  }
+}
+
+// ListDocumentsRequest ..
+message ListDocumentsRequest {
+  // Parent resource name to resolve the collection.
+  // Format: `databases/{application_id}/documents/{document_path}`.
+  // Required.
+  string parent = 1;
+
+  // CollectionId, relative to `parent`, to list.
+  // Required.
+  string collection_id = 2;
+
+  // PageSize is the maximum number of documents to return.
+  int32 page_size = 3;
+
+  // PageToken is the `next_page_token` value returned from a previous List request.
+  string page_token = 4;
+
+  // OrderBy to sort results by. For example: `priority desc, name`.
+  string order_by = 6;
+
+  // Mask is the fields to return. If not set, returns all fields.
+  DocumentMask mask = 7;
+
+}
+
+// ListDocumentsResponse ...
+message ListDocumentsResponse {
+  // The Documents found.
+  repeated Document documents = 1;
+
+  // NextPageToken is `page_token` value for the next ListDocumentsRequest.
+  string next_page_token = 2;
+}
+
+// MutateDocumentsRequest ...
+message MutateDocumentsRequest {
+  // The database name.
+  // Format: `databases/{application_id}`.
+  // Required.
+  string database = 1;
+
+  // The writes to apply.
+  repeated Write writes = 2;
+}
+
+// MutateDocumentsResponse ...
+message MutateDocumentsResponse {
+  // WriteResults is the result of applying the writes.
+  //
+  // This i-th write result corresponds to the i-th write in the
+  // request.
+  repeated WriteResult write_results = 1;
+}
+
+// RunQueryRequest ... NOT YET SUPPORTED!
+message RunQueryRequest {
+  // Parent resource name to resolve the collection.
+  // Format: `databases/{application_id}/documents/{document_path}`.
+  // Required.
+  string parent = 1;
+
+  // The query to run.
+  oneof query_type {
+    // A structured query.
+    indykite.objects.v1beta1.Value structured_query = 2;
+  }
+}
+
+// RunQueryResponse ... NOT YET SUPPORTED!
+message RunQueryResponse {
+  // A query result.
+  Document document = 1;
+
+  // SkippedResults is the number of results that have been skipped due to an offset between
+  // the last response and the current response.
+  int32 skipped_results = 4;
+}
+
+//
+// Experimental Functions.
+//
+
+message GetPasswordCredentialRequest {
+  DigitalTwin digital_twin = 1;
+}
+
+message GetPasswordCredentialResponse {
+}
+
+message PasswordCredentialOld {
+  string tenant = 1;
+  string uuid = 3;
+
+  int64 expires_at = 4;
+
+  bool flag_bit1 = 5; //8 bit flags
+  bool flag_bit2 = 6; //8 bit flags;
+  bool flag_bit3 = 7; //8 bit flags;
+  bool flag_bit4 = 8; //8 bit flags;
+  bool flag_bit5 = 9; //8 bit flags;
+  bool flag_bit6 = 10; //8 bit flags;
+  bool flag_bit7 = 11; //8 bit flags;
+  bool flag_bit8 = 12; //8 bit flags;
+  repeated CredentialControl controls = 13;
+}
+
+enum CredentialControl {
+  CREDENTIAL_CONTROL_INVALID = 0;
+  CREDENTIAL_CONTROL_DISABLE = 1;
+  CREDENTIAL_CONTROL_ENABLE = 2;
+  CREDENTIAL_CONTROL_LOCKOUT = 3;
+  // The user can't change the password.
+  CREDENTIAL_CONTROL_PASSWORD_CANT_CHANGE = 4;
+  // It's a default account type that represents a typical user.
+  CREDENTIAL_CONTROL_NORMAL_ACCOUNT = 5;
+  // Represents the password, which should never expire on the account.
+  CREDENTIAL_CONTROL_DONT_EXPIRE_PASSWORD = 6;
+  // The user's password has expired.
+  CREDENTIAL_CONTROL_PASSWORD_EXPIRED = 7;
+  //CREDENTIAL_CONTROL_ENCRYPTED_TEXT_PASSWORD_ALLOWED = 8;
+}
+
+// UpdatePasswordCredentialRequest used to change the Password Credential meta-data.
+message UpdatePasswordCredentialRequest {
+  // The username used to login.
+  //google.protobuf.StringValue login = 1;
+  repeated bytes login_properties = 1;
+  google.protobuf.BoolValue must_change = 2;
+  google.protobuf.BoolValue locked = 5;
+  oneof primary {
+    string email = 3;
+    string mobile = 4;
+  }
+}
+
+message UpdatePasswordCredentialResponse {
+
+}
+
+message Error {
+  //Invalid Authorization
+  //Password Policy Violation
+  //Password Can't be changed
+  //Unknown UID
+  //UID has no Password Credential
+  string code = 1;
+}
+
+message SelfServiceChangePasswordRequest {
+  string password = 1;
+}
+
+message SelfServiceChangePasswordResponse {
+  bool success = 1;
+  string error = 2; //Password policy violation
+}
+
+// CreateInvitationRequest ...
+message CreateInvitationRequest {
+  bytes tenant_id = 1 [(validate.rules).bytes.len = 16];
+  //External reference identifier to correlate the lifecycle events with.
+  string reference_id = 2;
+  //Human readable name of invitee.
+  string display_name = 3;
+  indykite.objects.v1beta1.MapValue attributes = 4;
+  google.protobuf.Timestamp create_time = 5;
+  google.protobuf.Timestamp expire_time = 6;
+  //Unique name of tenant. It's not globally unique only unique in scope of subscription.
+  //string environment=?;
+  //The name value is immutable.
+  // Must have a value set.
+  oneof invitee {
+    // Address where email will be sent.
+    string email = 7;
+    // Mobile number where sms will be sent.
+    string mobile = 8;
+  }
+}
+
+// CreateInvitationResponse ...
+message CreateInvitationResponse {
+  Invitation invitation = 1;
+  string invitation_key = 2;
+}
+
+
+message CheckConsentChallengeRequest {
+  string challenge = 1 [(validate.rules).string.len = 22];
+}
+
+message CheckConsentChallengeResponse {
+  string client_id = 1;
+
+  bytes app_space_id = 2;
+
+  repeated AudienceItem audiences = 3;
+
+  repeated ScopeItem scopes = 4;
+
+  // ACR represents the Authentication AuthorizationContext Class Reference value for this authentication session. You can use it
+  // to express that, for example, a user authenticated using two factor authentication.
+  repeated string acrs = 5;
+
+  // RequestURL is the original OAuth 2.0 Authorization URL requested by the OAuth 2.0 client. It is the URL which
+  // initiates the OAuth 2.0 Authorization Code or OAuth 2.0 Implicit flow. This URL is typically not needed, but
+  // might come in handy if you want to deal with additional request parameters.
+  string request_url = 6;
+
+  // Skip, if true, implies that the client has requested the same scopes from the same user previously.
+  // If true, you must not ask the user to grant the requested scopes. You must however either allow or deny the
+  // consent request using the usual API call.
+  bool skip = 7;
+
+  DigitalTwin digital_twin = 8;
+  // SubjectIdentifier is pairwise identifier as the sub claims in the token
+  string subject_identifier = 9;
+
+  google.protobuf.Timestamp authenticated_at = 10;
+  google.protobuf.Timestamp requested_at = 11;
+
+  // Context is an optional object which can hold arbitrary data. The data will be made available when fetching the
+  // consent request under the "context" field. This is useful in scenarios where login and consent endpoints share
+  // data.
+  indykite.objects.v1beta1.MapValue context = 12;
+}
+
+message ScopeItem {
+  string name = 1;
+  string display_name = 2;
+  string description = 3;
+  bool required = 4;
+}
+
+message AudienceItem {
+  string user_support_email_address = 1;
+  string client_id = 2;
+  string display_name = 3;
+  string description = 4;
+
+  string logo_url = 5;
+  string homepage_url = 6;
+  string privacy_policy_url = 7;
+  string tos_url = 8;
+}
+
+message CreateConsentVerifierRequest {
+  string challenge = 1  [(validate.rules).string.len = 22];
+  oneof result {
+    option (validate.required) = true;
+
+    ConsentApproval approval = 2;
+    DenialResponse denial = 3;
+  }
+}
+
+message CreateConsentVerifierResponse {
+  string verifier = 1;
+  string authorization_endpoint = 2;
+}
+
+message ConsentApproval  {
+  // GrantScopes sets the scope the user authorized the client to use. Should be a subset of `requested_scope`.
+  repeated string grant_scopes = 1 [(validate.rules).repeated = {min_items: 1, unique: true}];
+
+  // GrantedAudiences sets the audience the user authorized the client to use. Should be a subset of `audiences`.
+  repeated string granted_audiences = 2 [(validate.rules).repeated = {unique: true}];
+
+  // Session allows you to set (optional) session data for access and ID tokens.
+  ConsentRequestSessionData session = 3;
+
+  // Remember, if set to true, tells ORY Hydra to remember this consent authorization and reuse it if the same
+  // client asks the same user for the same, or a subset of, scope.
+  bool remember = 4;
+
+  // RememberFor sets how long the consent authorization should be remembered for in seconds. If set to `0`, the
+  // authorization will be remembered indefinitely.
+  int64 remember_for = 5;
+}
+
+// Used to pass session data to a consent request.
+message ConsentRequestSessionData  {
+  // AccessToken sets session data for the access and refresh token, as well as any future tokens issued by the
+  // refresh grant. Keep in mind that this data will be available to anyone performing OAuth 2.0 Challenge Introspection.
+  // If only your services can perform OAuth 2.0 Challenge Introspection, this is usually fine. But if third parties
+  // can access that endpoint as well, sensitive data from the session might be exposed to them. Use with care!
+  indykite.objects.v1beta1.MapValue access_token = 1;
+
+  // IDToken sets session data for the OpenID Connect ID token. Keep in mind that the session'id payloads are readable
+  // by anyone that has access to the ID Challenge. Use with care!
+  indykite.objects.v1beta1.MapValue id_token = 2;
+
+  indykite.objects.v1beta1.MapValue userinfo = 3;
+}
+
+// The request payload used to accept a login or consent request.
+message DenialResponse {
+  // The error should follow the OAuth2 error format (e.g. `invalid_request`, `login_required`).
+  // See [https://datatracker.ietf.org/doc/html/rfc6749#section-4.1.2.1](full specification)
+  // Defaults to `access_denied`.
+  string error = 1 [(validate.rules).string = {
+		ignore_empty: true,
+		pattern: "^[ !#-\\[\\]-~]+$", // %x20-21 / %x23-5B / %x5D-7E
+  }];
+
+  // Description of the error in a human readable format.
+  string error_description = 2 [(validate.rules).string = {
+		ignore_empty: true,
+		pattern: "^[ !#-\\[\\]-~]+$", // %x20-21 / %x23-5B / %x5D-7E
+  }];
+
+  // Hint to help resolve the error.
+  string error_hint = 3;
+
+  // Represents the HTTP status code of the error (e.g. 401 or 403)
+  //
+  // Defaults to 403
+  int64 status_code = 4 [(validate.rules).int64 = {
+    in: [400, 401, 403, 408, 409, 410, 412, 422, 429, 451],
+    ignore_empty: true
+  }];
+}
+
+// ExternalAccessTokenRequest ...
+message GetAccessTokenRequest {
+  //Client Application Identifier. Set by the server from the authenticated client.
+  string app_id = 1;
+  //Identity Provider configuration unique id - overrules type + name.
+  string provider_id = 2;
+  //Identity Provider type.
+  //id.indykite.jarvis.services.configuration.OAuth2ProviderType provider = 3;
+  //Identity Provider configuration  name.
+  string provider_name = 4;
+
+  //Digital Twin / Subject ID (Optional). If not provided authentication flow triggered.
+  string subject_id = 5;
+
+  //Requested scopes
+  repeated string scopes = 6;
+
+  //If true a refresh_token is requested and stored so next time authentication is not requested.
+  bool offline_access = 7;
+
+  //Challenge the client for example [Chat Client](https://docs.microsoft.com/en-us/azure/bot-service/bot-builder-authentication?view=azure-bot-service-4.0&tabs=aadv2%2Cjavascript)
+  //id.indykite.jarvis.auth.messages.OAuth2Message auth_message = 8;
+}
+
+// ExternalAccessTokenResponse ...
+message GetAccessTokenResponse {
+  //The active access token
+  OAuth2TokenResponse token = 1;
+  //If refresh_token is not set or extra scope requested the authentication challenge.
+  //id.indykite.jarvis.auth.messages.OAuth2Message auth_message = 2;
+}
+
+// TokenIntrospectRequest ...
+message SessionIntrospectRequest {
+  bytes tenant_id = 1;
+  // The string value of the token. For access tokens, this
+  // is the "access_token" value returned from the token endpoint
+  // defined in OAuth 2.0. For refresh tokens, this is the "refresh_token"
+  // value returned.
+  //
+  string token = 2;
+  // An optional, space separated list of required scopes. If the access token was not granted one of the
+  // scopes, the result of active will be false.
+  //string scope = 3;
+}
+
+// TokenIntrospectResponse ...
+message SessionIntrospectResponse {
+  bool active = 1;
+  IdentityTokenInfo token_info = 2;
+  //UserInfoResponsePayload payload = 2;
+
+  repeated string provider_data = 3;
+}

@@ -1,0 +1,173 @@
+// Copyright (c) 2020 IndyKite
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+syntax = "proto3";
+
+package indykite.identity.v1beta1;
+
+option csharp_namespace = "Id.Indykite.Jarvis.Services.Identity";
+option go_package = "github.com/indykite/jarvis/pkg/proto-gen/identity/v1;identity";
+option java_multiple_files = true;
+option java_outer_classname = "ImportProto";
+option java_package = "com.id.indykite.jarvis.services.identity";
+option objc_class_prefix = "IIJSI";
+option php_namespace = "Id\\Indykite\\Jarvis\\Services\\Identity";
+option ruby_package = "Id::Indykite::Jarvis::Services::Identity";
+
+message ImportUsersRequest {
+  repeated ImportUser users = 1;
+  oneof hash_algorithm {
+    Bcrypt bcrypt = 2;
+    StandardScrypt standard_scrypt = 3;
+    Scrypt scrypt = 4;
+    HMACMD5 hmac_md5 = 5;
+    HMACSHA1 hmac_sha1 = 6;
+    HMACSHA512 hmac_sha512 = 7;
+    HMACSHA256 hmac_sha256 = 8;
+    MD5 md5 = 9;
+    PBKDF2SHA256 pbkdf2_sha256 = 10;
+    PBKDFSHA1 pbkdf_sha1 = 11;
+    SHA1 sha1 = 12;
+    SHA256 sha256 = 13;
+    SHA512 sha512 = 14;
+  }
+}
+
+message ImportUsersResponse {
+  message ImportUsersError {
+    //int64 index = 1;
+    string message = 2;
+  }
+  message ImportUserResult {
+    bytes id = 1;
+    ImportUsersError error = 2;
+  }
+  repeated ImportUserResult errors = 1;
+}
+
+message ImportUser {
+  //uid is the unique internal identifier in source system.
+  /*optional*/ string uid = 1;
+  PasswordCredential password = 2;
+  repeated UserProvider provider_user_info = 3;
+  bool disabled = 4;
+}
+
+// UserMetadata contains additional metadata associated with a user account.
+// Timestamps are in milliseconds since epoch.
+message UserMetadata {
+  int64 creation_timestamp = 1;
+  int64 last_log_in_timestamp = 2;
+  // The time at which the user was last active (ID token refreshed), or 0 if
+  // the user was never active.
+  int64 last_refresh_timestamp = 3;
+}
+
+message Email {
+  string email = 1;
+  /*optional*/ bool verified = 2;
+}
+
+message Mobile {
+  string mobile = 1;
+  /*optional*/ bool verified = 2;
+}
+
+// PasswordCredential represent a password for user.
+//
+// Password can be specified for each user when importing in bulk.
+message PasswordCredential {
+  oneof uid {
+    Email email = 1;
+    Mobile mobile = 2;
+    string user_name = 3;
+  }
+  oneof password {
+    string value = 4;
+    PasswordHash hash = 5;
+  }
+}
+
+message PasswordHash {
+  bytes password_hash = 4;
+  /*optional*/ bytes salt = 5;
+}
+
+// UserProvider represents a user identity provider.
+//
+// One or more user providers can be specified for each user when importing in bulk.
+message UserProvider {
+  string uid = 1;
+  string provider_id = 2;
+  /*optional*/ string email = 3;
+  /*optional*/ string display_name = 4;
+  /*optional*/ string photo_url = 5;
+}
+
+message Bcrypt {
+}
+
+message StandardScrypt {
+  int64 block_size = 1;
+  int64 derived_key_length = 2;
+  int64 memory_cost = 3;
+  int64 parallelization = 4;
+}
+
+message Scrypt {
+  bytes key = 1;
+  bytes salt_separator = 2;
+  int64 rounds = 3;
+  int64 memory_cost = 4;
+}
+
+message HMACMD5 {
+  bytes key = 1;
+}
+
+message HMACSHA1 {
+  bytes key = 1;
+}
+
+message HMACSHA512 {
+  bytes key = 1;
+}
+
+message HMACSHA256 {
+  bytes key = 1;
+}
+
+message MD5 {
+  int64 rounds = 1;
+}
+
+message PBKDF2SHA256 {
+  int64 rounds = 1;
+}
+
+message PBKDFSHA1 {
+  int64 rounds = 1;
+}
+
+message SHA1 {
+  int64 rounds = 1;
+}
+
+message SHA256 {
+  int64 rounds = 1;
+}
+
+message SHA512 {
+  int64 rounds = 1;
+}

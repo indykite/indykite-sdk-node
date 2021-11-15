@@ -1,0 +1,79 @@
+// Copyright (c) 2020 IndyKite
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+syntax = "proto3";
+
+package indykite.objects.v1beta1;
+
+option csharp_namespace = "Id.Indykite.Jarvis.Objects";
+option go_package = "github.com/indykite/jarvis/pkg/proto-gen/objects";
+option java_multiple_files = true;
+option java_outer_classname = "StructProto";
+option java_package = "com.id.indykite.jarvis.objects";
+option objc_class_prefix = "IIJO";
+option php_namespace = "Id\\Indykite\\Jarvis\\Objects";
+
+import "google/protobuf/any.proto";
+import "google/protobuf/duration.proto";
+import "google/protobuf/struct.proto";
+import "google/protobuf/timestamp.proto";
+import "google/type/latlng.proto";
+import "indykite/objects/v1beta1/id.proto";
+
+// A message that can hold any of the supported value types.
+message Value {
+  // Must have a value set.
+  oneof value {
+    // A null value.
+    google.protobuf.NullValue null_value = 1;
+    // A boolean value.
+    bool bool_value = 2;
+    // An integer value.
+    int64 integer_value = 3;
+    // An integer value.
+    uint64 unsigned_integer_value = 14;
+    // A double value.
+    double double_value = 4;
+    // An Any value.
+    google.protobuf.Any any_value = 5;
+    // A timestamp value.
+    google.protobuf.Timestamp value_time = 6;
+    // A duration value.
+    google.protobuf.Duration duration_value = 12;
+    // An identifier value.
+    Identifier identifier_value = 13;
+    // A string value.
+    string string_value = 7;
+    // A bytes value.
+    bytes bytes_value = 8;
+    // A geo point value representing a point on the surface of Earth.
+    google.type.LatLng geo_point_value = 9;
+    // An array value.
+    ArrayValue array_value = 10;
+    // A map value.
+    MapValue map_value = 11;
+  }
+}
+
+// An array value.
+message ArrayValue {
+  // Values in the array.
+  repeated Value values = 1;
+}
+
+// A map value.
+message MapValue {
+  // The map's keys and values.
+  map<string, Value> fields = 1;
+}

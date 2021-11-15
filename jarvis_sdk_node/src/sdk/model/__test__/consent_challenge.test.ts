@@ -1,0 +1,147 @@
+import { v4 } from 'uuid';
+import { Audience } from '..';
+import { DigitalTwinKind, DigitalTwinState } from '../../../grpc/indykite/identity/v1beta1/model';
+import { Utils } from '../../utils/utils';
+import { ConsentChallenge } from '../consent_challenge';
+
+describe('properties', () => {
+  const challengeToken = 'challenge_token';
+  const clientId = v4();
+  const scopes = [{ name: 'openid', description: '', displayName: '', required: false }];
+  const requestUrl = 'http://www.example.com/oauth';
+  const audiences = [] as any[];
+  const appSpace = v4();
+  const acrs = [] as any[];
+  const subject = 'Subject';
+  const skip = false;
+  let challengeInstance: ConsentChallenge;
+
+  beforeEach(() => {
+    challengeInstance = new ConsentChallenge(
+      challengeToken,
+      clientId,
+      scopes,
+      requestUrl,
+      audiences,
+      appSpace,
+      acrs,
+      subject,
+      skip,
+    );
+  });
+
+  it('initialization', () => {
+    expect(challengeInstance.challenge).toEqual(challengeToken);
+    expect(challengeInstance.clientId).toEqual(clientId);
+    expect(challengeInstance.scopes).toEqual(scopes);
+    expect(challengeInstance.requestUrl).toEqual(requestUrl);
+    expect(challengeInstance.audiences).toEqual(audiences);
+    expect(challengeInstance.appSpaceId).toEqual(appSpace);
+    expect(challengeInstance.acrs).toEqual(acrs);
+    expect(challengeInstance.subjectIdentifier).toEqual(subject);
+    expect(challengeInstance.skip).toEqual(skip);
+    expect(challengeInstance.getApprovedScopeNames()).toEqual([]);
+    expect(challengeInstance.isDenied()).toEqual(false);
+    expect(challengeInstance.getDenialReason()).toEqual(null);
+  });
+
+  describe('approve scopes', () => {
+    beforeEach(() => {
+      challengeInstance.approveScopes(['openid']);
+    });
+
+    it('adds approved scopes', () => {
+      expect(challengeInstance.getApprovedScopeNames()).toEqual(['openid']);
+    });
+  });
+
+  describe("doesn't approve unknown scopes", () => {
+    let error: unknown;
+
+    beforeEach(() => {
+      try {
+        challengeInstance.approveScopes(['undefinedScope']);
+      } catch (err) {
+        error = err;
+      }
+    });
+
+    it('throws an error', () => {
+      expect(error).toBeDefined();
+      expect(challengeInstance.getApprovedScopeNames()).toEqual([]);
+    });
+  });
+
+  describe("doesn't approve duplicite scopes", () => {
+    beforeEach(() => {
+      challengeInstance.approveScopes(['openid', 'openid']);
+    });
+
+    it('throws an error', () => {
+      expect(challengeInstance.getApprovedScopeNames()).toEqual(['openid']);
+    });
+  });
+
+  describe('deny challenge', () => {
+    const denialReason = { error: 'access_denied' };
+
+    beforeEach(() => {
+      challengeInstance.deny(denialReason);
+    });
+
+    it('denies challenge', () => {
+      expect(challengeInstance.isDenied()).toEqual(true);
+      expect(challengeInstance.getDenialReason()).toEqual(denialReason);
+    });
+  });
+});
+
+describe('deserialization', () => {
+  const challengeToken = 'challenge_token';
+  const clientId = v4();
+  const scopes = [{ name: 'openid', description: '', displayName: '', required: false }];
+  const requestUrl = 'http://www.example.com/oauth';
+  const audiences = [] as Audience[];
+  const appSpace = v4();
+  const acrs = [] as any[];
+  const subject = 'Subject';
+  const skip = false;
+  let challengeInstance: ConsentChallenge;
+
+  beforeEach(() => {
+    challengeInstance = ConsentChallenge.deserialize(
+      {
+        acrs,
+        appSpaceId: Utils.uuidToBuffer(appSpace),
+        clientId,
+        audiences,
+        scopes,
+        requestUrl,
+        skip,
+        subjectIdentifier: subject,
+        digitalTwin: {
+          id: Utils.uuidToBuffer(v4()),
+          kind: DigitalTwinKind.DIGITAL_TWIN_KIND_PERSON,
+          state: DigitalTwinState.DIGITAL_TWIN_STATE_ACTIVE,
+          tenantId: Utils.uuidToBuffer(v4()),
+        },
+      },
+      challengeToken,
+    );
+  });
+
+  it('initialization', () => {
+    expect(challengeInstance.challenge).toEqual(challengeToken);
+    expect(challengeInstance.clientId).toEqual(clientId);
+    expect(challengeInstance.scopes).toEqual(scopes);
+    expect(challengeInstance.requestUrl).toEqual(requestUrl);
+    expect(challengeInstance.audiences).toEqual(audiences);
+    expect(challengeInstance.appSpaceId).toEqual(appSpace);
+    expect(challengeInstance.acrs).toEqual(acrs);
+    expect(challengeInstance.subjectIdentifier).toEqual(subject);
+    expect(challengeInstance.skip).toEqual(skip);
+    expect(challengeInstance.getApprovedScopeNames()).toEqual([]);
+    expect(challengeInstance.isDenied()).toEqual(false);
+    expect(challengeInstance.getDenialReason()).toEqual(null);
+  });
+});

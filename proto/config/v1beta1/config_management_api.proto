@@ -1,0 +1,1025 @@
+// Copyright (c) 2020 IndyKite
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+syntax = "proto3";
+
+package indykite.config.v1beta1;
+
+option csharp_namespace = "Id.Indykite.Jarvis.Services.Configuration";
+option go_package = "github.com/indykite/jarvis/pkg/proto-gen/config/v1;config";
+option java_multiple_files = true;
+option java_outer_classname = "ConfigManagementApiProto";
+option java_package = "com.id.indykite.jarvis.services.configuration";
+option objc_class_prefix = "IIJSC";
+option php_namespace = "Id\\Indykite\\Jarvis\\Services\\Configuration";
+
+import "indykite/config/v1beta1/model.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/wrappers.proto";
+import "validate/validate.proto";
+
+// ConfigManagementAPI provides the operations to mange the IndyKite platform configurations.
+service ConfigManagementAPI {
+  // ReadCustomer Reads a customer.
+  rpc ReadCustomer(ReadCustomerRequest) returns (ReadCustomerResponse);
+  // CreateApplicationSpace ...
+  rpc CreateApplicationSpace(CreateApplicationSpaceRequest) returns (CreateApplicationSpaceResponse);
+  rpc ReadApplicationSpace(ReadApplicationSpaceRequest) returns (ReadApplicationSpaceResponse);
+  rpc ListApplicationSpaces(ListApplicationSpacesRequest) returns (stream ListApplicationSpacesResponse);
+  rpc UpdateApplicationSpace(UpdateApplicationSpaceRequest) returns (UpdateApplicationSpaceResponse);
+  rpc DeleteApplicationSpace(DeleteApplicationSpaceRequest) returns (DeleteApplicationSpaceResponse);
+
+  //CreateApplication ...
+  rpc CreateApplication(CreateApplicationRequest) returns (CreateApplicationResponse);
+  rpc ReadApplication(ReadApplicationRequest) returns (ReadApplicationResponse);
+  rpc ListApplications(ListApplicationsRequest) returns (stream ListApplicationsResponse);
+  rpc UpdateApplication(UpdateApplicationRequest) returns (UpdateApplicationResponse);
+  rpc DeleteApplication(DeleteApplicationRequest) returns (DeleteApplicationResponse);
+
+  //CreateApplicationAgent ...
+  rpc CreateApplicationAgent(CreateApplicationAgentRequest) returns (CreateApplicationAgentResponse);
+  rpc ReadApplicationAgent(ReadApplicationAgentRequest) returns (ReadApplicationAgentResponse);
+  rpc ListApplicationAgents(ListApplicationAgentsRequest) returns (stream ListApplicationAgentsResponse);
+  rpc UpdateApplicationAgent(UpdateApplicationAgentRequest) returns (UpdateApplicationAgentResponse);
+  rpc DeleteApplicationAgent(DeleteApplicationAgentRequest) returns (DeleteApplicationAgentResponse);
+  rpc RegisterApplicationAgentCredential(RegisterApplicationAgentCredentialRequest) returns (RegisterApplicationAgentCredentialResponse);
+  rpc ReadApplicationAgentCredential(ReadApplicationAgentCredentialRequest) returns (ReadApplicationAgentCredentialResponse);
+  rpc DeleteApplicationAgentCredential(DeleteApplicationAgentCredentialRequest) returns (DeleteApplicationAgentCredentialResponse);
+
+  //CreateTenant ...
+  rpc CreateTenant(CreateTenantRequest) returns (CreateTenantResponse);
+  rpc ReadTenant(ReadTenantRequest) returns (ReadTenantResponse);
+  rpc ListTenants(ListTenantsRequest) returns (stream ListTenantsResponse);
+  rpc UpdateTenant(UpdateTenantRequest) returns (UpdateTenantResponse);
+  rpc DeleteTenant(DeleteTenantRequest) returns (DeleteTenantResponse);
+
+  //CreateConfigNode ...
+  rpc CreateConfigNode(CreateConfigNodeRequest) returns (CreateConfigNodeResponse);
+  rpc ReadConfigNode(ReadConfigNodeRequest) returns (ReadConfigNodeResponse);
+  // rpc ListConfigNodes(ListConfigNodesRequest) returns (stream ReadConfigNodeResponse);
+  rpc UpdateConfigNode(UpdateConfigNodeRequest) returns (UpdateConfigNodeResponse);
+  rpc DeleteConfigNode(DeleteConfigNodeRequest) returns (DeleteConfigNodeResponse);
+
+  rpc CreateOAuth2Provider(CreateOAuth2ProviderRequest) returns (CreateOAuth2ProviderResponse);
+  rpc ReadOAuth2Provider(ReadOAuth2ProviderRequest) returns (ReadOAuth2ProviderResponse);
+  // rpc ListOAuth2Providers(ListOAuth2ProvidersRequest) returns (stream ReadOAuth2ProviderResponse);
+  rpc UpdateOAuth2Provider(UpdateOAuth2ProviderRequest) returns (UpdateOAuth2ProviderResponse);
+  rpc DeleteOAuth2Provider(DeleteOAuth2ProviderRequest) returns (DeleteOAuth2ProviderResponse);
+
+  rpc CreateOAuth2Application(CreateOAuth2ApplicationRequest) returns (CreateOAuth2ApplicationResponse);
+  rpc ReadOAuth2Application(ReadOAuth2ApplicationRequest) returns (ReadOAuth2ApplicationResponse);
+  // rpc ListOAuth2Applications(ListOAuth2ApplicationsRequest) returns (stream ReadOAuth2ApplicationResponse);
+  rpc UpdateOAuth2Application(UpdateOAuth2ApplicationRequest) returns (UpdateOAuth2ApplicationResponse);
+  rpc DeleteOAuth2Application(DeleteOAuth2ApplicationRequest) returns (DeleteOAuth2ApplicationResponse);
+
+  // Experimental
+  // rpc ReadAuthFlowConfig(ReadAuthFlowConfigRequest) returns (ReadAuthFlowConfigResponse);
+}
+
+message ReadCustomerRequest {
+  oneof identifier {
+    option (validate.required) = true;
+    //Globally unique identifier.
+    string id = 1 [(validate.rules).string = {
+      min_len: 22
+      max_len: 254
+      pattern: "^[A-Za-z0-9-_:]{22,254}$"
+    }];
+    //Name is unique domain name of customer.
+    //The name value is immutable.
+    string name = 2  [(validate.rules).string = {
+      min_len: 2,
+      max_len: 63
+      pattern: "^[a-z](?:[-a-z0-9]{0,61}[a-z0-9])$"
+    }];
+  }
+}
+
+message ReadCustomerResponse {
+  Customer customer = 1;
+}
+
+// The request message containing the ApplicationSpace's name.
+message CreateApplicationSpaceRequest {
+  // CustomerId associated with the request.
+  string customer_id = 1 [(validate.rules).string = {
+    min_len: 22
+    max_len: 254
+    pattern: "^[A-Za-z0-9-_:]{22,254}$"
+  }];
+  // Name is unique and immutable name. It's not globally unique only unique in scope.
+  string name = 2 [(validate.rules).string = {
+    min_len: 2,
+    max_len: 63
+    pattern: "^[a-z](?:[-a-z0-9]{0,61}[a-z0-9])$"
+  }];
+  // DisplayName is a human readable name.
+  google.protobuf.StringValue display_name = 3  [(validate.rules).string = {min_len: 2, max_len: 254}];
+  // Description is a optional description
+  google.protobuf.StringValue description = 4  [(validate.rules).string = {min_len: 2, max_len: 254}];
+}
+
+message CreateApplicationSpaceResponse {
+  // Globally unique identifier.
+  string id = 1 [(validate.rules).string = {
+    min_len: 22
+    max_len: 254
+    pattern: "^[A-Za-z0-9-_:]{22,254}$"
+  }];
+  // Output only. The time at which the configuration was created.
+  google.protobuf.Timestamp create_time = 2;
+  // Output only. The time at which the configuration was last changed.
+  //
+  // This value is initially set to the `create_time` then increases monotonically with each change.
+  google.protobuf.Timestamp update_time = 3;
+  // Output only. Multiversion concurrency control version.
+  string etag = 4;
+}
+
+message ReadApplicationSpaceRequest {
+  oneof identifier {
+    option (validate.required) = true;
+    // Id contains the Globally Unique Identifier of the object with server generated id.
+    string id = 1 [(validate.rules).string = {
+      min_len: 22
+      max_len: 254
+      pattern: "^[A-Za-z0-9-_:]{22,254}$"
+    }];
+    // Name contains the client generated unique identifier with name.
+    UniqueNameIdentifier name = 2;
+  }
+}
+
+message ReadApplicationSpaceResponse {
+  ApplicationSpace app_space = 2;
+}
+
+message ListApplicationSpacesRequest {
+  // Globally unique identifier.
+  string customer_id = 1 [(validate.rules).string = {
+    min_len: 22
+    max_len: 254
+    pattern: "^[A-Za-z0-9-_:]{22,254}$"
+  }];
+
+  // Match documents with exact name search
+  repeated string match = 2 [(validate.rules).repeated = {
+    unique: true,
+    min_items: 1,
+    items: {string: {min_len: 2, max_len: 254, pattern: "^[a-z](?:[-a-z0-9]{0,252}[a-z0-9])$"}}
+  }];
+}
+
+message ListApplicationSpacesResponse {
+  ApplicationSpace app_space = 1;
+}
+
+message UpdateApplicationSpaceRequest {
+  // Globally unique identifier.
+  string id = 1 [(validate.rules).string = {
+    min_len: 22
+    max_len: 254
+    pattern: "^[A-Za-z0-9-_:]{22,254}$"
+  }];
+  google.protobuf.StringValue etag = 2 [(validate.rules).string = {
+    ignore_empty: true
+    min_len: 8
+    max_len: 18
+    pattern: "^[A-Za-z0-9-_]{8,18}$"
+  }];
+  // DisplayName is a human readable name.
+  google.protobuf.StringValue display_name = 3  [(validate.rules).string = {ignore_empty: true, min_len: 2, max_len: 254}];
+  // Description is a optional description
+  google.protobuf.StringValue description = 4  [(validate.rules).string = {ignore_empty: true, min_len: 2, max_len: 254}];
+}
+
+message UpdateApplicationSpaceResponse {
+  // Globally unique identifier.
+  string id = 1 [(validate.rules).string = {
+    min_len: 22
+    max_len: 254
+    pattern: "^[A-Za-z0-9-_:]{22,254}$"
+  }];
+  // This value is initially set to the `create_time` then increases monotonically with each change.
+  google.protobuf.Timestamp update_time = 2;
+  // Output only. Multiversion concurrency control version.
+  string etag = 3;
+}
+
+message DeleteApplicationSpaceRequest {
+  // Id is the Globally unique identifier of object to delete.
+  string id = 1 [(validate.rules).string = {
+    min_len: 22
+    max_len: 254
+    pattern: "^[A-Za-z0-9-_:]{22,254}$"
+  }];
+  google.protobuf.StringValue etag = 2 [(validate.rules).string = {
+    ignore_empty: true
+    min_len: 8
+    max_len: 18
+    pattern: "^[A-Za-z0-9-_]{8,18}$"
+  }];
+}
+
+message DeleteApplicationSpaceResponse {}
+// The request message containing the Application's name.
+message CreateApplicationRequest {
+  //ApplicationSpaceId defines the parent container identifier.
+  string app_space_id = 1 [(validate.rules).string = {
+    min_len: 22
+    max_len: 254
+    pattern: "^[A-Za-z0-9-_:]{22,254}$"
+  }];
+  // Name is unique and immutable name. It's not globally unique only unique in scope.
+  string name = 2 [(validate.rules).string = {
+    min_len: 2,
+    max_len: 63
+    pattern: "^[a-z](?:[-a-z0-9]{0,61}[a-z0-9])$"
+  }];
+  // DisplayName is a human readable name.
+  google.protobuf.StringValue display_name = 3  [(validate.rules).string = {min_len: 2, max_len: 254}];
+  // Description is a optional description
+  google.protobuf.StringValue description = 4  [(validate.rules).string = {min_len: 2, max_len: 254}];
+}
+
+message CreateApplicationResponse {
+  // Globally unique identifier.
+  string id = 1 [(validate.rules).string = {
+    min_len: 22
+    max_len: 254
+    pattern: "^[A-Za-z0-9-_:]{22,254}$"
+  }];
+  // Output only. The time at which the configuration was created.
+  google.protobuf.Timestamp create_time = 2;
+  // Output only. The time at which the configuration was last changed.
+  //
+  // This value is initially set to the `create_time` then increases monotonically with each change.
+  google.protobuf.Timestamp update_time = 3;
+  // Output only. Multiversion concurrency control version.
+  string etag = 4;
+}
+
+message ReadApplicationRequest {
+  oneof identifier {
+    option (validate.required) = true;
+    // Id contains the Globally Unique Identifier of the object with server generated id.
+    string id = 1 [(validate.rules).string = {
+      min_len: 22
+      max_len: 254
+      pattern: "^[A-Za-z0-9-_:]{22,254}$"
+    }];
+    // Name contains the client generated unique identifier with name.
+    UniqueNameIdentifier name = 2;
+  }
+}
+
+message ReadApplicationResponse {
+  Application application = 3;
+}
+
+message ListApplicationsRequest {
+  // Globally unique identifier.
+  string app_space_id = 1 [(validate.rules).string = {
+    min_len: 22
+    max_len: 254
+    pattern: "^[A-Za-z0-9-_:]{22,254}$"
+  }];
+
+  // Match documents with exact name search
+  repeated string match = 2 [(validate.rules).repeated = {
+    unique: true,
+    min_items: 1,
+    items: {string: {min_len: 2, max_len: 254, pattern: "^[a-z](?:[-a-z0-9]{0,252}[a-z0-9])$"}}
+  }];
+}
+
+message ListApplicationsResponse {
+  Application application = 1;
+}
+
+message UpdateApplicationRequest {
+  // Globally unique identifier.
+  string id = 1 [(validate.rules).string = {
+    min_len: 22
+    max_len: 254
+    pattern: "^[A-Za-z0-9-_:]{22,254}$"
+  }];
+  google.protobuf.StringValue etag = 2 [(validate.rules).string = {
+    ignore_empty: true
+    min_len: 8
+    max_len: 18
+    pattern: "^[A-Za-z0-9-_]{8,18}$"
+  }];
+  // DisplayName is a human readable name.
+  google.protobuf.StringValue display_name = 3  [(validate.rules).string = {ignore_empty: true, min_len: 2, max_len: 254}];
+  // Description is a optional description
+  google.protobuf.StringValue description = 4  [(validate.rules).string = {ignore_empty: true, min_len: 2, max_len: 254}];
+}
+
+message UpdateApplicationResponse {
+  // Globally unique identifier.
+  string id = 1 [(validate.rules).string = {
+    min_len: 22
+    max_len: 254
+    pattern: "^[A-Za-z0-9-_:]{22,254}$"
+  }];
+  // Output only. The time at which the configuration was last changed.
+  //
+  // This value is initially set to the `create_time` then increases monotonically with each change.
+  google.protobuf.Timestamp update_time = 2;
+  // Output only. Multiversion concurrency control version.
+  string etag = 3;
+}
+
+message DeleteApplicationRequest {
+  // Id is the Globally unique identifier of object to delete.
+  string id = 1 [(validate.rules).string = {
+    min_len: 22
+    max_len: 254
+    pattern: "^[A-Za-z0-9-_:]{22,254}$"
+  }];
+  google.protobuf.StringValue etag = 2 [(validate.rules).string = {
+    ignore_empty: true
+    min_len: 8
+    max_len: 18
+    pattern: "^[A-Za-z0-9-_]{8,18}$"
+  }];
+}
+
+message DeleteApplicationResponse {}
+
+// The request message containing the Application's name.
+message CreateApplicationAgentRequest {
+  //ApplicationId is the Parent Application ID.
+  string application_id = 1 [(validate.rules).string = {
+    min_len: 22
+    max_len: 254
+    pattern: "^[A-Za-z0-9-_:]{22,254}$"
+  }];
+  // Name is unique and immutable name. It's not globally unique only unique in scope.
+  string name = 2 [(validate.rules).string = {
+    min_len: 2,
+    max_len: 254
+    pattern: "^[a-z](?:[-a-z0-9]{0,252}[a-z0-9])$"
+  }];
+  // Human readable name of ApplicationAgent.
+  google.protobuf.StringValue display_name = 3 [(validate.rules).string = {min_len: 2,max_len: 254}];
+  // Description of ApplicationAgent.
+  google.protobuf.StringValue description = 4 [(validate.rules).string = {min_len: 2,max_len: 254}];
+}
+
+message CreateApplicationAgentResponse {
+  // Globally unique identifier.
+  string id = 1 [(validate.rules).string = {
+    min_len: 22
+    max_len: 254
+    pattern: "^[A-Za-z0-9-_:]{22,254}$"
+  }];
+  // Output only. The time at which the configuration was created.
+  google.protobuf.Timestamp create_time = 3;
+  // Output only. The time at which the configuration was last changed.
+  //
+  // This value is initially set to the `create_time` then increases monotonically with each change.
+  google.protobuf.Timestamp update_time = 4;
+  // Output only. Multiversion concurrency control version.
+  string etag = 5;
+}
+
+message ReadApplicationAgentRequest {
+  oneof identifier {
+    option (validate.required) = true;
+    // Id contains the Globally Unique Identifier of the object with server generated id.
+    string id = 1 [(validate.rules).string = {
+      min_len: 22
+      max_len: 254
+      pattern: "^[A-Za-z0-9-_:]{22,254}$"
+    }];
+    // Name contains the client generated unique identifier with name.
+    UniqueNameIdentifier name = 2;
+  }
+}
+
+message ReadApplicationAgentResponse {
+  ApplicationAgent application_agent = 2;
+}
+
+message ListApplicationAgentsRequest {
+  // Globally unique identifier.
+  string app_space_id = 1 [(validate.rules).string = {
+    min_len: 22
+    max_len: 254
+    pattern: "^[A-Za-z0-9-_:]{22,254}$"
+  }];
+
+  // Match documents with exact name search
+  repeated string match = 2 [(validate.rules).repeated = {
+    unique: true,
+    min_items: 1,
+    items: {string: {min_len: 2, max_len: 254, pattern: "^[a-z](?:[-a-z0-9]{0,252}[a-z0-9])$"}}
+  }];
+}
+
+message ListApplicationAgentsResponse {
+  ApplicationAgent application_agent = 1;
+}
+
+message UpdateApplicationAgentRequest {
+  // Globally unique identifier.
+  string id = 1 [(validate.rules).string = {
+    min_len: 22
+    max_len: 254
+    pattern: "^[A-Za-z0-9-_:]{22,254}$"
+  }];
+  google.protobuf.StringValue etag = 2 [(validate.rules).string = {
+    ignore_empty: true
+    min_len: 8
+    max_len: 18
+    pattern: "^[A-Za-z0-9-_]{8,18}$"
+  }];
+  // DisplayName is a human readable name.
+  google.protobuf.StringValue display_name = 3  [(validate.rules).string = {ignore_empty: true, min_len: 2, max_len: 254}];
+  // Description is a optional description
+  google.protobuf.StringValue description = 4  [(validate.rules).string = {ignore_empty: true, min_len: 2, max_len: 254}];
+
+}
+
+message UpdateApplicationAgentResponse {
+  // Globally unique identifier.
+  string id = 1 [(validate.rules).string = {
+    min_len: 22
+    max_len: 254
+    pattern: "^[A-Za-z0-9-_:]{22,254}$"
+  }];
+  // Output only. The time at which the configuration was last changed.
+  //
+  // This value is initially set to the `create_time` then increases monotonically with each change.
+  google.protobuf.Timestamp update_time = 2;
+  // Output only. Multiversion concurrency control version.
+  string etag = 3;
+}
+
+message DeleteApplicationAgentRequest {
+  // Id is the Globally unique identifier of object to delete.
+  string id = 1 [(validate.rules).string = {
+    min_len: 22
+    max_len: 254
+    pattern: "^[A-Za-z0-9-_:]{22,254}$"
+  }];
+  google.protobuf.StringValue etag = 2 [(validate.rules).string = {
+    ignore_empty: true
+    min_len: 8
+    max_len: 18
+    pattern: "^[A-Za-z0-9-_]{8,18}$"
+  }];
+}
+
+message DeleteApplicationAgentResponse {}
+
+message RegisterApplicationAgentCredentialRequest {
+  string application_agent_id = 1 [(validate.rules).string = {
+    min_len: 22
+    max_len: 254
+    pattern: "^[A-Za-z0-9-_:]{22,254}$"
+  }];
+  string display_name = 2 [(validate.rules).string = {
+    min_len: 2
+    max_len: 254
+    ignore_empty: true
+  }];
+  oneof public_key {
+    bytes jwk = 3  [(validate.rules).bytes = {
+      min_len: 96
+      max_len: 8192
+      prefix: "{"
+      suffix: "}"
+    }];
+    bytes pem = 4 [(validate.rules).bytes = {
+      min_len: 256
+      max_len: 8192
+      prefix: "-----BEGIN PUBLIC KEY-----"
+      suffix: "-----END PUBLIC KEY-----"
+    }];
+  }
+  google.protobuf.Timestamp expire_time = 5;
+  string default_tenant_id = 6 [(validate.rules).string = {
+    min_len: 22
+    max_len: 254
+    pattern: "^gid:[A-Za-z0-9-_:]{22,254}$"
+    ignore_empty: true
+  }];
+}
+
+message RegisterApplicationAgentCredentialResponse {
+  string id = 1 [(validate.rules).string = {
+    min_len: 22
+    max_len: 254
+    pattern: "^[A-Za-z0-9-_:]{22,254}$"
+  }];
+  string application_agent_id = 2 [(validate.rules).string = {
+    min_len: 22
+    max_len: 254
+    pattern: "^[A-Za-z0-9-_:]{22,254}$"
+  }];
+  string kid = 3;
+  bytes agent_config = 4;
+  google.protobuf.Timestamp create_time = 5;
+  google.protobuf.Timestamp expire_time = 6;
+}
+
+message ReadApplicationAgentCredentialRequest {
+  // Id contains the Globally Unique Identifier of the object with server generated id.
+  string id = 1 [(validate.rules).string = {
+    min_len: 22
+    max_len: 254
+    pattern: "^[A-Za-z0-9-_:]{22,254}$"
+  }];
+}
+
+message ReadApplicationAgentCredentialResponse{
+  ApplicationAgentCredential application_agent_credential = 1;
+}
+
+message DeleteApplicationAgentCredentialRequest {
+  // Id is the Globally unique identifier of object to delete.
+  string id = 1 [(validate.rules).string = {
+    min_len: 22
+    max_len: 254
+    pattern: "^[A-Za-z0-9-_:]{22,254}$"
+  }];
+}
+
+message DeleteApplicationAgentCredentialResponse {}
+
+// The request message containing the tenant's name.
+message CreateTenantRequest {
+  //IssuerId defines the parent container identifier.
+  string issuer_id = 5 [(validate.rules).string = {
+    min_len: 22
+    max_len: 254
+    pattern: "^[A-Za-z0-9-_:]{22,254}$"
+  }];
+  // Name is unique and immutable name. It's not globally unique only unique in scope.
+  string name = 2 [(validate.rules).string = {
+    min_len: 2,
+    max_len: 63
+    pattern: "^[a-z](?:[-a-z0-9]{0,621}[a-z0-9])$"
+  }];
+  // DisplayName is a human readable name.
+  google.protobuf.StringValue display_name = 3  [(validate.rules).string = {min_len: 2, max_len: 254}];
+  // Description is a optional description
+  google.protobuf.StringValue description = 4  [(validate.rules).string = {min_len: 2, max_len: 254}];
+}
+
+message CreateTenantResponse {
+  // Globally unique identifier.
+  string id = 1 [(validate.rules).string = {
+    min_len: 22
+    max_len: 254
+    pattern: "^[A-Za-z0-9-_:]{22,254}$"
+  }];
+  // Output only. The time at which the configuration was created.
+  google.protobuf.Timestamp create_time = 2;
+  // Output only. The time at which the configuration was last changed.
+  //
+  // This value is initially set to the `create_time` then increases monotonically with each change.
+  google.protobuf.Timestamp update_time = 3;
+  // Output only. Multiversion concurrency control version.
+  string etag = 4;
+}
+
+message ReadTenantRequest {
+  oneof identifier {
+    option (validate.required) = true;
+    // Id contains the Globally Unique Identifier of the object with server generated id.
+    string id = 1 [(validate.rules).string = {
+      min_len: 22
+      max_len: 254
+      pattern: "^[A-Za-z0-9-_:]{22,254}$"
+    }];
+    // Name contains the client generated unique identifier with name.
+    UniqueNameIdentifier name = 2;
+  }
+}
+
+message ReadTenantResponse {
+  Tenant tenant = 1;
+}
+
+message ListTenantsRequest {
+  // Globally unique identifier.
+  string app_space_id = 1 [(validate.rules).string = {
+    min_len: 22
+    max_len: 254
+    pattern: "^[A-Za-z0-9-_:]{22,254}$"
+  }];
+
+  // Match documents with exact name search
+  repeated string match = 2 [(validate.rules).repeated = {
+    unique: true,
+    min_items: 1,
+    items: {string: {min_len: 2, max_len: 254, pattern: "^[a-z](?:[-a-z0-9]{0,252}[a-z0-9])$"}}
+  }];
+}
+
+message ListTenantsResponse {
+  Tenant tenant = 1;
+}
+
+message UpdateTenantRequest {
+  // Globally unique identifier.
+  string id = 1 [(validate.rules).string = {
+    min_len: 22
+    max_len: 254
+    pattern: "^[A-Za-z0-9-_:]{22,254}$"
+  }];
+  google.protobuf.StringValue etag = 2 [(validate.rules).string = {
+    ignore_empty: true
+    min_len: 8
+    max_len: 18
+    pattern: "^[A-Za-z0-9-_]{8,18}$"
+  }];
+  // DisplayName is a human readable name.
+  google.protobuf.StringValue display_name = 3  [(validate.rules).string = {ignore_empty: true, min_len: 2, max_len: 254}];
+  // Description is a optional description
+  google.protobuf.StringValue description = 4  [(validate.rules).string = {ignore_empty: true, min_len: 2, max_len: 254}];
+}
+
+message UpdateTenantResponse {
+  // Globally unique identifier.
+  string id = 1 [(validate.rules).string = {
+    min_len: 22
+    max_len: 254
+    pattern: "^[A-Za-z0-9-_:]{22,254}$"
+  }];
+  // Output only. The time at which the configuration was last changed.
+  //
+  // This value is initially set to the `create_time` then increases monotonically with each change.
+  google.protobuf.Timestamp update_time = 2;
+  // Output only. Multiversion concurrency control version.
+  string etag = 3;
+}
+
+message DeleteTenantRequest {
+  // Id is the Globally unique identifier of object to delete.
+  string id = 1 [(validate.rules).string = {
+    min_len: 22
+    max_len: 254
+    pattern: "^[A-Za-z0-9-_:]{22,254}$"
+  }];
+  google.protobuf.StringValue etag = 2 [(validate.rules).string = {
+    ignore_empty: true
+    min_len: 8
+    max_len: 18
+    pattern: "^[A-Za-z0-9-_]{8,18}$"
+  }];
+}
+
+message DeleteTenantResponse {}
+
+// CreateConfigNodeRequest represents a request to create a new Configuration object.
+message CreateConfigNodeRequest {
+  // Location is the place where configuration object is created and associated with.
+  string location = 1 [(validate.rules).string = {
+    min_len: 22
+    max_len: 254
+    pattern: "^[A-Za-z0-9-_:]{22,254}$"
+  }];
+  // Name is unique and immutable name. It's not globally unique only unique in scope.
+  string name = 4 [(validate.rules).string = {
+    min_len: 2,
+    max_len: 254
+    pattern: "^[a-z](?:[-a-z0-9]{0,252}[a-z0-9])$"
+  }];
+  // DisplayName is a human readable name.
+  google.protobuf.StringValue display_name = 5  [(validate.rules).string = {ignore_empty: true, min_len: 2, max_len: 254}];
+  // Description is a optional description.
+  google.protobuf.StringValue description = 6  [(validate.rules).string = {ignore_empty: true, min_len: 2, max_len: 254}];
+
+  oneof config {
+    option (validate.required) = true;
+    AuthFlowConfig auth_flow_config = 15;
+    EmailServiceConfig email_service_config = 16;
+    SMSServiceConfig sms_service_config = 17;
+
+    // OAuth2ClientConfig for third party OIDC clients.
+    OAuth2ClientConfig oauth2_client_config = 18;
+
+    PasswordProviderConfig password_provider_config = 20;
+    WebAuthnProviderConfig webauthn_provider_config = 21;
+    AuthenteqProviderConfig authenteq_provider_config = 22;
+    SAFRProviderConfig safr_provider_config = 23;
+  }
+}
+
+// CreateConfigNodeResponse represents a result of operation request.
+message CreateConfigNodeResponse {
+  // Globally unique identifier.
+  string id = 1 [(validate.rules).string = {
+    min_len: 22
+    max_len: 254
+    pattern: "^[A-Za-z0-9-_:]{22,254}$"
+  }];
+  // Output only. The time at which the configuration was created.
+  google.protobuf.Timestamp create_time = 2;
+  // Output only. The time at which the configuration was last changed.
+  //
+  // This value is initially set to the `create_time` then increases monotonically with each change.
+  google.protobuf.Timestamp update_time = 3;
+  // Output only. Multiversion concurrency control version.
+  string etag = 4;
+}
+
+// ReadConfigNodeRequest represents a request to find a new Configuration object.
+message ReadConfigNodeRequest {
+  string id = 1 [(validate.rules).string = {
+    min_len: 22
+    max_len: 254
+    pattern: "^[A-Za-z0-9-_:]{22,254}$"
+  }];
+}
+
+// ReadConfigNodeResponse represents a result of operation request.
+message ReadConfigNodeResponse {
+  ConfigNode config_node = 1;
+}
+
+// UpdateConfigNodeRequest represents a request to update a Configuration object.
+message UpdateConfigNodeRequest {
+  // Globally unique identifier.
+  string id = 1 [(validate.rules).string = {
+    min_len: 22
+    max_len: 254
+    pattern: "^[A-Za-z0-9-_:]{22,254}$"
+  }];
+  google.protobuf.StringValue etag = 2;
+
+  // DisplayName is a human readable name.
+  google.protobuf.StringValue display_name = 3  [(validate.rules).string = {ignore_empty: true, min_len: 2, max_len: 254}];
+  // Description is a optional description.
+  google.protobuf.StringValue description = 4  [(validate.rules).string = {ignore_empty: true, min_len: 2, max_len: 254}];
+
+  oneof config {
+    AuthFlowConfig auth_flow_config = 15;
+    EmailServiceConfig email_service_config = 16;
+    SMSServiceConfig sms_service_config = 17;
+
+    // OAuth2ClientConfig for third party OIDC clients.
+    OAuth2ClientConfig oauth2_client_config = 18;
+
+    PasswordProviderConfig password_provider_config = 20;
+    WebAuthnProviderConfig webauthn_provider_config = 21;
+    AuthenteqProviderConfig authenteq_provider_config = 22;
+    SAFRProviderConfig safr_provider_config = 23;
+  }
+}
+
+// UpdateConfigNodeResponse represents a result of operation request.
+message UpdateConfigNodeResponse {
+  // Globally unique identifier.
+  string id = 1 [(validate.rules).string = {
+    min_len: 22
+    max_len: 254
+    pattern: "^[A-Za-z0-9-_:]{22,254}$"
+  }];
+  // Output only. The time at which the configuration was last changed.
+  //
+  // This value is initially set to the `create_time` then increases monotonically with each change.
+  google.protobuf.Timestamp update_time = 2;
+  // Output only. Multiversion concurrency control version.
+  string etag = 3;
+}
+
+// DeleteConfigNodeRequest represents a request to delete a Configuration object.
+message DeleteConfigNodeRequest {
+  // Globally unique identifier.
+  string id = 1 [(validate.rules).string = {
+    min_len: 22
+    max_len: 254
+    pattern: "^[A-Za-z0-9-_:]{22,254}$"
+  }];
+  google.protobuf.StringValue etag = 3;
+}
+
+message DeleteConfigNodeResponse {}
+
+// CreateOAuth2ProviderRequest represents a request to create a new Configuration object.
+message CreateOAuth2ProviderRequest {
+  // AppSpaceId is the place where configuration object is created and associated with.
+  string app_space_id = 1 [(validate.rules).string = {
+    min_len: 22
+    max_len: 254
+    pattern: "^[A-Za-z0-9-_:]{22,254}$"
+  }];
+
+  // Name is unique and immutable name. It's not globally unique only unique in scope.
+  string name = 2 [(validate.rules).string = {
+    min_len: 2,
+    max_len: 254
+    pattern: "^[a-z](?:[-a-z0-9]{0,252}[a-z0-9])$"
+  }];
+  // DisplayName is a human readable name.
+  google.protobuf.StringValue display_name = 3  [(validate.rules).string = {ignore_empty: true, min_len: 2, max_len: 254}];
+  // Description is a optional description.
+  google.protobuf.StringValue description = 4  [(validate.rules).string = {ignore_empty: true, min_len: 2, max_len: 254}];
+
+  OAuth2ProviderConfig config = 5 [(validate.rules).message.required = true];
+}
+
+// CreateOAuth2ProviderResponse represents a result of operation request.
+message CreateOAuth2ProviderResponse {
+  // Globally unique identifier.
+  string id = 1 [(validate.rules).string = {
+    min_len: 22
+    max_len: 254
+    pattern: "^[A-Za-z0-9-_:]{22,254}$"
+  }];
+  // Output only. The time at which the configuration was created.
+  google.protobuf.Timestamp create_time = 2;
+  // Output only. The time at which the configuration was last changed.
+  //
+  // This value is initially set to the `create_time` then increases monotonically with each change.
+  google.protobuf.Timestamp update_time = 3;
+  // Output only. Multiversion concurrency control version.
+  string etag = 4;
+}
+
+// ReadOAuth2ProviderRequest represents a request to find a new Configuration object.
+message ReadOAuth2ProviderRequest {
+  string id = 1 [(validate.rules).string = {
+    min_len: 22
+    max_len: 254
+    pattern: "^[A-Za-z0-9-_:]{22,254}$"
+  }];
+}
+
+// ReadOAuth2ProviderResponse represents a result of operation request.
+message ReadOAuth2ProviderResponse {
+  OAuth2Provider oauth2_provider = 1;
+}
+
+// UpdateOAuth2ProviderRequest represents a request to update a Configuration object.
+message UpdateOAuth2ProviderRequest {
+  // Globally unique identifier.
+  string id = 1 [(validate.rules).string = {
+    min_len: 22
+    max_len: 254
+    pattern: "^[A-Za-z0-9-_:]{22,254}$"
+  }];
+  google.protobuf.StringValue etag = 2;
+
+  // DisplayName is a human readable name.
+  google.protobuf.StringValue display_name = 3  [(validate.rules).string = {ignore_empty: true, min_len: 2, max_len: 254}];
+  // Description is a optional description.
+  google.protobuf.StringValue description = 4  [(validate.rules).string = {ignore_empty: true, min_len: 2, max_len: 254}];
+
+  OAuth2ProviderConfig config = 5;
+}
+
+// UpdateOAuth2ProviderResponse represents a result of operation request.
+message UpdateOAuth2ProviderResponse {
+  // Globally unique identifier.
+  string id = 1 [(validate.rules).string = {
+    min_len: 22
+    max_len: 254
+    pattern: "^[A-Za-z0-9-_:]{22,254}$"
+  }];
+  // Output only. The time at which the configuration was last changed.
+  //
+  // This value is initially set to the `create_time` then increases monotonically with each change.
+  google.protobuf.Timestamp update_time = 2;
+  // Output only. Multiversion concurrency control version.
+  string etag = 3;
+}
+
+// DeleteOAuth2ProviderRequest represents a request to delete a Configuration object.
+message DeleteOAuth2ProviderRequest {
+  // Globally unique identifier.
+  string id = 1 [(validate.rules).string = {
+    min_len: 22
+    max_len: 254
+    pattern: "^[A-Za-z0-9-_:]{22,254}$"
+  }];
+  google.protobuf.StringValue etag = 2;
+}
+
+message DeleteOAuth2ProviderResponse {}
+
+// CreateOAuth2ApplicationRequest represents a request to create a new Configuration object.
+message CreateOAuth2ApplicationRequest {
+  // Oauth2ProviderId is the place where configuration object is created and associated with.
+  string oauth2_provider_id = 1 [(validate.rules).string = {
+    min_len: 22
+    max_len: 254
+    pattern: "^[A-Za-z0-9-_:]{22,254}$"
+  }];
+
+  // Name is unique and immutable name. It's not globally unique only unique in scope.
+  string name = 2 [(validate.rules).string = {
+    min_len: 2,
+    max_len: 254
+    pattern: "^[a-z](?:[-a-z0-9]{0,252}[a-z0-9])$"
+  }];
+  // DisplayName is a human readable name.
+  google.protobuf.StringValue display_name = 3  [(validate.rules).string = {ignore_empty: true, min_len: 2, max_len: 254}];
+  // Description is a optional description.
+  google.protobuf.StringValue description = 4  [(validate.rules).string = {ignore_empty: true, min_len: 2, max_len: 254}];
+
+  OAuth2ApplicationConfig config = 5 [(validate.rules).message.required = true];
+}
+
+// CreateOAuth2ApplicationResponse represents a result of operation request.
+message CreateOAuth2ApplicationResponse {
+  // Globally unique identifier.
+  string id = 1 [(validate.rules).string = {
+    min_len: 22
+    max_len: 254
+    pattern: "^[A-Za-z0-9-_:]{22,254}$"
+  }];
+  // Output only. The time at which the configuration was created.
+  google.protobuf.Timestamp create_time = 2;
+  // Output only. The time at which the configuration was last changed.
+  //
+  // This value is initially set to the `create_time` then increases monotonically with each change.
+  google.protobuf.Timestamp update_time = 3;
+  // Output only. Multiversion concurrency control version.
+  string etag = 4;
+
+  string client_id = 5;
+
+  // ClientSecret is the client's secret. The secret will be included in the create request as cleartext, and then
+  // never again. The secret is stored using BCrypt so it is impossible to recover it. Tell your users
+  // that they need to write the secret down as it will not be made available again.
+  string client_secret = 6;
+}
+
+// ReadOAuth2ApplicationRequest represents a request to find a new Configuration object.
+message ReadOAuth2ApplicationRequest {
+  string id = 1 [(validate.rules).string = {
+    min_len: 22
+    max_len: 254
+    pattern: "^[A-Za-z0-9-_:]{22,254}$"
+  }];
+}
+
+// ReadOAuth2ApplicationResponse represents a result of operation request.
+message ReadOAuth2ApplicationResponse {
+  OAuth2Application oauth2_application = 1;
+}
+
+// UpdateOAuth2ApplicationRequest represents a request to update a Configuration object.
+message UpdateOAuth2ApplicationRequest {
+  // Globally unique identifier.
+  string id = 1 [(validate.rules).string = {
+    min_len: 22
+    max_len: 254
+    pattern: "^[A-Za-z0-9-_:]{22,254}$"
+  }];
+  google.protobuf.StringValue etag = 2;
+
+  // DisplayName is a human readable name.
+  google.protobuf.StringValue display_name = 3  [(validate.rules).string = {ignore_empty: true, min_len: 2, max_len: 254}];
+  // Description is a optional description.
+  google.protobuf.StringValue description = 4  [(validate.rules).string = {ignore_empty: true, min_len: 2, max_len: 254}];
+
+  OAuth2ApplicationConfig config = 5;
+}
+
+// UpdateOAuth2ApplicationResponse represents a result of operation request.
+message UpdateOAuth2ApplicationResponse {
+  // Globally unique identifier.
+  string id = 1 [(validate.rules).string = {
+    min_len: 22
+    max_len: 254
+    pattern: "^[A-Za-z0-9-_:]{22,254}$"
+  }];
+  // Output only. The time at which the configuration was last changed.
+  //
+  // This value is initially set to the `create_time` then increases monotonically with each change.
+  google.protobuf.Timestamp update_time = 2;
+  // Output only. Multiversion concurrency control version.
+  string etag = 3;
+}
+
+// DeleteOAuth2ApplicationRequest represents a request to delete a Configuration object.
+message DeleteOAuth2ApplicationRequest {
+  // Globally unique identifier.
+  string id = 1 [(validate.rules).string = {
+    min_len: 22
+    max_len: 254
+    pattern: "^[A-Za-z0-9-_:]{22,254}$"
+  }];
+  google.protobuf.StringValue etag = 2;
+}
+
+message DeleteOAuth2ApplicationResponse {}
