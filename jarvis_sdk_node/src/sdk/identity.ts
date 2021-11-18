@@ -18,7 +18,13 @@ import { MapValue } from '../grpc/indykite/objects/v1beta1/struct';
 
 import { SdkErrorCode, SdkError } from './error';
 import { Utils } from './utils/utils';
-import { ConsentChallenge, ConsentChallengeDenial, PatchResult, Property } from './model';
+import {
+  ConsentChallenge,
+  ConsentChallengeDenial,
+  ConsentRequestSessionData,
+  PatchResult,
+  Property,
+} from './model';
 import { SdkClient } from './client/client';
 
 export class IdentityClient {
@@ -427,8 +433,19 @@ export class IdentityClient {
 
   createConsentVerifier(
     consentChallenge: string,
-    scopes: string[],
-    denialReason?: ConsentChallengeDenial | null,
+    denialReason?: ConsentChallengeDenial,
+  ): Promise<{
+    authorizationEndpoint: string;
+    verifier: string;
+  }>;
+
+  createConsentVerifier(
+    consentChallenge: string,
+    scopes?: string[],
+    audiences?: string[],
+    session?: ConsentRequestSessionData,
+    remember?: boolean,
+    rememberFor?: number,
   ): Promise<{
     authorizationEndpoint: string;
     verifier: string;
@@ -436,32 +453,95 @@ export class IdentityClient {
 
   createConsentVerifier(
     consentChallenge: string | ConsentChallenge,
-    scopes: string[] = [],
-    denialReason?: ConsentChallengeDenial | null,
+    scopesOrDenialReason?: ConsentChallengeDenial | string[],
+    audiences?: string[],
+    session?: ConsentRequestSessionData,
+    remember?: boolean,
+    rememberFor?: number,
   ): Promise<{
     authorizationEndpoint: string;
     verifier: string;
   }> {
     if (typeof consentChallenge !== 'string') {
-      return this.createConsentVerifier(
-        consentChallenge.challenge,
-        consentChallenge.getApprovedScopeNames(),
-        consentChallenge.getDenialReason(),
-      );
+      return this.createConsentVerifierFromInstance(consentChallenge);
     }
 
-    let request: CreateConsentVerifierRequest;
-    if (denialReason) {
-      request = CreateConsentVerifierRequest.fromJSON({
-        challenge: consentChallenge,
-        denial: denialReason,
-      });
-    } else {
-      request = CreateConsentVerifierRequest.fromJSON({
-        challenge: consentChallenge,
-        approval: { grantScopes: scopes },
-      });
+    if (scopesOrDenialReason !== undefined && !Array.isArray(scopesOrDenialReason)) {
+      return this.createDeniedConsentVerifier(consentChallenge, scopesOrDenialReason);
     }
+
+    return this.createApprovedConsentVerifier(
+      consentChallenge,
+      scopesOrDenialReason,
+      audiences,
+      session,
+      remember,
+      rememberFor,
+    );
+  }
+
+  private createConsentVerifierFromInstance(consentChallenge: ConsentChallenge): Promise<{
+    authorizationEndpoint: string;
+    verifier: string;
+  }> {
+    if (consentChallenge.isDenied()) {
+      const denialReason = consentChallenge.getDenialReason();
+      if (denialReason) {
+        return this.createConsentVerifier(consentChallenge.challenge, denialReason);
+      }
+    }
+
+    return this.createConsentVerifier(
+      consentChallenge.challenge,
+      consentChallenge.getApprovedScopeNames(),
+      consentChallenge.getApprovedAudiences(),
+      consentChallenge.getSession(),
+      consentChallenge.getRemember(),
+      consentChallenge.getRememberFor(),
+    );
+  }
+
+  private createDeniedConsentVerifier(
+    consentChallenge: string,
+    denialReason: ConsentChallengeDenial,
+  ): Promise<{
+    authorizationEndpoint: string;
+    verifier: string;
+  }> {
+    const request = CreateConsentVerifierRequest.fromJSON({
+      challenge: consentChallenge,
+      denial: denialReason,
+    });
+
+    return new Promise((resolve, reject) => {
+      this.client.createConsentVerifier(request, (err, response) => {
+        if (err) reject(err);
+        else resolve(response);
+      });
+    });
+  }
+
+  private createApprovedConsentVerifier(
+    consentChallenge: string,
+    scopes?: string[],
+    audiences?: string[],
+    session?: ConsentRequestSessionData,
+    remember?: boolean,
+    rememberFor?: number,
+  ): Promise<{
+    authorizationEndpoint: string;
+    verifier: string;
+  }> {
+    const request = CreateConsentVerifierRequest.fromJSON({
+      challenge: consentChallenge,
+      approval: {
+        grantScopes: scopes,
+        grantedAudiences: audiences,
+        session,
+        remember,
+        rememberFor,
+      },
+    });
 
     return new Promise((resolve, reject) => {
       this.client.createConsentVerifier(request, (err, response) => {
