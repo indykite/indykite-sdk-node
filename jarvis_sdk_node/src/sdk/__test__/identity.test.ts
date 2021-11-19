@@ -717,6 +717,18 @@ describe('Digital Twin', () => {
       'Subject',
       false,
     );
+    const deniedConsentChallenge = new sdkTypes.ConsentChallenge(
+      challengeToken,
+      v4(),
+      [{ name: 'openid', description: '', displayName: '', required: false }],
+      'http://www.example.com/oauth',
+      [],
+      v4(),
+      [],
+      'Subject',
+      false,
+    );
+    deniedConsentChallenge.deny({ error: 'access_denied' });
     const mockResp = CreateConsentVerifierResponse.fromJSON({
       verifier: 'verifier_token',
       authorizationEndpoint: 'http://www.auth.com',
@@ -758,7 +770,7 @@ describe('Digital Twin', () => {
       if (clb.expected) expect(resp).resolves.toEqual(clb.expected);
       else expect(resp).rejects.toEqual(clb.err);
 
-      const deniedResp = sdk.createConsentVerifier(challengeToken, [], { error: 'access_denied' });
+      const deniedResp = sdk.createConsentVerifier(deniedConsentChallenge);
       expect(mockFunc).toBeCalled();
       if (clb.expected) expect(deniedResp).resolves.toEqual(clb.expected);
       else expect(deniedResp).rejects.toEqual(clb.err);

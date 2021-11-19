@@ -28,9 +28,27 @@ export interface ConsentChallengeDenial {
   statusCode?: number;
 }
 
+export interface ConsentRequestSessionData {
+  accessToken?: { [key: string]: unknown };
+  idToken?: { [key: string]: unknown };
+  userInfo?: { [key: string]: unknown };
+}
+
+export interface ConsentApproval {
+  grantScopes?: string[];
+  grantedAudiences?: string[];
+  session?: ConsentRequestSessionData;
+  remember?: boolean;
+  rememberFor?: number;
+}
+
 export class ConsentChallenge {
   private approvedScopeNames: string[];
+  private approvedAudiences: string[];
   private denialReason: ConsentChallengeDenial | null;
+  private sessionData?: ConsentRequestSessionData;
+  private remember?: boolean;
+  private rememberFor?: number;
 
   constructor(
     public challenge: string,
@@ -47,6 +65,7 @@ export class ConsentChallenge {
     public requestedAt?: Date,
   ) {
     this.approvedScopeNames = [];
+    this.approvedAudiences = [];
     this.denialReason = null;
   }
 
@@ -90,8 +109,22 @@ export class ConsentChallenge {
     scopeNames.forEach(this.approveScope.bind(this));
   }
 
+  approveAudience(audience: string): void {
+    if (!this.approvedAudiences.includes(audience)) {
+      this.approvedAudiences.push(audience);
+    }
+  }
+
+  approveAudiences(audiences: string[]): void {
+    audiences.forEach(this.approveAudience.bind(this));
+  }
+
   deny(reason: ConsentChallengeDenial): void {
     this.denialReason = reason;
+  }
+
+  getApprovedAudiences(): string[] {
+    return this.approvedAudiences;
   }
 
   getApprovedScopeNames(): string[] {
@@ -102,7 +135,31 @@ export class ConsentChallenge {
     return this.denialReason;
   }
 
+  getRemember(): boolean | undefined {
+    return this.remember;
+  }
+
+  getRememberFor(): number | undefined {
+    return this.rememberFor;
+  }
+
+  getSession(): ConsentRequestSessionData | undefined {
+    return this.sessionData;
+  }
+
   isDenied(): boolean {
     return !!this.denialReason;
+  }
+
+  setRemember(remember: boolean): void {
+    this.remember = remember;
+  }
+
+  setRememberFor(seconds: number): void {
+    this.rememberFor = seconds;
+  }
+
+  setSession(session: ConsentRequestSessionData): void {
+    this.sessionData = session;
   }
 }
