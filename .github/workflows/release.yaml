@@ -63,6 +63,6 @@ jobs:
 
       - name: Commit changes
         run: |
-          git add CHANGELOG.md package.json 
+          git add CHANGELOG.md jarvis_sdk_node/package.json 
           git commit -m "Bump to version ${{ env.VERSION }}"
           git push
