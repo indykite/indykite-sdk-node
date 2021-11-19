@@ -2,6 +2,7 @@
 ## 0.1.2
 
 - [Actions] Add automated release pipeline
+- [Actions] Remove duplicate step in publish flow
 ## 0.1.1
 
 - [FIX] Fixed method for consent verifier token creation (createConsentVerifier). Now it accepts list of scopes, list of audiences, session details and details for remembering the authorization.
