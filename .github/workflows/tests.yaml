@@ -26,7 +26,7 @@ jobs:
       #     cd jarvis_sdk_node
       #     npm run lint
       - name: Run Tests
-        uses: artiomtr/jest-coverage-report-action@v2.0-rc.5
+        uses: artiomtr/jest-coverage-report-action@v2.0-rc.4
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           threshold: 80
