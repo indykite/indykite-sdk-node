@@ -83,6 +83,7 @@ jobs:
       - name: "Copy README for publish"
         run: |
           cp ./README.md jarvis_sdk_node/
+          cp ./logo.png jarvis_sdk_node/
       - name: "Publish the package"
         run: |
           cd jarvis_sdk_node
