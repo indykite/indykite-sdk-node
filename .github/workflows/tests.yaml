@@ -31,3 +31,4 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           threshold: 80
           working-directory: jarvis_sdk_node
+          annotations: none
