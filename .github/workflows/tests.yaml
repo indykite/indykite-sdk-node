@@ -25,6 +25,7 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           threshold: 80
+          working-directory: jarvis_sdk_node
       - name: Run the tests
         run: |
           cd jarvis_sdk_node
