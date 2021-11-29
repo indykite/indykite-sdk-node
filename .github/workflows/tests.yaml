@@ -21,13 +21,13 @@ jobs:
         run: |
           cd jarvis_sdk_node
           npm install
-      - name: Check the code
-        run: |
-          cd jarvis_sdk_node
-          npm run lint
+      # - name: Check the code
+      #   run: |
+      #     cd jarvis_sdk_node
+      #     npm run lint
       - name: Run Tests
         uses: artiomtr/jest-coverage-report-action@v2.0-rc.5
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           threshold: 80
-          working-directory: jarvis_sdk_node/
+          working-directory: jarvis_sdk_node
