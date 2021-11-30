@@ -7,9 +7,24 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  tests:
-    name: EsLint & Prettier & Unit Tests
+  lint:
+    name: EsLint & Prettier
     runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@master
+      - name: Install Project
+        run: |
+          cd jarvis_sdk_node
+          npm install
+      - name: Check the code
+        run: |
+          cd jarvis_sdk_node
+          npm run lint
+  tests:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    needs: [lint]
     steps:
       - name: Checkout Repo
         uses: actions/checkout@master
