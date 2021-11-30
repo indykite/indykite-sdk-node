@@ -20,36 +20,6 @@
     "test": "jest",
     "coverage": "jest --coverage --silent"
   },
-  "jest": {
-    "collectCoverageFrom": [
-      "src/sdk/**/*.ts"
-    ],
-    "coveragePathIgnorePatterns": [
-      "<rootDir>/node_modules"
-    ],
-    "coverageReporters": [
-      "text"
-    ],
-    "coverageThreshold": {
-      "global": {
-        "branches": 80,
-        "functions": 80,
-        "lines": 80,
-        "statements": 80
-      }
-    },
-    "transform": {
-      ".ts": "<rootDir>/node_modules/ts-jest/preprocessor.js"
-    },
-    "testEnvironment": "node",
-    "testRegex": "(/__tests__/.*|\\.(test|spec))\\.(ts)$",
-    "moduleFileExtensions": [
-      "ts",
-      "js",
-      "json"
-    ],
-    "mapCoverage": true
-  },
   "devDependencies": {
     "@babel/core": "^7.14.6",
     "@babel/preset-env": "^7.14.7",
