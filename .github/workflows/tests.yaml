@@ -13,22 +13,14 @@ jobs:
     steps:
       - name: Checkout Repo
         uses: actions/checkout@master
-      # - name: Setup Node
-      #   uses: actions/setup-node@master
-      #   with:
-      #     node-version: "12.x"
-      # - name: Install Project
-      #   run: |
-      #     cd jarvis_sdk_node
-      #     npm install
-      # - name: Check the code
-      #   run: |
-      #     cd jarvis_sdk_node
-      #     npm run lint
+      - name: Install Project
+        run: |
+          cd jarvis_sdk_node
+          npm install
       - name: Run Tests
         uses: artiomtr/jest-coverage-report-action@v2.0-rc.4
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           threshold: 80
           working-directory: jarvis_sdk_node
-          annotations: none
+          annotations: failed-tests
