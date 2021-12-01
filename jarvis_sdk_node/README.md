@@ -41,7 +41,7 @@ npm i @indykiteone/jarvis-sdk-node
 ## Getting Started
 
 ### Trial
-For a trial please contact [IndyKite](https://indykite.com/trial) to setup and
+For a trial please contact [IndyKite](https://www.indykite.com/contact-us) to setup and
 configure the platform.
 
 ### Config 
