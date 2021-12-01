@@ -1,4 +1,7 @@
 # Changelog
+## 0.1.3
+
+- [BUILD] Add test coverage report to the pipeline
 ## 0.1.2
 
 - [Actions] Add automated release pipeline
