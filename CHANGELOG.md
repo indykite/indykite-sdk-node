@@ -1,4 +1,8 @@
 # Changelog
+## 0.1.3
+
+- [BUILD] Add test coverage report to the pipeline
+- [DOCS] Fix Trial link and logo in README file
 ## 0.1.2
 
 - [Actions] Add automated release pipeline
