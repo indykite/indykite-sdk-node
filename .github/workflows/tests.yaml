@@ -2,17 +2,17 @@ name: Run tests
 on:
   pull_request:
 
+concurrency:
+  group: pr-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  tests:
-    name: EsLint & Prettier & Unit Tests
+  lint:
+    name: EsLint & Prettier
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repo
         uses: actions/checkout@master
-      - name: Setup Node
-        uses: actions/setup-node@master
-        with:
-          node-version: "12.x"
       - name: Install Project
         run: |
           cd jarvis_sdk_node
@@ -21,7 +21,21 @@ jobs:
         run: |
           cd jarvis_sdk_node
           npm run lint
-      - name: Run the tests
+  tests:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    needs: [lint]
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@master
+      - name: Install Project
         run: |
           cd jarvis_sdk_node
-          npm test
+          npm install
+      - name: Run Tests
+        uses: artiomtr/jest-coverage-report-action@v2.0-rc.4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          threshold: 80
+          working-directory: jarvis_sdk_node
+          annotations: failed-tests
