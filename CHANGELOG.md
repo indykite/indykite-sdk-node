@@ -1,4 +1,8 @@
 # Changelog
+## 0.1.4
+
+- [FIX] Fixed  in the patch properties builder
+- [TESTS] Added unit tests
 ## 0.1.3
 
 - [BUILD] Add test coverage report to the pipeline
