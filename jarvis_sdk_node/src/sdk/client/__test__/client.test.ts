@@ -5,6 +5,22 @@ import { SdkError, SdkErrorCode } from '../../error';
 
 jest.mock('fs');
 import * as fs from 'fs';
+import {
+  CallCredentials,
+  ChannelCredentials,
+  ClientOptions,
+  credentials,
+  Interceptor,
+  InterceptorOptions,
+  Metadata,
+  StatusObject,
+} from '@grpc/grpc-js';
+import { LIB_VERSION } from '../../../version';
+import { IdentityManagementAPIClient } from '../../../grpc/indykite/identity/v1beta1/identity_management_api';
+import { InterceptingListener, MessageContext } from '@grpc/grpc-js/build/src/call-stream';
+import * as ClientInterceptors from '@grpc/grpc-js/build/src/client-interceptors';
+import { CallMetadataOptions } from '@grpc/grpc-js/build/src/call-credentials';
+import { Status } from '@grpc/grpc-js/build/src/constants';
 
 const appCredential = {
   appSpaceId: '696e6479-6b69-4465-8000-010f00000000',
@@ -21,6 +37,44 @@ const appCredential = {
     alg: 'ES256',
   },
 };
+
+class IdentityManagementAPIClientMock extends IdentityManagementAPIClient {
+  endpoint: string;
+  channelCredentials: ChannelCredentials;
+  interceptors: Interceptor[];
+
+  constructor(endpoint: string, channelCredentials: ChannelCredentials, options: ClientOptions) {
+    super('ENDPOINT', credentials.createInsecure());
+    this.endpoint = endpoint;
+    this.channelCredentials = channelCredentials;
+    this.interceptors = options.interceptors ?? [];
+  }
+}
+
+class InterceptingCallMock extends ClientInterceptors.InterceptingCall {
+  listener?: Partial<InterceptingListener>;
+  private options: InterceptorOptions;
+
+  constructor(
+    options: InterceptorOptions,
+    nextCall: ClientInterceptors.InterceptingCallInterface,
+    requester?: Partial<ClientInterceptors.FullRequester>,
+  ) {
+    super(nextCall, requester);
+    this.options = options;
+  }
+
+  start(metadata: Metadata, listener?: Partial<InterceptingListener>): void {
+    this.listener = listener;
+    super.start(metadata, listener);
+  }
+}
+
+const emptyFn = () => {
+  //
+};
+
+type CallCredentialsMock = CallCredentials & { metadata?: Metadata };
 
 describe('application credentials', () => {
   beforeEach(() => {
@@ -71,23 +125,222 @@ describe('application credentials', () => {
 });
 
 describe('channel credential', () => {
+  const originalNewChannelCredentialsFn = SdkClient['newChannelCredentials'];
   const err = new SdkError(SdkErrorCode.SDK_CODE_1, 'UNKNOWN');
   const staticFunc = jest.fn(() => {
     throw err;
   });
 
-  it('identity instance', () => {
+  beforeEach(() => {
     SdkClient['newChannelCredentials'] = staticFunc;
+  });
+
+  afterEach(() => {
+    SdkClient['newChannelCredentials'] = originalNewChannelCredentialsFn;
+  });
+
+  it('identity instance', () => {
     const sdk = SdkClient.createIdentityInstance(ConfigManagementAPIClient, 'TOKEN', 'ENDPOINT');
     expect(sdk).rejects.toEqual(err);
   });
 
   it('service instance', () => {
-    SdkClient['newChannelCredentials'] = staticFunc;
     const sdk = SdkClient.createServiceInstance(
       ConfigManagementAPIClient,
       JSON.stringify(appCredential),
     );
     expect(sdk).rejects.toEqual(err);
+  });
+});
+
+describe('call credential', () => {
+  let createFromMetadataGeneratorMock: jest.SpyInstance;
+  let createSslMock: jest.SpyInstance;
+
+  beforeEach(() => {
+    createFromMetadataGeneratorMock = jest
+      .spyOn(credentials, 'createFromMetadataGenerator')
+      .mockImplementation((fn) => {
+        const callCredentialsMock = CallCredentials.createEmpty() as CallCredentialsMock;
+        fn({} as CallMetadataOptions, (err, md) => {
+          callCredentialsMock.metadata = md;
+        });
+        return callCredentialsMock;
+      });
+    createSslMock = jest.spyOn(credentials, 'createSsl').mockImplementation();
+  });
+
+  afterEach(() => {
+    createFromMetadataGeneratorMock.mockRestore();
+    createSslMock.mockRestore();
+  });
+
+  describe('interceptors', () => {
+    let credentialsInterceptor: (
+      options: InterceptorOptions,
+      nextCall: ClientInterceptors.NextCall,
+    ) => ClientInterceptors.InterceptingCall;
+    let unauthenticatedStatusInterceptor: (
+      options: InterceptorOptions,
+      nextCall: ClientInterceptors.NextCall,
+    ) => ClientInterceptors.InterceptingCall;
+
+    beforeEach(async () => {
+      const sdk = await SdkClient.createIdentityInstance(
+        IdentityManagementAPIClientMock,
+        'TOKEN',
+        'ENDPOINT',
+      );
+      const client = sdk.client as IdentityManagementAPIClientMock;
+      expect(client.interceptors).toHaveLength(2);
+      [credentialsInterceptor, unauthenticatedStatusInterceptor] = client.interceptors;
+    });
+
+    it('credentials interceptor', () => {
+      credentialsInterceptor({} as InterceptorOptions, (options: InterceptorOptions) => {
+        const credentials = options.credentials as CallCredentialsMock;
+        expect(credentials.metadata?.get('authorization')).toEqual(['Bearer TOKEN']);
+        expect(credentials.metadata?.get('iksdk-version')).toEqual([LIB_VERSION]);
+        return new InterceptingCallMock(
+          {} as InterceptorOptions,
+          {} as ClientInterceptors.InterceptingCallInterface,
+        );
+      });
+    });
+
+    describe('unauthenticated interceptor', () => {
+      let runInterceptingCall: () => ClientInterceptors.InterceptingCall;
+      let startInterceptor: ClientInterceptors.MetadataRequester;
+      let sendMessage: ClientInterceptors.MessageRequester;
+
+      beforeAll(() => {
+        startInterceptor = emptyFn;
+        sendMessage = emptyFn;
+      });
+
+      beforeEach(() => {
+        runInterceptingCall = () =>
+          unauthenticatedStatusInterceptor(
+            {} as InterceptorOptions,
+            (options: InterceptorOptions) => {
+              return new InterceptingCallMock(
+                options,
+                new InterceptingCallMock(
+                  {} as InterceptorOptions,
+                  {} as ClientInterceptors.InterceptingCallInterface,
+                ),
+                {
+                  start: startInterceptor,
+                  sendMessage,
+                },
+              );
+            },
+          );
+      });
+
+      afterEach(() => {
+        startInterceptor = emptyFn;
+        sendMessage = emptyFn;
+      });
+
+      describe('when a message is sent', () => {
+        let sentMessage: string;
+
+        beforeEach(() => {
+          return new Promise<string>((resolve) => {
+            sendMessage = (message) => {
+              resolve(message);
+            };
+            const interceptingCall = runInterceptingCall();
+            interceptingCall.start(new Metadata());
+            interceptingCall.sendMessage('Message to be send.');
+          }).then((message) => {
+            sentMessage = message;
+          });
+        });
+
+        it('sends correct message', () => {
+          expect(sentMessage).toBe('Message to be send.');
+        });
+      });
+
+      describe('when a message is received with a correct status', () => {
+        let receivedMessage: string;
+        let receivedStatus: StatusObject;
+
+        beforeEach(() => {
+          return new Promise<void>((resolve) => {
+            startInterceptor = (metadata, listener) => {
+              listener.onReceiveMessage('Received message');
+              listener.onReceiveStatus({
+                code: Status.OK,
+                details: 'Correct',
+                metadata,
+              });
+            };
+            const interceptingCall = runInterceptingCall();
+            interceptingCall.start(new Metadata(), {
+              onReceiveMessage: (message) => {
+                receivedMessage = message;
+              },
+              onReceiveStatus: (status) => {
+                receivedStatus = status;
+                resolve();
+              },
+            });
+          });
+        });
+
+        it('sends correct message', () => {
+          expect(receivedMessage).toBe('Received message');
+          expect(receivedStatus.code).toBe(Status.OK);
+          expect(receivedStatus.details).toBe('Correct');
+        });
+      });
+
+      describe('when a message is received with an unauthenticated status', () => {
+        let receivedMessage: string;
+        let receivedStatus: StatusObject;
+
+        beforeEach(() => {
+          return new Promise<void>((resolve) => {
+            startInterceptor = jest
+              .fn()
+              .mockImplementationOnce((metadata, listener) => {
+                listener.onReceiveMessage('Received message');
+                listener.onReceiveStatus({
+                  code: Status.UNAUTHENTICATED,
+                  details: 'Error',
+                  metadata,
+                });
+              })
+              .mockImplementationOnce((metadata, listener) => {
+                listener.onReceiveMessage('Received message');
+                listener.onReceiveStatus({
+                  code: Status.OK,
+                  details: 'Correct',
+                  metadata,
+                });
+              });
+            const interceptingCall = runInterceptingCall();
+            interceptingCall.start(new Metadata(), {
+              onReceiveMessage: (message) => {
+                receivedMessage = message;
+              },
+              onReceiveStatus: (status) => {
+                receivedStatus = status;
+                resolve();
+              },
+            });
+          });
+        });
+
+        it('sends correct message', () => {
+          expect(receivedMessage).toBe('Received message');
+          expect(receivedStatus.code).toBe(Status.OK);
+          expect(receivedStatus.details).toBe('Correct');
+        });
+      });
+    });
   });
 });
