@@ -55,6 +55,15 @@ export class DigitalTwin extends DigitalTwinCore {
     } else return undefined;
   }
 
+  getPropertyById(id: string): Property | undefined {
+    for (const name in this.properties) {
+      const propertyWithId = this.properties[name].find((property) => property.id === id);
+      if (propertyWithId) {
+        return propertyWithId;
+      }
+    }
+  }
+
   getPropertyValue(name: string): unknown | undefined {
     return this.getProperty(name)?.value;
   }
