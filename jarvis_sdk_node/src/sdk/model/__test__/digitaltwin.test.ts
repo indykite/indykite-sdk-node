@@ -85,4 +85,42 @@ describe('properties', () => {
     expect(dt.getProperties('email')).toHaveLength(1);
     expect(dt.getProperties('firstName')).toHaveLength(0);
   });
+
+  describe('when a property is required by id', () => {
+    const mobile1Id = v4();
+    const mobile2Id = v4();
+    const mobile1Value = '+421949949949';
+    const mobile2Value = '+421905505505';
+
+    beforeEach(() => {
+      const mobile1 = new Property('mobile', mobile1Id).withMetadata(false).withValue(mobile1Value);
+      const mobile2 = new Property('mobile', mobile2Id).withMetadata(false).withValue(mobile2Value);
+      dt.addProperty(mobile1);
+      dt.addProperty(mobile2);
+    });
+
+    describe('when a property exists', () => {
+      let property: Property | undefined;
+
+      beforeEach(() => {
+        property = dt.getPropertyById(mobile2Id);
+      });
+
+      it('returns correct property', () => {
+        expect(property?.value).toBe(mobile2Value);
+      });
+    });
+
+    describe('when a property does not exist', () => {
+      let property: Property | undefined;
+
+      beforeEach(() => {
+        property = dt.getPropertyById(v4());
+      });
+
+      it('returns no property', () => {
+        expect(property).toBeUndefined();
+      });
+    });
+  });
 });

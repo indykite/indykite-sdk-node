@@ -1,4 +1,7 @@
 # Changelog
+## 0.1.5
+
+- [FEATURE] Allow to get a digital twin property by ID
 ## 0.1.4
 
 - [FIX] Fixed  in the patch properties builder
