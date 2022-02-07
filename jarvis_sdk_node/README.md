@@ -284,7 +284,7 @@ Checkout our roadmap on our [issues page](https://github.com/indykite/jarvis-sdk
 ## Support, Feedback, Connect with other developers
 We'd love to have you connect with us or other community developers over at [IndyKite.one](https://indykite.one) 
 
-Feel free to file a bug, submit an issue or give us feedback on our [issues page](https://github.com/indykite/jarvis-sdk-nodejs-proto/issues)
+Feel free to file a bug, submit an issue or give us feedback on our [issues page](https://github.com/indykite/jarvis-sdk-node/issues)
 
 ## Vulnerability Reporting
 [Responsible Disclosure](responsible_disclosure.md)
