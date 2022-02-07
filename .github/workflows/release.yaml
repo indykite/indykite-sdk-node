@@ -13,7 +13,6 @@ jobs:
         with:
           release-type: node
           default-branch: codecov-and-release
-          changelog-path: ./CHANGELOG.md
           path: jarvis_sdk_node
           package-name: jarvis-sdk-node
           bump-minor-pre-major: true
