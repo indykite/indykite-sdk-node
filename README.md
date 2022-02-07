@@ -272,8 +272,15 @@ async function updateProp(sdk:IdentityClient) {
 
 
 
+## SDK Development
 
+Look into using `npm link` in case you want to develop the lib with the app  
+https://medium.com/dailyjs/how-to-use-npm-link-7375b6219557
 
+In case you update the response don't forget to update CommonJS docs and also
+any typescript definitions.
+
+Commit message follows [commit guidelines](./doc/guides/commit-message.md#commit-message-guidelines)
 
 ## Roadmap 
 Checkout our roadmap on our [issues page](https://github.com/indykite/jarvis-sdk-nodejs-proto/issues)
