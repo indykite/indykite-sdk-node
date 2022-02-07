@@ -3,7 +3,7 @@ name: Publish
 on:
   push:
     branches: [master]
-    # We want to release only whe there are relevant changes in the Changelog
+    # We want to release only when there are relevant changes in the Changelog
     paths:
       - "CHANGELOG.md"
 
