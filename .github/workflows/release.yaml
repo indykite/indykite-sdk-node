@@ -2,7 +2,7 @@ name: Release
 on:
   push:
     branches:
-      - codecov-and-release
+      - master
 jobs:
   release-please:
     name: Prepare Release notes
@@ -12,8 +12,6 @@ jobs:
         uses: GoogleCloudPlatform/release-please-action@v3
         with:
           release-type: node
-          default-branch: codecov-and-release
-          changelog-path: ./CHANGELOG.md
           path: jarvis_sdk_node
           package-name: jarvis-sdk-node
           bump-minor-pre-major: true
