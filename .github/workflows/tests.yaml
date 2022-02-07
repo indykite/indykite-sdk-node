@@ -1,6 +1,9 @@
 name: Run tests
 on:
   pull_request:
+    branches: [master]
+  push:
+    branches: [master]
 
 concurrency:
   group: pr-${{ github.ref }}
@@ -32,10 +35,11 @@ jobs:
         run: |
           cd jarvis_sdk_node
           npm install
-      - name: Run Tests
-        uses: artiomtr/jest-coverage-report-action@v2.0-rc.4
+      - name: Run test coverage
+        run: 
+          cd jarvis_sdk_node
+          npm run coverage-ci
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v2
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          threshold: 80
-          working-directory: jarvis_sdk_node
-          annotations: failed-tests
+          files: jarvis_sdk_node/coverage/clover.xml

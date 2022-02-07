@@ -19,6 +19,7 @@
     "prepublishOnly": "npm run clean && npm run build",
     "test": "jest",
     "coverage": "jest --coverage --silent",
+    "coverage-ci": "jest --ci --silent --coverage --coverageReporters=clover",
     "coverage-html": "jest --coverage --silent --coverageReporters=html"
   },
   "devDependencies": {
