@@ -7,6 +7,8 @@ IndyKite is a cloud identity platform built to secure and manage human & non-per
 
 [![NPM version](https://img.shields.io/npm/v/@indykiteone/jarvis-sdk-node.svg?style=flat-square)](https://www.npmjs.com/package/@indykiteone/jarvis-sdk-node)
 ![npm type definitions](https://img.shields.io/npm/types/@indykiteone/jarvis-sdk-node?style=flat-square)
+[![codecov](https://codecov.io/gh/indykite/jarvis-sdk-node/branch/master/graph/badge.svg?token=G6T2UWO9G1)](https://codecov.io/gh/indykite/jarvis-sdk-node)
+
 
 Examples of functionality available in SDK:
 * Token Introspection
