@@ -27,7 +27,6 @@ jobs:
   tests:
     name: Unit Tests
     runs-on: ubuntu-latest
-    needs: [lint]
     steps:
       - name: Checkout Repo
         uses: actions/checkout@master
@@ -36,7 +35,7 @@ jobs:
           cd jarvis_sdk_node
           npm install
       - name: Run test coverage
-        run: 
+        run: |
           cd jarvis_sdk_node
           npm run coverage-ci
       - name: Upload coverage to Codecov
