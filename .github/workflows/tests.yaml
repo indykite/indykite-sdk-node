@@ -40,5 +40,3 @@ jobs:
           npm run coverage-ci
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v2
-        with:
-          files: jarvis_sdk_node/coverage/clover.xml
