@@ -109,14 +109,18 @@ export class SdkClient {
                     savedMessageContent = message;
                   },
                   onReceiveStatus: (status) => {
-                    savedMessageNext(savedMessageContent);
+                    if (savedMessageNext) {
+                      savedMessageNext(savedMessageContent);
+                    }
                     next(status);
                   },
                 });
                 newCall.sendMessage(originalMessage);
                 newCall.halfClose();
               } else {
-                savedMessageNext(savedMessageContent);
+                if (savedMessageNext) {
+                  savedMessageNext(savedMessageContent);
+                }
                 next(status);
               }
             },

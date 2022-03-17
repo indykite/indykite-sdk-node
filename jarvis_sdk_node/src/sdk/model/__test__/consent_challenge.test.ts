@@ -9,9 +9,9 @@ describe('properties', () => {
   const clientId = v4();
   const scopes = [{ name: 'openid', description: '', displayName: '', required: false }];
   const requestUrl = 'http://www.example.com/oauth';
-  const audiences = [] as any[];
+  const audiences = [] as Audience[];
   const appSpace = v4();
-  const acrs = [] as any[];
+  const acrs = [] as string[];
   const subject = 'Subject';
   const skip = false;
   let challengeInstance: ConsentChallenge;
@@ -103,7 +103,7 @@ describe('deserialization', () => {
   const requestUrl = 'http://www.example.com/oauth';
   const audiences = [] as Audience[];
   const appSpace = v4();
-  const acrs = [] as any[];
+  const acrs = [] as string[];
   const subject = 'Subject';
   const skip = false;
   let challengeInstance: ConsentChallenge;

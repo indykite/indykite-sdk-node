@@ -1,7 +1,9 @@
 import {
   ConfigManagementAPIClient,
   CreateConfigNodeRequest,
+  DeleteApplicationSpaceRequest,
   DeleteConfigNodeRequest,
+  UpdateApplicationSpaceRequest,
   UpdateConfigNodeRequest,
 } from '../grpc/indykite/config/v1beta1/config_management_api';
 import { SdkClient } from './client/client';
@@ -9,6 +11,8 @@ import { SdkErrorCode, SdkError } from './error';
 import { AuthFlow } from './model/config/authflow/flow';
 import { EmailProviderType } from './model/config/email/factory';
 import { ConfigurationFactory } from './model/config/factory';
+import { Customer } from './model/customer';
+import { ApplicationSpace } from './model/application_space';
 
 const endpoint = process.env.JARVIS_ENDPOINT || 'jarvis.indykite.com';
 export class ConfigClient {
@@ -220,6 +224,171 @@ export class ConfigClient {
     return new Promise<boolean>((resolve, reject) => {
       this.client.deleteConfigNode(req, (err) => {
         if (err) reject(false);
+        else resolve(true);
+      });
+    });
+  }
+
+  readCustomerById(id: string): Promise<Customer> {
+    return new Promise((resolve, reject) => {
+      this.client.readCustomer(
+        {
+          identifier: {
+            $case: 'id',
+            id,
+          },
+        },
+        (err, response) => {
+          if (err) reject(err);
+          else resolve(Customer.deserialize(response));
+        },
+      );
+    });
+  }
+
+  readCustomerByName(name: string): Promise<Customer> {
+    return new Promise((resolve, reject) => {
+      this.client.readCustomer(
+        {
+          identifier: {
+            $case: 'name',
+            name,
+          },
+        },
+        (err, response) => {
+          if (err) reject(err);
+          else resolve(Customer.deserialize(response));
+        },
+      );
+    });
+  }
+
+  createApplicationSpace(
+    customerId: string,
+    name: string,
+    displayName?: string,
+    description?: string,
+  ): Promise<string> {
+    return new Promise((resolve, reject) => {
+      this.client.createApplicationSpace(
+        {
+          customerId,
+          name,
+          displayName,
+          description,
+        },
+        (err, response) => {
+          if (err) reject(err);
+          else resolve(response.id);
+        },
+      );
+    });
+  }
+
+  readApplicationSpaceById(id: string): Promise<ApplicationSpace> {
+    return new Promise((resolve, reject) => {
+      this.client.readApplicationSpace(
+        {
+          identifier: {
+            $case: 'id',
+            id,
+          },
+        },
+        (err, response) => {
+          if (err) reject(err);
+          else resolve(ApplicationSpace.deserialize(response));
+        },
+      );
+    });
+  }
+
+  readApplicationSpaceByName(location: string, name: string): Promise<ApplicationSpace> {
+    return new Promise((resolve, reject) => {
+      this.client.readApplicationSpace(
+        {
+          identifier: {
+            $case: 'name',
+            name: {
+              location,
+              name,
+            },
+          },
+        },
+        (err, response) => {
+          if (err) reject(err);
+          else resolve(ApplicationSpace.deserialize(response));
+        },
+      );
+    });
+  }
+
+  readApplicationSpaceList(
+    customerId: string,
+    appSpaceNames: string[],
+  ): Promise<ApplicationSpace[]> {
+    return new Promise((resolve, reject) => {
+      const list: ApplicationSpace[] = [];
+      const stream = this.client
+        .listApplicationSpaces({
+          customerId,
+          match: appSpaceNames,
+        })
+        .on('readable', () => {
+          const value = stream.read();
+          if (value && value.appSpace) {
+            list.push(ApplicationSpace.deserialize(value));
+          }
+        })
+        .on('close', () => {
+          resolve(list);
+        })
+        .on('error', (err) => {
+          reject(err);
+        });
+    });
+  }
+
+  updateApplicationSpace(appSpace: ApplicationSpace): Promise<ApplicationSpace> {
+    return new Promise((resolve, reject) => {
+      const req: UpdateApplicationSpaceRequest = {
+        id: appSpace.id,
+        etag: appSpace.etag,
+        displayName: appSpace.displayName,
+        description: appSpace.description,
+      };
+
+      this.client.updateApplicationSpace(req, (err, response) => {
+        if (err) reject(err);
+        else {
+          try {
+            if (response.id === appSpace.id) {
+              appSpace.etag = response.etag;
+              appSpace.updateTime = response.updateTime;
+              resolve(appSpace);
+            } else {
+              reject(
+                new SdkError(
+                  SdkErrorCode.SDK_CODE_1,
+                  `Update returned with different id: req.iq=${appSpace.id}, res.id=${response.id}`,
+                ),
+              );
+            }
+          } catch (err) {
+            reject(err);
+          }
+        }
+      });
+    });
+  }
+
+  deleteApplicationSpace(appSpace: ApplicationSpace): Promise<boolean> {
+    const req = {
+      id: appSpace.id,
+      etag: appSpace.etag,
+    } as DeleteApplicationSpaceRequest;
+    return new Promise<boolean>((resolve, reject) => {
+      this.client.deleteApplicationSpace(req, (err) => {
+        if (err) reject(err);
         else resolve(true);
       });
     });
