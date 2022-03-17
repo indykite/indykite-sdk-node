@@ -1,5 +1,5 @@
 import { IdentityClient } from '../sdk/identity';
-import { PatchPropertiesBuilder, Property } from '../sdk/model';
+import { Property } from '../sdk/model';
 
 const userToken = process.env.USER_TOKEN || 'MISSING_TOKEN';
 

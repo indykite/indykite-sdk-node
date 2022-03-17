@@ -177,6 +177,14 @@ describe('Read, Update, Delete - Email Configuration', () => {
           to: [TEST_TO_EMAIL],
           cc: [],
           bcc: [],
+          from: {
+            address: 'user@example.com',
+            name: 'User',
+          },
+          replyTo: {
+            address: 'anotherUser@example.com',
+            name: 'Another User',
+          },
           subject: 'subject',
           htmlContent: '',
           textContent: 'Text Email Content',
@@ -250,6 +258,14 @@ describe('Read, Update, Delete - Email Configuration', () => {
       cc: [],
       bcc: [],
       textContent: 'Text Email Content',
+      from: {
+        address: 'user@example.com',
+        name: 'User',
+      },
+      replyTo: {
+        address: 'anotherUser@example.com',
+        name: 'Another User',
+      },
     };
     const expectedEmailTmpl = {
       templateId,

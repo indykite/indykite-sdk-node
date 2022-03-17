@@ -1,5 +1,4 @@
 import { IdentityClient } from '../sdk/identity';
-import { Property } from '../sdk/model';
 
 const consentChallengeToken = process.env.CONSENT_CHALLENGE || 'MISSING_CONSENT_CHALLENGE';
 
