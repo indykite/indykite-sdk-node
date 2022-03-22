@@ -1,4 +1,18 @@
 # Changelog
+### [0.1.6](https://github.com/indykite/jarvis-sdk-node/compare/v0.1.5...v0.1.6) (2022-03-22)
+
+
+### Features
+
+* add read customer and crud + list app spaces ([0198794](https://github.com/indykite/jarvis-sdk-node/commit/0198794fcff5e2228ca69bd4e25ac1971efc4ae7))
+
+
+### Bug Fixes
+
+* fix the chanelog path ([40d6cd4](https://github.com/indykite/jarvis-sdk-node/commit/40d6cd4657fd672183d8ef56973f9faa359dc3a9))
+* fix the path in readme ([40d6cd4](https://github.com/indykite/jarvis-sdk-node/commit/40d6cd4657fd672183d8ef56973f9faa359dc3a9))
+* use the parent path for Changelog ([40d6cd4](https://github.com/indykite/jarvis-sdk-node/commit/40d6cd4657fd672183d8ef56973f9faa359dc3a9))
+
 ## 0.1.5
 
 - [FEATURE] Allow to get a digital twin property by ID
