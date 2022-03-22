@@ -14,6 +14,10 @@ jobs:
         with:
           node-version: "12.x"
           registry-url: "https://registry.npmjs.org"
+      - name: "Install"
+        run: |
+          cd jarvis_sdk_node
+          npm install
       - name: "Build"
         run: |
           cd jarvis_sdk_node
