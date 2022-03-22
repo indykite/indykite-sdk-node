@@ -1,45 +1,32 @@
 name: Release
+concurrency: sdk-release
 on:
-  push:
-    branches:
-      - master
+    release:
+        types:
+            - published
 jobs:
-  release-please:
+  release:
     name: Prepare Release notes
     runs-on: ubuntu-latest
     steps:
-      - id: release-please
-        uses: GoogleCloudPlatform/release-please-action@v3
-        with:
-          release-type: node
-          path: jarvis_sdk_node
-          package-name: jarvis-sdk-node
-          bump-minor-pre-major: true
-          bump-patch-for-minor-pre-major: true
-      - uses: actions/checkout@v2
-        if: ${{ steps.release-please.outputs.release_created }}
+      - uses: actions/checkout@v3
       - uses: actions/setup-node@v2
         with:
           node-version: "12.x"
           registry-url: "https://registry.npmjs.org"
-        if: ${{ steps.release-please.outputs.release_created }}
       - name: "Build"
         run: |
           cd jarvis_sdk_node
           npm run build
-        if: ${{ steps.release-please.outputs.release_created }}
       - name: "Verify es support of dist package"
         run: |
           cd jarvis_sdk_node
           npm run-script check-es
-        if: ${{ steps.release-please.outputs.release_created }}
       - name: "Copy README for publish"
-        if: ${{ steps.release-please.outputs.release_created }}
         run: |
           cp ./README.md jarvis_sdk_node/
           cp ./logo.png jarvis_sdk_node/
       - name: "Publish the package"
-        if: ${{ steps.release-please.outputs.release_created }}
         run: |
           cd jarvis_sdk_node
           npm publish --access public

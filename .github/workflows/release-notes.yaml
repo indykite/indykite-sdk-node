@@ -1,0 +1,18 @@
+name: Release notes
+on:
+  push:
+    branches:
+      - master
+jobs:
+  release-please:
+    name: Prepare Release notes
+    runs-on: ubuntu-latest
+    steps:
+      - id: release-please
+        uses: GoogleCloudPlatform/release-please-action@v3
+        with:
+          release-type: node
+          path: jarvis_sdk_node
+          package-name: jarvis-sdk-node
+          bump-minor-pre-major: true
+          bump-patch-for-minor-pre-major: true
