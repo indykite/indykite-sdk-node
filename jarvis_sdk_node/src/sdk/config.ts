@@ -1,5 +1,4 @@
 import {
-  ConfigManagementAPIClient,
   CreateConfigNodeRequest,
   DeleteApplicationSpaceRequest,
   DeleteConfigNodeRequest,
@@ -13,6 +12,9 @@ import { EmailProviderType } from './model/config/email/factory';
 import { ConfigurationFactory } from './model/config/factory';
 import { Customer } from './model/customer';
 import { ApplicationSpace } from './model/application_space';
+import { ConfigManagementAPIClient } from '../grpc/indykite/config/v1beta1/config_management_api.grpc-client';
+import { StringValue } from '../grpc/google/protobuf/wrappers';
+import { Utils } from './utils/utils';
 
 const endpoint = process.env.JARVIS_ENDPOINT || 'jarvis.indykite.com';
 export class ConfigClient {
@@ -38,12 +40,12 @@ export class ConfigClient {
     location: string,
     config: EmailProviderType,
   ): Promise<EmailProviderType> {
-    const req = CreateConfigNodeRequest.fromJSON({
+    const req = CreateConfigNodeRequest.fromJson({
       location,
       name: config.name,
     });
     req.config = {
-      $case: 'emailServiceConfig',
+      oneofKind: 'emailServiceConfig',
       emailServiceConfig: config.marshal(),
     };
     // console.log(JSON.stringify(nr, null, 2));
@@ -66,7 +68,7 @@ export class ConfigClient {
         if (err) reject(err);
         else
           try {
-            if (response.configNode) {
+            if (response?.configNode) {
               const ret = ConfigurationFactory.createInstance(
                 response.configNode,
               ) as EmailProviderType;
@@ -85,11 +87,11 @@ export class ConfigClient {
     const req = {
       id: config.id,
     } as UpdateConfigNodeRequest;
-    if (config.etag) req.etag = config.etag;
-    if (config.displayName) req.displayName = config.displayName;
-    if (config.description) req.description = config.description;
+    if (config.etag) req.etag = StringValue.create({ value: config.etag });
+    if (config.displayName) req.displayName = StringValue.create({ value: config.displayName });
+    if (config.description) req.description = StringValue.create({ value: config.description });
     req.config = {
-      $case: 'emailServiceConfig',
+      oneofKind: 'emailServiceConfig',
       emailServiceConfig: config.marshal(),
     };
 
@@ -98,15 +100,15 @@ export class ConfigClient {
         if (err) reject(err);
         else
           try {
-            if (response.id === config.id) {
-              config.etag = response.etag;
-              config.updateTime = response.updateTime;
+            if (response?.id === config.id) {
+              config.etag = response?.etag;
+              config.updateTime = Utils.timestampToDate(response?.updateTime);
               resolve(config);
             } else {
               reject(
                 new SdkError(
                   SdkErrorCode.SDK_CODE_1,
-                  `Update returned with different id: req.iq=${config.id}, res.id=${response.id}`,
+                  `Update returned with different id: req.iq=${config.id}, res.id=${response?.id}`,
                 ),
               );
             }
@@ -121,7 +123,7 @@ export class ConfigClient {
     const req = {
       id: config.id,
     } as DeleteConfigNodeRequest;
-    if (config.etag) req.etag = config.etag;
+    if (config.etag) req.etag = StringValue.create({ value: config.etag });
 
     return new Promise<boolean>((resolve, reject) => {
       this.client.deleteConfigNode(req, (err) => {
@@ -132,12 +134,12 @@ export class ConfigClient {
   }
 
   createAuthflowConfiguration(location: string, config: AuthFlow): Promise<AuthFlow> {
-    const req = CreateConfigNodeRequest.fromJSON({
+    const req = CreateConfigNodeRequest.fromJson({
       location,
       name: config.name,
     });
     req.config = {
-      $case: 'authFlowConfig',
+      oneofKind: 'authFlowConfig',
       authFlowConfig: config.marshal(),
     };
     // console.log(JSON.stringify(nr, null, 2));
@@ -146,10 +148,10 @@ export class ConfigClient {
         if (err) reject(err);
         else
           try {
-            config.id = response.id;
-            config.etag = response.etag;
-            config.createTime = response.createTime;
-            config.updateTime = response.updateTime;
+            config.id = response?.id;
+            config.etag = response?.etag;
+            config.createTime = Utils.timestampToDate(response?.createTime);
+            config.updateTime = Utils.timestampToDate(response?.updateTime);
             resolve(config);
           } catch (err) {
             reject(err);
@@ -164,7 +166,7 @@ export class ConfigClient {
         if (err) reject(err);
         else
           try {
-            if (response.configNode) {
+            if (response?.configNode) {
               const ret = ConfigurationFactory.createInstance(response.configNode) as AuthFlow;
               resolve(ret);
             } else {
@@ -183,11 +185,11 @@ export class ConfigClient {
     const req = {
       id: config.id,
     } as UpdateConfigNodeRequest;
-    if (config.etag) req.etag = config.etag;
-    if (config.displayName) req.displayName = config.displayName;
-    if (config.description) req.description = config.description;
+    if (config.etag) req.etag = StringValue.create({ value: config.etag });
+    if (config.displayName) req.displayName = StringValue.create({ value: config.displayName });
+    if (config.description) req.description = StringValue.create({ value: config.description });
     req.config = {
-      $case: 'authFlowConfig',
+      oneofKind: 'authFlowConfig',
       authFlowConfig: config.marshal(),
     };
 
@@ -196,15 +198,15 @@ export class ConfigClient {
         if (err) reject(err);
         else
           try {
-            if (response.id === config.id) {
-              config.etag = response.etag;
-              config.updateTime = response.updateTime;
+            if (response?.id === config.id) {
+              config.etag = response?.etag;
+              config.updateTime = Utils.timestampToDate(response?.updateTime);
               resolve(config);
             } else {
               reject(
                 new SdkError(
                   SdkErrorCode.SDK_CODE_1,
-                  `Update returned with different id: req.iq=${config.id}, res.id=${response.id}`,
+                  `Update returned with different id: req.iq=${config.id}, res.id=${response?.id}`,
                 ),
               );
             }
@@ -219,7 +221,7 @@ export class ConfigClient {
     const req = {
       id: config.id,
     } as DeleteConfigNodeRequest;
-    if (config.etag) req.etag = config.etag;
+    if (config.etag) req.etag = StringValue.create({ value: config.etag });
 
     return new Promise<boolean>((resolve, reject) => {
       this.client.deleteConfigNode(req, (err) => {
@@ -234,12 +236,13 @@ export class ConfigClient {
       this.client.readCustomer(
         {
           identifier: {
-            $case: 'id',
+            oneofKind: 'id',
             id,
           },
         },
         (err, response) => {
           if (err) reject(err);
+          else if (!response) reject(new SdkError(SdkErrorCode.SDK_CODE_1, 'No customer response'));
           else resolve(Customer.deserialize(response));
         },
       );
@@ -251,12 +254,13 @@ export class ConfigClient {
       this.client.readCustomer(
         {
           identifier: {
-            $case: 'name',
+            oneofKind: 'name',
             name,
           },
         },
         (err, response) => {
           if (err) reject(err);
+          else if (!response) reject(new SdkError(SdkErrorCode.SDK_CODE_1, 'No customer response'));
           else resolve(Customer.deserialize(response));
         },
       );
@@ -268,18 +272,18 @@ export class ConfigClient {
     name: string,
     displayName?: string,
     description?: string,
-  ): Promise<string> {
+  ): Promise<string | undefined> {
     return new Promise((resolve, reject) => {
       this.client.createApplicationSpace(
         {
           customerId,
           name,
-          displayName,
-          description,
+          displayName: StringValue.create({ value: displayName }),
+          description: StringValue.create({ value: description }),
         },
         (err, response) => {
           if (err) reject(err);
-          else resolve(response.id);
+          else resolve(response?.id);
         },
       );
     });
@@ -290,13 +294,17 @@ export class ConfigClient {
       this.client.readApplicationSpace(
         {
           identifier: {
-            $case: 'id',
+            oneofKind: 'id',
             id,
           },
         },
         (err, response) => {
           if (err) reject(err);
-          else resolve(ApplicationSpace.deserialize(response));
+          else if (!response) {
+            reject(new SdkError(SdkErrorCode.SDK_CODE_1, 'No application space response'));
+          } else {
+            resolve(ApplicationSpace.deserialize(response));
+          }
         },
       );
     });
@@ -307,7 +315,7 @@ export class ConfigClient {
       this.client.readApplicationSpace(
         {
           identifier: {
-            $case: 'name',
+            oneofKind: 'name',
             name: {
               location,
               name,
@@ -316,7 +324,11 @@ export class ConfigClient {
         },
         (err, response) => {
           if (err) reject(err);
-          else resolve(ApplicationSpace.deserialize(response));
+          else if (!response) {
+            reject(new SdkError(SdkErrorCode.SDK_CODE_1, 'No application space response'));
+          } else {
+            resolve(ApplicationSpace.deserialize(response));
+          }
         },
       );
     });
@@ -352,24 +364,24 @@ export class ConfigClient {
     return new Promise((resolve, reject) => {
       const req: UpdateApplicationSpaceRequest = {
         id: appSpace.id,
-        etag: appSpace.etag,
-        displayName: appSpace.displayName,
-        description: appSpace.description,
+        etag: StringValue.create({ value: appSpace.etag }),
+        displayName: StringValue.create({ value: appSpace.displayName }),
+        description: StringValue.create({ value: appSpace.description }),
       };
 
       this.client.updateApplicationSpace(req, (err, response) => {
         if (err) reject(err);
         else {
           try {
-            if (response.id === appSpace.id) {
+            if (response?.id === appSpace.id) {
               appSpace.etag = response.etag;
-              appSpace.updateTime = response.updateTime;
+              appSpace.updateTime = Utils.timestampToDate(response.updateTime);
               resolve(appSpace);
             } else {
               reject(
                 new SdkError(
                   SdkErrorCode.SDK_CODE_1,
-                  `Update returned with different id: req.iq=${appSpace.id}, res.id=${response.id}`,
+                  `Update returned with different id: req.iq=${appSpace.id}, res.id=${response?.id}`,
                 ),
               );
             }
@@ -384,7 +396,7 @@ export class ConfigClient {
   deleteApplicationSpace(appSpace: ApplicationSpace): Promise<boolean> {
     const req = {
       id: appSpace.id,
-      etag: appSpace.etag,
+      etag: StringValue.create({ value: appSpace.etag }),
     } as DeleteApplicationSpaceRequest;
     return new Promise<boolean>((resolve, reject) => {
       this.client.deleteApplicationSpace(req, (err) => {

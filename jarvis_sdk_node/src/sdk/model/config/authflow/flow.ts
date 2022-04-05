@@ -4,11 +4,12 @@ import {
 } from '../../../../grpc/indykite/config/v1beta1/model';
 import { Any } from '../../../../grpc/google/protobuf/any';
 import { NodeConfiguration } from '../configuration';
+import { BoolValue } from '../../../../grpc/google/protobuf/wrappers';
 
 export type AuthFlowSourceType = AuthFlowConfig_Format;
 
 export class AuthFlow extends NodeConfiguration {
-  proto?: unknown;
+  proto?: Any;
 
   constructor(
     name: string,
@@ -23,9 +24,9 @@ export class AuthFlow extends NodeConfiguration {
     const flow: AuthFlowConfig = {
       sourceFormat: this.type,
       source: this.source,
-      default: this.defaultFlow,
+      default: BoolValue.create({ value: this.defaultFlow }),
+      proto: this.proto,
     };
-    if (this.proto) flow.proto = Any.fromJSON(this.proto);
 
     return flow;
   }

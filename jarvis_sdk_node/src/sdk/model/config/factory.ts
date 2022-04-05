@@ -1,5 +1,6 @@
 import { ConfigNode } from '../../../grpc/indykite/config/v1beta1/model';
 import { SdkErrorCode, SdkError } from '../../error';
+import { Utils } from '../../utils/utils';
 import { AuthflowFactory } from './authflow/factory';
 import { AuthFlow } from './authflow/flow';
 import { NodeConfiguration } from './configuration';
@@ -17,13 +18,13 @@ export class ConfigurationFactory {
         customerId: config.customerId,
         appSpaceId: config.appSpaceId,
         tenantId: config.tenantId,
-        createTime: config.createTime,
-        updateTime: config.updateTime,
+        createTime: Utils.timestampToDate(config.createTime),
+        updateTime: Utils.timestampToDate(config.updateTime),
       } as NodeConfiguration;
-      if (config.description) meta.description = config.description;
+      if (config.description) meta.description = config.description.value;
 
       // console.log(JSON.stringify(config, null, 2));
-      switch (config.config.$case) {
+      switch (config.config.oneofKind) {
         case 'emailServiceConfig': {
           const provider = EmailProviderFactory.createInstance(
             config.name,

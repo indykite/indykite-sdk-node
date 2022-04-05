@@ -1,3 +1,4 @@
+import { StringValue } from '../../../../grpc/google/protobuf/wrappers';
 import * as grpc from '../../../../grpc/indykite/config/v1beta1/model';
 import { Value } from '../../../../grpc/indykite/objects/v1beta1/struct';
 import { Email } from './provider';
@@ -41,11 +42,11 @@ export class EmailTemplate {
     } as grpc.EmailTemplate;
     tmpl.from = this.from;
     tmpl.replyTo = this.replyTo;
-    tmpl.eventPayload = this.eventPayload;
+    tmpl.eventPayload = StringValue.create({ value: this.eventPayload });
 
     return {
       email: {
-        $case: 'template',
+        oneofKind: 'template',
         template: tmpl,
       },
     };

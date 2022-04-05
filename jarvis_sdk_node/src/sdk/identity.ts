@@ -1,11 +1,11 @@
 import {
   ChangePasswordRequest,
   CheckConsentChallengeRequest,
+  ConsentRequestSessionData,
   CreateConsentVerifierRequest,
   DeleteDigitalTwinRequest,
   DigitalTwinIdentifier,
   GetDigitalTwinRequest,
-  IdentityManagementAPIClient,
   PatchDigitalTwinRequest,
   StartDigitalTwinEmailVerificationRequest,
   StartForgottenPasswordFlowRequest,
@@ -18,14 +18,9 @@ import { MapValue } from '../grpc/indykite/objects/v1beta1/struct';
 
 import { SdkErrorCode, SdkError } from './error';
 import { Utils } from './utils/utils';
-import {
-  ConsentChallenge,
-  ConsentChallengeDenial,
-  ConsentRequestSessionData,
-  PatchResult,
-  Property,
-} from './model';
+import { ConsentChallenge, ConsentChallengeDenial, PatchResult, Property } from './model';
 import { SdkClient } from './client/client';
+import { IdentityManagementAPIClient } from '../grpc/indykite/identity/v1beta1/identity_management_api.grpc-client';
 
 export class IdentityClient {
   private client: IdentityManagementAPIClient;
@@ -57,13 +52,17 @@ export class IdentityClient {
 
   introspectToken(token: string): Promise<sdkTypes.TokenInfo> {
     // Build request message
-    const request = TokenIntrospectRequest.fromJSON({ token });
+    const request = TokenIntrospectRequest.fromJson({ token });
 
     // Invoke the RPC
     return new Promise<sdkTypes.TokenInfo>((resolve, reject) => {
       this.client.tokenIntrospect(request, (err, response) => {
         if (err) reject(err);
         try {
+          if (!response) {
+            reject(new SdkError(SdkErrorCode.SDK_CODE_1, 'Missing token introspect response'));
+            return;
+          }
           resolve(sdkTypes.TokenInfo.deserialize(response));
         } catch (err) {
           reject(err);
@@ -79,7 +78,7 @@ export class IdentityClient {
   ): Promise<{ digitalTwin?: sdkTypes.DigitalTwin; tokenInfo?: sdkTypes.TokenInfo }> {
     const dtId = Utils.uuidToBuffer(digitalTwinId);
     const tId = Utils.uuidToBuffer(tenantId);
-    const request = GetDigitalTwinRequest.fromJSON({
+    const request = GetDigitalTwinRequest.fromJson({
       id: Utils.createDigitalTwinId(dtId, tId),
       properties: Property.fromPropertiesList(properties),
     });
@@ -93,11 +92,11 @@ export class IdentityClient {
               digitalTwin?: sdkTypes.DigitalTwin;
               tokenInfo?: sdkTypes.TokenInfo;
             } = {};
-            if (response.digitalTwin) {
+            if (response?.digitalTwin) {
               dtResponse.digitalTwin = sdkTypes.DigitalTwin.deserialize(response);
             }
 
-            if (response.tokenInfo) {
+            if (response?.tokenInfo) {
               dtResponse.tokenInfo = sdkTypes.TokenInfo.deserialize(
                 response.tokenInfo as IdentityTokenInfo,
               );
@@ -118,7 +117,7 @@ export class IdentityClient {
     if (token.length < 32) {
       throw new Error('Token must be 32 chars or more.');
     }
-    const request = GetDigitalTwinRequest.fromJSON({
+    const request = GetDigitalTwinRequest.fromJson({
       id: Utils.createDigitalTwinIdFromToken(token),
       properties: Property.fromPropertiesList(properties),
     });
@@ -132,6 +131,10 @@ export class IdentityClient {
               digitalTwin?: sdkTypes.DigitalTwin;
               tokenInfo?: sdkTypes.TokenInfo;
             } = {};
+            if (!response) {
+              reject(new SdkError(SdkErrorCode.SDK_CODE_1, 'Missing digital twin response'));
+              return;
+            }
             if (response.digitalTwin) {
               dtResponse.digitalTwin = sdkTypes.DigitalTwin.deserialize(response);
             }
@@ -171,16 +174,16 @@ export class IdentityClient {
     dt: sdkTypes.DigitalTwin,
     forceDelete = false,
   ): Promise<PatchResult[]> {
-    const patchdt = DigitalTwin.fromJSON({});
+    const patchdt = DigitalTwin.fromJson({});
     patchdt.id = Utils.uuidToBuffer(digitalTwinId);
     patchdt.tenantId = Utils.uuidToBuffer(tenantId);
 
-    const dti = DigitalTwinIdentifier.fromJSON({
-      digitalTwin: DigitalTwin.toJSON(patchdt),
+    const dti = DigitalTwinIdentifier.fromJson({
+      digitalTwin: DigitalTwin.toJson(patchdt),
     });
 
-    const request = PatchDigitalTwinRequest.fromJSON({
-      id: DigitalTwinIdentifier.toJSON(dti),
+    const request = PatchDigitalTwinRequest.fromJson({
+      id: DigitalTwinIdentifier.toJson(dti),
       forceDelete,
     });
     request.operations = dt.getPatchOperationsAndReset();
@@ -195,7 +198,7 @@ export class IdentityClient {
     if (token.length < 32) {
       throw new Error('Token must be 32 chars or more.');
     }
-    const request = PatchDigitalTwinRequest.fromJSON({
+    const request = PatchDigitalTwinRequest.fromJson({
       id: Utils.createDigitalTwinIdFromToken(token),
       forceDelete,
     });
@@ -210,7 +213,7 @@ export class IdentityClient {
     attributes?: unknown,
   ): Promise<boolean> {
     const { digitalTwin } = Utils.createDigitalTwinId(digitalTwinId, tenantId);
-    const request = StartDigitalTwinEmailVerificationRequest.fromJSON({
+    const request = StartDigitalTwinEmailVerificationRequest.fromJson({
       digitalTwin,
       email,
     });
@@ -231,7 +234,7 @@ export class IdentityClient {
       throw new Error('Token must be 32 chars or more.');
     }
 
-    const request = VerifyDigitalTwinEmailRequest.fromJSON({
+    const request = VerifyDigitalTwinEmailRequest.fromJson({
       token,
     });
 
@@ -262,7 +265,7 @@ export class IdentityClient {
     tenantId: string | Buffer,
   ): Promise<boolean> {
     const digitalTwin = Utils.createDigitalTwinId(digitalTwinId, tenantId);
-    const request = StartForgottenPasswordFlowRequest.fromJSON(digitalTwin);
+    const request = StartForgottenPasswordFlowRequest.fromJson(digitalTwin);
 
     return new Promise<boolean>((resolve, reject) => {
       this.client.startForgottenPasswordFlow(request, (err) => {
@@ -276,7 +279,7 @@ export class IdentityClient {
     if (token.length < 32) {
       throw new Error('Token must be 32 chars or more.');
     }
-    const request = ChangePasswordRequest.fromJSON({
+    const request = ChangePasswordRequest.fromJson({
       token,
       password,
     });
@@ -284,7 +287,7 @@ export class IdentityClient {
     return new Promise<boolean>((resolve, reject) => {
       this.client.changePassword(request, (err, response) => {
         if (err) reject(err);
-        else if (response.error) reject(response.error);
+        else if (response?.error) reject(response.error);
         else resolve(true);
       });
     });
@@ -297,7 +300,7 @@ export class IdentityClient {
     if (token.length < 32) {
       throw new Error('Token must be 32 chars or more.');
     }
-    const request = ChangePasswordRequest.fromJSON({
+    const request = ChangePasswordRequest.fromJson({
       token,
       password,
     });
@@ -316,7 +319,7 @@ export class IdentityClient {
     password: string,
   ): Promise<boolean> {
     const { digitalTwin } = Utils.createDigitalTwinId(digitalTwinId, tenantId);
-    const request = ChangePasswordRequest.fromJSON({
+    const request = ChangePasswordRequest.fromJson({
       digitalTwin,
       password,
     });
@@ -324,7 +327,7 @@ export class IdentityClient {
     return new Promise<boolean>((resolve, reject) => {
       this.client.changePassword(request, (err, response) => {
         if (err) reject(err);
-        else if (response.error) reject(response.error);
+        else if (response?.error) reject(response.error);
         else resolve(true);
       });
     });
@@ -339,7 +342,7 @@ export class IdentityClient {
     password: string,
   ): Promise<boolean> {
     const { digitalTwin } = Utils.createDigitalTwinId(digitalTwinId, tenantId);
-    const request = ChangePasswordRequest.fromJSON({
+    const request = ChangePasswordRequest.fromJson({
       digitalTwin,
       password,
     });
@@ -357,7 +360,7 @@ export class IdentityClient {
     tenantId: string | Buffer,
   ): Promise<sdkTypes.DigitalTwin> {
     const digitalTwin = Utils.createDigitalTwinId(digitalTwinId, tenantId);
-    const request = DeleteDigitalTwinRequest.fromJSON({
+    const request = DeleteDigitalTwinRequest.fromJson({
       id: digitalTwin,
     });
 
@@ -387,7 +390,7 @@ export class IdentityClient {
     if (token.length < 32) {
       throw new Error('Token must be 32 chars or more.');
     }
-    const request = DeleteDigitalTwinRequest.fromJSON({
+    const request = DeleteDigitalTwinRequest.fromJson({
       id: Utils.createDigitalTwinIdFromToken(token),
     });
 
@@ -414,14 +417,18 @@ export class IdentityClient {
   }
 
   checkConsentChallenge(challenge: string): Promise<ConsentChallenge> {
-    const request = CheckConsentChallengeRequest.fromJSON({
+    const request = CheckConsentChallengeRequest.fromJson({
       challenge,
     });
 
     return new Promise((resolve, reject) => {
       this.client.checkConsentChallenge(request, (err, response) => {
         if (err) reject(err);
-        else resolve(ConsentChallenge.deserialize(response, challenge));
+        else if (!response) {
+          reject(new SdkError(SdkErrorCode.SDK_CODE_1, 'Missing check consent challenge response'));
+        } else {
+          resolve(ConsentChallenge.deserialize(response, challenge));
+        }
       });
     });
   }
@@ -445,7 +452,7 @@ export class IdentityClient {
     audiences?: string[],
     session?: ConsentRequestSessionData,
     remember?: boolean,
-    rememberFor?: number,
+    rememberFor?: string,
   ): Promise<{
     authorizationEndpoint: string;
     verifier: string;
@@ -457,7 +464,7 @@ export class IdentityClient {
     audiences?: string[],
     session?: ConsentRequestSessionData,
     remember?: boolean,
-    rememberFor?: number,
+    rememberFor?: string,
   ): Promise<{
     authorizationEndpoint: string;
     verifier: string;
@@ -508,15 +515,23 @@ export class IdentityClient {
     authorizationEndpoint: string;
     verifier: string;
   }> {
-    const request = CreateConsentVerifierRequest.fromJSON({
+    const request = CreateConsentVerifierRequest.fromJson({
       challenge: consentChallenge,
-      denial: denialReason,
     });
+
+    request.result = {
+      oneofKind: 'denial',
+      denial: denialReason,
+    };
 
     return new Promise((resolve, reject) => {
       this.client.createConsentVerifier(request, (err, response) => {
         if (err) reject(err);
-        else resolve(response);
+        else if (!response) {
+          reject(new SdkError(SdkErrorCode.SDK_CODE_1, 'Missing denied consent verifier response'));
+        } else {
+          resolve(response);
+        }
       });
     });
   }
@@ -526,27 +541,37 @@ export class IdentityClient {
     scopes?: string[],
     audiences?: string[],
     session?: ConsentRequestSessionData,
-    remember?: boolean,
-    rememberFor?: number,
+    remember = false,
+    rememberFor = '0',
   ): Promise<{
     authorizationEndpoint: string;
     verifier: string;
   }> {
-    const request = CreateConsentVerifierRequest.fromJSON({
+    const request = CreateConsentVerifierRequest.fromJson({
       challenge: consentChallenge,
+    });
+
+    request.result = {
+      oneofKind: 'approval',
       approval: {
-        grantScopes: scopes,
-        grantedAudiences: audiences,
         session,
+        grantedAudiences: audiences ?? [],
+        grantScopes: scopes ?? [],
         remember,
         rememberFor,
       },
-    });
+    };
 
     return new Promise((resolve, reject) => {
       this.client.createConsentVerifier(request, (err, response) => {
         if (err) reject(err);
-        else resolve(response);
+        else if (!response) {
+          reject(
+            new SdkError(SdkErrorCode.SDK_CODE_1, 'Missing approved consent verifier response'),
+          );
+        } else {
+          resolve(response);
+        }
       });
     });
   }

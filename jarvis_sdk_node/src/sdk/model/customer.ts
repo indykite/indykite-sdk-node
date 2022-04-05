@@ -1,5 +1,6 @@
 import { SdkErrorCode, SdkError } from './../error';
 import { ReadCustomerResponse } from '../../grpc/indykite/config/v1beta1/config_management_api';
+import { Utils } from '../utils/utils';
 
 export class Customer {
   constructor(
@@ -24,11 +25,11 @@ export class Customer {
       response.customer.name,
       response.customer.displayName,
       response.customer.etag,
-      response.customer.description,
-      response.customer.createTime,
-      response.customer.updateTime,
-      response.customer.deleteTime,
-      response.customer.destroyTime,
+      response.customer.description?.value,
+      Utils.timestampToDate(response.customer.createTime),
+      Utils.timestampToDate(response.customer.updateTime),
+      Utils.timestampToDate(response.customer.deleteTime),
+      Utils.timestampToDate(response.customer.destroyTime),
     );
   }
 }

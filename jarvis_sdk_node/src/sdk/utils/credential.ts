@@ -1,5 +1,4 @@
-import { JWK, parseJwk } from 'jose/jwk/parse';
-import { SignJWT } from 'jose/jwt/sign';
+import { JWK, importJWK, SignJWT } from 'jose';
 import { v4, validate, version } from 'uuid';
 import { JARVIS_DEFAULT_ENDPOINT } from '../utils/consts';
 
@@ -58,7 +57,10 @@ export class ApplicationCredential {
   }
 
   private async signToken() {
-    const parsedKey = await parseJwk(this.privateKey);
+    const parsedKey = await importJWK(this.privateKey);
+    if (!this.privateKey.alg) {
+      throw new SdkError(SdkErrorCode.SDK_CODE_1, 'Missing private key algorithm');
+    }
     this.jwt = await new SignJWT({})
       .setProtectedHeader({ alg: this.privateKey.alg, kid: this.privateKey.kid })
       .setIssuedAt()

@@ -1,7 +1,9 @@
+import { JsonValue } from '@protobuf-ts/runtime';
 import * as grpcAttr from '../../grpc/indykite/identity/v1beta1/attributes';
 
 import { Value } from '../../grpc/indykite/objects/v1beta1/struct';
 import { SdkErrorCode, SdkError } from '../error';
+import { Utils } from '../utils/utils';
 
 type UnknownObject = { [k: string]: unknown };
 
@@ -18,7 +20,7 @@ export class PropertyMetaData {
     m.assuranceLevel = meta.assuranceLevel;
     m.issuer = meta.issuer;
     m.verifier = meta.verifier;
-    m.verificationTime = meta.verificationTime;
+    m.verificationTime = Utils.timestampToDate(meta.verificationTime);
     return m;
   }
 }
@@ -87,7 +89,7 @@ export class Property {
 
   private static deserializeValue(v: Value): unknown {
     if (v && v.value) {
-      switch (v.value.$case) {
+      switch (v.value.oneofKind) {
         case 'nullValue':
           return v.value.nullValue;
         case 'boolValue':
@@ -133,7 +135,7 @@ export class Property {
       p.type = property.definition.type;
       if ('objectValue' in property.value) {
         p.value = Property.deserializeValue(property.value.objectValue);
-      } else {
+      } else if ('referenceValue' in property.value) {
         p.reference = property.value.referenceValue;
       }
       if (property.meta) p.meta = PropertyMetaData.deserialize(property.meta);
@@ -206,9 +208,9 @@ export class PatchPropertiesBuilder {
   }
 
   addProperty(property: Property): PatchPropertiesBuilder {
-    let value: { objectValue: Value } | { referenceValue: string };
+    let value: { objectValue: JsonValue } | { referenceValue: string };
     if (property.value) {
-      value = { objectValue: Property.objectToValue(property.value) as Value };
+      value = { objectValue: Property.objectToValue(property.value) as JsonValue };
     } else if (property.reference) {
       value = { referenceValue: property.reference };
     } else {
@@ -216,7 +218,7 @@ export class PatchPropertiesBuilder {
     }
 
     this.operations.push(
-      grpcAttr.PropertyBatchOperation.fromJSON({
+      grpcAttr.PropertyBatchOperation.fromJson({
         add: {
           definition: {
             property: property.property,
@@ -229,6 +231,10 @@ export class PatchPropertiesBuilder {
   }
 
   updateProperty(property: Property): PatchPropertiesBuilder {
+    if (!property.id) {
+      return this;
+    }
+
     const bo = {
       replace: {
         id: property.id,
@@ -256,14 +262,18 @@ export class PatchPropertiesBuilder {
     if (updated) {
       if (value) bo.replace = Object.assign(bo.replace, value);
       if (meta) bo.replace = Object.assign(bo.replace, { meta });
-      this.operations.push(grpcAttr.PropertyBatchOperation.fromJSON(bo));
+      this.operations.push(grpcAttr.PropertyBatchOperation.fromJson(bo));
     }
     return this;
   }
 
   deleteProperty(property: Property): PatchPropertiesBuilder {
+    if (!property.id) {
+      return this;
+    }
+
     this.operations.push(
-      grpcAttr.PropertyBatchOperation.fromJSON({
+      grpcAttr.PropertyBatchOperation.fromJson({
         remove: {
           id: property.id,
         },
@@ -284,10 +294,10 @@ export class PatchResult {
 
   constructor(public index: string, public status: PatchResultStatus) {}
   static deserialize(result: grpcAttr.BatchOperationResult): PatchResult {
-    const pResult = new PatchResult(result.index, result.result?.$case || 'error');
-    if (result.result?.$case == 'success') {
+    const pResult = new PatchResult(result.index, result.result?.oneofKind || 'error');
+    if (result.result?.oneofKind == 'success') {
       pResult.propertyId = result.result.success.propertyId;
-    } else {
+    } else if (result.result?.oneofKind == 'error') {
       pResult.message = result.result?.error.message;
     }
     return pResult;

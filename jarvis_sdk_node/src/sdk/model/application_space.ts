@@ -1,5 +1,6 @@
 import { SdkErrorCode, SdkError } from '../error';
 import { ReadApplicationSpaceResponse } from '../../grpc/indykite/config/v1beta1/config_management_api';
+import { Utils } from '../utils/utils';
 
 export class ApplicationSpace {
   constructor(
@@ -28,11 +29,11 @@ export class ApplicationSpace {
       response.appSpace.displayName,
       response.appSpace.issuerId,
       response.appSpace.etag,
-      response.appSpace.description,
-      response.appSpace.createTime,
-      response.appSpace.updateTime,
-      response.appSpace.deleteTime,
-      response.appSpace.destroyTime,
+      response.appSpace.description?.value,
+      Utils.timestampToDate(response.appSpace.createTime),
+      Utils.timestampToDate(response.appSpace.updateTime),
+      Utils.timestampToDate(response.appSpace.deleteTime),
+      Utils.timestampToDate(response.appSpace.destroyTime),
     );
   }
 }

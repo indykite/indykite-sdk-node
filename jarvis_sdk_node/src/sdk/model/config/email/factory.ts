@@ -8,12 +8,12 @@ import { EmailTemplate } from './template';
 export type EmailProviderType = SendgridEmailProvider;
 
 type EmailDefinitionType =
-  | { $case: 'template'; template: EmailTemplate }
-  | { $case: 'message'; message: EmailMessage };
+  | { oneofKind: 'template'; template: EmailTemplate }
+  | { oneofKind: 'message'; message: EmailMessage };
 
 export class EmailProviderFactory {
   private static createMessageOrTemplate(def: EmailDefinitionType): EmailMessage | EmailTemplate {
-    if (def.$case === 'message') {
+    if (def.oneofKind === 'message') {
       const e = def.message as grpc.EmailMessage;
       const msg = new EmailMessage(e.to, e.subject);
       msg.bcc = e.bcc;
@@ -34,8 +34,8 @@ export class EmailProviderFactory {
       msg.cc = t.cc;
       msg.from = t.from;
       msg.replyTo = t.replyTo;
-      msg.eventPayload = t.eventPayload;
-      msg.templateVersion = t.templateVersion;
+      msg.eventPayload = t.eventPayload?.value;
+      msg.templateVersion = t.templateVersion?.value;
       return msg;
     }
   }
@@ -60,7 +60,7 @@ export class EmailProviderFactory {
       );
 
     if (provider.provider) {
-      switch (provider.provider.$case) {
+      switch (provider.provider.oneofKind) {
         case 'sendgrid': {
           const s = provider.provider.sendgrid;
           const sendgrid = new SendgridEmailProvider(name, s.apiKey, s.sandboxMode);
@@ -73,7 +73,7 @@ export class EmailProviderFactory {
         default:
           throw new SdkError(
             SdkErrorCode.SDK_CODE_1,
-            `${provider.provider.$case} provider is not support yet`,
+            `${provider.provider.oneofKind} provider is not support yet`,
           );
       }
     }

@@ -10,12 +10,11 @@ import { InterceptingCall, NextCall } from '@grpc/grpc-js/build/src/client-inter
 import { Status } from '@grpc/grpc-js/build/src/constants';
 import { readFileSync } from 'fs';
 
-import { ConfigManagementAPIClient } from '../../grpc/indykite/config/v1beta1/config_management_api';
-import { IdentityManagementAPIClient } from '../../grpc/indykite/identity/v1beta1/identity_management_api';
-
 import { SdkErrorCode, SdkError } from '../error';
 import { ApplicationCredential } from '../utils/credential';
 import { LIB_VERSION } from '../../version';
+import { IdentityManagementAPIClient } from '../../grpc/indykite/identity/v1beta1/identity_management_api.grpc-client';
+import { ConfigManagementAPIClient } from '../../grpc/indykite/config/v1beta1/config_management_api.grpc-client';
 
 type ClientType = IdentityManagementAPIClient | ConfigManagementAPIClient;
 type ClientConstructor = new (

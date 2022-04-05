@@ -2,6 +2,7 @@ import { stringify } from 'uuid';
 import { PropertyBatchOperation } from '../../grpc/indykite/identity/v1beta1/attributes';
 import * as grpcId from '../../grpc/indykite/identity/v1beta1/identity_management_api';
 import { SdkErrorCode, SdkError } from '../error';
+import { Utils } from '../utils/utils';
 import { Property, PatchPropertiesBuilder } from './property';
 
 export class DigitalTwinCore {
@@ -33,7 +34,7 @@ export class DigitalTwin extends DigitalTwinCore {
         stringify(dtResponse.digitalTwin.digitalTwin.tenantId),
         dtResponse.digitalTwin.digitalTwin.kind,
         dtResponse.digitalTwin.digitalTwin.state,
-        dtResponse.digitalTwin.createTime,
+        Utils.timestampToDate(dtResponse.digitalTwin.createTime),
       );
       dtResponse.digitalTwin.properties
         .filter((p) => p.definition && p.definition.property)
