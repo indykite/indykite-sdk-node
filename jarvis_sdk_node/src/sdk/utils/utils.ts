@@ -1,4 +1,6 @@
 import { parse, stringify } from 'uuid';
+import { Timestamp } from '../../grpc/google/protobuf/timestamp';
+import { StringValue } from '../../grpc/google/protobuf/wrappers';
 export class Utils {
   /**
    * Returns the UUIDv4 format of the id.
@@ -53,6 +55,35 @@ export class Utils {
     }
 
     return Buffer.from(uuid);
+  }
+
+  /**
+   * Returns the Date instance equal to the passed Timestamp object.
+   */
+  static timestampToDate(timestamp: Timestamp): Date;
+
+  /**
+   * Returns the Date instance equal to the passed Timestamp object. If the parameter
+   * is `undefined` then the returned value is `undefined` as well.
+   */
+  static timestampToDate(timestamp?: Timestamp): Date | undefined;
+
+  static timestampToDate(timestamp?: Timestamp): Date | undefined {
+    if (!timestamp) return;
+
+    const seconds = parseInt(timestamp.seconds) * 1000;
+    const milis = timestamp.nanos ? timestamp.nanos / 1000000 : 0;
+    return new Date(seconds + milis);
+  }
+
+  static dateToTimestamp(date: Date): Timestamp {
+    const time = date.getTime();
+    const seconds = time / 1000;
+    const nanos = (time % 1000) * 1000000;
+    return {
+      seconds: seconds.toString(),
+      nanos,
+    };
   }
 
   private static getBase64Id(id: string | Uint8Array | Buffer): string {

@@ -1,6 +1,7 @@
 import { stringify } from 'uuid';
 import * as grpcIdentity from '../../grpc/indykite/identity/v1beta1/identity_management_api';
 import * as grpcModel from '../../grpc/indykite/identity/v1beta1/model';
+import { Utils } from '../utils/utils';
 import { DigitalTwinCore } from './digitaltwin';
 
 export type ProviderType =
@@ -16,20 +17,18 @@ export class ProviderInfo {
 
   private static deserializeProviderType(type: grpcModel.ProviderType): ProviderType {
     switch (type) {
-      case grpcModel.ProviderType.PROVIDER_TYPE_EMAIL:
+      case grpcModel.ProviderType.EMAIL:
         return 'email';
-      case grpcModel.ProviderType.PROVIDER_TYPE_INVALID:
+      case grpcModel.ProviderType.INVALID:
         return 'invalid';
-      case grpcModel.ProviderType.PROVIDER_TYPE_OIDC:
+      case grpcModel.ProviderType.OIDC:
         return 'oidc';
-      case grpcModel.ProviderType.PROVIDER_TYPE_PASSWORD:
+      case grpcModel.ProviderType.PASSWORD:
         return 'password';
-      case grpcModel.ProviderType.PROVIDER_TYPE_SMS:
+      case grpcModel.ProviderType.SMS:
         return 'sms';
-      case grpcModel.ProviderType.PROVIDER_TYPE_WEBAUTHN:
+      case grpcModel.ProviderType.WEBAUTHN:
         return 'webauthn';
-      case grpcModel.ProviderType.UNRECOGNIZED:
-        return 'unrecognized';
     }
   }
 
@@ -62,9 +61,9 @@ export class TokenInfo {
     if (msgTokenInfo) {
       tokenInfo.appSpaceId = stringify(msgTokenInfo.appSpaceId);
       tokenInfo.applicationId = stringify(msgTokenInfo.applicationId);
-      tokenInfo.authenticationTime = msgTokenInfo.authenticationTime;
+      tokenInfo.authenticationTime = Utils.timestampToDate(msgTokenInfo.authenticationTime);
       tokenInfo.customerId = stringify(msgTokenInfo.customerId);
-      tokenInfo.expireTime = msgTokenInfo.expireTime;
+      tokenInfo.expireTime = Utils.timestampToDate(msgTokenInfo.expireTime);
       if (msgTokenInfo.impersonated) {
         const dt = msgTokenInfo.impersonated;
         tokenInfo.impersonated = new DigitalTwinCore(
@@ -74,7 +73,7 @@ export class TokenInfo {
           dt.state,
         );
       }
-      tokenInfo.issueTime = msgTokenInfo.issueTime;
+      tokenInfo.issueTime = Utils.timestampToDate(msgTokenInfo.issueTime);
       if (msgTokenInfo.subject) {
         const dt = msgTokenInfo.subject;
         tokenInfo.subject = new DigitalTwinCore(

@@ -1,3 +1,4 @@
+import { StringValue } from '../../../../../grpc/google/protobuf/wrappers';
 import {
   EmailServiceConfig,
   SendGridProviderConfig,
@@ -7,8 +8,8 @@ import { EmailProvider } from '../provider';
 export class SendgridEmailProvider extends EmailProvider implements SendGridProviderConfig {
   apiKey: string;
   sandboxMode: boolean;
-  ipPoolName?: string | undefined;
-  host?: string | undefined;
+  ipPoolName?: StringValue | undefined;
+  host?: StringValue | undefined;
 
   constructor(name: string, apiKey: string, sandboxMode: boolean) {
     super(name);
@@ -17,10 +18,10 @@ export class SendgridEmailProvider extends EmailProvider implements SendGridProv
   }
 
   marshal(): EmailServiceConfig {
-    const emailService = super.marshal();
+    const emailService = super.marshalWithoutProvider();
 
-    emailService.provider = {
-      $case: 'sendgrid',
+    const provider: EmailServiceConfig['provider'] = {
+      oneofKind: 'sendgrid',
       sendgrid: {
         apiKey: this.apiKey,
         sandboxMode: this.sandboxMode,
@@ -29,6 +30,9 @@ export class SendgridEmailProvider extends EmailProvider implements SendGridProv
       },
     };
 
-    return emailService;
+    return {
+      ...emailService,
+      provider,
+    };
   }
 }

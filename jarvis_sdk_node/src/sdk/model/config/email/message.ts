@@ -44,7 +44,7 @@ export class EmailMessage {
     } as grpc.EmailMessage;
     return {
       email: {
-        $case: 'message',
+        oneofKind: 'message',
         message: msg,
       },
     };

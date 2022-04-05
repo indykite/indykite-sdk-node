@@ -24,10 +24,11 @@ export class EmailProvider extends NodeConfiguration {
     super(name);
   }
 
-  marshal(): EmailServiceConfig {
-    const svc: EmailServiceConfig = {
-      defaultFromAddress: this.defaultFromAddress,
-    };
+  marshalWithoutProvider(): Omit<EmailServiceConfig, 'provider'> {
+    const svc: Partial<EmailServiceConfig> = {};
+    if (this.defaultFromAddress) {
+      svc.defaultFromAddress = this.defaultFromAddress;
+    }
     if (this.authenticationMessage)
       svc.authenticationMessage = this.authenticationMessage.marshal();
     if (this.invitationMessage) svc.invitationMessage = this.invitationMessage.marshal();

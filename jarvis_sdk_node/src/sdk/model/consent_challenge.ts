@@ -1,4 +1,5 @@
 import * as grpcId from '../../grpc/indykite/identity/v1beta1/identity_management_api';
+import { MapValue } from '../../grpc/indykite/objects/v1beta1/struct';
 import { DigitalTwin } from './digitaltwin';
 import { SdkError, SdkErrorCode } from '../error';
 import { Utils } from '../utils/utils';
@@ -22,16 +23,16 @@ export interface Audience {
 }
 
 export interface ConsentChallengeDenial {
-  error?: string;
-  errorDescription?: string;
-  errorHint?: string;
-  statusCode?: number;
+  error: string;
+  errorDescription: string;
+  errorHint: string;
+  statusCode: string;
 }
 
 export interface ConsentRequestSessionData {
-  accessToken?: { [key: string]: unknown };
-  idToken?: { [key: string]: unknown };
-  userInfo?: { [key: string]: unknown };
+  accessToken?: MapValue;
+  idToken?: MapValue;
+  userInfo?: MapValue;
 }
 
 export interface ConsentApproval {
@@ -48,7 +49,7 @@ export class ConsentChallenge {
   private denialReason: ConsentChallengeDenial | null;
   private sessionData?: ConsentRequestSessionData;
   private remember?: boolean;
-  private rememberFor?: number;
+  private rememberFor?: string;
 
   constructor(
     public challenge: string,
@@ -90,8 +91,8 @@ export class ConsentChallenge {
           response.digitalTwin.kind,
           response.digitalTwin.state,
         ),
-      response.authenticatedAt,
-      response.requestedAt,
+      Utils.timestampToDate(response.authenticatedAt),
+      Utils.timestampToDate(response.requestedAt),
     );
   }
 
@@ -139,7 +140,7 @@ export class ConsentChallenge {
     return this.remember;
   }
 
-  getRememberFor(): number | undefined {
+  getRememberFor(): string | undefined {
     return this.rememberFor;
   }
 
@@ -155,7 +156,7 @@ export class ConsentChallenge {
     this.remember = remember;
   }
 
-  setRememberFor(seconds: number): void {
+  setRememberFor(seconds: string): void {
     this.rememberFor = seconds;
   }
 
