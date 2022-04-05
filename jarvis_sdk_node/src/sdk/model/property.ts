@@ -1,5 +1,7 @@
 import { JsonValue } from '@protobuf-ts/runtime';
+import { Any } from '../../grpc/google/protobuf/any';
 import * as grpcAttr from '../../grpc/indykite/identity/v1beta1/attributes';
+import { PostalAddress } from '../../grpc/indykite/identity/v1beta1/model';
 
 import { Value } from '../../grpc/indykite/objects/v1beta1/struct';
 import { SdkErrorCode, SdkError } from '../error';
@@ -100,8 +102,12 @@ export class Property {
           return v.value.unsignedIntegerValue;
         case 'doubleValue':
           return v.value.doubleValue;
-        case 'anyValue':
+        case 'anyValue': {
+          if (Any.typeNameToUrl(PostalAddress.typeName) === v.value.anyValue.typeUrl) {
+            return PostalAddress.fromBinary(v.value.anyValue.value);
+          }
           return v.value.anyValue;
+        }
         case 'valueTime':
           return v.value.valueTime;
         case 'durationValue':
@@ -133,9 +139,9 @@ export class Property {
       const p = new Property(property.definition.property, property.id);
       p.context = property.definition.context;
       p.type = property.definition.type;
-      if ('objectValue' in property.value) {
+      if (property.value.oneofKind === 'objectValue') {
         p.value = Property.deserializeValue(property.value.objectValue);
-      } else if ('referenceValue' in property.value) {
+      } else if (property.value.oneofKind === 'referenceValue') {
         p.reference = property.value.referenceValue;
       }
       if (property.meta) p.meta = PropertyMetaData.deserialize(property.meta);
@@ -183,6 +189,14 @@ export class Property {
             },
           };
         }
+        if (PostalAddress.is(value)) {
+          return {
+            anyValue: {
+              ...value,
+              ['@type']: Any.typeNameToUrl(PostalAddress.typeName),
+            },
+          };
+        }
         const m: UnknownObject = {};
         Object.entries<unknown>(value as UnknownObject).forEach(([k, v]) => {
           m[k] = this.objectToValue(v);
@@ -218,14 +232,19 @@ export class PatchPropertiesBuilder {
     }
 
     this.operations.push(
-      grpcAttr.PropertyBatchOperation.fromJson({
-        add: {
-          definition: {
-            property: property.property,
+      grpcAttr.PropertyBatchOperation.fromJson(
+        {
+          add: {
+            definition: {
+              property: property.property,
+            },
+            ...value,
           },
-          ...value,
         },
-      }),
+        {
+          typeRegistry: [PostalAddress],
+        },
+      ),
     );
     return this;
   }
@@ -251,18 +270,20 @@ export class PatchPropertiesBuilder {
       updated = true;
     }
 
-    let meta:
-      | { primary: boolean; assuranceLevel: number; verifier: string; issuer: string }
-      | undefined;
+    let meta: { primary: boolean } | undefined;
     if (property.meta) {
-      meta = { primary: property.meta.primary, assuranceLevel: 1, verifier: '', issuer: '' };
+      meta = {
+        primary: property.meta.primary,
+      };
       updated = true;
     }
 
     if (updated) {
       if (value) bo.replace = Object.assign(bo.replace, value);
       if (meta) bo.replace = Object.assign(bo.replace, { meta });
-      this.operations.push(grpcAttr.PropertyBatchOperation.fromJson(bo));
+      this.operations.push(
+        grpcAttr.PropertyBatchOperation.fromJson(bo, { typeRegistry: [PostalAddress] }),
+      );
     }
     return this;
   }
