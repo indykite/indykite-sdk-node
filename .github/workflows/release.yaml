@@ -6,7 +6,7 @@ on:
             - published
 jobs:
   release:
-    name: Prepare Release notes
+    name: Release SDK to npmjs repository
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -36,3 +36,17 @@ jobs:
           npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: Install CU tool
+        run: npm install -g clickup-simple-cli
+      - name: Get Version
+        run: |
+          export VERSION=$(cat jarvis_sdk_node/package.json | jq -r '.version')
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+      - name: Create CU task
+        env:
+          CU_list: "186335199"
+          CU_token: ${{ secrets.CLICKUPPAT }}
+          APP_NAME: "Node.js SDK"
+          APP_TAG: "jarvis-sdk-node"
+        run: |
+          CU_tags="$APP_TAG,$VERSION" cu-cli create -d "Release of $APP_NAME available here: https://www.npmjs.com/package/@indykiteone/$APP_TAG/v/$VERSION" "$APP_NAME - release $VERSION"
