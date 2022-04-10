@@ -68,7 +68,7 @@ export class ConfigClient {
         if (err) reject(err);
         else
           try {
-            if (response?.configNode) {
+            if (response && response.configNode) {
               const ret = ConfigurationFactory.createInstance(
                 response.configNode,
               ) as EmailProviderType;
@@ -100,15 +100,17 @@ export class ConfigClient {
         if (err) reject(err);
         else
           try {
-            if (response?.id === config.id) {
-              config.etag = response?.etag;
-              config.updateTime = Utils.timestampToDate(response?.updateTime);
+            if (response && response.id === config.id) {
+              config.etag = response.etag;
+              config.updateTime = Utils.timestampToDate(response.updateTime);
               resolve(config);
             } else {
               reject(
                 new SdkError(
                   SdkErrorCode.SDK_CODE_1,
-                  `Update returned with different id: req.iq=${config.id}, res.id=${response?.id}`,
+                  `Update returned with different id: req.iq=${config.id}, res.id=${
+                    response ? response.id : 'undefined'
+                  }`,
                 ),
               );
             }
@@ -146,16 +148,22 @@ export class ConfigClient {
     return new Promise((resolve, reject) => {
       this.client.createConfigNode(req, (err, response) => {
         if (err) reject(err);
-        else
+        else {
+          if (!response) {
+            reject(new SdkError(SdkErrorCode.SDK_CODE_1, 'No auth flow response'));
+            return;
+          }
+
           try {
-            config.id = response?.id;
-            config.etag = response?.etag;
-            config.createTime = Utils.timestampToDate(response?.createTime);
-            config.updateTime = Utils.timestampToDate(response?.updateTime);
+            config.id = response.id;
+            config.etag = response.etag;
+            config.createTime = Utils.timestampToDate(response.createTime);
+            config.updateTime = Utils.timestampToDate(response.updateTime);
             resolve(config);
           } catch (err) {
             reject(err);
           }
+        }
       });
     });
   }
@@ -166,7 +174,7 @@ export class ConfigClient {
         if (err) reject(err);
         else
           try {
-            if (response?.configNode) {
+            if (response && response.configNode) {
               const ret = ConfigurationFactory.createInstance(response.configNode) as AuthFlow;
               resolve(ret);
             } else {
@@ -198,15 +206,17 @@ export class ConfigClient {
         if (err) reject(err);
         else
           try {
-            if (response?.id === config.id) {
-              config.etag = response?.etag;
-              config.updateTime = Utils.timestampToDate(response?.updateTime);
+            if (response && response.id === config.id) {
+              config.etag = response.etag;
+              config.updateTime = Utils.timestampToDate(response.updateTime);
               resolve(config);
             } else {
               reject(
                 new SdkError(
                   SdkErrorCode.SDK_CODE_1,
-                  `Update returned with different id: req.iq=${config.id}, res.id=${response?.id}`,
+                  `Update returned with different id: req.iq=${config.id}, res.id=${
+                    response ? response.id : 'undefined'
+                  }`,
                 ),
               );
             }
@@ -283,7 +293,9 @@ export class ConfigClient {
         },
         (err, response) => {
           if (err) reject(err);
-          else resolve(response?.id);
+          else if (!response)
+            reject(new SdkError(SdkErrorCode.SDK_CODE_1, 'No application space response'));
+          else resolve(response.id);
         },
       );
     });
@@ -373,7 +385,7 @@ export class ConfigClient {
         if (err) reject(err);
         else {
           try {
-            if (response?.id === appSpace.id) {
+            if (response && response.id === appSpace.id) {
               appSpace.etag = response.etag;
               appSpace.updateTime = Utils.timestampToDate(response.updateTime);
               resolve(appSpace);
@@ -381,7 +393,9 @@ export class ConfigClient {
               reject(
                 new SdkError(
                   SdkErrorCode.SDK_CODE_1,
-                  `Update returned with different id: req.iq=${appSpace.id}, res.id=${response?.id}`,
+                  `Update returned with different id: req.iq=${appSpace.id}, res.id=${
+                    response ? response.id : 'undefined'
+                  }`,
                 ),
               );
             }

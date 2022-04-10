@@ -1,4 +1,4 @@
-import { Metadata } from '@grpc/grpc-js';
+import { CallOptions, Metadata } from '@grpc/grpc-js';
 import { ServiceError, SurfaceCall } from '@grpc/grpc-js/build/src/call';
 import { parse, stringify, v4 } from 'uuid';
 import {
@@ -12,6 +12,7 @@ import {
 } from '../../grpc/indykite/identity/v1beta1/model';
 import { IdentityClient } from '../identity';
 import { TokenInfo } from '../model';
+import { Utils } from '../utils/utils';
 
 let sdk: IdentityClient;
 const applicationToken = {
@@ -41,6 +42,28 @@ describe('Introspection', () => {
     jest.resetAllMocks();
   });
 
+  it('No response', async () => {
+    const mockResponse = undefined;
+    const mockFunc = jest.fn(
+      (
+        request: TokenIntrospectRequest,
+        callback:
+          | Metadata
+          | CallOptions
+          | ((error: ServiceError | null, response?: TokenIntrospectResponse) => void),
+      ): SurfaceCall => {
+        if (typeof callback === 'function') callback(null, mockResponse);
+        return {} as SurfaceCall;
+      },
+    );
+
+    jest.spyOn(sdk['client'], 'tokenIntrospect').mockImplementation(mockFunc);
+
+    const resp = sdk.introspectToken('BAD_TOKEN');
+    expect(mockFunc).toHaveBeenCalled();
+    expect(resp).rejects.toHaveProperty('message', 'Missing token introspect response');
+  });
+
   it('Invalid token', async () => {
     const mockResponse: TokenIntrospectResponse = {
       active: false,
@@ -50,6 +73,7 @@ describe('Introspection', () => {
         request: TokenIntrospectRequest,
         callback:
           | Metadata
+          | CallOptions
           | ((error: ServiceError | null, response: TokenIntrospectResponse) => void),
       ): SurfaceCall => {
         if (typeof callback === 'function') callback(null, mockResponse);
@@ -68,27 +92,27 @@ describe('Introspection', () => {
     const dt = {
       id: parse(v4()) as Buffer,
       tenantId: parse(v4()) as Buffer,
-      kind: DigitalTwinKind.DIGITAL_TWIN_KIND_PERSON,
-      state: DigitalTwinState.DIGITAL_TWIN_STATE_ACTIVE,
+      kind: DigitalTwinKind.PERSON,
+      state: DigitalTwinState.ACTIVE,
     };
     const expectedDt = {
       id: stringify(dt.id),
       tenantId: stringify(dt.tenantId),
-      kind: DigitalTwinKind.DIGITAL_TWIN_KIND_PERSON,
-      state: DigitalTwinState.DIGITAL_TWIN_STATE_ACTIVE,
+      kind: DigitalTwinKind.PERSON,
+      state: DigitalTwinState.ACTIVE,
     };
 
     ['subject', 'impersonated'].forEach(async (dtType) => {
-      const mockResponse = TokenIntrospectResponse.fromJSON({
+      const mockResponse = TokenIntrospectResponse.fromJson({
         active: true,
         tokenInfo: {
-          appSpaceId: parse(applicationToken.appSpaceId) as Buffer,
-          applicationId: parse(v4()) as Buffer,
-          customerId: parse(v4()) as Buffer,
-          authenticationTime: new Date(),
-          expireTime: new Date(Date.now() + 1 * 3600 * 1000),
-          issueTime: new Date(),
-          providerInfo: [{ type: ProviderType.PROVIDER_TYPE_PASSWORD, issuer: 'indykite.id' }],
+          appSpaceId: Utils.uuidToBase64(applicationToken.appSpaceId),
+          applicationId: Utils.uuidToBase64(v4()),
+          customerId: Utils.uuidToBase64(v4()),
+          authenticationTime: new Date().toISOString(),
+          expireTime: new Date(Date.now() + 1 * 3600 * 1000).toISOString(),
+          issueTime: new Date().toISOString(),
+          providerInfo: [{ type: ProviderType.PASSWORD, issuer: 'indykite.id' }],
         },
       });
       if (mockResponse.tokenInfo) {
@@ -102,6 +126,7 @@ describe('Introspection', () => {
           request: TokenIntrospectRequest,
           callback:
             | Metadata
+            | CallOptions
             | ((error: ServiceError | null, response: TokenIntrospectResponse) => void),
         ): SurfaceCall => {
           if (typeof callback === 'function') callback(null, mockResponse);
@@ -115,9 +140,9 @@ describe('Introspection', () => {
           appSpaceId: applicationToken.appSpaceId,
           applicationId: stringify(mockResponse.tokenInfo.applicationId),
           customerId: stringify(mockResponse.tokenInfo.customerId),
-          authenticationTime: mockResponse.tokenInfo.authenticationTime,
-          expireTime: mockResponse.tokenInfo.expireTime,
-          issueTime: mockResponse.tokenInfo.issueTime,
+          authenticationTime: Utils.timestampToDate(mockResponse.tokenInfo.authenticationTime),
+          expireTime: Utils.timestampToDate(mockResponse.tokenInfo.expireTime),
+          issueTime: Utils.timestampToDate(mockResponse.tokenInfo.issueTime),
 
           providerInfo: [{ type: 'password', issuer: 'indykite.id' }],
         } as TokenInfo;

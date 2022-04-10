@@ -7,7 +7,7 @@ export class AuthflowFactory {
       name,
       config.sourceFormat,
       Buffer.from(config.source),
-      !!config.default?.value,
+      config.default ? config.default.value : false,
     );
     if (config.proto) flow.proto = config.proto;
     return flow;

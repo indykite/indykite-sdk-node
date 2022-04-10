@@ -29,7 +29,7 @@ export class ApplicationSpace {
       response.appSpace.displayName,
       response.appSpace.issuerId,
       response.appSpace.etag,
-      response.appSpace.description?.value,
+      response.appSpace.description ? response.appSpace.description.value : undefined,
       Utils.timestampToDate(response.appSpace.createTime),
       Utils.timestampToDate(response.appSpace.updateTime),
       Utils.timestampToDate(response.appSpace.deleteTime),

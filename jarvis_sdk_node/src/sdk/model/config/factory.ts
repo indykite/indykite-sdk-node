@@ -39,6 +39,9 @@ export class ConfigurationFactory {
         }
       }
     }
-    throw new SdkError(SdkErrorCode.SDK_CODE_1, `can't unmarshal configuration: ${config.config}`);
+    throw new SdkError(
+      SdkErrorCode.SDK_CODE_1,
+      `can't unmarshal configuration: ${config.config.oneofKind}`,
+    );
   }
 }

@@ -1,8 +1,9 @@
-import { ServiceError } from '@grpc/grpc-js';
+import { CallOptions, ServiceError } from '@grpc/grpc-js';
 import { ClientUnaryCall } from '@grpc/grpc-js/build/src/call';
 import { Status } from '@grpc/grpc-js/build/src/constants';
 import { Metadata } from '@grpc/grpc-js/build/src/metadata';
-import { parse, v4 } from 'uuid';
+import { v4 } from 'uuid';
+import { StringValue } from '../../grpc/google/protobuf/wrappers';
 import {
   CreateConfigNodeRequest,
   CreateConfigNodeResponse,
@@ -13,12 +14,17 @@ import {
   UpdateConfigNodeRequest,
   UpdateConfigNodeResponse,
 } from '../../grpc/indykite/config/v1beta1/config_management_api';
-import { AuthFlowConfig, EmailDefinition } from '../../grpc/indykite/config/v1beta1/model';
+import {
+  AuthFlowConfig,
+  EmailDefinition,
+  EmailServiceConfig,
+} from '../../grpc/indykite/config/v1beta1/model';
 import { ConfigClient } from '../config';
 import { SdkError, SdkErrorCode } from '../error';
 import { EmailMessage, SendgridEmailProvider } from '../model';
 import { AuthFlow } from '../model/config/authflow/flow';
 import { EmailTemplate } from '../model/config/email/template';
+import { Utils } from '../utils/utils';
 
 let sdk: ConfigClient;
 
@@ -74,6 +80,7 @@ describe('Invalid Token', () => {
         request: ReadConfigNodeRequest,
         callback:
           | Metadata
+          | CallOptions
           | ((error: ServiceError | null, response: ReadConfigNodeResponse) => void),
       ): ClientUnaryCall => {
         if (typeof callback === 'function') callback(mockErr, {});
@@ -90,17 +97,18 @@ describe('Invalid Token', () => {
 
 describe('Email Configuration', () => {
   it('Create Sendgrid Provider', async () => {
-    const mockResp = CreateConfigNodeResponse.fromJSON({
-      id: parse(v4()),
-      etag: new String(Date.now()),
-      createTime: new Date(),
-      updateTime: new Date(),
+    const mockResp = CreateConfigNodeResponse.fromJson({
+      id: v4(),
+      etag: new Date().toISOString(),
+      createTime: new Date().toISOString(),
+      updateTime: new Date().toISOString(),
     });
     const mockFunc = jest.fn(
       (
         request: CreateConfigNodeRequest,
         callback:
           | Metadata
+          | CallOptions
           | ((error: ServiceError | null, response: CreateConfigNodeResponse) => void),
       ): ClientUnaryCall => {
         if (typeof callback === 'function') callback(null, mockResp);
@@ -121,11 +129,11 @@ describe('Email Configuration', () => {
 
 describe('Email Configuration - Error', () => {
   it('Create Sendgrid Provider', async () => {
-    const mockResp = CreateConfigNodeResponse.fromJSON({
-      id: parse(v4()),
-      etag: new String(Date.now()),
-      createTime: new Date(),
-      updateTime: new Date(),
+    const mockResp = CreateConfigNodeResponse.fromJson({
+      id: v4(),
+      etag: new Date().toISOString(),
+      createTime: new Date().toISOString(),
+      updateTime: new Date().toISOString(),
     });
     const mockError = { message: 'Configuration error' } as ServiceError;
     const mockFunc = jest.fn(
@@ -133,6 +141,7 @@ describe('Email Configuration - Error', () => {
         request: CreateConfigNodeRequest,
         callback:
           | Metadata
+          | CallOptions
           | ((error: ServiceError | null, response: CreateConfigNodeResponse) => void),
       ): ClientUnaryCall => {
         if (typeof callback === 'function') callback(mockError, mockResp);
@@ -157,14 +166,14 @@ describe('Read, Update, Delete - Email Configuration', () => {
   const templateId = v4();
 
   it('Read - Success', async () => {
-    const mockResp = ReadConfigNodeResponse.fromJSON({
+    const mockResp = ReadConfigNodeResponse.fromJson({
       configNode: {
         name: 'Email Configuration',
         displayName: '',
         id: objectId,
-        etag: new String(Date.now()),
-        createTime: new Date(),
-        updateTime: new Date(),
+        etag: new Date().toISOString(),
+        createTime: new Date().toISOString(),
+        updateTime: new Date().toISOString(),
         customerId: v4(),
         appSpaceId: '',
         tenantId: '',
@@ -172,7 +181,7 @@ describe('Read, Update, Delete - Email Configuration', () => {
     });
     const emailMsg = {
       email: {
-        $case: 'message',
+        oneofKind: 'message',
         message: {
           to: [TEST_TO_EMAIL],
           cc: [],
@@ -198,7 +207,7 @@ describe('Read, Update, Delete - Email Configuration', () => {
     } as EmailDefinition;
     const emailTmpl = {
       email: {
-        $case: 'template',
+        oneofKind: 'template',
         template: {
           templateId,
           headers: {},
@@ -212,22 +221,24 @@ describe('Read, Update, Delete - Email Configuration', () => {
           cc: [],
           bcc: [],
           subject: 'subject',
+          eventPayload: StringValue.fromJson('Event Payload'),
+          templateVersion: StringValue.fromJson('Template Version'),
         },
       },
     } as EmailDefinition;
 
     if (mockResp.configNode)
       mockResp.configNode.config = {
-        $case: 'emailServiceConfig',
+        oneofKind: 'emailServiceConfig',
         emailServiceConfig: {
           defaultFromAddress: TEST_TO_EMAIL,
           provider: {
-            $case: 'sendgrid',
+            oneofKind: 'sendgrid',
             sendgrid: {
               apiKey,
               sandboxMode: true,
-              host: 'HOST',
-              ipPoolName: 'IP_POOL_NAME',
+              host: StringValue.create({ value: 'HOST' }),
+              ipPoolName: StringValue.create({ value: 'IP_POOL_NAME' }),
             },
           },
           invitationMessage: emailTmpl,
@@ -242,6 +253,7 @@ describe('Read, Update, Delete - Email Configuration', () => {
         request: ReadConfigNodeRequest,
         callback:
           | Metadata
+          | CallOptions
           | ((error: ServiceError | null, response: ReadConfigNodeResponse) => void),
       ): ClientUnaryCall => {
         if (typeof callback === 'function') callback(null, mockResp);
@@ -280,6 +292,8 @@ describe('Read, Update, Delete - Email Configuration', () => {
       categories: [],
       attachments: [],
       templateArn: 'Template ARN',
+      eventPayload: 'Event Payload',
+      templateVersion: 'Template Version',
     };
 
     const expectedResp = {
@@ -287,8 +301,8 @@ describe('Read, Update, Delete - Email Configuration', () => {
       name: mockResp.configNode?.name,
       apiKey,
       sandboxMode: true,
-      host: 'HOST',
-      ipPoolName: 'IP_POOL_NAME',
+      host: { value: 'HOST' },
+      ipPoolName: { value: 'IP_POOL_NAME' },
       authenticationMessage: expectedEmailMsg,
       invitationMessage: expectedEmailTmpl,
       resetPasswordMessage: expectedEmailMsg,
@@ -298,8 +312,159 @@ describe('Read, Update, Delete - Email Configuration', () => {
       customerId: mockResp.configNode?.customerId,
       appSpaceId: mockResp.configNode?.appSpaceId,
       tenantId: mockResp.configNode?.tenantId,
-      createTime: mockResp.configNode?.createTime,
-      updateTime: mockResp.configNode?.updateTime,
+      createTime: Utils.timestampToDate(mockResp.configNode?.createTime),
+      updateTime: Utils.timestampToDate(mockResp.configNode?.updateTime),
+    };
+
+    expect(mockFunc).toBeCalled();
+    expect(resp).toEqual(expectedResp);
+  });
+
+  it('Read (html) - Success', async () => {
+    const mockResp = ReadConfigNodeResponse.fromJson({
+      configNode: {
+        name: 'Email Configuration',
+        displayName: '',
+        id: objectId,
+        etag: new Date().toISOString(),
+        createTime: new Date().toISOString(),
+        updateTime: new Date().toISOString(),
+        customerId: v4(),
+        appSpaceId: '',
+        tenantId: '',
+      },
+    });
+    const emailMsg = {
+      email: {
+        oneofKind: 'message',
+        message: {
+          to: [TEST_TO_EMAIL],
+          cc: [],
+          bcc: [],
+          from: {
+            address: 'user@example.com',
+            name: 'User',
+          },
+          replyTo: {
+            address: 'anotherUser@example.com',
+            name: 'Another User',
+          },
+          subject: 'subject',
+          htmlContent: '<span>Text Email Content</span>',
+          textContent: '',
+          headers: {},
+          customArgs: {},
+          dynamicTemplateValues: {},
+          attachments: [],
+          categories: [],
+        },
+      },
+    } as EmailDefinition;
+    const emailTmpl = {
+      email: {
+        oneofKind: 'template',
+        template: {
+          templateId,
+          headers: {},
+          substitutions: {},
+          attachments: [],
+          categories: [],
+          customArgs: {},
+          dynamicTemplateValues: {},
+          templateArn: 'Template ARN',
+          to: [TEST_TO_EMAIL],
+          cc: [],
+          bcc: [],
+          subject: 'subject',
+        },
+      },
+    } as EmailDefinition;
+
+    if (mockResp.configNode)
+      mockResp.configNode.config = {
+        oneofKind: 'emailServiceConfig',
+        emailServiceConfig: {
+          defaultFromAddress: TEST_TO_EMAIL,
+          provider: {
+            oneofKind: 'sendgrid',
+            sendgrid: {
+              apiKey,
+              sandboxMode: true,
+              host: StringValue.create({ value: 'HOST' }),
+              ipPoolName: StringValue.create({ value: 'IP_POOL_NAME' }),
+            },
+          },
+          invitationMessage: emailTmpl,
+          authenticationMessage: emailMsg,
+          resetPasswordMessage: emailMsg,
+          verificationMessage: emailMsg,
+        },
+      };
+
+    const mockFunc = jest.fn(
+      (
+        request: ReadConfigNodeRequest,
+        callback:
+          | Metadata
+          | CallOptions
+          | ((error: ServiceError | null, response: ReadConfigNodeResponse) => void),
+      ): ClientUnaryCall => {
+        if (typeof callback === 'function') callback(null, mockResp);
+        return {} as ClientUnaryCall;
+      },
+    );
+    jest.spyOn(sdk['client'], 'readConfigNode').mockImplementation(mockFunc);
+
+    const resp = await sdk.readEmailServiceConfiguration(objectId);
+
+    const expectedEmailMsg = {
+      to: [TEST_TO_EMAIL],
+      subject: 'subject',
+      cc: [],
+      bcc: [],
+      htmlContent: '<span>Text Email Content</span>',
+      from: {
+        address: 'user@example.com',
+        name: 'User',
+      },
+      replyTo: {
+        address: 'anotherUser@example.com',
+        name: 'Another User',
+      },
+    };
+    const expectedEmailTmpl = {
+      templateId,
+      to: [TEST_TO_EMAIL],
+      subject: 'subject',
+      cc: [],
+      bcc: [],
+      headers: {},
+      substitutions: {},
+      customArgs: {},
+      dynamicTemplateValues: {},
+      categories: [],
+      attachments: [],
+      templateArn: 'Template ARN',
+    };
+
+    const expectedResp = {
+      id: objectId,
+      name: mockResp.configNode?.name,
+      apiKey,
+      sandboxMode: true,
+      host: { value: 'HOST' },
+      ipPoolName: { value: 'IP_POOL_NAME' },
+      authenticationMessage: expectedEmailMsg,
+      invitationMessage: expectedEmailTmpl,
+      resetPasswordMessage: expectedEmailMsg,
+      verificationMessage: expectedEmailMsg,
+      displayName: '',
+      etag: mockResp.configNode?.etag,
+      customerId: mockResp.configNode?.customerId,
+      appSpaceId: mockResp.configNode?.appSpaceId,
+      tenantId: mockResp.configNode?.tenantId,
+      createTime: Utils.timestampToDate(mockResp.configNode?.createTime),
+      updateTime: Utils.timestampToDate(mockResp.configNode?.updateTime),
     };
 
     expect(mockFunc).toBeCalled();
@@ -307,12 +472,13 @@ describe('Read, Update, Delete - Email Configuration', () => {
   });
 
   it('Read - Missing config node', async () => {
-    const mockResp = ReadConfigNodeResponse.fromJSON({});
+    const mockResp = ReadConfigNodeResponse.fromJson({});
     const mockFunc = jest.fn(
       (
         request: ReadConfigNodeRequest,
         callback:
           | Metadata
+          | CallOptions
           | ((error: ServiceError | null, response: ReadConfigNodeResponse) => void),
       ): ClientUnaryCall => {
         if (typeof callback === 'function') callback(null, mockResp);
@@ -328,14 +494,14 @@ describe('Read, Update, Delete - Email Configuration', () => {
   });
 
   it('Read - Unsupported Provider', async () => {
-    const mockResp = ReadConfigNodeResponse.fromJSON({
+    const mockResp = ReadConfigNodeResponse.fromJson({
       configNode: {
         name: 'Email Configuration',
         displayName: '',
         id: objectId,
-        etag: new String(Date.now()),
-        createTime: new Date(),
-        updateTime: new Date(),
+        etag: new Date().toISOString(),
+        createTime: new Date().toISOString(),
+        updateTime: new Date().toISOString(),
         customerId: v4(),
         appSpaceId: '',
         tenantId: '',
@@ -343,11 +509,11 @@ describe('Read, Update, Delete - Email Configuration', () => {
     });
     if (mockResp.configNode)
       mockResp.configNode.config = {
-        $case: 'emailServiceConfig',
+        oneofKind: 'emailServiceConfig',
         emailServiceConfig: {
           defaultFromAddress: TEST_TO_EMAIL,
           provider: {
-            $case: 'mailjet', // unsupported yet
+            oneofKind: 'mailjet', // unsupported yet
             mailjet: {
               apiKey,
               sandboxMode: true,
@@ -362,6 +528,7 @@ describe('Read, Update, Delete - Email Configuration', () => {
         request: ReadConfigNodeRequest,
         callback:
           | Metadata
+          | CallOptions
           | ((error: ServiceError | null, response: ReadConfigNodeResponse) => void),
       ): ClientUnaryCall => {
         if (typeof callback === 'function') callback(null, mockResp);
@@ -383,14 +550,14 @@ describe('Read, Update, Delete - Email Configuration', () => {
   });
 
   it('Read - Missing Provider', async () => {
-    const mockResp = ReadConfigNodeResponse.fromJSON({
+    const mockResp = ReadConfigNodeResponse.fromJson({
       configNode: {
         name: 'Email Configuration',
         displayName: '',
         id: objectId,
-        etag: new String(Date.now()),
-        createTime: new Date(),
-        updateTime: new Date(),
+        etag: new Date().toISOString(),
+        createTime: new Date().toISOString(),
+        updateTime: new Date().toISOString(),
         customerId: v4(),
         appSpaceId: '',
         tenantId: '',
@@ -398,10 +565,10 @@ describe('Read, Update, Delete - Email Configuration', () => {
     });
     if (mockResp.configNode)
       mockResp.configNode.config = {
-        $case: 'emailServiceConfig',
+        oneofKind: 'emailServiceConfig',
         emailServiceConfig: {
           defaultFromAddress: TEST_TO_EMAIL,
-        },
+        } as EmailServiceConfig,
       };
 
     const mockFunc = jest.fn(
@@ -409,6 +576,7 @@ describe('Read, Update, Delete - Email Configuration', () => {
         request: ReadConfigNodeRequest,
         callback:
           | Metadata
+          | CallOptions
           | ((error: ServiceError | null, response: ReadConfigNodeResponse) => void),
       ): ClientUnaryCall => {
         if (typeof callback === 'function') callback(null, mockResp);
@@ -432,10 +600,9 @@ describe('Read, Update, Delete - Email Configuration', () => {
     const sendgrid = createSendgridObject(false);
     sendgrid.id = v4();
 
-    const mockResp = UpdateConfigNodeResponse.fromJSON({
+    const mockResp = UpdateConfigNodeResponse.fromJson({
       id: sendgrid.id,
-      etag: sendgrid.etag,
-      updateTime: new Date(),
+      updateTime: new Date().toISOString(),
     });
 
     const mockFunc = jest.fn(
@@ -443,6 +610,7 @@ describe('Read, Update, Delete - Email Configuration', () => {
         request: UpdateConfigNodeRequest,
         callback:
           | Metadata
+          | CallOptions
           | ((error: ServiceError | null, response: UpdateConfigNodeResponse) => void),
       ): ClientUnaryCall => {
         if (typeof callback === 'function') callback(null, mockResp);
@@ -463,10 +631,10 @@ describe('Read, Update, Delete - Email Configuration', () => {
     sendgrid.etag = 'eTag';
     sendgrid.displayName = 'My Sendgrid';
 
-    const mockResp = UpdateConfigNodeResponse.fromJSON({
+    const mockResp = UpdateConfigNodeResponse.fromJson({
       id: sendgrid.id,
       etag: sendgrid.etag,
-      updateTime: new Date(),
+      updateTime: new Date().toISOString(),
     });
 
     const mockFunc = jest.fn(
@@ -474,6 +642,7 @@ describe('Read, Update, Delete - Email Configuration', () => {
         request: UpdateConfigNodeRequest,
         callback:
           | Metadata
+          | CallOptions
           | ((error: ServiceError | null, response: UpdateConfigNodeResponse) => void),
       ): ClientUnaryCall => {
         if (typeof callback === 'function') callback(null, mockResp);
@@ -492,10 +661,9 @@ describe('Read, Update, Delete - Email Configuration', () => {
     const sendgrid = createSendgridObject(false);
     sendgrid.id = v4();
 
-    const mockResp = UpdateConfigNodeResponse.fromJSON({
+    const mockResp = UpdateConfigNodeResponse.fromJson({
       id: 'incorrect-id',
-      etag: sendgrid.etag,
-      updateTime: new Date(),
+      updateTime: new Date().toISOString(),
     });
 
     const mockFunc = jest.fn(
@@ -503,6 +671,7 @@ describe('Read, Update, Delete - Email Configuration', () => {
         request: UpdateConfigNodeRequest,
         callback:
           | Metadata
+          | CallOptions
           | ((error: ServiceError | null, response: UpdateConfigNodeResponse) => void),
       ): ClientUnaryCall => {
         if (typeof callback === 'function') callback(null, mockResp);
@@ -530,6 +699,7 @@ describe('Read, Update, Delete - Email Configuration', () => {
         request: UpdateConfigNodeRequest,
         callback:
           | Metadata
+          | CallOptions
           | ((error: ServiceError | null, response: UpdateConfigNodeResponse) => void),
       ): ClientUnaryCall => {
         if (typeof callback === 'function') callback(mockError, {} as UpdateConfigNodeResponse);
@@ -544,16 +714,44 @@ describe('Read, Update, Delete - Email Configuration', () => {
     expect(resp).rejects.toEqual(mockError);
   });
 
+  it('Update - No response', async () => {
+    const sendgrid = createSendgridObject(false);
+    sendgrid.id = v4();
+
+    const mockFunc = jest.fn(
+      (
+        request: UpdateConfigNodeRequest,
+        callback:
+          | Metadata
+          | CallOptions
+          | ((error: ServiceError | null, response?: UpdateConfigNodeResponse) => void),
+      ): ClientUnaryCall => {
+        if (typeof callback === 'function') callback(null);
+        return {} as ClientUnaryCall;
+      },
+    );
+    jest.spyOn(sdk['client'], 'updateConfigNode').mockImplementation(mockFunc);
+
+    const resp = sdk.updateEmailServiceConfiguration(sendgrid);
+
+    expect(mockFunc).toBeCalled();
+    expect(resp).rejects.toHaveProperty(
+      'message',
+      `Update returned with different id: req.iq=${sendgrid.id}, res.id=undefined`,
+    );
+  });
+
   it('Delete - True', async () => {
     const sendgrid = createSendgridObject();
     sendgrid.id = v4();
 
-    const mockResp = DeleteConfigNodeResponse.fromJSON({});
+    const mockResp = DeleteConfigNodeResponse.fromJson({});
     const mockFunc = jest.fn(
       (
         request: DeleteConfigNodeRequest,
         callback:
           | Metadata
+          | CallOptions
           | ((error: ServiceError | null, response: DeleteConfigNodeResponse) => void),
       ): ClientUnaryCall => {
         expect(request).toEqual({ id: sendgrid.id, etag: undefined });
@@ -573,15 +771,16 @@ describe('Read, Update, Delete - Email Configuration', () => {
     sendgrid.id = v4();
     sendgrid.etag = 'eTag';
 
-    const mockResp = DeleteConfigNodeResponse.fromJSON({});
+    const mockResp = DeleteConfigNodeResponse.fromJson({});
     const mockFunc = jest.fn(
       (
         request: DeleteConfigNodeRequest,
         callback:
           | Metadata
+          | CallOptions
           | ((error: ServiceError | null, response: DeleteConfigNodeResponse) => void),
       ): ClientUnaryCall => {
-        expect(request).toEqual({ id: sendgrid.id, etag: sendgrid.etag });
+        expect(request).toEqual({ id: sendgrid.id, etag: { value: sendgrid.etag } });
         if (typeof callback === 'function') {
           callback(
             { code: Status.NOT_FOUND, details: 'no details', metadata: {} } as ServiceError,
@@ -598,7 +797,7 @@ describe('Read, Update, Delete - Email Configuration', () => {
   });
 
   it('Create auth flow configuration - Error', async () => {
-    const mockResp = CreateConfigNodeResponse.fromJSON({});
+    const mockResp = CreateConfigNodeResponse.fromJson({});
     const mockError = {
       code: Status.NOT_FOUND,
       details: 'no details',
@@ -609,6 +808,7 @@ describe('Read, Update, Delete - Email Configuration', () => {
         request: CreateConfigNodeRequest,
         callback:
           | Metadata
+          | CallOptions
           | ((error: ServiceError | null, response: CreateConfigNodeResponse) => void),
       ): ClientUnaryCall => {
         if (typeof callback === 'function') {
@@ -620,13 +820,14 @@ describe('Read, Update, Delete - Email Configuration', () => {
     jest.spyOn(sdk['client'], 'createConfigNode').mockImplementation(mockFunc);
     const resp = sdk.createAuthflowConfiguration('location', {
       marshal: () => ({} as AuthFlowConfig),
+      name: 'name',
     } as AuthFlow);
     expect(mockFunc).toBeCalled();
     expect(resp).rejects.toEqual(mockError);
   });
 
   it('Read auth flow configuration - Error', async () => {
-    const mockResp = ReadConfigNodeResponse.fromJSON({});
+    const mockResp = ReadConfigNodeResponse.fromJson({});
     const mockError = {
       code: Status.NOT_FOUND,
       details: 'no details',
@@ -637,6 +838,7 @@ describe('Read, Update, Delete - Email Configuration', () => {
         request: ReadConfigNodeRequest,
         callback:
           | Metadata
+          | CallOptions
           | ((error: ServiceError | null, response: ReadConfigNodeResponse) => void),
       ): ClientUnaryCall => {
         if (typeof callback === 'function') {
@@ -652,12 +854,13 @@ describe('Read, Update, Delete - Email Configuration', () => {
   });
 
   it('Read - Missing config node', async () => {
-    const mockResp = ReadConfigNodeResponse.fromJSON({});
+    const mockResp = ReadConfigNodeResponse.fromJson({});
     const mockFunc = jest.fn(
       (
         request: ReadConfigNodeRequest,
         callback:
           | Metadata
+          | CallOptions
           | ((error: ServiceError | null, response: ReadConfigNodeResponse) => void),
       ): ClientUnaryCall => {
         if (typeof callback === 'function') {
@@ -677,7 +880,7 @@ describe('Read, Update, Delete - Email Configuration', () => {
     const config = {} as AuthFlow;
     config.displayName = 'Display Name';
     config.marshal = () => ({} as AuthFlowConfig);
-    const mockResp = UpdateConfigNodeResponse.fromJSON({});
+    const mockResp = UpdateConfigNodeResponse.fromJson({});
     const mockError = {
       code: Status.NOT_FOUND,
       details: 'no details',
@@ -688,9 +891,10 @@ describe('Read, Update, Delete - Email Configuration', () => {
         request: UpdateConfigNodeRequest,
         callback:
           | Metadata
+          | CallOptions
           | ((error: ServiceError | null, response: UpdateConfigNodeResponse) => void),
       ): ClientUnaryCall => {
-        expect(request.displayName).toEqual(config.displayName);
+        expect(request.displayName).toEqual({ value: config.displayName });
         if (typeof callback === 'function') {
           callback(mockError, mockResp);
         }
@@ -708,7 +912,7 @@ describe('Read, Update, Delete - Email Configuration', () => {
     config.id = '42';
     config.displayName = 'Display Name';
     config.marshal = () => ({} as AuthFlowConfig);
-    const mockResp = UpdateConfigNodeResponse.fromJSON({
+    const mockResp = UpdateConfigNodeResponse.fromJson({
       id: 'incorrect-id',
     });
     const mockFunc = jest.fn(
@@ -716,9 +920,10 @@ describe('Read, Update, Delete - Email Configuration', () => {
         request: UpdateConfigNodeRequest,
         callback:
           | Metadata
+          | CallOptions
           | ((error: ServiceError | null, response: UpdateConfigNodeResponse) => void),
       ): ClientUnaryCall => {
-        expect(request.displayName).toEqual(config.displayName);
+        expect(request.displayName).toEqual({ value: config.displayName });
         if (typeof callback === 'function') {
           callback(null, mockResp);
         }
@@ -745,9 +950,9 @@ describe('Read, Update, Delete - Email Configuration', () => {
     const mockFunc = jest.fn(
       (
         request: DeleteConfigNodeRequest,
-        callback: Metadata | ((error: ServiceError | null) => void),
+        callback: Metadata | CallOptions | ((error: ServiceError | null) => void),
       ): ClientUnaryCall => {
-        expect(request.etag).toEqual(config.etag);
+        expect(request.etag).toEqual({ value: config.etag });
         if (typeof callback === 'function') {
           callback(mockError);
         }

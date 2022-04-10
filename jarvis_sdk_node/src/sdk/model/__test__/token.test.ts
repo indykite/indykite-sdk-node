@@ -4,17 +4,16 @@ import * as sdkTypes from '../../model';
 describe('token', () => {
   const issuer = 'indykite.com';
   it('provider info', () => {
-    const types = ['email', 'invalid', 'oidc', 'password', 'sms', 'webauthn', 'unrecognized'];
+    const types = ['email', 'invalid', 'oidc', 'password', 'sms', 'webauthn'];
     [
-      ProviderType.PROVIDER_TYPE_EMAIL,
-      ProviderType.PROVIDER_TYPE_INVALID,
-      ProviderType.PROVIDER_TYPE_OIDC,
-      ProviderType.PROVIDER_TYPE_PASSWORD,
-      ProviderType.PROVIDER_TYPE_SMS,
-      ProviderType.PROVIDER_TYPE_WEBAUTHN,
-      ProviderType.UNRECOGNIZED,
+      ProviderType.EMAIL,
+      ProviderType.INVALID,
+      ProviderType.OIDC,
+      ProviderType.PASSWORD,
+      ProviderType.SMS,
+      ProviderType.WEBAUTHN,
     ].forEach((type, idx) => {
-      const pInfo = ProviderInfo.fromJSON({
+      const pInfo = ProviderInfo.fromJson({
         type,
         issuer,
       });

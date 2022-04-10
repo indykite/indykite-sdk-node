@@ -1,9 +1,9 @@
 import { EventEmitter } from 'events';
-import { Metadata } from '@grpc/grpc-js';
+import { CallOptions, Metadata } from '@grpc/grpc-js';
 import { ClientReadableStream, ServiceError, SurfaceCall } from '@grpc/grpc-js/build/src/call';
 import { Status } from '@grpc/grpc-js/build/src/constants';
+import { ConfigManagementAPIClient } from '../../grpc/indykite/config/v1beta1/config_management_api.grpc-client';
 import {
-  ConfigManagementAPIClient,
   CreateApplicationSpaceResponse,
   ListApplicationSpacesResponse,
   ReadApplicationSpaceResponse,
@@ -15,6 +15,8 @@ import { ConfigClient } from '../config';
 import { ApplicationSpace } from '../model/application_space';
 import { Customer } from '../model/customer';
 import { SdkError, SdkErrorCode } from '../error';
+import { StringValue } from '../../grpc/google/protobuf/wrappers';
+import { Utils } from '../utils/utils';
 
 const userToken = 'user-token';
 
@@ -64,7 +66,7 @@ describe('New client', () => {
     it('New instance creation', async () => {
       const { SdkClient } = await import('../client/client');
       const { ConfigManagementAPIClient } = await import(
-        '../../grpc/indykite/config/v1beta1/config_management_api'
+        '../../grpc/indykite/config/v1beta1/config_management_api.grpc-client'
       );
       expect(SdkClient.createIdentityInstance).toBeCalledWith(
         ConfigManagementAPIClient,
@@ -87,7 +89,10 @@ describe('readCustomerById', () => {
         .mockImplementation(
           (
             req,
-            res: Metadata | ((err: ServiceError | null, response: ReadCustomerResponse) => void),
+            res:
+              | Metadata
+              | CallOptions
+              | ((err: ServiceError | null, response: ReadCustomerResponse) => void),
           ) => {
             if (typeof res === 'function') {
               res(null, {
@@ -109,7 +114,7 @@ describe('readCustomerById', () => {
       expect(readCustomerSpy).toBeCalledWith(
         {
           identifier: {
-            $case: 'id',
+            oneofKind: 'id',
             id: 'customer-id-request',
           },
         },
@@ -140,7 +145,10 @@ describe('readCustomerById', () => {
         .mockImplementation(
           (
             req,
-            res: Metadata | ((err: ServiceError | null, response: ReadCustomerResponse) => void),
+            res:
+              | Metadata
+              | CallOptions
+              | ((err: ServiceError | null, response: ReadCustomerResponse) => void),
           ) => {
             if (typeof res === 'function') {
               res(error, {});
@@ -157,6 +165,37 @@ describe('readCustomerById', () => {
       expect(thrownError).toBe(error);
     });
   });
+
+  describe('when no response is returned', () => {
+    let thrownError: Error;
+
+    beforeEach(async () => {
+      const sdk = await ConfigClient.createInstance(userToken);
+      jest
+        .spyOn(sdk['client'], 'readCustomer')
+        .mockImplementation(
+          (
+            req,
+            res:
+              | Metadata
+              | CallOptions
+              | ((err: ServiceError | null, response?: ReadCustomerResponse) => void),
+          ) => {
+            if (typeof res === 'function') {
+              res(null, undefined);
+            }
+            return {} as SurfaceCall;
+          },
+        );
+      sdk.readCustomerById('customer-id-request').catch((err) => {
+        thrownError = err;
+      });
+    });
+
+    it('throws an error', () => {
+      expect(thrownError.message).toBe('No customer response');
+    });
+  });
 });
 
 describe('readCustomerByName', () => {
@@ -171,7 +210,10 @@ describe('readCustomerByName', () => {
         .mockImplementation(
           (
             req,
-            res: Metadata | ((err: ServiceError | null, response: ReadCustomerResponse) => void),
+            res:
+              | Metadata
+              | CallOptions
+              | ((err: ServiceError | null, response: ReadCustomerResponse) => void),
           ) => {
             if (typeof res === 'function') {
               res(null, {
@@ -193,7 +235,7 @@ describe('readCustomerByName', () => {
       expect(readCustomerSpy).toBeCalledWith(
         {
           identifier: {
-            $case: 'name',
+            oneofKind: 'name',
             name: 'customer-name-request',
           },
         },
@@ -224,7 +266,10 @@ describe('readCustomerByName', () => {
         .mockImplementation(
           (
             req,
-            res: Metadata | ((err: ServiceError | null, response: ReadCustomerResponse) => void),
+            res:
+              | Metadata
+              | CallOptions
+              | ((err: ServiceError | null, response: ReadCustomerResponse) => void),
           ) => {
             if (typeof res === 'function') {
               res(error, {});
@@ -241,11 +286,42 @@ describe('readCustomerByName', () => {
       expect(thrownError).toBe(error);
     });
   });
+
+  describe('when no response is returned', () => {
+    let thrownError: Error;
+
+    beforeEach(async () => {
+      const sdk = await ConfigClient.createInstance(userToken);
+      jest
+        .spyOn(sdk['client'], 'readCustomer')
+        .mockImplementation(
+          (
+            req,
+            res:
+              | Metadata
+              | CallOptions
+              | ((err: ServiceError | null, response?: ReadCustomerResponse) => void),
+          ) => {
+            if (typeof res === 'function') {
+              res(null, undefined);
+            }
+            return {} as SurfaceCall;
+          },
+        );
+      sdk.readCustomerByName('customer-name-request').catch((err) => {
+        thrownError = err;
+      });
+    });
+
+    it('throws an error', () => {
+      expect(thrownError.message).toBe('No customer response');
+    });
+  });
 });
 
 describe('createApplicationSpace', () => {
   describe('when no error is returned', () => {
-    let appSpaceId: string;
+    let appSpaceId: string | undefined;
     let createApplicationSpaceSpy: jest.SpyInstance;
 
     beforeEach(async () => {
@@ -257,6 +333,7 @@ describe('createApplicationSpace', () => {
             req,
             res:
               | Metadata
+              | CallOptions
               | ((err: ServiceError | null, response: CreateApplicationSpaceResponse) => void),
           ) => {
             if (typeof res === 'function') {
@@ -281,8 +358,8 @@ describe('createApplicationSpace', () => {
         {
           customerId: 'customer-id',
           name: 'new-app-space',
-          displayName: 'New App Space',
-          description: 'App space description',
+          displayName: StringValue.create({ value: 'New App Space' }),
+          description: StringValue.create({ value: 'App space description' }),
         },
         expect.any(Function),
       );
@@ -310,6 +387,7 @@ describe('createApplicationSpace', () => {
             req,
             res:
               | Metadata
+              | CallOptions
               | ((err: ServiceError | null, response?: CreateApplicationSpaceResponse) => void),
           ) => {
             if (typeof res === 'function') {
@@ -334,6 +412,44 @@ describe('createApplicationSpace', () => {
       expect(thrownError).toBe(error);
     });
   });
+
+  describe('when no response is returned', () => {
+    let thrownError: Error;
+
+    beforeEach(async () => {
+      const sdk = await ConfigClient.createInstance(userToken);
+      jest
+        .spyOn(sdk['client'], 'createApplicationSpace')
+        .mockImplementation(
+          (
+            req,
+            res:
+              | Metadata
+              | CallOptions
+              | ((err: ServiceError | null, response?: CreateApplicationSpaceResponse) => void),
+          ) => {
+            if (typeof res === 'function') {
+              res(null);
+            }
+            return {} as SurfaceCall;
+          },
+        );
+      sdk
+        .createApplicationSpace(
+          'customer-id',
+          'new-app-space',
+          'New App Space',
+          'App space description',
+        )
+        .catch((err) => {
+          thrownError = err;
+        });
+    });
+
+    it('throws an error', () => {
+      expect(thrownError.message).toBe('No application space response');
+    });
+  });
 });
 
 describe('readApplicationSpaceById', () => {
@@ -350,6 +466,7 @@ describe('readApplicationSpaceById', () => {
             req,
             res:
               | Metadata
+              | CallOptions
               | ((err: ServiceError | null, response: ReadApplicationSpaceResponse) => void),
           ) => {
             if (typeof res === 'function') {
@@ -358,14 +475,14 @@ describe('readApplicationSpaceById', () => {
                   id: 'app-space-id',
                   customerId: 'customer-id',
                   name: 'app-space-name',
-                  description: 'App space description',
+                  description: StringValue.create({ value: 'App space description' }),
                   displayName: 'App Space Name',
                   etag: '5432',
                   issuerId: 'issuer-id',
-                  createTime: new Date(2022, 2, 15, 13, 12),
-                  updateTime: new Date(2022, 2, 15, 13, 13),
-                  deleteTime: new Date(2022, 2, 15, 13, 14),
-                  destroyTime: new Date(2022, 2, 15, 13, 15),
+                  createTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 12)),
+                  updateTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 13)),
+                  deleteTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 14)),
+                  destroyTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 15)),
                 },
               });
             }
@@ -379,7 +496,7 @@ describe('readApplicationSpaceById', () => {
       expect(readApplicationSpaceSpy).toBeCalledWith(
         {
           identifier: {
-            $case: 'id',
+            oneofKind: 'id',
             id: 'app-space-id-request',
           },
         },
@@ -419,6 +536,7 @@ describe('readApplicationSpaceById', () => {
             req,
             res:
               | Metadata
+              | CallOptions
               | ((err: ServiceError | null, response?: ReadApplicationSpaceResponse) => void),
           ) => {
             if (typeof res === 'function') {
@@ -434,6 +552,37 @@ describe('readApplicationSpaceById', () => {
 
     it('throws an error', () => {
       expect(thrownError).toBe(error);
+    });
+  });
+
+  describe('when no response is returned', () => {
+    let thrownError: Error;
+
+    beforeEach(async () => {
+      const sdk = await ConfigClient.createInstance(userToken);
+      jest
+        .spyOn(sdk['client'], 'readApplicationSpace')
+        .mockImplementation(
+          (
+            req,
+            res:
+              | Metadata
+              | CallOptions
+              | ((err: ServiceError | null, response?: ReadApplicationSpaceResponse) => void),
+          ) => {
+            if (typeof res === 'function') {
+              res(null);
+            }
+            return {} as SurfaceCall;
+          },
+        );
+      sdk.readApplicationSpaceById('app-space-id-request').catch((err) => {
+        thrownError = err;
+      });
+    });
+
+    it('throws an error', () => {
+      expect(thrownError.message).toBe('No application space response');
     });
   });
 });
@@ -452,6 +601,7 @@ describe('readApplicationSpaceByName', () => {
             req,
             res:
               | Metadata
+              | CallOptions
               | ((err: ServiceError | null, response: ReadApplicationSpaceResponse) => void),
           ) => {
             if (typeof res === 'function') {
@@ -460,14 +610,14 @@ describe('readApplicationSpaceByName', () => {
                   id: 'app-space-id',
                   customerId: 'customer-id',
                   name: 'app-space-name',
-                  description: 'App space description',
+                  description: StringValue.create({ value: 'App space description' }),
                   displayName: 'App Space Name',
                   etag: '5432',
                   issuerId: 'issuer-id',
-                  createTime: new Date(2022, 2, 15, 13, 12),
-                  updateTime: new Date(2022, 2, 15, 13, 13),
-                  deleteTime: new Date(2022, 2, 15, 13, 14),
-                  destroyTime: new Date(2022, 2, 15, 13, 15),
+                  createTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 12)),
+                  updateTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 13)),
+                  deleteTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 14)),
+                  destroyTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 15)),
                 },
               });
             }
@@ -484,7 +634,7 @@ describe('readApplicationSpaceByName', () => {
       expect(readApplicationSpaceSpy).toBeCalledWith(
         {
           identifier: {
-            $case: 'name',
+            oneofKind: 'name',
             name: {
               location: 'customer-id-request',
               name: 'app-space-name-request',
@@ -527,6 +677,7 @@ describe('readApplicationSpaceByName', () => {
             req,
             res:
               | Metadata
+              | CallOptions
               | ((err: ServiceError | null, response?: ReadApplicationSpaceResponse) => void),
           ) => {
             if (typeof res === 'function') {
@@ -546,6 +697,39 @@ describe('readApplicationSpaceByName', () => {
       expect(thrownError).toBe(error);
     });
   });
+
+  describe('when no response is returned', () => {
+    let thrownError: Error;
+
+    beforeEach(async () => {
+      const sdk = await ConfigClient.createInstance(userToken);
+      jest
+        .spyOn(sdk['client'], 'readApplicationSpace')
+        .mockImplementation(
+          (
+            req,
+            res:
+              | Metadata
+              | CallOptions
+              | ((err: ServiceError | null, response?: ReadApplicationSpaceResponse) => void),
+          ) => {
+            if (typeof res === 'function') {
+              res(null);
+            }
+            return {} as SurfaceCall;
+          },
+        );
+      sdk
+        .readApplicationSpaceByName('customer-id-request', 'app-space-name-request')
+        .catch((err) => {
+          thrownError = err;
+        });
+    });
+
+    it('throws an error', () => {
+      expect(thrownError.message).toBe('No application space response');
+    });
+  });
 });
 
 describe('readApplicationSpaceList', () => {
@@ -562,14 +746,14 @@ describe('readApplicationSpaceList', () => {
             id: 'app-space-id',
             customerId: 'customer-id',
             name: 'app-space-name',
-            description: 'App space description',
+            description: StringValue.create({ value: 'App space description' }),
             displayName: 'App Space Name',
             etag: '5432',
             issuerId: 'issuer-id',
-            createTime: new Date(2022, 2, 15, 13, 12),
-            updateTime: new Date(2022, 2, 15, 13, 13),
-            deleteTime: new Date(2022, 2, 15, 13, 14),
-            destroyTime: new Date(2022, 2, 15, 13, 15),
+            createTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 12)),
+            updateTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 13)),
+            deleteTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 14)),
+            destroyTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 15)),
           },
         }))
         .mockImplementationOnce(() => null);
@@ -650,13 +834,14 @@ describe('updateApplicationSpace', () => {
             req,
             res:
               | Metadata
+              | CallOptions
               | ((err: ServiceError | null, response: UpdateApplicationSpaceResponse) => void),
           ) => {
             if (typeof res === 'function') {
               res(null, {
                 etag: '777',
                 id: 'app-space-id',
-                updateTime: new Date(2022, 2, 15, 13, 16),
+                updateTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 16)),
               });
             }
             return {} as SurfaceCall;
@@ -678,9 +863,9 @@ describe('updateApplicationSpace', () => {
       expect(updateApplicationSpaceSpy).toBeCalledWith(
         {
           id: 'app-space-id',
-          etag: '555',
-          displayName: 'App Space',
-          description: 'Description',
+          etag: { value: '555' },
+          displayName: { value: 'App Space' },
+          description: { value: 'Description' },
         },
         expect.any(Function),
       );
@@ -713,13 +898,14 @@ describe('updateApplicationSpace', () => {
             req,
             res:
               | Metadata
+              | CallOptions
               | ((err: ServiceError | null, response: UpdateApplicationSpaceResponse) => void),
           ) => {
             if (typeof res === 'function') {
               res(null, {
                 etag: '777',
                 id: 'different-app-space-id',
-                updateTime: new Date(2022, 2, 15, 13, 16),
+                updateTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 16)),
               });
             }
             return {} as SurfaceCall;
@@ -762,7 +948,8 @@ describe('updateApplicationSpace', () => {
             req,
             res:
               | Metadata
-              | ((err: ServiceError | null, response?: ReadApplicationSpaceResponse) => void),
+              | CallOptions
+              | ((err: ServiceError | null, response?: UpdateApplicationSpaceResponse) => void),
           ) => {
             if (typeof res === 'function') {
               res(error);
@@ -788,6 +975,48 @@ describe('updateApplicationSpace', () => {
       expect(thrownError).toBe(error);
     });
   });
+
+  describe('when no response is returned', () => {
+    let thrownError: Error;
+
+    beforeEach(async () => {
+      const sdk = await ConfigClient.createInstance(userToken);
+      jest
+        .spyOn(sdk['client'], 'updateApplicationSpace')
+        .mockImplementation(
+          (
+            req,
+            res:
+              | Metadata
+              | CallOptions
+              | ((err: ServiceError | null, response?: UpdateApplicationSpaceResponse) => void),
+          ) => {
+            if (typeof res === 'function') {
+              res(null);
+            }
+            return {} as SurfaceCall;
+          },
+        );
+      const appSpace = new ApplicationSpace(
+        'app-space-id',
+        'app-space',
+        'customer-id',
+        'App Space',
+        '11',
+        '555',
+        'Description',
+      );
+      sdk.updateApplicationSpace(appSpace).catch((err) => {
+        thrownError = err;
+      });
+    });
+
+    it('throws an error', () => {
+      expect(thrownError.message).toBe(
+        'Update returned with different id: req.iq=app-space-id, res.id=undefined',
+      );
+    });
+  });
 });
 
 describe('deleteApplicationSpace', () => {
@@ -799,12 +1028,14 @@ describe('deleteApplicationSpace', () => {
       const sdk = await ConfigClient.createInstance(userToken);
       deleteApplicationSpaceSpy = jest
         .spyOn(sdk['client'], 'deleteApplicationSpace')
-        .mockImplementation((req, res: Metadata | ((err: ServiceError | null) => void)) => {
-          if (typeof res === 'function') {
-            res(null);
-          }
-          return {} as SurfaceCall;
-        });
+        .mockImplementation(
+          (req, res: Metadata | CallOptions | ((err: ServiceError | null) => void)) => {
+            if (typeof res === 'function') {
+              res(null);
+            }
+            return {} as SurfaceCall;
+          },
+        );
       const appSpace = new ApplicationSpace(
         'app-space-id',
         'app-space',
@@ -821,7 +1052,7 @@ describe('deleteApplicationSpace', () => {
       expect(deleteApplicationSpaceSpy).toBeCalledWith(
         {
           id: 'app-space-id',
-          etag: '555',
+          etag: { value: '555' },
         },
         expect.any(Function),
       );
@@ -844,12 +1075,14 @@ describe('deleteApplicationSpace', () => {
       const sdk = await ConfigClient.createInstance(userToken);
       jest
         .spyOn(sdk['client'], 'deleteApplicationSpace')
-        .mockImplementation((req, res: Metadata | ((err: ServiceError | null) => void)) => {
-          if (typeof res === 'function') {
-            res(error);
-          }
-          return {} as SurfaceCall;
-        });
+        .mockImplementation(
+          (req, res: Metadata | CallOptions | ((err: ServiceError | null) => void)) => {
+            if (typeof res === 'function') {
+              res(error);
+            }
+            return {} as SurfaceCall;
+          },
+        );
       const appSpace = new ApplicationSpace(
         'app-space-id',
         'app-space',

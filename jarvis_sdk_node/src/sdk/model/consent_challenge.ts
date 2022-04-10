@@ -26,7 +26,7 @@ export interface ConsentChallengeDenial {
   error: string;
   errorDescription: string;
   errorHint: string;
-  statusCode: string;
+  statusCode: number;
 }
 
 export interface ConsentRequestSessionData {
