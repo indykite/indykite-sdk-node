@@ -45,7 +45,7 @@ For a trial please contact [IndyKite](https://www.indykite.com/contact-us) to se
 configure the platform.
 
 ### Config 
-The IndyKite SDK reads config properties from a JSON formatted configuration file. The path to this file is provided to your application via an environment variable  Once you have the config information (After you've registered and setup an application space) then you need to create the json file (you can find an example here: [example_config.json](jarvis-proto-sdk/config_example.json)) then create the `INDYKITE_APPLICATION_CREDENTIALS_FILE` environment variable which will contain the path to the json configuration file (see the example below).
+The IndyKite SDK reads config properties from a JSON formatted configuration file. The path to this file is provided to your application via an environment variable  Once you have the config information (After you've registered and setup an application space) then you need to create the json file (you can find an example here: [example_config.json](https://github.com/indykite/jarvis-sdk-node/blob/master/jarvis_sdk_node/config_example.json)) then create the `INDYKITE_APPLICATION_CREDENTIALS_FILE` environment variable which will contain the path to the json configuration file (see the example below).
 
 ```shell
 export INDYKITE_APPLICATION_CREDENTIALS_FILE=<path_to_config_file>/config.json
