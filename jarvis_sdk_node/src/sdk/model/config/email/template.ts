@@ -42,7 +42,9 @@ export class EmailTemplate {
     } as grpc.EmailTemplate;
     tmpl.from = this.from;
     tmpl.replyTo = this.replyTo;
-    tmpl.eventPayload = StringValue.create({ value: this.eventPayload });
+    tmpl.eventPayload = this.eventPayload
+      ? StringValue.create({ value: this.eventPayload })
+      : undefined;
 
     return {
       email: {

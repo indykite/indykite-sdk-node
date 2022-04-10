@@ -39,8 +39,9 @@ import { IdentityClient } from '../identity';
 import * as sdkTypes from '../model';
 import { Status } from '@grpc/grpc-js/build/src/constants';
 import { Audience, PatchResult } from '../model';
-import { Metadata } from '@grpc/grpc-js';
+import { CallOptions, Metadata } from '@grpc/grpc-js';
 import { Utils } from '../utils/utils';
+import { JsonObject } from '@protobuf-ts/runtime';
 
 let sdk: IdentityClient;
 const applicationToken = {
@@ -80,6 +81,27 @@ describe('New client', () => {
 });
 
 describe('Digital Twin', () => {
+  it('Read - No response', async () => {
+    const mockFunc = jest.fn(
+      (
+        request: GetDigitalTwinRequest,
+        callback:
+          | Metadata
+          | CallOptions
+          | ((error: ServiceError | null, response?: GetDigitalTwinResponse) => void),
+      ): SurfaceCall => {
+        if (typeof callback === 'function') callback(null, undefined);
+        return {} as SurfaceCall;
+      },
+    );
+
+    jest.spyOn(sdk['client'], 'getDigitalTwin').mockImplementation(mockFunc);
+
+    const resp = sdk.getDigitalTwinByToken(userToken, []);
+    expect(mockFunc).toHaveBeenCalled();
+    expect(resp).rejects.toHaveProperty('message', 'Missing digital twin response');
+  });
+
   it('Read - Too short token & bad missing DT', async () => {
     const mockResponse: GetDigitalTwinResponse = {
       digitalTwin: {} as DigitalEntity,
@@ -90,6 +112,7 @@ describe('Digital Twin', () => {
         request: GetDigitalTwinRequest,
         callback:
           | Metadata
+          | CallOptions
           | ((error: ServiceError | null, response: GetDigitalTwinResponse) => void),
       ): SurfaceCall => {
         if (typeof callback === 'function') callback(null, mockResponse);
@@ -117,26 +140,26 @@ describe('Digital Twin', () => {
 
   it('Read - Success', async () => {
     const dt = {
-      id: parse(v4()),
-      tenantId: parse(v4()),
-      kind: DigitalTwinKind.DIGITAL_TWIN_KIND_PERSON,
-      state: DigitalTwinState.DIGITAL_TWIN_STATE_ACTIVE,
+      id: Utils.uuidToBuffer(v4()),
+      tenantId: Utils.uuidToBuffer(v4()),
+      kind: DigitalTwinKind.PERSON,
+      state: DigitalTwinState.ACTIVE,
     } as DigitalTwin;
     const emailProperty = {
       id: v4(),
       definition: { property: 'email' },
       meta: {
-        assuranceLevel: AssuranceLevel.ASSURANCE_LEVEL_LOW,
+        assuranceLevel: AssuranceLevel.LOW,
         issuer: 'indykite.id',
         primary: true,
         verifier: 'indykite.id',
-        verificationTime: new Date(),
+        verificationTime: Utils.dateToTimestamp(new Date()),
       },
       value: {
-        $case: 'objectValue',
+        oneofKind: 'objectValue',
         objectValue: {
           value: {
-            $case: 'stringValue',
+            oneofKind: 'stringValue',
             stringValue: 'test+email@indykite.com',
           },
         },
@@ -145,20 +168,20 @@ describe('Digital Twin', () => {
     const mockResponse: GetDigitalTwinResponse = {
       digitalTwin: {
         properties: [emailProperty],
-        createTime: new Date(),
+        createTime: Utils.dateToTimestamp(new Date()),
         digitalTwin: dt,
       } as DigitalEntity,
       tokenInfo: {
-        customerId: parse(v4()),
-        appSpaceId: parse(v4()),
-        applicationId: parse(v4()),
-        authenticationTime: new Date(),
-        expireTime: new Date(Date.now() + 20 * 3600 * 1000),
-        issueTime: new Date(),
+        customerId: Utils.uuidToBuffer(v4()),
+        appSpaceId: Utils.uuidToBuffer(v4()),
+        applicationId: Utils.uuidToBuffer(v4()),
+        authenticationTime: Utils.dateToTimestamp(new Date()),
+        expireTime: Utils.dateToTimestamp(new Date(Date.now() + 20 * 3600 * 1000)),
+        issueTime: Utils.dateToTimestamp(new Date()),
         providerInfo: [
           {
             issuer: 'indykite.id',
-            type: ProviderType.PROVIDER_TYPE_PASSWORD,
+            type: ProviderType.PASSWORD,
           },
         ],
         subject: dt,
@@ -169,6 +192,7 @@ describe('Digital Twin', () => {
         request: GetDigitalTwinRequest,
         callback:
           | Metadata
+          | CallOptions
           | ((error: ServiceError | null, response: GetDigitalTwinResponse) => void),
       ): SurfaceCall => {
         if (typeof callback === 'function') callback(null, mockResponse);
@@ -183,13 +207,16 @@ describe('Digital Twin', () => {
       stringify(dt.tenantId),
       dt.kind,
       dt.state,
-      mockResponse.digitalTwin?.createTime,
+      Utils.timestampToDate(mockResponse.digitalTwin?.createTime),
     );
     const email = new sdkTypes.Property(
-      emailProperty.definition.property,
+      emailProperty.definition?.property ?? '',
       emailProperty.id,
     ).withValue(emailProperty.value.objectValue.value.stringValue);
-    email.meta = emailProperty.meta as sdkTypes.PropertyMetaData;
+    email.meta = {
+      ...emailProperty.meta,
+      verificationTime: Utils.timestampToDate(emailProperty.meta.verificationTime),
+    };
 
     expectedDT.addProperty(email);
 
@@ -203,7 +230,7 @@ describe('Digital Twin', () => {
     expect(resp.digitalTwin?.getProperty('undefined')).toBeUndefined();
     expect(resp.digitalTwin?.getProperties('email')).toHaveLength(1);
 
-    resp = await sdk.getDigitalTwin(dt.id, dt.tenantId, ['email']);
+    resp = await sdk.getDigitalTwin(Buffer.from(dt.id), Buffer.from(dt.tenantId), ['email']);
     expect(mockFunc).toBeCalledTimes(2);
     expect(resp).toHaveProperty('tokenInfo');
     expect(resp).toHaveProperty('digitalTwin');
@@ -220,10 +247,10 @@ describe('Digital Twin', () => {
 
   it('Read - Failure', async () => {
     const dt = {
-      id: parse(v4()),
-      tenantId: parse(v4()),
-      kind: DigitalTwinKind.DIGITAL_TWIN_KIND_PERSON,
-      state: DigitalTwinState.DIGITAL_TWIN_STATE_ACTIVE,
+      id: Utils.uuidToBuffer(v4()),
+      tenantId: Utils.uuidToBuffer(v4()),
+      kind: DigitalTwinKind.PERSON,
+      state: DigitalTwinState.ACTIVE,
     } as DigitalTwin;
     const mockResponse: GetDigitalTwinResponse = {};
     const mockErr = { code: Status.NOT_FOUND, details: 'DETAILS', metadata: {} } as ServiceError;
@@ -232,6 +259,7 @@ describe('Digital Twin', () => {
         request: GetDigitalTwinRequest,
         callback:
           | Metadata
+          | CallOptions
           | ((error: ServiceError | null, response: GetDigitalTwinResponse) => void),
       ): SurfaceCall => {
         if (typeof callback === 'function') callback(mockErr, mockResponse);
@@ -245,7 +273,7 @@ describe('Digital Twin', () => {
     expect(mockFunc).toHaveBeenCalled();
     expect(resp).rejects.toEqual(mockErr);
 
-    resp = sdk.getDigitalTwin(dt.id, dt.tenantId, ['email']);
+    resp = sdk.getDigitalTwin(Buffer.from(dt.id), Buffer.from(dt.tenantId), ['email']);
     expect(mockFunc).toBeCalledTimes(2);
     expect(resp).rejects.toEqual(mockErr);
   });
@@ -258,6 +286,7 @@ describe('Digital Twin', () => {
         request: TokenIntrospectRequest,
         callback:
           | Metadata
+          | CallOptions
           | ((error: ServiceError | null, response: TokenIntrospectResponse) => void),
       ): SurfaceCall => {
         if (typeof callback === 'function') callback(mockErr, mockResponse);
@@ -284,7 +313,7 @@ describe('Digital Twin', () => {
         'test+to@indykite.com',
       );
       email.meta = {
-        assuranceLevel: AssuranceLevel.ASSURANCE_LEVEL_LOW,
+        assuranceLevel: AssuranceLevel.LOW,
         issuer: 'indykite.id',
         primary: true,
       };
@@ -312,7 +341,7 @@ describe('Digital Twin', () => {
         } as BatchOperationResult;
         if (ids[i] != null) {
           bop.result = {
-            $case: 'success',
+            oneofKind: 'success',
             success: {
               propertyId: ids[i] as string,
             },
@@ -326,6 +355,7 @@ describe('Digital Twin', () => {
           request: PatchDigitalTwinRequest,
           callback:
             | Metadata
+            | CallOptions
             | ((error: ServiceError | null, response: PatchDigitalTwinResponse) => void),
         ): SurfaceCall => {
           if (typeof callback === 'function') callback(null, mockResp);
@@ -352,6 +382,7 @@ describe('Digital Twin', () => {
         request: PatchDigitalTwinRequest,
         callback:
           | Metadata
+          | CallOptions
           | ((error: ServiceError | null, response: PatchDigitalTwinResponse) => void),
       ): SurfaceCall => {
         if (typeof callback === 'function') callback(null, {} as PatchDigitalTwinResponse);
@@ -387,6 +418,7 @@ describe('Digital Twin', () => {
           request: PatchDigitalTwinRequest,
           callback:
             | Metadata
+            | CallOptions
             | ((error: ServiceError | null, response: PatchDigitalTwinResponse) => void),
         ): SurfaceCall => {
           if (typeof callback === 'function') callback(clb.svcerr, clb.res);
@@ -426,6 +458,7 @@ describe('Digital Twin', () => {
           request: StartDigitalTwinEmailVerificationRequest,
           callback:
             | Metadata
+            | CallOptions
             | ((
                 error: ServiceError | null,
                 response: StartDigitalTwinEmailVerificationResponse,
@@ -454,6 +487,7 @@ describe('Digital Twin', () => {
         request: VerifyDigitalTwinEmailRequest,
         callback:
           | Metadata
+          | CallOptions
           | ((error: ServiceError | null, response: VerifyDigitalTwinEmailResponse) => void),
       ): SurfaceCall => {
         if (typeof callback === 'function') callback(null, {});
@@ -473,12 +507,12 @@ describe('Digital Twin', () => {
   it('verify digital twin - success', () => {
     const dtId = v4();
     const tId = v4();
-    const mockResp = VerifyDigitalTwinEmailResponse.fromJSON({
+    const mockResp = VerifyDigitalTwinEmailResponse.fromJson({
       digitalTwin: {
-        id: parse(dtId),
-        tenantId: parse(tId),
-        kind: DigitalTwinKind.DIGITAL_TWIN_KIND_PERSON,
-        state: DigitalTwinState.DIGITAL_TWIN_STATE_ACTIVE,
+        id: Utils.uuidToBase64(dtId),
+        tenantId: Utils.uuidToBase64(tId),
+        kind: DigitalTwinKind.PERSON,
+        state: DigitalTwinState.ACTIVE,
       },
     });
     const mockFunc = jest.fn(
@@ -486,6 +520,7 @@ describe('Digital Twin', () => {
         request: VerifyDigitalTwinEmailRequest,
         callback:
           | Metadata
+          | CallOptions
           | ((error: ServiceError | null, response: VerifyDigitalTwinEmailResponse) => void),
       ): SurfaceCall => {
         if (typeof callback === 'function') callback(null, mockResp);
@@ -526,6 +561,7 @@ describe('Digital Twin', () => {
           request: VerifyDigitalTwinEmailRequest,
           callback:
             | Metadata
+            | CallOptions
             | ((error: ServiceError | null, response: VerifyDigitalTwinEmailResponse) => void),
         ): SurfaceCall => {
           if (typeof callback === 'function') callback(clb.svcerr, clb.res);
@@ -559,6 +595,7 @@ describe('Digital Twin', () => {
           request: StartForgottenPasswordFlowRequest,
           callback:
             | Metadata
+            | CallOptions
             | ((error: ServiceError | null, response: StartForgottenPasswordFlowResponse) => void),
         ): SurfaceCall => {
           if (typeof callback === 'function') callback(clb.err, clb.res);
@@ -580,6 +617,7 @@ describe('Digital Twin', () => {
         request: ChangePasswordRequest,
         callback:
           | Metadata
+          | CallOptions
           | ((error: ServiceError | null, response: ChangePasswordResponse) => void),
       ): SurfaceCall => {
         if (typeof callback === 'function') callback(null, {});
@@ -618,6 +656,7 @@ describe('Digital Twin', () => {
           request: ChangePasswordRequest,
           callback:
             | Metadata
+            | CallOptions
             | ((error: ServiceError | null, response: ChangePasswordResponse) => void),
         ): SurfaceCall => {
           if (typeof callback === 'function') callback(clb.err, clb.res);
@@ -640,6 +679,7 @@ describe('Digital Twin', () => {
         request: ChangePasswordRequest,
         callback:
           | Metadata
+          | CallOptions
           | ((error: ServiceError | null, response: ChangePasswordResponse) => void),
       ): SurfaceCall => {
         if (typeof callback === 'function') callback(error, {});
@@ -678,6 +718,7 @@ describe('Digital Twin', () => {
           request: ChangePasswordRequest,
           callback:
             | Metadata
+            | CallOptions
             | ((error: ServiceError | null, response: ChangePasswordResponse) => void),
         ): SurfaceCall => {
           if (typeof callback === 'function') callback(clb.err, clb.res);
@@ -699,6 +740,7 @@ describe('Digital Twin', () => {
         request: ChangePasswordRequest,
         callback:
           | Metadata
+          | CallOptions
           | ((error: ServiceError | null, response: ChangePasswordResponse) => void),
       ): SurfaceCall => {
         if (typeof callback === 'function') callback(null, {});
@@ -730,6 +772,7 @@ describe('Digital Twin', () => {
           request: ChangePasswordRequest,
           callback:
             | Metadata
+            | CallOptions
             | ((error: ServiceError | null, response: ChangePasswordResponse) => void),
         ): SurfaceCall => {
           if (typeof callback === 'function') callback(clb.err, clb.res);
@@ -756,6 +799,7 @@ describe('Digital Twin', () => {
         request: DeleteDigitalTwinRequest,
         callback:
           | Metadata
+          | CallOptions
           | ((error: ServiceError | null, response: DeleteDigitalTwinResponse) => void),
       ): SurfaceCall => {
         if (typeof callback === 'function') callback(null, {});
@@ -774,12 +818,12 @@ describe('Digital Twin', () => {
   it('delete digital twin - true / false', () => {
     const dtId = v4();
     const tId = v4();
-    const mockResp = DeleteDigitalTwinResponse.fromJSON({
+    const mockResp = DeleteDigitalTwinResponse.fromJson({
       digitalTwin: {
-        id: parse(dtId),
-        tenantId: parse(tId),
-        kind: DigitalTwinKind.DIGITAL_TWIN_KIND_PERSON,
-        state: DigitalTwinState.DIGITAL_TWIN_STATE_ACTIVE,
+        id: Utils.uuidToBase64(dtId),
+        tenantId: Utils.uuidToBase64(tId),
+        kind: DigitalTwinKind.PERSON,
+        state: DigitalTwinState.ACTIVE,
       },
     });
     const clbs = [
@@ -809,6 +853,7 @@ describe('Digital Twin', () => {
           request: DeleteDigitalTwinRequest,
           callback:
             | Metadata
+            | CallOptions
             | ((error: ServiceError | null, response: DeleteDigitalTwinResponse) => void),
         ): SurfaceCall => {
           if (typeof callback === 'function') callback(clb.svcerr, clb.res);
@@ -839,11 +884,11 @@ describe('Digital Twin', () => {
     const acrs = [] as string[];
     const subject = 'Subject';
     const skip = false;
-    const mockResp = CheckConsentChallengeResponse.fromJSON({
+    const mockResp = CheckConsentChallengeResponse.fromJson({
       acrs,
-      appSpaceId: Utils.uuidToBuffer(appSpace),
-      clientId,
-      audiences,
+      appSpaceId: Utils.uuidToBase64(appSpace),
+      clientId: clientId,
+      audiences: audiences as unknown as JsonObject[],
       scopes,
       requestUrl,
       skip,
@@ -880,6 +925,7 @@ describe('Digital Twin', () => {
           request: CheckConsentChallengeRequest,
           callback:
             | Metadata
+            | CallOptions
             | ((error: ServiceError | null, response: CheckConsentChallengeResponse) => void),
         ): SurfaceCall => {
           if (typeof callback === 'function') callback(clb.svcerr, clb.res);
@@ -893,6 +939,28 @@ describe('Digital Twin', () => {
       if (clb.expected) expect(resp).resolves.toEqual(clb.expected);
       else expect(resp).rejects.toEqual(clb.err);
     });
+  });
+
+  it('check consent challenge - no response', () => {
+    const challengeToken = 'challenge_token';
+
+    const mockFunc = jest.fn(
+      (
+        request: CheckConsentChallengeRequest,
+        callback:
+          | Metadata
+          | CallOptions
+          | ((error: ServiceError | null, response?: CheckConsentChallengeResponse) => void),
+      ): SurfaceCall => {
+        if (typeof callback === 'function') callback(null, undefined);
+        return {} as SurfaceCall;
+      },
+    );
+    jest.spyOn(sdk['client'], 'checkConsentChallenge').mockImplementation(mockFunc);
+
+    const resp = sdk.checkConsentChallenge(challengeToken);
+    expect(mockFunc).toBeCalled();
+    expect(resp).rejects.toHaveProperty('message', 'Missing check consent challenge response');
   });
 
   it('create consent verifier', () => {
@@ -919,8 +987,13 @@ describe('Digital Twin', () => {
       'Subject',
       false,
     );
-    deniedConsentChallenge.deny({ error: 'access_denied' });
-    const mockResp = CreateConsentVerifierResponse.fromJSON({
+    deniedConsentChallenge.deny({
+      error: 'access_denied',
+      errorDescription: 'the reason why is the access denied',
+      errorHint: '',
+      statusCode: 403,
+    });
+    const mockResp = CreateConsentVerifierResponse.fromJson({
       verifier: 'verifier_token',
       authorizationEndpoint: 'http://www.auth.com',
     });
@@ -948,6 +1021,7 @@ describe('Digital Twin', () => {
           request: CreateConsentVerifierRequest,
           callback:
             | Metadata
+            | CallOptions
             | ((error: ServiceError | null, response: CreateConsentVerifierResponse) => void),
         ): SurfaceCall => {
           if (typeof callback === 'function') callback(clb.svcerr, clb.res);
@@ -966,5 +1040,62 @@ describe('Digital Twin', () => {
       if (clb.expected) expect(deniedResp).resolves.toEqual(clb.expected);
       else expect(deniedResp).rejects.toEqual(clb.err);
     });
+  });
+
+  it('create consent verifier - no response', () => {
+    const challengeToken = 'challenge_token';
+    const consentChallenge = new sdkTypes.ConsentChallenge(
+      challengeToken,
+      v4(),
+      [{ name: 'openid', description: '', displayName: '', required: false }],
+      'http://www.example.com/oauth',
+      [],
+      v4(),
+      [],
+      'Subject',
+      false,
+    );
+    const deniedConsentChallenge = new sdkTypes.ConsentChallenge(
+      challengeToken,
+      v4(),
+      [{ name: 'openid', description: '', displayName: '', required: false }],
+      'http://www.example.com/oauth',
+      [],
+      v4(),
+      [],
+      'Subject',
+      false,
+    );
+    deniedConsentChallenge.deny({
+      error: 'access_denied',
+      errorDescription: 'the reason why is the access denied',
+      errorHint: '',
+      statusCode: 403,
+    });
+
+    const mockFunc = jest.fn(
+      (
+        request: CreateConsentVerifierRequest,
+        callback:
+          | Metadata
+          | CallOptions
+          | ((error: ServiceError | null, response?: CreateConsentVerifierResponse) => void),
+      ): SurfaceCall => {
+        if (typeof callback === 'function') callback(null);
+        return {} as SurfaceCall;
+      },
+    );
+    jest.spyOn(sdk['client'], 'createConsentVerifier').mockImplementation(mockFunc);
+
+    const resp = sdk.createConsentVerifier(consentChallenge);
+    expect(mockFunc).toBeCalled();
+    expect(resp).rejects.toHaveProperty('message', 'Missing approved consent verifier response');
+
+    const deniedResp = sdk.createConsentVerifier(deniedConsentChallenge);
+    expect(mockFunc).toBeCalled();
+    expect(deniedResp).rejects.toHaveProperty(
+      'message',
+      'Missing denied consent verifier response',
+    );
   });
 });

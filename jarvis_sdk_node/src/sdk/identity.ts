@@ -92,11 +92,11 @@ export class IdentityClient {
               digitalTwin?: sdkTypes.DigitalTwin;
               tokenInfo?: sdkTypes.TokenInfo;
             } = {};
-            if (response?.digitalTwin) {
+            if (response && response.digitalTwin) {
               dtResponse.digitalTwin = sdkTypes.DigitalTwin.deserialize(response);
             }
 
-            if (response?.tokenInfo) {
+            if (response && response.tokenInfo) {
               dtResponse.tokenInfo = sdkTypes.TokenInfo.deserialize(
                 response.tokenInfo as IdentityTokenInfo,
               );
@@ -287,7 +287,7 @@ export class IdentityClient {
     return new Promise<boolean>((resolve, reject) => {
       this.client.changePassword(request, (err, response) => {
         if (err) reject(err);
-        else if (response?.error) reject(response.error);
+        else if (response && response.error) reject(response.error);
         else resolve(true);
       });
     });
@@ -327,7 +327,7 @@ export class IdentityClient {
     return new Promise<boolean>((resolve, reject) => {
       this.client.changePassword(request, (err, response) => {
         if (err) reject(err);
-        else if (response?.error) reject(response.error);
+        else if (response && response.error) reject(response.error);
         else resolve(true);
       });
     });
@@ -521,7 +521,10 @@ export class IdentityClient {
 
     request.result = {
       oneofKind: 'denial',
-      denial: denialReason,
+      denial: {
+        ...denialReason,
+        statusCode: denialReason.statusCode.toString(),
+      },
     };
 
     return new Promise((resolve, reject) => {

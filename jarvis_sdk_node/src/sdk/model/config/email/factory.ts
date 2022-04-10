@@ -34,8 +34,8 @@ export class EmailProviderFactory {
       msg.cc = t.cc;
       msg.from = t.from;
       msg.replyTo = t.replyTo;
-      msg.eventPayload = t.eventPayload?.value;
-      msg.templateVersion = t.templateVersion?.value;
+      msg.eventPayload = t.eventPayload ? t.eventPayload.value : undefined;
+      msg.templateVersion = t.templateVersion ? t.templateVersion.value : undefined;
       return msg;
     }
   }

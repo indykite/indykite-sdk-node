@@ -1,4 +1,6 @@
+import { StringValue } from '../../../grpc/google/protobuf/wrappers';
 import { SdkError, SdkErrorCode } from '../../error';
+import { Utils } from '../../utils/utils';
 import { Customer } from '../customer';
 
 describe('deserialize', () => {
@@ -12,11 +14,11 @@ describe('deserialize', () => {
           displayName: 'Display Name',
           etag: 'etag',
           name: 'customer-name',
-          description: 'Lorem ipsum',
-          createTime: new Date(2022, 2, 17, 12, 17),
-          updateTime: new Date(2022, 2, 17, 12, 18),
-          deleteTime: new Date(2022, 2, 17, 12, 19),
-          destroyTime: new Date(2022, 2, 17, 12, 20),
+          description: StringValue.create({ value: 'Lorem ipsum' }),
+          createTime: Utils.dateToTimestamp(new Date(2022, 2, 17, 12, 17)),
+          updateTime: Utils.dateToTimestamp(new Date(2022, 2, 17, 12, 18)),
+          deleteTime: Utils.dateToTimestamp(new Date(2022, 2, 17, 12, 19)),
+          destroyTime: Utils.dateToTimestamp(new Date(2022, 2, 17, 12, 20)),
         },
       });
     });

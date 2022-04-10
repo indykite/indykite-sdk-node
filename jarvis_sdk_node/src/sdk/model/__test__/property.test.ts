@@ -1,19 +1,18 @@
+import { JsonValue } from '@protobuf-ts/runtime';
 import { v4 } from 'uuid';
 import { Any } from '../../../grpc/google/protobuf/any';
-import { Duration } from '../../../grpc/google/protobuf/duration';
-import { NullValue } from '../../../grpc/google/protobuf/struct';
 import { LatLng } from '../../../grpc/google/type/latlng';
 import * as grpcAttr from '../../../grpc/indykite/identity/v1beta1/attributes';
-import { Identifier } from '../../../grpc/indykite/objects/v1beta1/id';
+import { PostalAddress } from '../../../grpc/indykite/identity/v1beta1/model';
 import { Value } from '../../../grpc/indykite/objects/v1beta1/struct';
 import { SdkError, SdkErrorCode } from '../../error';
 import { PatchPropertiesBuilder, Property } from '../property';
 
 describe('properties', () => {
   it('deserialize - error', () => {
-    const p1 = grpcAttr.Property.fromJSON({
+    const p1 = grpcAttr.Property.fromJson({
       id: v4(),
-      value: { $case: 'referenceValue', referenceValue: 'some_reference' },
+      referenceValue: 'some_reference',
     });
     const mockErr = new SdkError(
       SdkErrorCode.SDK_CODE_1,
@@ -29,25 +28,33 @@ describe('properties', () => {
 
   it('deserialize values', () => {
     [
-      { nullValue: NullValue.NULL_VALUE },
+      { nullValue: null },
       { boolValue: true },
-      { value: { integerValue: 10 } },
+      { integerValue: 10 },
       { unsignedIntegerValue: 10 },
       { doubleValue: 1.2 },
-      { anyValue: Any.fromJSON({}) },
-      { valueTime: new Date() },
+      { anyValue: Any.fromJson({}) },
       {
-        durationValue: Duration.fromJSON({ seconds: 20 }),
+        anyValue: {
+          ...PostalAddress.fromJson({
+            addressCountry: 'Slovakia',
+          }),
+          ['@type']: Any.typeNameToUrl(PostalAddress.typeName),
+        },
+      },
+      { valueTime: new Date().toISOString() },
+      {
+        durationValue: '20s',
       },
       {
-        identifierValue: Identifier.fromJSON({
+        identifierValue: {
           idString: 'string_id',
-        }),
+        },
       },
       { stringValue: 'string' },
-      { bytesValue: Buffer.from(v4()) },
+      { bytesValue: Buffer.from(v4()).toString('base64') },
       {
-        geoPointValue: LatLng.fromJSON({
+        geoPointValue: LatLng.fromJson({
           latitude: 45,
           longitude: -45,
         }),
@@ -63,18 +70,20 @@ describe('properties', () => {
         },
       },
     ].forEach((valueType) => {
-      const p1 = grpcAttr.Property.fromJSON({
+      const p1 = grpcAttr.Property.fromJson({
         id: v4(),
         meta: {
-          priority: true,
+          primary: true,
         },
         definition: {
           property: 'property',
         },
       });
       p1.value = {
-        $case: 'objectValue',
-        objectValue: Value.fromJSON(valueType),
+        oneofKind: 'objectValue',
+        objectValue: Value.fromJson(valueType as unknown as JsonValue, {
+          typeRegistry: [PostalAddress],
+        }),
       };
       const sdkProp = Property.deserialize(p1);
       expect(sdkProp.value).not.toBeNull();
@@ -82,7 +91,7 @@ describe('properties', () => {
   });
 
   it('value & reference', () => {
-    const prop = grpcAttr.Property.fromJSON({
+    const prop = grpcAttr.Property.fromJson({
       id: v4(),
       definition: {
         property: 'email',
@@ -90,7 +99,7 @@ describe('properties', () => {
 
       meta: { primary: true },
     });
-    prop.value = { $case: 'referenceValue', referenceValue: 'some_reference' };
+    prop.value = { oneofKind: 'referenceValue', referenceValue: 'some_reference' };
 
     const sdkProp = Property.deserialize(prop);
     sdkProp.withValue('test+email@indykite.com');
@@ -109,14 +118,14 @@ describe('properties', () => {
 
     const builder = PatchPropertiesBuilder.newBuilder().updateProperty(sdkProp);
     expect(builder.operations).toHaveLength(1);
-    let bo = builder.operations.find((bo) => bo.operation?.$case === 'replace');
+    let bo = builder.operations.find((bo) => bo.operation?.oneofKind === 'replace');
     expect(bo).not.toBeNull();
 
     builder.addProperty(
       new Property('firstName', v4()).withMetadata(true).withReference('some_reference'),
     );
     expect(builder.operations).toHaveLength(2);
-    bo = builder.operations.find((bo) => bo.operation?.$case === 'add');
+    bo = builder.operations.find((bo) => bo.operation?.oneofKind === 'add');
     expect(bo).not.toBeNull();
 
     //property needs a value to be added
@@ -129,14 +138,15 @@ describe('properties', () => {
     expect(builder.operations).toHaveLength(3);
     bo = builder.operations.find(
       (bo) =>
-        bo.operation?.$case === 'add' && bo.operation?.add.definition?.property === 'firstName',
+        bo.operation?.oneofKind === 'add' && bo.operation?.add.definition?.property === 'firstName',
     );
     expect(bo).not.toBeNull();
 
     builder.addProperty(new Property('double', v4()).withValue(2.6));
     expect(builder.operations).toHaveLength(4);
     bo = builder.operations.find(
-      (bo) => bo.operation?.$case === 'add' && bo.operation?.add.definition?.property === 'double',
+      (bo) =>
+        bo.operation?.oneofKind === 'add' && bo.operation?.add.definition?.property === 'double',
     );
     expect(bo).not.toBeNull();
 
@@ -152,6 +162,29 @@ describe('properties', () => {
     expect(Property.objectToValue(geo)).toEqual(geo);
     expect(Property.objectToValue(duration)).toEqual(duration);
     expect(Property.objectToValue(bytes)).toEqual(bytes);
+  });
+
+  it('PostalAddress', () => {
+    const address = PostalAddress.fromJson(
+      {
+        addressCountry: 'Slovakia',
+      },
+      { typeRegistry: [PostalAddress] },
+    );
+    expect(Property.objectToValue(address)).toEqual({
+      anyValue: {
+        ['@type']: Any.typeNameToUrl(PostalAddress.typeName),
+        addressCountry: 'Slovakia',
+        addressCountryCode: '',
+        addressLocality: '',
+        addressRegion: '',
+        addressType: '',
+        formatted: '',
+        postOfficeBoxNumber: '',
+        postalCode: '',
+        streetAddress: '',
+      },
+    });
   });
 
   it('isPrimary', () => {
@@ -187,6 +220,7 @@ describe('properties', () => {
     const res = [{ definition: { property: 'str1' } }, { definition: { property: 'str2' } }];
     expect(Property.fromPropertiesList(strings)).toEqual(res);
     expect(Property.fromPropertiesList([])).toEqual([]);
+    expect(Property.fromPropertiesList()).toEqual([]);
   });
 
   it('objectToValue', () => {
@@ -206,5 +240,12 @@ describe('builder', () => {
     const p = new Property('email', v4()).withReference('email_ref');
     const b1 = PatchPropertiesBuilder.newBuilder().updateProperty(p);
     expect(b1.operations).toHaveLength(1);
+  });
+
+  it('delete property without id', () => {
+    const p = new Property('email').withReference('email_ref');
+    const b1 = PatchPropertiesBuilder.newBuilder();
+    expect(b1.deleteProperty(p)).toBe(b1);
+    expect(b1.operations).toHaveLength(0);
   });
 });

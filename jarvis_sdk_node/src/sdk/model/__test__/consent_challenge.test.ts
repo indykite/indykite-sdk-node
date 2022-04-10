@@ -83,7 +83,12 @@ describe('properties', () => {
   });
 
   describe('deny challenge', () => {
-    const denialReason = { error: 'access_denied' };
+    const denialReason = {
+      error: 'access_denied',
+      errorDescription: 'Error description',
+      errorHint: '',
+      statusCode: 400,
+    };
 
     beforeEach(() => {
       challengeInstance.deny(denialReason);
@@ -121,8 +126,8 @@ describe('deserialization', () => {
         subjectIdentifier: subject,
         digitalTwin: {
           id: Utils.uuidToBuffer(v4()),
-          kind: DigitalTwinKind.DIGITAL_TWIN_KIND_PERSON,
-          state: DigitalTwinState.DIGITAL_TWIN_STATE_ACTIVE,
+          kind: DigitalTwinKind.PERSON,
+          state: DigitalTwinState.ACTIVE,
           tenantId: Utils.uuidToBuffer(v4()),
         },
       },
@@ -143,5 +148,15 @@ describe('deserialization', () => {
     expect(challengeInstance.getApprovedScopeNames()).toEqual([]);
     expect(challengeInstance.isDenied()).toEqual(false);
     expect(challengeInstance.getDenialReason()).toEqual(null);
+  });
+
+  describe('when an audience is approved', () => {
+    beforeEach(() => {
+      challengeInstance.approveAudience('audience1');
+    });
+
+    it('stores the audience name', () => {
+      expect(challengeInstance.getApprovedAudiences()).toEqual(['audience1']);
+    });
   });
 });

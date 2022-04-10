@@ -185,7 +185,7 @@ export class Property {
         if (Array.isArray(value)) {
           return {
             arrayValue: {
-              value: value.map((v) => this.objectToValue(v)),
+              values: value.map((v) => this.objectToValue(v)),
             },
           };
         }
@@ -316,10 +316,10 @@ export class PatchResult {
   constructor(public index: string, public status: PatchResultStatus) {}
   static deserialize(result: grpcAttr.BatchOperationResult): PatchResult {
     const pResult = new PatchResult(result.index, result.result?.oneofKind || 'error');
-    if (result.result?.oneofKind == 'success') {
+    if (result.result && result.result.oneofKind == 'success') {
       pResult.propertyId = result.result.success.propertyId;
-    } else if (result.result?.oneofKind == 'error') {
-      pResult.message = result.result?.error.message;
+    } else if (result.result && result.result.oneofKind == 'error') {
+      pResult.message = result.result.error.message;
     }
     return pResult;
   }

@@ -18,6 +18,17 @@ export class Utils {
   }
 
   /**
+   * Returns the UUIDv4 format of the id in the Base64 encoding.
+   * @param id The value in the `UUIDv4 string` format.
+   */
+  static uuidToBase64(id: string): string {
+    switch (typeof id) {
+      case 'string':
+        return id.charAt(8) === '-' ? Buffer.from(Array.from(parse(id))).toString('base64') : id;
+    }
+  }
+
+  /**
    * Creates an object with `digitalTwin` property containing `id` and `tenantId`
    * properties with base64 encoded values.
    */
