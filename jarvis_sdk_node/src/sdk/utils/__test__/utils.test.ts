@@ -44,18 +44,35 @@ describe('Utils', () => {
   it('Transform UUID', () => {
     const arrayId = parse(v4()) as Uint8Array;
     const uuid = stringify(arrayId);
+    const uuid32 = uuid.replace(/-/g, '');
     const bufferId = Buffer.from(arrayId);
     const base64Id = bufferId.toString('base64');
     let undf; //undefined
 
     expect(Utils.uuidToBuffer(arrayId).valueOf()).toEqual(bufferId.valueOf());
     expect(Utils.uuidToBuffer(uuid).valueOf()).toEqual(bufferId.valueOf());
+    expect(Utils.uuidToBuffer(uuid32).valueOf()).toEqual(bufferId.valueOf());
     expect(Utils.uuidToBuffer(bufferId).valueOf()).toEqual(bufferId.valueOf());
     expect(Utils.uuidToBuffer(base64Id).valueOf()).toEqual(bufferId.valueOf());
     expect(Utils.uuidToString(arrayId).valueOf()).toEqual(uuid);
     expect(Utils.uuidToString(uuid).valueOf()).toEqual(uuid);
+    expect(Utils.uuidToString(uuid32).valueOf()).toEqual(uuid);
     expect(Utils.uuidToString(bufferId).valueOf()).toEqual(uuid);
     expect(Utils.uuidToString(base64Id).valueOf()).toEqual(uuid);
     expect(Utils.uuidToString(undf).valueOf()).toEqual('');
+    expect(Utils.uuidToBase64(arrayId).valueOf()).toEqual(base64Id);
+    expect(Utils.uuidToBase64(uuid).valueOf()).toEqual(base64Id);
+    expect(Utils.uuidToBase64(uuid32).valueOf()).toEqual(base64Id);
+    expect(Utils.uuidToBase64(bufferId).valueOf()).toEqual(base64Id);
+    expect(Utils.uuidToBase64(base64Id).valueOf()).toEqual(base64Id);
+
+    let thrownError;
+    try {
+      Utils.uuidToString('123456789012345678901234567890??');
+    } catch (err) {
+      thrownError = err;
+    }
+
+    expect(thrownError).toHaveProperty('message', 'Invalid UUID encoding');
   });
 });
