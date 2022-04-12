@@ -1,6 +1,7 @@
 import { parse, stringify } from 'uuid';
 import { Timestamp } from '../../grpc/google/protobuf/timestamp';
 import { StringValue } from '../../grpc/google/protobuf/wrappers';
+import { SdkError, SdkErrorCode } from '../error';
 export class Utils {
   /**
    * Returns the UUIDv4 format of the id.
@@ -9,7 +10,9 @@ export class Utils {
   static uuidToString(id: string | Uint8Array | undefined | Buffer): string {
     switch (typeof id) {
       case 'string':
-        return id.charAt(8) === '-' ? id : stringify(Buffer.from(id, 'base64'));
+        return [32, 36].includes(id.length)
+          ? Utils.uuid32ToUuid36(id)
+          : stringify(Buffer.from(id, 'base64'));
       case 'undefined':
         return '';
       case 'object':
@@ -21,11 +24,16 @@ export class Utils {
    * Returns the UUIDv4 format of the id in the Base64 encoding.
    * @param id The value in the `UUIDv4 string` format.
    */
-  static uuidToBase64(id: string): string {
-    switch (typeof id) {
-      case 'string':
-        return id.charAt(8) === '-' ? Buffer.from(Array.from(parse(id))).toString('base64') : id;
+  static uuidToBase64(id: string | Buffer | Uint8Array): string {
+    if (id instanceof Buffer) {
+      return id.toString('base64');
+    } else if (id instanceof Uint8Array) {
+      return Buffer.from(id).toString('base64');
     }
+
+    return [32, 36].includes(id.length)
+      ? this.uuidToBase64(Uint8Array.from(parse(Utils.uuid32ToUuid36(id))))
+      : id;
   }
 
   /**
@@ -56,8 +64,8 @@ export class Utils {
    */
   static uuidToBuffer(uuid: string | Uint8Array | Buffer): Buffer {
     if (typeof uuid === 'string') {
-      return uuid.charAt(8) === '-'
-        ? Buffer.from(parse(uuid) as Uint8Array)
+      return [32, 36].includes(uuid.length)
+        ? Buffer.from(parse(Utils.uuid32ToUuid36(uuid)) as Uint8Array)
         : Buffer.from(uuid, 'base64');
     }
 
@@ -89,7 +97,7 @@ export class Utils {
 
   static dateToTimestamp(date: Date): Timestamp {
     const time = date.getTime();
-    const seconds = time / 1000;
+    const seconds = Math.floor(time / 1000);
     const nanos = (time % 1000) * 1000000;
     return {
       seconds: seconds.toString(),
@@ -103,5 +111,26 @@ export class Utils {
     }
 
     return this.uuidToBuffer(id).toString('base64');
+  }
+
+  /**
+   * Converts the UUID encoded with 32 characters to the 36 characters UUID format (with dash symbols).
+   * If the UUID is already encoded with 36 characters, the original value is returned.
+   * @param id The UUID encoded either with 32 or 36 characters.
+   * @returns The UUID encoded with 36 characters.
+   */
+  private static uuid32ToUuid36(id: string) {
+    if (!/[a-zA-Z0-9+/=]{32}/.test(id) && !/[a-zA-Z0-9+/=-]{36}/.test(id)) {
+      throw new SdkError(SdkErrorCode.SDK_CODE_1, 'Invalid UUID encoding');
+    }
+
+    if (id.length === 36) return id;
+
+    const part1 = id.substring(0, 8);
+    const part2 = id.substring(8, 12);
+    const part3 = id.substring(12, 16);
+    const part4 = id.substring(16, 20);
+    const part5 = id.substring(20, 32);
+    return `${part1}-${part2}-${part3}-${part4}-${part5}`;
   }
 }
