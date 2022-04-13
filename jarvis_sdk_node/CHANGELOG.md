@@ -1,4 +1,17 @@
 # Changelog
+### [0.1.7](https://github.com/indykite/jarvis-sdk-node/compare/v0.1.6...v0.1.7) (2022-04-13)
+
+
+### Features
+
+* add support for uuids encoded with 32 chars ([dfa186e](https://github.com/indykite/jarvis-sdk-node/commit/dfa186ec8204e294a973b26192bfe84382ccb2b0))
+* parse postal address ([ce65690](https://github.com/indykite/jarvis-sdk-node/commit/ce656902bd74da363af365dbaa8e7ae7dea796f6))
+
+
+### Bug Fixes
+
+* use new protobuf definitions in code ([04752be](https://github.com/indykite/jarvis-sdk-node/commit/04752be1e7872b837fca4298603258a29e90525a))
+
 ### [0.1.6](https://github.com/indykite/jarvis-sdk-node/compare/v0.1.5...v0.1.6) (2022-03-22)
 
 
