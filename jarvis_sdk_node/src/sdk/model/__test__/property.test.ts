@@ -155,38 +155,6 @@ describe('properties', () => {
     expect(sdkPropNoMeta.meta).toBeUndefined();
   });
 
-  it('geo, duration, bytes', () => {
-    const geo = { geoPointValue: 'geoPointValue' };
-    const duration = { durationValue: 'durationValue' };
-    const bytes = { bytesValue: 'bytesValue' };
-    expect(Property.objectToValue(geo)).toEqual(geo);
-    expect(Property.objectToValue(duration)).toEqual(duration);
-    expect(Property.objectToValue(bytes)).toEqual(bytes);
-  });
-
-  it('PostalAddress', () => {
-    const address = PostalAddress.fromJson(
-      {
-        addressCountry: 'Slovakia',
-      },
-      { typeRegistry: [PostalAddress] },
-    );
-    expect(Property.objectToValue(address)).toEqual({
-      anyValue: {
-        ['@type']: Any.typeNameToUrl(PostalAddress.typeName),
-        addressCountry: 'Slovakia',
-        addressCountryCode: '',
-        addressLocality: '',
-        addressRegion: '',
-        addressType: '',
-        formatted: '',
-        postOfficeBoxNumber: '',
-        postalCode: '',
-        streetAddress: '',
-      },
-    });
-  });
-
   it('isPrimary', () => {
     const p = new Property('test', v4());
     delete p.meta;
@@ -221,11 +189,6 @@ describe('properties', () => {
     expect(Property.fromPropertiesList(strings)).toEqual(res);
     expect(Property.fromPropertiesList([])).toEqual([]);
     expect(Property.fromPropertiesList()).toEqual([]);
-  });
-
-  it('objectToValue', () => {
-    const d = new Date();
-    expect(Property.objectToValue(d)).toEqual({ valueTime: d });
   });
 });
 

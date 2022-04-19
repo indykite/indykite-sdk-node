@@ -1,12 +1,16 @@
 import {
+  CancelInvitationRequest,
   ChangePasswordRequest,
   CheckConsentChallengeRequest,
+  CheckInvitationStateRequest,
   ConsentRequestSessionData,
   CreateConsentVerifierRequest,
+  CreateInvitationRequest,
   DeleteDigitalTwinRequest,
   DigitalTwinIdentifier,
   GetDigitalTwinRequest,
   PatchDigitalTwinRequest,
+  ResendInvitationRequest,
   StartDigitalTwinEmailVerificationRequest,
   StartForgottenPasswordFlowRequest,
   TokenIntrospectRequest,
@@ -14,13 +18,13 @@ import {
 } from '../grpc/indykite/identity/v1beta1/identity_management_api';
 import { DigitalTwin, IdentityTokenInfo } from '../grpc/indykite/identity/v1beta1/model';
 import * as sdkTypes from './model';
-import { MapValue } from '../grpc/indykite/objects/v1beta1/struct';
 
 import { SdkErrorCode, SdkError } from './error';
 import { Utils } from './utils/utils';
 import { ConsentChallenge, ConsentChallengeDenial, PatchResult, Property } from './model';
 import { SdkClient } from './client/client';
 import { IdentityManagementAPIClient } from '../grpc/indykite/identity/v1beta1/identity_management_api.grpc-client';
+import { Invitation } from './model/invitation';
 
 export class IdentityClient {
   private client: IdentityManagementAPIClient;
@@ -218,7 +222,14 @@ export class IdentityClient {
       email,
     });
     if (attributes) {
-      request.attributes = Property.objectToValue(attributes) as MapValue;
+      const attributesValue = Utils.objectToValue(attributes);
+      if (attributesValue.value.oneofKind !== 'mapValue') {
+        throw new SdkError(
+          SdkErrorCode.SDK_CODE_1,
+          'Message attributes property needs to be an object value',
+        );
+      }
+      request.attributes = attributesValue.value.mapValue;
     }
 
     return new Promise<boolean>((resolve, reject) => {
@@ -485,6 +496,175 @@ export class IdentityClient {
       remember,
       rememberFor,
     );
+  }
+
+  createEmailInvitation(
+    invitee: string,
+    tenantId: Buffer | string,
+    referenceId: string,
+    expireTime?: Date,
+    inviteAtTime?: Date,
+    messageAttributes?: Record<string, unknown>,
+  ): Promise<void> {
+    return new Promise((resolve, reject) => {
+      const request = CreateInvitationRequest.fromJson({
+        tenantId: Utils.uuidToBase64(tenantId),
+        referenceId,
+        email: invitee,
+      });
+
+      if (expireTime) {
+        request.expireTime = Utils.dateToTimestamp(expireTime);
+      }
+
+      if (inviteAtTime) {
+        request.inviteAtTime = Utils.dateToTimestamp(inviteAtTime);
+      }
+
+      if (messageAttributes) {
+        const attributesValue = Utils.objectToValue(messageAttributes);
+        if (attributesValue.value.oneofKind !== 'mapValue') {
+          reject(
+            new SdkError(
+              SdkErrorCode.SDK_CODE_1,
+              'Message attributes property needs to be an object value',
+            ),
+          );
+          return;
+        }
+        request.messageAttributes = attributesValue.value.mapValue;
+      }
+
+      this.client.createInvitation(request, (err) => {
+        if (err) reject(err);
+        else resolve();
+      });
+    });
+  }
+
+  createMobileInvitation(
+    invitee: string,
+    tenantId: Buffer | string,
+    referenceId: string,
+    expireTime?: Date,
+    inviteAtTime?: Date,
+    messageAttributes?: Record<string, unknown>,
+  ): Promise<void> {
+    return new Promise((resolve, reject) => {
+      const request = CreateInvitationRequest.fromJson({
+        tenantId: Utils.uuidToBase64(tenantId),
+        referenceId,
+        mobile: invitee,
+      });
+
+      if (expireTime) {
+        request.expireTime = Utils.dateToTimestamp(expireTime);
+      }
+
+      if (inviteAtTime) {
+        request.inviteAtTime = Utils.dateToTimestamp(inviteAtTime);
+      }
+
+      if (messageAttributes) {
+        const attributesValue = Utils.objectToValue(messageAttributes);
+        if (attributesValue.value.oneofKind !== 'mapValue') {
+          reject(
+            new SdkError(
+              SdkErrorCode.SDK_CODE_1,
+              'Message attributes property needs to be an object value',
+            ),
+          );
+          return;
+        }
+        request.messageAttributes = attributesValue.value.mapValue;
+      }
+
+      this.client.createInvitation(request, (err) => {
+        if (err) reject(err);
+        else resolve();
+      });
+    });
+  }
+
+  checkInvitationState({
+    referenceId,
+    invitationToken,
+  }: {
+    referenceId?: string;
+    invitationToken?: string;
+  }): Promise<Invitation> {
+    return new Promise((resolve, reject) => {
+      const request = CheckInvitationStateRequest.create();
+
+      if (!referenceId && !invitationToken) {
+        reject(
+          new SdkError(
+            SdkErrorCode.SDK_CODE_1,
+            'You have not specified neither reference ID nor invitation token',
+          ),
+        );
+        return;
+      }
+
+      if (referenceId && invitationToken) {
+        reject(
+          new SdkError(
+            SdkErrorCode.SDK_CODE_1,
+            'You can not specify both the reference ID and the invitation token',
+          ),
+        );
+        return;
+      }
+
+      if (referenceId) {
+        request.identifier = {
+          oneofKind: 'referenceId',
+          referenceId,
+        };
+      }
+
+      if (invitationToken) {
+        request.identifier = {
+          oneofKind: 'invitationToken',
+          invitationToken,
+        };
+      }
+
+      this.client.checkInvitationState(request, (err, response) => {
+        if (err) reject(err);
+        else if (!response)
+          reject(new SdkError(SdkErrorCode.SDK_CODE_1, 'Missing check invitation response'));
+        else {
+          resolve(Invitation.deserialize(response));
+        }
+      });
+    });
+  }
+
+  resendInvitation(referenceId: string): Promise<void> {
+    return new Promise((resolve, reject) => {
+      const request = ResendInvitationRequest.fromJson({
+        referenceId,
+      });
+
+      this.client.resendInvitation(request, (err) => {
+        if (err) reject(err);
+        else resolve();
+      });
+    });
+  }
+
+  cancelInvitation(referenceId: string): Promise<void> {
+    return new Promise((resolve, reject) => {
+      const request = CancelInvitationRequest.fromJson({
+        referenceId,
+      });
+
+      this.client.cancelInvitation(request, (err) => {
+        if (err) reject(err);
+        else resolve();
+      });
+    });
   }
 
   private createConsentVerifierFromInstance(consentChallenge: ConsentChallenge): Promise<{

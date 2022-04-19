@@ -1,13 +1,9 @@
 import { JsonValue } from '@protobuf-ts/runtime';
-import { Any } from '../../grpc/google/protobuf/any';
 import * as grpcAttr from '../../grpc/indykite/identity/v1beta1/attributes';
 import { PostalAddress } from '../../grpc/indykite/identity/v1beta1/model';
 
-import { Value } from '../../grpc/indykite/objects/v1beta1/struct';
 import { SdkErrorCode, SdkError } from '../error';
 import { Utils } from '../utils/utils';
-
-type UnknownObject = { [k: string]: unknown };
 
 export class PropertyMetaData {
   primary = false;
@@ -89,58 +85,13 @@ export class Property {
     return this;
   }
 
-  private static deserializeValue(v: Value): unknown {
-    if (v && v.value) {
-      switch (v.value.oneofKind) {
-        case 'nullValue':
-          return v.value.nullValue;
-        case 'boolValue':
-          return v.value.boolValue;
-        case 'integerValue':
-          return v.value.integerValue;
-        case 'unsignedIntegerValue':
-          return v.value.unsignedIntegerValue;
-        case 'doubleValue':
-          return v.value.doubleValue;
-        case 'anyValue': {
-          if (Any.typeNameToUrl(PostalAddress.typeName) === v.value.anyValue.typeUrl) {
-            return PostalAddress.fromBinary(v.value.anyValue.value);
-          }
-          return v.value.anyValue;
-        }
-        case 'valueTime':
-          return v.value.valueTime;
-        case 'durationValue':
-          return v.value.durationValue;
-        case 'identifierValue':
-          return v.value.identifierValue;
-        case 'stringValue':
-          return v.value.stringValue;
-        case 'bytesValue':
-          return v.value.bytesValue;
-        case 'geoPointValue':
-          return v.value.geoPointValue;
-        case 'arrayValue':
-          return v.value.arrayValue.values.map((v: Value) => Property.deserializeValue(v));
-        case 'mapValue': {
-          const m: { [k: string]: unknown } = {};
-          Object.entries(v.value.mapValue.fields).forEach(([k, v]) => {
-            m[k] = Property.deserializeValue(v);
-          });
-          return m;
-        }
-      }
-    }
-    return undefined;
-  }
-
   static deserialize(property: grpcAttr.Property): Property {
     if (property.definition && property.value) {
       const p = new Property(property.definition.property, property.id);
       p.context = property.definition.context;
       p.type = property.definition.type;
       if (property.value.oneofKind === 'objectValue') {
-        p.value = Property.deserializeValue(property.value.objectValue);
+        p.value = Utils.deserializeValue(property.value.objectValue);
       } else if (property.value.oneofKind === 'referenceValue') {
         p.reference = property.value.referenceValue;
       }
@@ -163,50 +114,6 @@ export class Property {
       };
     });
   }
-
-  static objectToValue(value: unknown): unknown {
-    if (
-      typeof value === 'object' &&
-      value &&
-      ('geoPointValue' in value || 'durationValue' in value || 'bytesValue' in value)
-    ) {
-      return value;
-    }
-
-    switch (typeof value) {
-      case 'boolean':
-        return { boolValue: value };
-      case 'number':
-        return { doubleValue: value };
-      case 'string':
-        return { stringValue: value };
-      case 'object': {
-        if (value instanceof Date) return { valueTime: value };
-        if (Array.isArray(value)) {
-          return {
-            arrayValue: {
-              values: value.map((v) => this.objectToValue(v)),
-            },
-          };
-        }
-        if (PostalAddress.is(value)) {
-          return {
-            anyValue: {
-              ...value,
-              ['@type']: Any.typeNameToUrl(PostalAddress.typeName),
-            },
-          };
-        }
-        const m: UnknownObject = {};
-        Object.entries<unknown>(value as UnknownObject).forEach(([k, v]) => {
-          m[k] = this.objectToValue(v);
-        });
-        return { fields: { ...m } };
-      }
-    }
-    //TODO: add anyValue
-    // anyValue: Any ///expects Buffer
-  }
 }
 
 export class PatchPropertiesBuilder {
@@ -224,7 +131,7 @@ export class PatchPropertiesBuilder {
   addProperty(property: Property): PatchPropertiesBuilder {
     let value: { objectValue: JsonValue } | { referenceValue: string };
     if (property.value) {
-      value = { objectValue: Property.objectToValue(property.value) as JsonValue };
+      value = { objectValue: Utils.objectToJsonValue(property.value) };
     } else if (property.reference) {
       value = { referenceValue: property.reference };
     } else {
@@ -261,9 +168,9 @@ export class PatchPropertiesBuilder {
     };
     let updated = false;
 
-    let value: { objectValue: Value } | { referenceValue: string } | undefined;
+    let value: { objectValue: JsonValue } | { referenceValue: string } | undefined;
     if (property.value) {
-      value = { objectValue: Property.objectToValue(property.value) as Value };
+      value = { objectValue: Utils.objectToJsonValue(property.value) };
       updated = true;
     } else if (property.reference) {
       value = { referenceValue: property.reference };
