@@ -1,7 +1,12 @@
+import { JsonObject, JsonValue } from '@protobuf-ts/runtime';
 import { parse, stringify } from 'uuid';
+import { Any } from '../../grpc/google/protobuf/any';
 import { Timestamp } from '../../grpc/google/protobuf/timestamp';
-import { StringValue } from '../../grpc/google/protobuf/wrappers';
+import { PostalAddress } from '../../grpc/indykite/identity/v1beta1/model';
+import { Value } from '../../grpc/indykite/objects/v1beta1/struct';
 import { SdkError, SdkErrorCode } from '../error';
+
+type UnknownObject = { [k: string]: unknown };
 export class Utils {
   /**
    * Returns the UUIDv4 format of the id.
@@ -103,6 +108,106 @@ export class Utils {
       seconds: seconds.toString(),
       nanos,
     };
+  }
+
+  static deserializeValue(v: Value): unknown {
+    if (v && v.value) {
+      switch (v.value.oneofKind) {
+        case 'nullValue':
+          return v.value.nullValue;
+        case 'boolValue':
+          return v.value.boolValue;
+        case 'integerValue':
+          return v.value.integerValue;
+        case 'unsignedIntegerValue':
+          return v.value.unsignedIntegerValue;
+        case 'doubleValue':
+          return v.value.doubleValue;
+        case 'anyValue': {
+          if (Any.typeNameToUrl(PostalAddress.typeName) === v.value.anyValue.typeUrl) {
+            return PostalAddress.fromBinary(v.value.anyValue.value);
+          }
+          return v.value.anyValue;
+        }
+        case 'valueTime':
+          return v.value.valueTime;
+        case 'durationValue':
+          return v.value.durationValue;
+        case 'identifierValue':
+          return v.value.identifierValue;
+        case 'stringValue':
+          return v.value.stringValue;
+        case 'bytesValue':
+          return v.value.bytesValue;
+        case 'geoPointValue':
+          return v.value.geoPointValue;
+        case 'arrayValue':
+          return v.value.arrayValue.values.map((v: Value) => Utils.deserializeValue(v));
+        case 'mapValue': {
+          const m: { [k: string]: unknown } = {};
+          Object.entries(v.value.mapValue.fields).forEach(([k, v]) => {
+            m[k] = Utils.deserializeValue(v);
+          });
+          return m;
+        }
+      }
+    }
+    return undefined;
+  }
+
+  static objectToJsonValue(value: unknown): JsonValue {
+    if (
+      typeof value === 'object' &&
+      value &&
+      ('geoPointValue' in value || 'durationValue' in value || 'bytesValue' in value)
+    ) {
+      return value as JsonObject;
+    }
+
+    switch (typeof value) {
+      case 'boolean':
+        return { boolValue: value };
+      case 'number':
+        return { doubleValue: value };
+      case 'string':
+        return { stringValue: value };
+      case 'object': {
+        if (value === null) return { nullValue: null };
+        if (value instanceof Date) return { valueTime: value.toISOString() };
+        if (Array.isArray(value)) {
+          return {
+            arrayValue: {
+              values: value.map((v) => this.objectToJsonValue(v)),
+            },
+          };
+        }
+        if (PostalAddress.is(value)) {
+          return {
+            anyValue: {
+              ...value,
+              ['@type']: Any.typeNameToUrl(PostalAddress.typeName),
+            },
+          };
+        }
+        const m: JsonObject = {};
+        Object.entries(value as UnknownObject).forEach(([k, v]) => {
+          m[k] = this.objectToJsonValue(v);
+        });
+        return {
+          mapValue: {
+            fields: { ...m },
+          },
+        };
+      }
+    }
+    //TODO: add anyValue
+    // anyValue: Any ///expects Buffer
+
+    throw new SdkError(SdkErrorCode.SDK_CODE_1, 'Unable to convert a value');
+  }
+
+  static objectToValue(value: unknown): Value {
+    return Value.fromJson(Utils.objectToJsonValue(value), { typeRegistry: [PostalAddress] });
   }
 
   private static getBase64Id(id: string | Uint8Array | Buffer): string {
