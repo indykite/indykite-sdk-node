@@ -1,4 +1,11 @@
 # Changelog
+### [0.1.8](https://github.com/indykite/jarvis-sdk-node/compare/v0.1.7...v0.1.8) (2022-04-22)
+
+
+### Features
+
+* support for email invitation ([a690a1b](https://github.com/indykite/jarvis-sdk-node/commit/a690a1baa95b5db93454a8bcd3fcf28919f42d7f))
+
 ### [0.1.7](https://github.com/indykite/jarvis-sdk-node/compare/v0.1.6...v0.1.7) (2022-04-13)
 
 
