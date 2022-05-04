@@ -1,4 +1,5 @@
 export { IdentityClient } from './sdk/identity';
+export { ConfigClient } from './sdk/config';
 export * from './sdk/model';
 export {
   ChangePasswordRequest,
