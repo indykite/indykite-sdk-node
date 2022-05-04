@@ -1,4 +1,11 @@
 # Changelog
+### [0.1.9](https://github.com/indykite/jarvis-sdk-node/compare/v0.1.8...v0.1.9) (2022-05-04)
+
+
+### Bug Fixes
+
+* expose config client type ([96bc02a](https://github.com/indykite/jarvis-sdk-node/commit/96bc02a6c6486dadc95a7f88e1d11cb5aaff2900))
+
 ### [0.1.8](https://github.com/indykite/jarvis-sdk-node/compare/v0.1.7...v0.1.8) (2022-04-22)
 
 
