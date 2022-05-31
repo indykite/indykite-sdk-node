@@ -1,9 +1,14 @@
 import {
+  CreateApplicationRequest,
+  CreateApplicationSpaceRequest,
   CreateConfigNodeRequest,
+  CreateTenantRequest,
   DeleteApplicationSpaceRequest,
   DeleteConfigNodeRequest,
+  UpdateApplicationRequest,
   UpdateApplicationSpaceRequest,
   UpdateConfigNodeRequest,
+  UpdateTenantRequest,
 } from '../grpc/indykite/config/v1beta1/config_management_api';
 import { SdkClient } from './client/client';
 import { SdkErrorCode, SdkError } from './error';
@@ -15,6 +20,8 @@ import { ApplicationSpace } from './model/application_space';
 import { ConfigManagementAPIClient } from '../grpc/indykite/config/v1beta1/config_management_api.grpc-client';
 import { StringValue } from '../grpc/google/protobuf/wrappers';
 import { Utils } from './utils/utils';
+import { Tenant } from './model/tenant';
+import { Application } from './model/application';
 
 const endpoint = process.env.JARVIS_ENDPOINT || 'jarvis.indykite.com';
 export class ConfigClient {
@@ -284,20 +291,20 @@ export class ConfigClient {
     description?: string,
   ): Promise<string | undefined> {
     return new Promise((resolve, reject) => {
-      this.client.createApplicationSpace(
-        {
-          customerId,
-          name,
-          displayName: StringValue.create({ value: displayName }),
-          description: StringValue.create({ value: description }),
-        },
-        (err, response) => {
-          if (err) reject(err);
-          else if (!response)
-            reject(new SdkError(SdkErrorCode.SDK_CODE_1, 'No application space response'));
-          else resolve(response.id);
-        },
-      );
+      const req: CreateApplicationSpaceRequest = {
+        customerId,
+        name,
+      };
+
+      if (displayName) req.displayName = StringValue.create({ value: displayName });
+      if (description) req.description = StringValue.create({ value: description });
+
+      this.client.createApplicationSpace(req, (err, response) => {
+        if (err) reject(err);
+        else if (!response)
+          reject(new SdkError(SdkErrorCode.SDK_CODE_1, 'No application space response'));
+        else resolve(response.id);
+      });
     });
   }
 
@@ -376,10 +383,13 @@ export class ConfigClient {
     return new Promise((resolve, reject) => {
       const req: UpdateApplicationSpaceRequest = {
         id: appSpace.id,
-        etag: StringValue.create({ value: appSpace.etag }),
-        displayName: StringValue.create({ value: appSpace.displayName }),
-        description: StringValue.create({ value: appSpace.description }),
       };
+
+      if (appSpace.etag) req.etag = StringValue.create({ value: appSpace.etag });
+      if (appSpace.displayName)
+        req.displayName = StringValue.create({ value: appSpace.displayName });
+      if (appSpace.description)
+        req.description = StringValue.create({ value: appSpace.description });
 
       this.client.updateApplicationSpace(req, (err, response) => {
         if (err) reject(err);
@@ -410,13 +420,270 @@ export class ConfigClient {
   deleteApplicationSpace(appSpace: ApplicationSpace): Promise<boolean> {
     const req = {
       id: appSpace.id,
-      etag: StringValue.create({ value: appSpace.etag }),
     } as DeleteApplicationSpaceRequest;
+
+    if (appSpace.etag) req.etag = StringValue.create({ value: appSpace.etag });
+
     return new Promise<boolean>((resolve, reject) => {
       this.client.deleteApplicationSpace(req, (err) => {
         if (err) reject(err);
         else resolve(true);
       });
+    });
+  }
+
+  createTenant(
+    issuerId: string,
+    name: string,
+    displayName?: string,
+    description?: string,
+  ): Promise<Tenant> {
+    return new Promise((resolve, reject) => {
+      const req: CreateTenantRequest = {
+        issuerId,
+        name,
+      };
+
+      if (displayName) req.displayName = StringValue.create({ value: displayName });
+      if (description) req.description = StringValue.create({ value: description });
+
+      this.client.createTenant(req, (err, response) => {
+        if (err) reject(err);
+        else if (!response) reject(new SdkError(SdkErrorCode.SDK_CODE_1, 'No tenant response'));
+        else resolve(Tenant.deserialize(response, issuerId, name, displayName, description));
+      });
+    });
+  }
+
+  readTenantById(id: string): Promise<Tenant> {
+    return new Promise((resolve, reject) => {
+      this.client.readTenant(
+        {
+          identifier: {
+            oneofKind: 'id',
+            id,
+          },
+        },
+        (err, response) => {
+          if (err) reject(err);
+          else if (!response) {
+            reject(new SdkError(SdkErrorCode.SDK_CODE_1, 'No tenant response'));
+          } else {
+            resolve(Tenant.deserialize(response));
+          }
+        },
+      );
+    });
+  }
+
+  readTenantByName(location: string, name: string): Promise<Tenant> {
+    return new Promise((resolve, reject) => {
+      this.client.readTenant(
+        {
+          identifier: {
+            oneofKind: 'name',
+            name: {
+              location,
+              name,
+            },
+          },
+        },
+        (err, response) => {
+          if (err) reject(err);
+          else if (!response) {
+            reject(new SdkError(SdkErrorCode.SDK_CODE_1, 'No tenant response'));
+          } else {
+            resolve(Tenant.deserialize(response));
+          }
+        },
+      );
+    });
+  }
+
+  updateTenant(tenant: Tenant): Promise<Tenant> {
+    return new Promise((resolve, reject) => {
+      const req: UpdateTenantRequest = {
+        id: tenant.id,
+      };
+
+      if (tenant.etag) req.etag = StringValue.create({ value: tenant.etag });
+      if (tenant.displayName) req.displayName = StringValue.create({ value: tenant.displayName });
+      if (tenant.description) req.description = StringValue.create({ value: tenant.description });
+
+      this.client.updateTenant(req, (err, response) => {
+        if (err) reject(err);
+        else {
+          try {
+            if (response && response.id === tenant.id) {
+              tenant.etag = response.etag;
+              tenant.updateTime = Utils.timestampToDate(response.updateTime);
+              resolve(tenant);
+            } else {
+              reject(
+                new SdkError(
+                  SdkErrorCode.SDK_CODE_1,
+                  `Update returned with different id: req.iq=${tenant.id}, res.id=${
+                    response ? response.id : 'undefined'
+                  }`,
+                ),
+              );
+            }
+          } catch (err) {
+            reject(err);
+          }
+        }
+      });
+    });
+  }
+
+  readTenantList(appSpaceId: string, tenantIds: string[]): Promise<Tenant[]> {
+    return new Promise((resolve, reject) => {
+      const list: Tenant[] = [];
+      this.client
+        .listTenants({
+          appSpaceId,
+          match: tenantIds,
+        })
+        .on('error', (err) => {
+          reject(err);
+        })
+        .on('data', (data) => {
+          if (data && data.tenant) {
+            list.push(Tenant.deserialize(data));
+          }
+        })
+        .on('end', () => {
+          resolve(list);
+        });
+    });
+  }
+
+  createApplication(
+    appSpaceId: string,
+    name: string,
+    displayName?: string,
+    description?: string,
+  ): Promise<Application> {
+    return new Promise((resolve, reject) => {
+      const req: CreateApplicationRequest = {
+        appSpaceId,
+        name,
+      };
+
+      if (displayName) req.displayName = StringValue.create({ value: displayName });
+      if (description) req.description = StringValue.create({ value: description });
+
+      this.client.createApplication(req, (err, response) => {
+        if (err) reject(err);
+        else if (!response)
+          reject(new SdkError(SdkErrorCode.SDK_CODE_1, 'No application response'));
+        else resolve(Application.deserialize(response, appSpaceId, name, displayName, description));
+      });
+    });
+  }
+
+  readApplicationById(applicationId: string): Promise<Application> {
+    return new Promise((resolve, reject) => {
+      this.client.readApplication(
+        {
+          identifier: {
+            oneofKind: 'id',
+            id: applicationId,
+          },
+        },
+        (err, response) => {
+          if (err) reject(err);
+          else if (!response) {
+            reject(new SdkError(SdkErrorCode.SDK_CODE_1, 'No application response'));
+          } else {
+            resolve(Application.deserialize(response));
+          }
+        },
+      );
+    });
+  }
+
+  readApplicationByName(appSpaceId: string, name: string): Promise<Application> {
+    return new Promise((resolve, reject) => {
+      this.client.readApplication(
+        {
+          identifier: {
+            oneofKind: 'name',
+            name: {
+              location: appSpaceId,
+              name,
+            },
+          },
+        },
+        (err, response) => {
+          if (err) reject(err);
+          else if (!response) {
+            reject(new SdkError(SdkErrorCode.SDK_CODE_1, 'No application response'));
+          } else {
+            resolve(Application.deserialize(response));
+          }
+        },
+      );
+    });
+  }
+
+  updateApplication(application: Application): Promise<Application> {
+    return new Promise((resolve, reject) => {
+      const req: UpdateApplicationRequest = {
+        id: application.id,
+      };
+
+      if (application.etag) req.etag = StringValue.create({ value: application.etag });
+      if (application.displayName)
+        req.displayName = StringValue.create({ value: application.displayName });
+      if (application.description)
+        req.description = StringValue.create({ value: application.description });
+
+      this.client.updateApplication(req, (err, response) => {
+        if (err) reject(err);
+        else {
+          try {
+            if (response && response.id === application.id) {
+              application.etag = response.etag;
+              application.updateTime = Utils.timestampToDate(response.updateTime);
+              resolve(application);
+            } else {
+              reject(
+                new SdkError(
+                  SdkErrorCode.SDK_CODE_1,
+                  `Update returned with different id: req.iq=${application.id}, res.id=${
+                    response ? response.id : 'undefined'
+                  }`,
+                ),
+              );
+            }
+          } catch (err) {
+            reject(err);
+          }
+        }
+      });
+    });
+  }
+
+  readApplicationList(appSpaceId: string, applicationIds: string[]): Promise<Application[]> {
+    return new Promise((resolve, reject) => {
+      const list: Application[] = [];
+      this.client
+        .listApplications({
+          appSpaceId,
+          match: applicationIds,
+        })
+        .on('error', (err) => {
+          reject(err);
+        })
+        .on('data', (data) => {
+          if (data && data.application) {
+            list.push(Application.deserialize(data));
+          }
+        })
+        .on('end', () => {
+          resolve(list);
+        });
     });
   }
 }
