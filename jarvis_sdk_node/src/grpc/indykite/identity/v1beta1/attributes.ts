@@ -50,23 +50,58 @@ export interface Schema {
     attributeName: string;
 }
 /**
+ * PropertyDefinition identifies the location of property schema and type definition.
+ *
+ * The location consist of three component:
+ * 1. Schema namespace where the property is defined.
+ * Some examples like:
+ *  "schema": "http://schema.org/",
+ *  "bibo": "http://purl.org/ontology/bibo/",
+ *  "dc": "http://purl.org/dc/elements/1.1/",
+ *  "dcat": "http://www.w3.org/ns/dcat#",
+ *  "dct": "http://purl.org/dc/terms/",
+ *  "dcterms": "http://purl.org/dc/terms/",
+ *  "dctype": "http://purl.org/dc/dcmitype/",
+ *  "eli": "http://data.europa.eu/eli/ontology#",
+ *  "foaf": "http://xmlns.com/foaf/0.1/",
+ *  "owl": "http://www.w3.org/2002/07/owl#",
+ *  "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+ *  "rdfa": "http://www.w3.org/ns/rdfa#",
+ *  "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+ *  "skos": "http://www.w3.org/2004/02/skos/core#",
+ *  "snomed": "http://purl.bioontology.org/ontology/SNOMEDCT/",
+ *  "void": "http://rdfs.org/ns/void#",
+ *  "xsd": "http://www.w3.org/2001/XMLSchema#",
+ *  "xsd1": "hhttp://www.w3.org/2001/XMLSchema#"
+ *
+ * 2. Type definition withing the names space.
+ * 3. Exact property name, it may be unambiguous if there is one definition but ambiguous without
+ * knowing exactly which Object Type defines this property.
+ *
  * @generated from protobuf message indykite.identity.v1beta1.PropertyDefinition
  */
 export interface PropertyDefinition {
     /**
-     * http://schema.org/
+     * Context defines the namespace in which the type and property are defined.
+     * Example: http://schema.org/
      *
      * @generated from protobuf field: string context = 1;
      */
     context: string;
     /**
-     * Person
+     * Type is the name of type definition in context.
+     *
+     * Either type or property must be defined in request!
+     * Example: Person
      *
      * @generated from protobuf field: string type = 2;
      */
     type: string;
     /**
-     * email
+     * Property is the name the property definition in context and relation to type.
+     *
+     * Either type or property must be defined in request!
+     * Example: email
      *
      * @generated from protobuf field: string property = 3;
      */
@@ -432,8 +467,8 @@ class PropertyDefinition$Type extends MessageType<PropertyDefinition> {
     constructor() {
         super("indykite.identity.v1beta1.PropertyDefinition", [
             { no: 1, name: "context", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { uri: true, ignoreEmpty: true } } } },
-            { no: 2, name: "type", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 3, name: "property", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "256", pattern: "^[a-zA-Z_][a-zA-Z0-9_]+$" } } } }
+            { no: 2, name: "type", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "256", pattern: "^[a-zA-Z_][a-zA-Z0-9_]+$", ignoreEmpty: true } } } },
+            { no: 3, name: "property", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "256", pattern: "^[a-zA-Z_][a-zA-Z0-9_]+$", ignoreEmpty: true } } } }
         ]);
     }
     create(value?: PartialMessage<PropertyDefinition>): PropertyDefinition {

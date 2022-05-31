@@ -25,6 +25,8 @@ import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MESSAGE_TYPE } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
+import { Struct } from "../../../google/protobuf/struct";
+import { Duration } from "../../../google/protobuf/duration";
 import { OAuth2TokenResponse } from "./model";
 import { Invitation } from "./model";
 import { Timestamp } from "../../../google/protobuf/timestamp";
@@ -1171,6 +1173,89 @@ export interface SessionIntrospectResponse {
      * @generated from protobuf field: repeated string provider_data = 3;
      */
     providerData: string[];
+}
+/**
+ * @generated from protobuf message indykite.identity.v1beta1.IsAuthorizedRequest
+ */
+export interface IsAuthorizedRequest {
+    /**
+     * Subject is DigitalTwin identifier to check if is authorized to perform given actions
+     *
+     * @generated from protobuf field: indykite.identity.v1beta1.DigitalTwinIdentifier subject = 1;
+     */
+    subject?: DigitalTwinIdentifier;
+    /**
+     * @generated from protobuf field: repeated string actions = 2;
+     */
+    actions: string[];
+    /**
+     * @generated from protobuf field: repeated string resource_references = 3;
+     */
+    resourceReferences: string[];
+}
+/**
+ * @generated from protobuf message indykite.identity.v1beta1.IsAuthorizedResponse
+ */
+export interface IsAuthorizedResponse {
+    /**
+     * @generated from protobuf field: google.protobuf.Timestamp decision_time = 1;
+     */
+    decisionTime?: Timestamp;
+    /**
+     * @generated from protobuf field: google.protobuf.Duration ttl = 2;
+     */
+    ttl?: Duration;
+    /**
+     * Decisions is map with resource references as keys
+     *
+     * @generated from protobuf field: map<string, indykite.identity.v1beta1.AuthorizationDecision> decisions = 3;
+     */
+    decisions: {
+        [key: string]: AuthorizationDecision;
+    };
+}
+/**
+ * @generated from protobuf message indykite.identity.v1beta1.AuthorizationDecision
+ */
+export interface AuthorizationDecision {
+    /**
+     * @generated from protobuf field: repeated string allowed_actions = 1;
+     */
+    allowedActions: string[];
+    /**
+     * @generated from protobuf field: repeated string denied_actions = 2;
+     */
+    deniedActions: string[];
+}
+/**
+ * @generated from protobuf message indykite.identity.v1beta1.EnrichTokenRequest
+ */
+export interface EnrichTokenRequest {
+    /**
+     * Access token to identify session to enrich.
+     *
+     * @generated from protobuf field: string access_token = 1;
+     */
+    accessToken: string;
+    /**
+     * Claims to be enriched in the session, will also be populated in the access token after a refresh.
+     *
+     * @generated from protobuf field: google.protobuf.Struct token_claims = 2;
+     */
+    tokenClaims?: Struct;
+    /**
+     * Claims to be enriched in the session, but will not be populated in the access token.
+     *
+     * @generated from protobuf field: google.protobuf.Struct session_claims = 3;
+     */
+    sessionClaims?: Struct;
+}
+/**
+ * EnrichTokenResponse ...
+ *
+ * @generated from protobuf message indykite.identity.v1beta1.EnrichTokenResponse
+ */
+export interface EnrichTokenResponse {
 }
 /**
  * @generated from protobuf enum indykite.identity.v1beta1.CredentialControl
@@ -4481,6 +4566,289 @@ class SessionIntrospectResponse$Type extends MessageType<SessionIntrospectRespon
  * @generated MessageType for protobuf message indykite.identity.v1beta1.SessionIntrospectResponse
  */
 export const SessionIntrospectResponse = new SessionIntrospectResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class IsAuthorizedRequest$Type extends MessageType<IsAuthorizedRequest> {
+    constructor() {
+        super("indykite.identity.v1beta1.IsAuthorizedRequest", [
+            { no: 1, name: "subject", kind: "message", T: () => DigitalTwinIdentifier, options: { "validate.rules": { message: { required: true } } } },
+            { no: 2, name: "actions", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { minItems: "1", maxItems: "32", unique: true, items: { string: { minLen: "2", maxLen: "100" } } } } } },
+            { no: 3, name: "resource_references", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { minItems: "1", maxItems: "32", unique: true, items: { string: { minLen: "2", maxLen: "100" } } } } } }
+        ]);
+    }
+    create(value?: PartialMessage<IsAuthorizedRequest>): IsAuthorizedRequest {
+        const message = { actions: [], resourceReferences: [] };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<IsAuthorizedRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: IsAuthorizedRequest): IsAuthorizedRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* indykite.identity.v1beta1.DigitalTwinIdentifier subject */ 1:
+                    message.subject = DigitalTwinIdentifier.internalBinaryRead(reader, reader.uint32(), options, message.subject);
+                    break;
+                case /* repeated string actions */ 2:
+                    message.actions.push(reader.string());
+                    break;
+                case /* repeated string resource_references */ 3:
+                    message.resourceReferences.push(reader.string());
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: IsAuthorizedRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* indykite.identity.v1beta1.DigitalTwinIdentifier subject = 1; */
+        if (message.subject)
+            DigitalTwinIdentifier.internalBinaryWrite(message.subject, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* repeated string actions = 2; */
+        for (let i = 0; i < message.actions.length; i++)
+            writer.tag(2, WireType.LengthDelimited).string(message.actions[i]);
+        /* repeated string resource_references = 3; */
+        for (let i = 0; i < message.resourceReferences.length; i++)
+            writer.tag(3, WireType.LengthDelimited).string(message.resourceReferences[i]);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message indykite.identity.v1beta1.IsAuthorizedRequest
+ */
+export const IsAuthorizedRequest = new IsAuthorizedRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class IsAuthorizedResponse$Type extends MessageType<IsAuthorizedResponse> {
+    constructor() {
+        super("indykite.identity.v1beta1.IsAuthorizedResponse", [
+            { no: 1, name: "decision_time", kind: "message", T: () => Timestamp },
+            { no: 2, name: "ttl", kind: "message", T: () => Duration },
+            { no: 3, name: "decisions", kind: "map", K: 9 /*ScalarType.STRING*/, V: { kind: "message", T: () => AuthorizationDecision } }
+        ]);
+    }
+    create(value?: PartialMessage<IsAuthorizedResponse>): IsAuthorizedResponse {
+        const message = { decisions: {} };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<IsAuthorizedResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: IsAuthorizedResponse): IsAuthorizedResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* google.protobuf.Timestamp decision_time */ 1:
+                    message.decisionTime = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.decisionTime);
+                    break;
+                case /* google.protobuf.Duration ttl */ 2:
+                    message.ttl = Duration.internalBinaryRead(reader, reader.uint32(), options, message.ttl);
+                    break;
+                case /* map<string, indykite.identity.v1beta1.AuthorizationDecision> decisions */ 3:
+                    this.binaryReadMap3(message.decisions, reader, options);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    private binaryReadMap3(map: IsAuthorizedResponse["decisions"], reader: IBinaryReader, options: BinaryReadOptions): void {
+        let len = reader.uint32(), end = reader.pos + len, key: keyof IsAuthorizedResponse["decisions"] | undefined, val: IsAuthorizedResponse["decisions"][any] | undefined;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case 1:
+                    key = reader.string();
+                    break;
+                case 2:
+                    val = AuthorizationDecision.internalBinaryRead(reader, reader.uint32(), options);
+                    break;
+                default: throw new globalThis.Error("unknown map entry field for field indykite.identity.v1beta1.IsAuthorizedResponse.decisions");
+            }
+        }
+        map[key ?? ""] = val ?? AuthorizationDecision.create();
+    }
+    internalBinaryWrite(message: IsAuthorizedResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* google.protobuf.Timestamp decision_time = 1; */
+        if (message.decisionTime)
+            Timestamp.internalBinaryWrite(message.decisionTime, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* google.protobuf.Duration ttl = 2; */
+        if (message.ttl)
+            Duration.internalBinaryWrite(message.ttl, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* map<string, indykite.identity.v1beta1.AuthorizationDecision> decisions = 3; */
+        for (let k of Object.keys(message.decisions)) {
+            writer.tag(3, WireType.LengthDelimited).fork().tag(1, WireType.LengthDelimited).string(k);
+            writer.tag(2, WireType.LengthDelimited).fork();
+            AuthorizationDecision.internalBinaryWrite(message.decisions[k], writer, options);
+            writer.join().join();
+        }
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message indykite.identity.v1beta1.IsAuthorizedResponse
+ */
+export const IsAuthorizedResponse = new IsAuthorizedResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class AuthorizationDecision$Type extends MessageType<AuthorizationDecision> {
+    constructor() {
+        super("indykite.identity.v1beta1.AuthorizationDecision", [
+            { no: 1, name: "allowed_actions", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/ },
+            { no: 2, name: "denied_actions", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/ }
+        ]);
+    }
+    create(value?: PartialMessage<AuthorizationDecision>): AuthorizationDecision {
+        const message = { allowedActions: [], deniedActions: [] };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<AuthorizationDecision>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: AuthorizationDecision): AuthorizationDecision {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* repeated string allowed_actions */ 1:
+                    message.allowedActions.push(reader.string());
+                    break;
+                case /* repeated string denied_actions */ 2:
+                    message.deniedActions.push(reader.string());
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: AuthorizationDecision, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* repeated string allowed_actions = 1; */
+        for (let i = 0; i < message.allowedActions.length; i++)
+            writer.tag(1, WireType.LengthDelimited).string(message.allowedActions[i]);
+        /* repeated string denied_actions = 2; */
+        for (let i = 0; i < message.deniedActions.length; i++)
+            writer.tag(2, WireType.LengthDelimited).string(message.deniedActions[i]);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message indykite.identity.v1beta1.AuthorizationDecision
+ */
+export const AuthorizationDecision = new AuthorizationDecision$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class EnrichTokenRequest$Type extends MessageType<EnrichTokenRequest> {
+    constructor() {
+        super("indykite.identity.v1beta1.EnrichTokenRequest", [
+            { no: 1, name: "access_token", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 2, name: "token_claims", kind: "message", T: () => Struct },
+            { no: 3, name: "session_claims", kind: "message", T: () => Struct }
+        ]);
+    }
+    create(value?: PartialMessage<EnrichTokenRequest>): EnrichTokenRequest {
+        const message = { accessToken: "" };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<EnrichTokenRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: EnrichTokenRequest): EnrichTokenRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string access_token */ 1:
+                    message.accessToken = reader.string();
+                    break;
+                case /* google.protobuf.Struct token_claims */ 2:
+                    message.tokenClaims = Struct.internalBinaryRead(reader, reader.uint32(), options, message.tokenClaims);
+                    break;
+                case /* google.protobuf.Struct session_claims */ 3:
+                    message.sessionClaims = Struct.internalBinaryRead(reader, reader.uint32(), options, message.sessionClaims);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: EnrichTokenRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string access_token = 1; */
+        if (message.accessToken !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.accessToken);
+        /* google.protobuf.Struct token_claims = 2; */
+        if (message.tokenClaims)
+            Struct.internalBinaryWrite(message.tokenClaims, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* google.protobuf.Struct session_claims = 3; */
+        if (message.sessionClaims)
+            Struct.internalBinaryWrite(message.sessionClaims, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message indykite.identity.v1beta1.EnrichTokenRequest
+ */
+export const EnrichTokenRequest = new EnrichTokenRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class EnrichTokenResponse$Type extends MessageType<EnrichTokenResponse> {
+    constructor() {
+        super("indykite.identity.v1beta1.EnrichTokenResponse", []);
+    }
+    create(value?: PartialMessage<EnrichTokenResponse>): EnrichTokenResponse {
+        const message = {};
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<EnrichTokenResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: EnrichTokenResponse): EnrichTokenResponse {
+        return target ?? this.create();
+    }
+    internalBinaryWrite(message: EnrichTokenResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message indykite.identity.v1beta1.EnrichTokenResponse
+ */
+export const EnrichTokenResponse = new EnrichTokenResponse$Type();
 /**
  * @generated ServiceType for protobuf service indykite.identity.v1beta1.IdentityManagementAPI
  */
@@ -4506,8 +4874,10 @@ export const IdentityManagementAPI = new ServiceType("indykite.identity.v1beta1.
     { name: "CheckInvitationState", options: {}, I: CheckInvitationStateRequest, O: CheckInvitationStateResponse },
     { name: "ResendInvitation", options: {}, I: ResendInvitationRequest, O: ResendInvitationResponse },
     { name: "CancelInvitation", options: {}, I: CancelInvitationRequest, O: CancelInvitationResponse },
+    { name: "IsAuthorized", options: {}, I: IsAuthorizedRequest, O: IsAuthorizedResponse },
     { name: "GetPasswordCredential", options: {}, I: GetPasswordCredentialRequest, O: GetPasswordCredentialResponse },
     { name: "UpdatePasswordCredential", options: {}, I: UpdatePasswordCredentialRequest, O: UpdatePasswordCredentialResponse },
     { name: "GetAccessToken", options: {}, I: GetAccessTokenRequest, O: GetAccessTokenResponse },
-    { name: "SessionIntrospect", options: { "google.api.http": { post: "/identity/session/introspect", body: "*" } }, I: SessionIntrospectRequest, O: SessionIntrospectResponse }
+    { name: "SessionIntrospect", options: { "google.api.http": { post: "/identity/session/introspect", body: "*" } }, I: SessionIntrospectRequest, O: SessionIntrospectResponse },
+    { name: "EnrichToken", options: {}, I: EnrichTokenRequest, O: EnrichTokenResponse }
 ]);

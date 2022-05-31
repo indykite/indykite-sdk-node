@@ -25,7 +25,7 @@ import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MESSAGE_TYPE } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
-import { Value } from "../../objects/v1beta1/struct";
+import { Record } from "./model";
 /**
  * @generated from protobuf message indykite.ingest.v1beta1.StreamRecordsRequest
  */
@@ -35,11 +35,9 @@ export interface StreamRecordsRequest {
      */
     mappingConfigId: string;
     /**
-     * @generated from protobuf field: map<string, indykite.objects.v1beta1.Value> record = 2;
+     * @generated from protobuf field: indykite.ingest.v1beta1.Record record = 2;
      */
-    record: {
-        [key: string]: Value;
-    };
+    record?: Record;
 }
 /**
  * @generated from protobuf message indykite.ingest.v1beta1.StreamRecordsResponse
@@ -55,11 +53,11 @@ class StreamRecordsRequest$Type extends MessageType<StreamRecordsRequest> {
     constructor() {
         super("indykite.ingest.v1beta1.StreamRecordsRequest", [
             { no: 1, name: "mapping_config_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
-            { no: 2, name: "record", kind: "map", K: 9 /*ScalarType.STRING*/, V: { kind: "message", T: () => Value }, options: { "validate.rules": { map: { minPairs: "1" } } } }
+            { no: 2, name: "record", kind: "message", T: () => Record, options: { "validate.rules": { message: { required: true } } } }
         ]);
     }
     create(value?: PartialMessage<StreamRecordsRequest>): StreamRecordsRequest {
-        const message = { mappingConfigId: "", record: {} };
+        const message = { mappingConfigId: "" };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<StreamRecordsRequest>(this, message, value);
@@ -73,8 +71,8 @@ class StreamRecordsRequest$Type extends MessageType<StreamRecordsRequest> {
                 case /* string mapping_config_id */ 1:
                     message.mappingConfigId = reader.string();
                     break;
-                case /* map<string, indykite.objects.v1beta1.Value> record */ 2:
-                    this.binaryReadMap2(message.record, reader, options);
+                case /* indykite.ingest.v1beta1.Record record */ 2:
+                    message.record = Record.internalBinaryRead(reader, reader.uint32(), options, message.record);
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -87,33 +85,13 @@ class StreamRecordsRequest$Type extends MessageType<StreamRecordsRequest> {
         }
         return message;
     }
-    private binaryReadMap2(map: StreamRecordsRequest["record"], reader: IBinaryReader, options: BinaryReadOptions): void {
-        let len = reader.uint32(), end = reader.pos + len, key: keyof StreamRecordsRequest["record"] | undefined, val: StreamRecordsRequest["record"][any] | undefined;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case 1:
-                    key = reader.string();
-                    break;
-                case 2:
-                    val = Value.internalBinaryRead(reader, reader.uint32(), options);
-                    break;
-                default: throw new globalThis.Error("unknown map entry field for field indykite.ingest.v1beta1.StreamRecordsRequest.record");
-            }
-        }
-        map[key ?? ""] = val ?? Value.create();
-    }
     internalBinaryWrite(message: StreamRecordsRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* string mapping_config_id = 1; */
         if (message.mappingConfigId !== "")
             writer.tag(1, WireType.LengthDelimited).string(message.mappingConfigId);
-        /* map<string, indykite.objects.v1beta1.Value> record = 2; */
-        for (let k of Object.keys(message.record)) {
-            writer.tag(2, WireType.LengthDelimited).fork().tag(1, WireType.LengthDelimited).string(k);
-            writer.tag(2, WireType.LengthDelimited).fork();
-            Value.internalBinaryWrite(message.record[k], writer, options);
-            writer.join().join();
-        }
+        /* indykite.ingest.v1beta1.Record record = 2; */
+        if (message.record)
+            Record.internalBinaryWrite(message.record, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
