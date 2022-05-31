@@ -6076,7 +6076,7 @@ class IngestMappingConfig_Entity$Type extends MessageType<IngestMappingConfig_En
     constructor() {
         super("indykite.config.v1beta1.IngestMappingConfig.Entity", [
             { no: 1, name: "labels", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { minItems: "1", maxItems: "5", items: { string: { maxLen: "64", pattern: "^([A-Z][a-z]+)+$" } } } } } },
-            { no: 2, name: "external_id", kind: "message", T: () => IngestMappingConfig_Property },
+            { no: 2, name: "external_id", kind: "message", T: () => IngestMappingConfig_Property, options: { "validate.rules": { message: { required: true } } } },
             { no: 3, name: "properties", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => IngestMappingConfig_Property, options: { "validate.rules": { repeated: { maxItems: "20" } } } },
             { no: 4, name: "relationships", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => IngestMappingConfig_Relationship, options: { "validate.rules": { repeated: { maxItems: "20" } } } }
         ]);

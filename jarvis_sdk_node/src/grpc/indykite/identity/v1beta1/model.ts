@@ -24,6 +24,7 @@ import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MESSAGE_TYPE } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
+import { Struct } from "../../../google/protobuf/struct";
 import { MapValue } from "../../objects/v1beta1/struct";
 import { Value } from "../../../google/protobuf/struct";
 import { Property } from "./attributes";
@@ -480,6 +481,18 @@ export interface IdentityTokenInfo {
      * @generated from protobuf field: repeated indykite.identity.v1beta1.ProviderInfo provider_info = 9;
      */
     providerInfo: ProviderInfo[];
+    /**
+     * SessionClaims is a collection of values used to enrich the session.
+     *
+     * @generated from protobuf field: google.protobuf.Struct session_claims = 10;
+     */
+    sessionClaims?: Struct;
+    /**
+     * SessionClaims is a collection of values used to enrich the token.
+     *
+     * @generated from protobuf field: google.protobuf.Struct token_claims = 11;
+     */
+    tokenClaims?: Struct;
 }
 /**
  * @generated from protobuf message indykite.identity.v1beta1.ProviderInfo
@@ -1474,7 +1487,9 @@ class IdentityTokenInfo$Type extends MessageType<IdentityTokenInfo> {
             { no: 6, name: "issue_time", kind: "message", T: () => Timestamp },
             { no: 7, name: "expire_time", kind: "message", T: () => Timestamp },
             { no: 8, name: "authentication_time", kind: "message", T: () => Timestamp },
-            { no: 9, name: "provider_info", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => ProviderInfo }
+            { no: 9, name: "provider_info", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => ProviderInfo },
+            { no: 10, name: "session_claims", kind: "message", T: () => Struct },
+            { no: 11, name: "token_claims", kind: "message", T: () => Struct }
         ]);
     }
     create(value?: PartialMessage<IdentityTokenInfo>): IdentityTokenInfo {
@@ -1516,6 +1531,12 @@ class IdentityTokenInfo$Type extends MessageType<IdentityTokenInfo> {
                 case /* repeated indykite.identity.v1beta1.ProviderInfo provider_info */ 9:
                     message.providerInfo.push(ProviderInfo.internalBinaryRead(reader, reader.uint32(), options));
                     break;
+                case /* google.protobuf.Struct session_claims */ 10:
+                    message.sessionClaims = Struct.internalBinaryRead(reader, reader.uint32(), options, message.sessionClaims);
+                    break;
+                case /* google.protobuf.Struct token_claims */ 11:
+                    message.tokenClaims = Struct.internalBinaryRead(reader, reader.uint32(), options, message.tokenClaims);
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -1555,6 +1576,12 @@ class IdentityTokenInfo$Type extends MessageType<IdentityTokenInfo> {
         /* repeated indykite.identity.v1beta1.ProviderInfo provider_info = 9; */
         for (let i = 0; i < message.providerInfo.length; i++)
             ProviderInfo.internalBinaryWrite(message.providerInfo[i], writer.tag(9, WireType.LengthDelimited).fork(), options).join();
+        /* google.protobuf.Struct session_claims = 10; */
+        if (message.sessionClaims)
+            Struct.internalBinaryWrite(message.sessionClaims, writer.tag(10, WireType.LengthDelimited).fork(), options).join();
+        /* google.protobuf.Struct token_claims = 11; */
+        if (message.tokenClaims)
+            Struct.internalBinaryWrite(message.tokenClaims, writer.tag(11, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
