@@ -331,11 +331,12 @@ describe('readCustomerByName', () => {
 
 describe('createApplicationSpace', () => {
   describe('when no error is returned', () => {
-    let appSpaceId: string | undefined;
+    let appSpace: ApplicationSpace;
     let createApplicationSpaceSpy: jest.SpyInstance;
+    let sdk: ConfigClient;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(userToken);
+      sdk = await ConfigClient.createInstance(userToken);
       createApplicationSpaceSpy = jest
         .spyOn(sdk['client'], 'createApplicationSpace')
         .mockImplementation(
@@ -350,33 +351,72 @@ describe('createApplicationSpace', () => {
               res(null, {
                 id: 'new-app-space-id',
                 etag: '111',
+                createTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 12)),
+                updateTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 13)),
               });
             }
             return {} as SurfaceCall;
           },
         );
-      appSpaceId = await sdk.createApplicationSpace(
-        'customer-id',
-        'new-app-space',
-        'New App Space',
-        'App space description',
-      );
     });
 
-    it('sends correct request', () => {
-      expect(createApplicationSpaceSpy).toBeCalledWith(
-        {
-          customerId: 'customer-id',
-          name: 'new-app-space',
-          displayName: StringValue.create({ value: 'New App Space' }),
-          description: StringValue.create({ value: 'App space description' }),
-        },
-        expect.any(Function),
-      );
+    describe('when necessary values are sent only', () => {
+      beforeEach(async () => {
+        appSpace = await sdk.createApplicationSpace('customer-id', 'new-app-space');
+      });
+
+      it('sends correct request', () => {
+        expect(createApplicationSpaceSpy).toBeCalledWith(
+          {
+            customerId: 'customer-id',
+            name: 'new-app-space',
+          },
+          expect.any(Function),
+        );
+      });
+
+      it('returns a correct instance', () => {
+        expect(appSpace.id).toBe('new-app-space-id');
+        expect(appSpace.name).toBe('new-app-space');
+        expect(appSpace.displayName).toBeUndefined();
+        expect(appSpace.description).toBeUndefined();
+        expect(appSpace.etag).toBe('111');
+        expect(appSpace.createTime?.toString()).toBe(new Date(2022, 2, 15, 13, 12).toString());
+        expect(appSpace.updateTime?.toString()).toBe(new Date(2022, 2, 15, 13, 13).toString());
+      });
     });
 
-    it('returns a correct instance', () => {
-      expect(appSpaceId).toBe('new-app-space-id');
+    describe('when all possible values are sent', () => {
+      beforeEach(async () => {
+        appSpace = await sdk.createApplicationSpace(
+          'customer-id',
+          'new-app-space',
+          'New App Space',
+          'App space description',
+        );
+      });
+
+      it('sends correct request', () => {
+        expect(createApplicationSpaceSpy).toBeCalledWith(
+          {
+            customerId: 'customer-id',
+            name: 'new-app-space',
+            displayName: StringValue.create({ value: 'New App Space' }),
+            description: StringValue.create({ value: 'App space description' }),
+          },
+          expect.any(Function),
+        );
+      });
+
+      it('returns a correct instance', () => {
+        expect(appSpace.id).toBe('new-app-space-id');
+        expect(appSpace.name).toBe('new-app-space');
+        expect(appSpace.displayName).toBe('New App Space');
+        expect(appSpace.description).toBe('App space description');
+        expect(appSpace.etag).toBe('111');
+        expect(appSpace.createTime?.toString()).toBe(new Date(2022, 2, 15, 13, 12).toString());
+        expect(appSpace.updateTime?.toString()).toBe(new Date(2022, 2, 15, 13, 13).toString());
+      });
     });
   });
 
@@ -834,9 +874,10 @@ describe('updateApplicationSpace', () => {
   describe('when no error is returned', () => {
     let updatedAppSpace: ApplicationSpace;
     let updateApplicationSpaceSpy: jest.SpyInstance;
+    let sdk: ConfigClient;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(userToken);
+      sdk = await ConfigClient.createInstance(userToken);
       updateApplicationSpaceSpy = jest
         .spyOn(sdk['client'], 'updateApplicationSpace')
         .mockImplementation(
@@ -857,42 +898,81 @@ describe('updateApplicationSpace', () => {
             return {} as SurfaceCall;
           },
         );
-      const appSpace = new ApplicationSpace(
-        'app-space-id',
-        'app-space',
-        'customer-id',
-        'App Space',
-        '11',
-        '555',
-        'Description',
-      );
-      updatedAppSpace = await sdk.updateApplicationSpace(appSpace);
     });
 
-    it('sends correct request', () => {
-      expect(updateApplicationSpaceSpy).toBeCalledWith(
-        {
-          id: 'app-space-id',
-          etag: { value: '555' },
-          displayName: { value: 'App Space' },
-          description: { value: 'Description' },
-        },
-        expect.any(Function),
-      );
+    describe('when necessary values are sent only', () => {
+      beforeEach(async () => {
+        const appSpace = new ApplicationSpace('app-space-id', 'app-space', 'customer-id');
+        updatedAppSpace = await sdk.updateApplicationSpace(appSpace);
+      });
+
+      it('sends correct request', () => {
+        expect(updateApplicationSpaceSpy).toBeCalledWith(
+          {
+            id: 'app-space-id',
+          },
+          expect.any(Function),
+        );
+      });
+
+      it('returns a correct instance', () => {
+        expect(updatedAppSpace.id).toBe('app-space-id');
+        expect(updatedAppSpace.customerId).toBe('customer-id');
+        expect(updatedAppSpace.name).toBe('app-space');
+        expect(updatedAppSpace.description).toBeUndefined();
+        expect(updatedAppSpace.displayName).toBeUndefined();
+        expect(updatedAppSpace.etag).toBe('777');
+        expect(updatedAppSpace.issuerId).toBeUndefined();
+        expect(updatedAppSpace.createTime).toBeUndefined();
+        expect(updatedAppSpace.updateTime?.toString()).toBe(
+          new Date(2022, 2, 15, 13, 16).toString(),
+        );
+        expect(updatedAppSpace.deleteTime).toBeUndefined();
+        expect(updatedAppSpace.destroyTime).toBeUndefined();
+      });
     });
 
-    it('returns a correct instance', () => {
-      expect(updatedAppSpace.id).toBe('app-space-id');
-      expect(updatedAppSpace.customerId).toBe('customer-id');
-      expect(updatedAppSpace.name).toBe('app-space');
-      expect(updatedAppSpace.description).toBe('Description');
-      expect(updatedAppSpace.displayName).toBe('App Space');
-      expect(updatedAppSpace.etag).toBe('777');
-      expect(updatedAppSpace.issuerId).toBe('11');
-      expect(updatedAppSpace.createTime).toBeUndefined();
-      expect(updatedAppSpace.updateTime?.toString()).toBe(new Date(2022, 2, 15, 13, 16).toString());
-      expect(updatedAppSpace.deleteTime).toBeUndefined();
-      expect(updatedAppSpace.destroyTime).toBeUndefined();
+    describe('when all possible values are sent', () => {
+      beforeEach(async () => {
+        const appSpace = new ApplicationSpace(
+          'app-space-id',
+          'app-space',
+          'customer-id',
+          '555',
+          'App Space',
+          '11',
+          'Description',
+        );
+        updatedAppSpace = await sdk.updateApplicationSpace(appSpace);
+      });
+
+      it('sends correct request', () => {
+        expect(updateApplicationSpaceSpy).toBeCalledWith(
+          {
+            id: 'app-space-id',
+            etag: { value: '555' },
+            displayName: { value: 'App Space' },
+            description: { value: 'Description' },
+          },
+          expect.any(Function),
+        );
+      });
+
+      it('returns a correct instance', () => {
+        expect(updatedAppSpace.id).toBe('app-space-id');
+        expect(updatedAppSpace.customerId).toBe('customer-id');
+        expect(updatedAppSpace.name).toBe('app-space');
+        expect(updatedAppSpace.description).toBe('Description');
+        expect(updatedAppSpace.displayName).toBe('App Space');
+        expect(updatedAppSpace.etag).toBe('777');
+        expect(updatedAppSpace.issuerId).toBe('11');
+        expect(updatedAppSpace.createTime).toBeUndefined();
+        expect(updatedAppSpace.updateTime?.toString()).toBe(
+          new Date(2022, 2, 15, 13, 16).toString(),
+        );
+        expect(updatedAppSpace.deleteTime).toBeUndefined();
+        expect(updatedAppSpace.destroyTime).toBeUndefined();
+      });
     });
   });
 
@@ -925,9 +1005,9 @@ describe('updateApplicationSpace', () => {
         'app-space-id',
         'app-space',
         'customer-id',
+        '555',
         'App Space',
         '11',
-        '555',
         'Description',
       );
       return sdk.updateApplicationSpace(appSpace).catch((err) => (thrownError = err));
@@ -971,9 +1051,9 @@ describe('updateApplicationSpace', () => {
         'app-space-id',
         'app-space',
         'customer-id',
+        '555',
         'App Space',
         '11',
-        '555',
         'Description',
       );
       sdk.updateApplicationSpace(appSpace).catch((err) => {
@@ -1011,9 +1091,9 @@ describe('updateApplicationSpace', () => {
         'app-space-id',
         'app-space',
         'customer-id',
+        '555',
         'App Space',
         '11',
-        '555',
         'Description',
       );
       sdk.updateApplicationSpace(appSpace).catch((err) => {
@@ -1050,9 +1130,9 @@ describe('deleteApplicationSpace', () => {
         'app-space-id',
         'app-space',
         'customer-id',
+        '555',
         'App Space',
         '11',
-        '555',
         'Description',
       );
       returnedValue = await sdk.deleteApplicationSpace(appSpace);
@@ -1097,9 +1177,9 @@ describe('deleteApplicationSpace', () => {
         'app-space-id',
         'app-space',
         'customer-id',
+        '555',
         'App Space',
         '11',
-        '555',
         'Description',
       );
       sdk.deleteApplicationSpace(appSpace).catch((err) => {
