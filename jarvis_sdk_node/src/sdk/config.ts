@@ -289,7 +289,7 @@ export class ConfigClient {
     name: string,
     displayName?: string,
     description?: string,
-  ): Promise<string | undefined> {
+  ): Promise<ApplicationSpace> {
     return new Promise((resolve, reject) => {
       const req: CreateApplicationSpaceRequest = {
         customerId,
@@ -303,7 +303,10 @@ export class ConfigClient {
         if (err) reject(err);
         else if (!response)
           reject(new SdkError(SdkErrorCode.SDK_CODE_1, 'No application space response'));
-        else resolve(response.id);
+        else
+          resolve(
+            ApplicationSpace.deserialize(response, customerId, name, displayName, description),
+          );
       });
     });
   }
