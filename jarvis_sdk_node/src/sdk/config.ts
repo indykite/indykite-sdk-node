@@ -95,8 +95,10 @@ export class ConfigClient {
       id: config.id,
     } as UpdateConfigNodeRequest;
     if (config.etag) req.etag = StringValue.create({ value: config.etag });
-    if (config.displayName) req.displayName = StringValue.create({ value: config.displayName });
-    if (config.description) req.description = StringValue.create({ value: config.description });
+    if (config.displayName !== undefined)
+      req.displayName = StringValue.create({ value: config.displayName });
+    if (config.description !== undefined)
+      req.description = StringValue.create({ value: config.description });
     req.config = {
       oneofKind: 'emailServiceConfig',
       emailServiceConfig: config.marshal(),
@@ -132,7 +134,7 @@ export class ConfigClient {
     const req = {
       id: config.id,
     } as DeleteConfigNodeRequest;
-    if (config.etag) req.etag = StringValue.create({ value: config.etag });
+    if (config.etag !== undefined) req.etag = StringValue.create({ value: config.etag });
 
     return new Promise<boolean>((resolve, reject) => {
       this.client.deleteConfigNode(req, (err) => {
@@ -200,9 +202,11 @@ export class ConfigClient {
     const req = {
       id: config.id,
     } as UpdateConfigNodeRequest;
-    if (config.etag) req.etag = StringValue.create({ value: config.etag });
-    if (config.displayName) req.displayName = StringValue.create({ value: config.displayName });
-    if (config.description) req.description = StringValue.create({ value: config.description });
+    if (config.etag !== undefined) req.etag = StringValue.create({ value: config.etag });
+    if (config.displayName !== undefined)
+      req.displayName = StringValue.create({ value: config.displayName });
+    if (config.description !== undefined)
+      req.description = StringValue.create({ value: config.description });
     req.config = {
       oneofKind: 'authFlowConfig',
       authFlowConfig: config.marshal(),
@@ -238,7 +242,7 @@ export class ConfigClient {
     const req = {
       id: config.id,
     } as DeleteConfigNodeRequest;
-    if (config.etag) req.etag = StringValue.create({ value: config.etag });
+    if (config.etag !== undefined) req.etag = StringValue.create({ value: config.etag });
 
     return new Promise<boolean>((resolve, reject) => {
       this.client.deleteConfigNode(req, (err) => {
@@ -296,8 +300,8 @@ export class ConfigClient {
         name,
       };
 
-      if (displayName) req.displayName = StringValue.create({ value: displayName });
-      if (description) req.description = StringValue.create({ value: description });
+      if (displayName !== undefined) req.displayName = StringValue.create({ value: displayName });
+      if (description !== undefined) req.description = StringValue.create({ value: description });
 
       this.client.createApplicationSpace(req, (err, response) => {
         if (err) reject(err);
@@ -388,10 +392,10 @@ export class ConfigClient {
         id: appSpace.id,
       };
 
-      if (appSpace.etag) req.etag = StringValue.create({ value: appSpace.etag });
-      if (appSpace.displayName)
+      if (appSpace.etag !== undefined) req.etag = StringValue.create({ value: appSpace.etag });
+      if (appSpace.displayName !== undefined)
         req.displayName = StringValue.create({ value: appSpace.displayName });
-      if (appSpace.description)
+      if (appSpace.description !== undefined)
         req.description = StringValue.create({ value: appSpace.description });
 
       this.client.updateApplicationSpace(req, (err, response) => {
@@ -425,7 +429,7 @@ export class ConfigClient {
       id: appSpace.id,
     } as DeleteApplicationSpaceRequest;
 
-    if (appSpace.etag) req.etag = StringValue.create({ value: appSpace.etag });
+    if (appSpace.etag !== undefined) req.etag = StringValue.create({ value: appSpace.etag });
 
     return new Promise<boolean>((resolve, reject) => {
       this.client.deleteApplicationSpace(req, (err) => {
@@ -447,8 +451,8 @@ export class ConfigClient {
         name,
       };
 
-      if (displayName) req.displayName = StringValue.create({ value: displayName });
-      if (description) req.description = StringValue.create({ value: description });
+      if (displayName !== undefined) req.displayName = StringValue.create({ value: displayName });
+      if (description !== undefined) req.description = StringValue.create({ value: description });
 
       this.client.createTenant(req, (err, response) => {
         if (err) reject(err);
@@ -509,9 +513,11 @@ export class ConfigClient {
         id: tenant.id,
       };
 
-      if (tenant.etag) req.etag = StringValue.create({ value: tenant.etag });
-      if (tenant.displayName) req.displayName = StringValue.create({ value: tenant.displayName });
-      if (tenant.description) req.description = StringValue.create({ value: tenant.description });
+      if (tenant.etag !== undefined) req.etag = StringValue.create({ value: tenant.etag });
+      if (tenant.displayName !== undefined)
+        req.displayName = StringValue.create({ value: tenant.displayName });
+      if (tenant.description !== undefined)
+        req.description = StringValue.create({ value: tenant.description });
 
       this.client.updateTenant(req, (err, response) => {
         if (err) reject(err);
@@ -573,8 +579,8 @@ export class ConfigClient {
         name,
       };
 
-      if (displayName) req.displayName = StringValue.create({ value: displayName });
-      if (description) req.description = StringValue.create({ value: description });
+      if (displayName !== undefined) req.displayName = StringValue.create({ value: displayName });
+      if (description !== undefined) req.description = StringValue.create({ value: description });
 
       this.client.createApplication(req, (err, response) => {
         if (err) reject(err);
@@ -636,10 +642,11 @@ export class ConfigClient {
         id: application.id,
       };
 
-      if (application.etag) req.etag = StringValue.create({ value: application.etag });
-      if (application.displayName)
+      if (application.etag !== undefined)
+        req.etag = StringValue.create({ value: application.etag });
+      if (application.displayName !== undefined)
         req.displayName = StringValue.create({ value: application.displayName });
-      if (application.description)
+      if (application.description !== undefined)
         req.description = StringValue.create({ value: application.description });
 
       this.client.updateApplication(req, (err, response) => {
