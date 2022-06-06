@@ -21,7 +21,7 @@
     "coverage": "jest --coverage --silent",
     "coverage-ci": "jest --ci --silent --coverage --coverageReporters=json",
     "coverage-html": "jest --coverage --silent --coverageReporters=html",
-    "buf-generate": "buf generate --template ../buf.gen.yaml buf.build/indykite/indykiteapis"
+    "buf-generate": "buf generate --template ../buf.gen.yaml buf.build/indykite/indykiteapis -o .."
   },
   "devDependencies": {
     "@babel/core": "^7.14.6",

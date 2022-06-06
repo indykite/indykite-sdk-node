@@ -19,6 +19,7 @@ import {
   CreateInvitationResponse,
   DeleteDigitalTwinRequest,
   DeleteDigitalTwinResponse,
+  EnrichTokenRequest,
   GetDigitalTwinRequest,
   GetDigitalTwinResponse,
   PatchDigitalTwinRequest,
@@ -1897,6 +1898,135 @@ describe('Digital Twin', () => {
 
         try {
           await sdk.cancelInvitation(referenceId);
+        } catch (err) {
+          caughtError = err;
+        }
+      });
+
+      it('throws the error', () => {
+        expect(caughtError).toBe(error);
+      });
+    });
+  });
+
+  describe('enrichToken', () => {
+    describe('when the response is successful', () => {
+      describe('when no optional arguments is used', () => {
+        const accessToken = 'access-token';
+
+        beforeEach(async () => {
+          const mockFunc = jest.fn(
+            (
+              request: EnrichTokenRequest,
+              callback:
+                | Metadata
+                | CallOptions
+                | ((error: ServiceError | null, response?: CancelInvitationResponse) => void),
+            ): SurfaceCall => {
+              if (typeof callback === 'function') callback(null, {});
+              return {} as SurfaceCall;
+            },
+          );
+
+          jest.spyOn(sdk['client'], 'enrichToken').mockImplementation(mockFunc);
+
+          return sdk.enrichToken(accessToken);
+        });
+
+        it('sends correct request', () => {
+          expect(sdk['client'].enrichToken).toBeCalledTimes(1);
+          expect(sdk['client'].enrichToken).toBeCalledWith(
+            {
+              accessToken,
+            },
+            expect.any(Function),
+          );
+        });
+      });
+
+      describe('when all arguments are used', () => {
+        const accessToken = 'access-token';
+        const tokenClaims = { myTokenKey: 'my-token-value' };
+        const sessionClaims = { mySessionKey: 'my-session-value' };
+
+        beforeEach(async () => {
+          const mockFunc = jest.fn(
+            (
+              request: EnrichTokenRequest,
+              callback:
+                | Metadata
+                | CallOptions
+                | ((error: ServiceError | null, response?: CancelInvitationResponse) => void),
+            ): SurfaceCall => {
+              if (typeof callback === 'function') callback(null, {});
+              return {} as SurfaceCall;
+            },
+          );
+
+          jest.spyOn(sdk['client'], 'enrichToken').mockImplementation(mockFunc);
+
+          return sdk.enrichToken(accessToken, tokenClaims, sessionClaims);
+        });
+
+        it('sends correct request', () => {
+          expect(sdk['client'].enrichToken).toBeCalledTimes(1);
+          expect(sdk['client'].enrichToken).toBeCalledWith(
+            {
+              accessToken,
+              tokenClaims: {
+                fields: {
+                  myTokenKey: {
+                    kind: {
+                      oneofKind: 'stringValue',
+                      stringValue: 'my-token-value',
+                    },
+                  },
+                },
+              },
+              sessionClaims: {
+                fields: {
+                  mySessionKey: {
+                    kind: {
+                      oneofKind: 'stringValue',
+                      stringValue: 'my-session-value',
+                    },
+                  },
+                },
+              },
+            },
+            expect.any(Function),
+          );
+        });
+      });
+    });
+
+    describe('when the response contains an error', () => {
+      const accessToken = 'access-token';
+      const error = {
+        code: Status.NOT_FOUND,
+        details: 'no details',
+        metadata: {},
+      } as ServiceError;
+      let caughtError: unknown;
+
+      beforeEach(async () => {
+        const mockFunc = jest.fn(
+          (
+            request: EnrichTokenRequest,
+            callback:
+              | Metadata
+              | CallOptions
+              | ((error: ServiceError | null, response?: CancelInvitationResponse) => void),
+          ): SurfaceCall => {
+            if (typeof callback === 'function') callback(error);
+            return {} as SurfaceCall;
+          },
+        );
+
+        jest.spyOn(sdk['client'], 'enrichToken').mockImplementation(mockFunc);
+
+        try {
+          await sdk.enrichToken(accessToken);
         } catch (err) {
           caughtError = err;
         }
