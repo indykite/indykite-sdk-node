@@ -8,6 +8,7 @@ import {
   CreateInvitationRequest,
   DeleteDigitalTwinRequest,
   DigitalTwinIdentifier,
+  EnrichTokenRequest,
   GetDigitalTwinRequest,
   PatchDigitalTwinRequest,
   ResendInvitationRequest,
@@ -25,6 +26,7 @@ import { ConsentChallenge, ConsentChallengeDenial, PatchResult, Property } from 
 import { SdkClient } from './client/client';
 import { IdentityManagementAPIClient } from '../grpc/indykite/identity/v1beta1/identity_management_api.grpc-client';
 import { Invitation } from './model/invitation';
+import { JsonValue } from '@protobuf-ts/runtime';
 
 export class IdentityClient {
   private client: IdentityManagementAPIClient;
@@ -661,6 +663,30 @@ export class IdentityClient {
       });
 
       this.client.cancelInvitation(request, (err) => {
+        if (err) reject(err);
+        else resolve();
+      });
+    });
+  }
+
+  enrichToken(
+    accessToken: string,
+    tokenClaims?: Record<string, unknown>,
+    sessionClaims?: Record<string, unknown>,
+  ): Promise<void> {
+    return new Promise((resolve, reject) => {
+      const jsonValue: JsonValue = { accessToken };
+
+      if (tokenClaims) {
+        jsonValue.tokenClaims = tokenClaims as JsonValue;
+      }
+
+      if (sessionClaims) {
+        jsonValue.sessionClaims = sessionClaims as JsonValue;
+      }
+
+      const request = EnrichTokenRequest.fromJson(jsonValue);
+      this.client.enrichToken(request, (err) => {
         if (err) reject(err);
         else resolve();
       });
