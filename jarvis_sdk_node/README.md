@@ -270,6 +270,31 @@ async function updateProp(sdk:IdentityClient) {
 }
 ```
 
+### Enriching access token
+
+You can enrich an access token with token claims and session claims with the following code:
+```typescript
+async function enrichToken(sdk:IdentityClient) {
+  const tokenClaims = {
+    stringClaim: "stringValue",
+    numberClaim: 42,
+    mapClaim: {
+      key: "value",
+    },
+  };
+
+  const sessionClaims = {
+    boolClaim: true,
+    nullClaim: null,
+    arrayClaim: ["stringValue"]
+  };
+
+  await sdk.enrichToken(userToken, tokenClaims, sessionClaims);
+}
+```
+
+> Note: You need to refresh the access token so that the access token is enriched with the claims.
+
 
 
 
