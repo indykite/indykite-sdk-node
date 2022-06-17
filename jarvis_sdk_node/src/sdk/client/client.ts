@@ -86,14 +86,16 @@ export class SdkClient {
   private getUnauthenticatedStatusInterceptor() {
     return (options: InterceptorOptions, nextCall: NextCall): InterceptingCall => {
       let originalMessage: unknown;
-      let savedMessageContent: unknown;
       let savedMessageNext: (message: unknown) => void;
       return new InterceptingCall(nextCall(options), {
         start: (metadata, listener, next) => {
           next(metadata, {
             onReceiveMessage: (message, next) => {
-              savedMessageContent = message;
-              savedMessageNext = next;
+              if (message === null) {
+                savedMessageNext = next;
+              } else {
+                next(message);
+              }
             },
             onReceiveStatus: async (status, next) => {
               if (status.code === Status.UNAUTHENTICATED) {
@@ -105,21 +107,17 @@ export class SdkClient {
                 const newCall = nextCall(newOptions);
                 newCall.start(metadata, {
                   onReceiveMessage: (message) => {
-                    savedMessageContent = message;
+                    if (savedMessageNext) {
+                      savedMessageNext(message);
+                    }
                   },
                   onReceiveStatus: (status) => {
-                    if (savedMessageNext) {
-                      savedMessageNext(savedMessageContent);
-                    }
                     next(status);
                   },
                 });
                 newCall.sendMessage(originalMessage);
                 newCall.halfClose();
               } else {
-                if (savedMessageNext) {
-                  savedMessageNext(savedMessageContent);
-                }
                 next(status);
               }
             },

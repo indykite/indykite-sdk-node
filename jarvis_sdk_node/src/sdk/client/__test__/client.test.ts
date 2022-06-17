@@ -307,7 +307,7 @@ describe('call credential', () => {
             startInterceptor = jest
               .fn()
               .mockImplementationOnce((metadata, listener) => {
-                listener.onReceiveMessage('Received message');
+                listener.onReceiveMessage(null);
                 listener.onReceiveStatus({
                   code: Status.UNAUTHENTICATED,
                   details: 'Error',
