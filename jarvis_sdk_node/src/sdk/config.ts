@@ -1,10 +1,16 @@
 import {
+  CreateApplicationAgentRequest,
   CreateApplicationRequest,
   CreateApplicationSpaceRequest,
   CreateConfigNodeRequest,
   CreateTenantRequest,
+  DeleteApplicationAgentCredentialRequest,
+  DeleteApplicationAgentRequest,
   DeleteApplicationSpaceRequest,
   DeleteConfigNodeRequest,
+  ReadApplicationAgentCredentialRequest,
+  RegisterApplicationAgentCredentialRequest,
+  UpdateApplicationAgentRequest,
   UpdateApplicationRequest,
   UpdateApplicationSpaceRequest,
   UpdateConfigNodeRequest,
@@ -22,6 +28,8 @@ import { StringValue } from '../grpc/google/protobuf/wrappers';
 import { Utils } from './utils/utils';
 import { Tenant } from './model/tenant';
 import { Application } from './model/application';
+import { ApplicationAgent } from './model/application_agent';
+import { ApplicationAgentCredential } from './model/application_agent_credential';
 
 const endpoint = process.env.JARVIS_ENDPOINT || 'jarvis.indykite.com';
 export class ConfigClient {
@@ -694,6 +702,228 @@ export class ConfigClient {
         .on('end', () => {
           resolve(list);
         });
+    });
+  }
+
+  createApplicationAgent(
+    applicationId: string,
+    name: string,
+    displayName?: string,
+    description?: string,
+  ): Promise<ApplicationAgent> {
+    return new Promise((resolve, reject) => {
+      const req: CreateApplicationAgentRequest = {
+        applicationId,
+        name,
+      };
+
+      if (displayName !== undefined) req.displayName = StringValue.create({ value: displayName });
+      if (description !== undefined) req.description = StringValue.create({ value: description });
+
+      this.client.createApplicationAgent(req, (err, response) => {
+        if (err) reject(err);
+        else if (!response)
+          reject(new SdkError(SdkErrorCode.SDK_CODE_1, 'No application agent response'));
+        else
+          resolve(
+            ApplicationAgent.deserialize(response, applicationId, name, displayName, description),
+          );
+      });
+    });
+  }
+
+  readApplicationAgentById(applicationAgentId: string): Promise<ApplicationAgent> {
+    return new Promise((resolve, reject) => {
+      this.client.readApplicationAgent(
+        {
+          identifier: {
+            oneofKind: 'id',
+            id: applicationAgentId,
+          },
+        },
+        (err, response) => {
+          if (err) reject(err);
+          else if (!response) {
+            reject(new SdkError(SdkErrorCode.SDK_CODE_1, 'No application agent response'));
+          } else {
+            resolve(ApplicationAgent.deserialize(response));
+          }
+        },
+      );
+    });
+  }
+
+  readApplicationAgentByName(appSpaceId: string, name: string): Promise<ApplicationAgent> {
+    return new Promise((resolve, reject) => {
+      this.client.readApplicationAgent(
+        {
+          identifier: {
+            oneofKind: 'name',
+            name: {
+              location: appSpaceId,
+              name,
+            },
+          },
+        },
+        (err, response) => {
+          if (err) reject(err);
+          else if (!response) {
+            reject(new SdkError(SdkErrorCode.SDK_CODE_1, 'No application agent response'));
+          } else {
+            resolve(ApplicationAgent.deserialize(response));
+          }
+        },
+      );
+    });
+  }
+
+  updateApplicationAgent(applicationAgent: ApplicationAgent): Promise<ApplicationAgent> {
+    return new Promise((resolve, reject) => {
+      const req: UpdateApplicationAgentRequest = {
+        id: applicationAgent.id,
+      };
+
+      if (applicationAgent.etag !== undefined)
+        req.etag = StringValue.create({ value: applicationAgent.etag });
+      if (applicationAgent.displayName !== undefined)
+        req.displayName = StringValue.create({ value: applicationAgent.displayName });
+      if (applicationAgent.description !== undefined)
+        req.description = StringValue.create({ value: applicationAgent.description });
+
+      this.client.updateApplicationAgent(req, (err, response) => {
+        if (err) reject(err);
+        else {
+          try {
+            if (response && response.id === applicationAgent.id) {
+              applicationAgent.etag = response.etag;
+              applicationAgent.updateTime = Utils.timestampToDate(response.updateTime);
+              resolve(applicationAgent);
+            } else {
+              reject(
+                new SdkError(
+                  SdkErrorCode.SDK_CODE_1,
+                  `Update returned with different id: req.iq=${applicationAgent.id}, res.id=${
+                    response ? response.id : 'undefined'
+                  }`,
+                ),
+              );
+            }
+          } catch (err) {
+            reject(err);
+          }
+        }
+      });
+    });
+  }
+
+  readApplicationAgentList(
+    appSpaceId: string,
+    applicationAgentIds: string[],
+  ): Promise<ApplicationAgent[]> {
+    return new Promise((resolve, reject) => {
+      const list: ApplicationAgent[] = [];
+      this.client
+        .listApplicationAgents({
+          appSpaceId,
+          match: applicationAgentIds,
+        })
+        .on('error', (err) => {
+          reject(err);
+        })
+        .on('data', (data) => {
+          if (data && data.applicationAgent) {
+            list.push(ApplicationAgent.deserialize(data));
+          }
+        })
+        .on('end', () => {
+          resolve(list);
+        });
+    });
+  }
+
+  deleteApplicationAgent(appAgentId: string): Promise<void> {
+    return new Promise((resolve, reject) => {
+      const req: DeleteApplicationAgentRequest = {
+        id: appAgentId,
+      };
+
+      this.client.deleteApplicationAgent(req, (err, response) => {
+        if (err) reject(err);
+        else if (!response)
+          reject(new SdkError(SdkErrorCode.SDK_CODE_1, 'No application agent response'));
+        else resolve();
+      });
+    });
+  }
+
+  registerApplicationCredential(
+    appAgentId: string,
+    displayName: string,
+    defaultTenantId: string,
+    publicKeyType?: 'jwk' | 'pem',
+    publicKey?: Buffer,
+    expireTime?: Date,
+  ): Promise<ApplicationAgentCredential> {
+    return new Promise((resolve, reject) => {
+      let publicKeyObject = {
+        oneofKind: undefined,
+      } as RegisterApplicationAgentCredentialRequest['publicKey'];
+      if (publicKeyType !== undefined && publicKey !== undefined) {
+        switch (publicKeyType) {
+          case 'jwk':
+            publicKeyObject = { oneofKind: 'jwk', jwk: publicKey };
+            break;
+          case 'pem':
+            publicKeyObject = { oneofKind: 'pem', pem: publicKey };
+            break;
+        }
+      }
+
+      const req: RegisterApplicationAgentCredentialRequest = {
+        applicationAgentId: appAgentId,
+        displayName,
+        defaultTenantId,
+        publicKey: publicKeyObject,
+      };
+
+      if (expireTime !== undefined) req.expireTime = Utils.dateToTimestamp(expireTime);
+
+      this.client.registerApplicationAgentCredential(req, (err, response) => {
+        if (err) reject(err);
+        else if (!response)
+          reject(new SdkError(SdkErrorCode.SDK_CODE_1, 'No application agent credential response'));
+        else resolve(ApplicationAgentCredential.deserialize(response, displayName, appAgentId));
+      });
+    });
+  }
+
+  readApplicationAgentCredential(appCredentialId: string): Promise<ApplicationAgentCredential> {
+    return new Promise((resolve, reject) => {
+      const req: ReadApplicationAgentCredentialRequest = {
+        id: appCredentialId,
+      };
+
+      this.client.readApplicationAgentCredential(req, (err, response) => {
+        if (err) reject(err);
+        else if (!response)
+          reject(new SdkError(SdkErrorCode.SDK_CODE_1, 'No application agent credential response'));
+        else resolve(ApplicationAgentCredential.deserialize(response));
+      });
+    });
+  }
+
+  deleteApplicationAgentCredential(appCredentialId: string): Promise<void> {
+    return new Promise((resolve, reject) => {
+      const req: DeleteApplicationAgentCredentialRequest = {
+        id: appCredentialId,
+      };
+
+      this.client.deleteApplicationAgentCredential(req, (err, response) => {
+        if (err) reject(err);
+        else if (!response)
+          reject(new SdkError(SdkErrorCode.SDK_CODE_1, 'No application agent credential response'));
+        else resolve();
+      });
     });
   }
 }
