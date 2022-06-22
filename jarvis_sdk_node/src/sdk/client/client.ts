@@ -118,6 +118,12 @@ export class SdkClient {
                 newCall.sendMessage(originalMessage);
                 newCall.halfClose();
               } else {
+                if (savedMessageNext) {
+                  // if the received message was `null`, but it was not caused by UNAUTHENTICATED status
+                  // (it happens usually when response has no content)
+                  // in this case we need to process the `null` message
+                  savedMessageNext(null);
+                }
                 next(status);
               }
             },
