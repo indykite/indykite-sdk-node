@@ -1,6 +1,6 @@
-import { SdkErrorCode, SdkError } from './../error';
-import { ReadCustomerResponse } from '../../grpc/indykite/config/v1beta1/config_management_api';
-import { Utils } from '../utils/utils';
+import { SdkErrorCode, SdkError } from '../../error';
+import { ReadCustomerResponse } from '../../../grpc/indykite/config/v1beta1/config_management_api';
+import { Utils } from '../../utils/utils';
 
 export class Customer {
   constructor(

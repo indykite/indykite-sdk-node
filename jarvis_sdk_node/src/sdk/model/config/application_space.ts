@@ -1,9 +1,9 @@
-import { SdkErrorCode, SdkError } from '../error';
+import { SdkErrorCode, SdkError } from '../../error';
 import {
   CreateApplicationSpaceResponse,
   ReadApplicationSpaceResponse,
-} from '../../grpc/indykite/config/v1beta1/config_management_api';
-import { Utils } from '../utils/utils';
+} from '../../../grpc/indykite/config/v1beta1/config_management_api';
+import { Utils } from '../../utils/utils';
 
 export class ApplicationSpace {
   constructor(

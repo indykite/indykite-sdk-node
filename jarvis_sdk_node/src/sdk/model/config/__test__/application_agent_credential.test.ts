@@ -1,5 +1,5 @@
-import { SdkError, SdkErrorCode } from '../../error';
-import { Utils } from '../../utils/utils';
+import { SdkError, SdkErrorCode } from '../../../error';
+import { Utils } from '../../../utils/utils';
 import { ApplicationAgentCredential } from '../application_agent_credential';
 
 describe('deserialize', () => {
