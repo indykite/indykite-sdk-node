@@ -1,6 +1,6 @@
-import { StringValue } from '../../../grpc/google/protobuf/wrappers';
-import { SdkError, SdkErrorCode } from '../../error';
-import { Utils } from '../../utils/utils';
+import { StringValue } from '../../../../grpc/google/protobuf/wrappers';
+import { SdkError, SdkErrorCode } from '../../../error';
+import { Utils } from '../../../utils/utils';
 import { ApplicationSpace } from '../application_space';
 
 describe('deserialize', () => {

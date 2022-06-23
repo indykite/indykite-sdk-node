@@ -21,15 +21,15 @@ import { SdkErrorCode, SdkError } from './error';
 import { AuthFlow } from './model/config/authflow/flow';
 import { EmailProviderType } from './model/config/email/factory';
 import { ConfigurationFactory } from './model/config/factory';
-import { Customer } from './model/customer';
-import { ApplicationSpace } from './model/application_space';
+import { Customer } from './model/config/customer';
+import { ApplicationSpace } from './model/config/application_space';
 import { ConfigManagementAPIClient } from '../grpc/indykite/config/v1beta1/config_management_api.grpc-client';
 import { StringValue } from '../grpc/google/protobuf/wrappers';
 import { Utils } from './utils/utils';
-import { Tenant } from './model/tenant';
-import { Application } from './model/application';
-import { ApplicationAgent } from './model/application_agent';
-import { ApplicationAgentCredential } from './model/application_agent_credential';
+import { Tenant } from './model/config/tenant';
+import { Application } from './model/config/application';
+import { ApplicationAgent } from './model/config/application_agent';
+import { ApplicationAgentCredential } from './model/config/application_agent_credential';
 
 const endpoint = process.env.JARVIS_ENDPOINT || 'jarvis.indykite.com';
 export class ConfigClient {
