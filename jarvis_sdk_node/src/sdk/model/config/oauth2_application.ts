@@ -9,7 +9,7 @@ import { Utils } from '../../utils/utils';
 type IOptions = {
   id: string;
   name: string;
-  etag: string;
+  etag?: string;
   displayName?: string;
   description?: string;
   createTime?: Date;
@@ -25,12 +25,11 @@ type IOptions = {
 export class OAuth2Application {
   public id = '';
   public name = '';
-  public etag = '';
 
   constructor(
     id: string,
     name: string,
-    etag: string,
+    etag?: string,
     displayName?: string,
     description?: string,
     createTime?: Date,
@@ -46,7 +45,7 @@ export class OAuth2Application {
   constructor(
     idOrOptions: string | IOptions,
     name?: string,
-    etag?: string,
+    public etag?: string,
     public displayName?: string,
     public description?: string,
     public createTime?: Date,
@@ -58,10 +57,9 @@ export class OAuth2Application {
     public oauth2ProviderId?: string,
     public config?: OAuth2ApplicationConfig,
   ) {
-    if (typeof idOrOptions === 'string' && name !== undefined && etag !== undefined) {
+    if (typeof idOrOptions === 'string' && name !== undefined) {
       this.id = idOrOptions;
       this.name = name;
-      this.etag = etag;
     }
 
     if (typeof idOrOptions === 'object') {
