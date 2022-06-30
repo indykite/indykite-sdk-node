@@ -809,6 +809,11 @@ export interface OAuth2ClientConfig {
      */
     clientId: string;
     /**
+     * Client secret, must be provided when creating a new client config but is optional when updating.
+     * If provided when updating, stored secret value will be updated with new value.
+     * If not provided when updating, stored secret value will be kept.
+     * When reading back client config, client secret will always be set to string empty.
+     *
      * @generated from protobuf field: string client_secret = 3;
      */
     clientSecret: string;
@@ -894,6 +899,12 @@ export interface OAuth2ClientConfig {
      * @generated from protobuf field: string hosted_domain = 18;
      */
     hostedDomain: string;
+    /**
+     * AuthStyle represents how requests for tokens are authenticated to the server.
+     *
+     * @generated from protobuf field: indykite.config.v1beta1.AuthStyle auth_style = 20;
+     */
+    authStyle: AuthStyle;
 }
 /**
  * @generated from protobuf message indykite.config.v1beta1.OAuth2Application
@@ -1411,6 +1422,11 @@ export interface AuthenteqProviderConfig {
      */
     clientId: string;
     /**
+     * Client secret, must be provided when creating a new config but is optional when updating.
+     * If provided when updating, stored secret value will be updated with new value.
+     * If not provided when updating, stored secret value will be kept.
+     * When reading back config, client secret will always be set to string empty.
+     *
      * @generated from protobuf field: string client_secret = 3;
      */
     clientSecret: string;
@@ -1428,6 +1444,11 @@ export interface SAFRProviderConfig {
      */
     accountId: string;
     /**
+     * Password, must be provided when creating a new config but is optional when updating.
+     * If provided when updating, stored password value will be updated with new value.
+     * If not provided when updating, stored password value will be kept.
+     * When reading back config, password will always be set to string empty.
+     *
      * @generated from protobuf field: string password = 2;
      */
     password: string;
@@ -1524,6 +1545,11 @@ export interface Email {
  */
 export interface SendGridProviderConfig {
     /**
+     * Api key, must be provided when creating a new config but is optional when updating.
+     * If provided when updating, stored api key value will be updated with new value.
+     * If not provided when updating, stored api key value will be kept.
+     * When reading back config, api key will always be set to string empty.
+     *
      * @generated from protobuf field: string api_key = 1;
      */
     apiKey: string;
@@ -1547,6 +1573,11 @@ export interface SendGridProviderConfig {
  */
 export interface MailJetProviderConfig {
     /**
+     * Api key, must be provided when creating a new config but is optional when updating.
+     * If provided when updating, stored api key value will be updated with new value.
+     * If not provided when updating, stored api key value will be kept.
+     * When reading back config, api key will always be set to string empty.
+     *
      * @generated from protobuf field: string api_key = 1;
      */
     apiKey: string;
@@ -1570,6 +1601,11 @@ export interface MailJetProviderConfig {
  */
 export interface MailgunProviderConfig {
     /**
+     * Api key, must be provided when creating a new config but is optional when updating.
+     * If provided when updating, stored api key value will be updated with new value.
+     * If not provided when updating, stored api key value will be kept.
+     * When reading back config, api key will always be set to string empty.
+     *
      * @generated from protobuf field: string api_key = 1;
      */
     apiKey: string;
@@ -1589,7 +1625,10 @@ export interface AmazonSESProviderConfig {
      */
     accessKeyId: string;
     /**
-     * AWS Secret Access Key
+     * AWS Secret Access Key, must be provided when creating a new config but is optional when updating.
+     * If provided when updating, stored access key value will be updated with new value.
+     * If not provided when updating, stored access key value will be kept.
+     * When reading back config, access key will always be set to string empty.
      *
      * @generated from protobuf field: string secret_access_key = 2;
      */
@@ -1947,31 +1986,37 @@ export interface IngestMappingConfig_UpsertData {
  */
 export interface IngestMappingConfig_Entity {
     /**
+     * Optional TenantId to create the digital twin entity under, if specified.
+     *
+     * @generated from protobuf field: string tenant_id = 1;
+     */
+    tenantId: string;
+    /**
      * The labels to attach to the Node representing the Entity.
-     * For a DigitalTwin this list has length 1 and contains only 'DigitalTwin'.
+     * For a DigitalTwin this list needs to contain 'DigitalTwin'.
      * A domain entity can contain anything *but* 'DigitalTwin'.
      * Labels need to be in PascalCase.
      *
-     * @generated from protobuf field: repeated string labels = 1;
+     * @generated from protobuf field: repeated string labels = 2;
      */
     labels: string[];
     /**
      * The property to be used as the externalId of the entity, representing its unique id in the source system.
      *
-     * @generated from protobuf field: indykite.config.v1beta1.IngestMappingConfig.Property external_id = 2;
+     * @generated from protobuf field: indykite.config.v1beta1.IngestMappingConfig.Property external_id = 3;
      */
     externalId?: IngestMappingConfig_Property;
     /**
      * Knowledge Graph: Actual properties on the node.
      * Identity Graph: Node properties with a 'HAS' relation from the DigitalTwin (if PII).
      *
-     * @generated from protobuf field: repeated indykite.config.v1beta1.IngestMappingConfig.Property properties = 3;
+     * @generated from protobuf field: repeated indykite.config.v1beta1.IngestMappingConfig.Property properties = 4;
      */
     properties: IngestMappingConfig_Property[];
     /**
      * Knowledge Graph only: A list of relationships to create between this entity node and other nodes.
      *
-     * @generated from protobuf field: repeated indykite.config.v1beta1.IngestMappingConfig.Relationship relationships = 4;
+     * @generated from protobuf field: repeated indykite.config.v1beta1.IngestMappingConfig.Relationship relationships = 5;
      */
     relationships: IngestMappingConfig_Relationship[];
 }
@@ -1997,13 +2042,6 @@ export interface IngestMappingConfig_Property {
      * @generated from protobuf field: bool is_required = 4;
      */
     isRequired: boolean;
-    /**
-     * Whether this property contains PII. If it does it will only be stored in the Identity Graph, if not it will
-     * be stored in the Knowledge Graph.
-     *
-     * @generated from protobuf field: bool is_pii = 5;
-     */
-    isPii: boolean;
 }
 /**
  * @generated from protobuf message indykite.config.v1beta1.IngestMappingConfig.Relationship
@@ -2230,6 +2268,41 @@ export enum ProviderType {
      * @generated from protobuf enum value: PROVIDER_TYPE_VIPPS_NO = 40;
      */
     VIPPS_NO = 40
+}
+/**
+ * AuthStyle represents how requests for tokens are authenticated
+ * to the server.
+ *
+ * @generated from protobuf enum indykite.config.v1beta1.AuthStyle
+ */
+export enum AuthStyle {
+    /**
+     * @generated from protobuf enum value: AUTH_STYLE_INVALID = 0;
+     */
+    INVALID = 0,
+    /**
+     * AuthStyleAutoDetect means to auto-detect which authentication
+     * style the provider wants by trying both ways and caching
+     * the successful way for the future.
+     *
+     * @generated from protobuf enum value: AUTH_STYLE_AUTO_DETECT = 1;
+     */
+    AUTO_DETECT = 1,
+    /**
+     * AuthStyleInParams sends the "client_id" and "client_secret"
+     * in the POST body as application/x-www-form-urlencoded parameters.
+     *
+     * @generated from protobuf enum value: AUTH_STYLE_IN_PARAMS = 2;
+     */
+    IN_PARAMS = 2,
+    /**
+     * AuthStyleInHeader sends the client_id and client_password
+     * using HTTP Basic Authorization. This is an optional style
+     * described in the OAuth2 RFC 6749 section 2.3.1.
+     *
+     * @generated from protobuf enum value: AUTH_STYLE_IN_HEADER = 3;
+     */
+    IN_HEADER = 3
 }
 // 
 // 
@@ -3604,7 +3677,7 @@ class OAuth2ClientConfig$Type extends MessageType<OAuth2ClientConfig> {
         super("indykite.config.v1beta1.OAuth2ClientConfig", [
             { no: 1, name: "provider_type", kind: "enum", T: () => ["indykite.config.v1beta1.ProviderType", ProviderType, "PROVIDER_TYPE_"], options: { "validate.rules": { enum: { definedOnly: true, notIn: [0] } } } },
             { no: 2, name: "client_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "8" } } } },
-            { no: 3, name: "client_secret", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "8" } } } },
+            { no: 3, name: "client_secret", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "8", ignoreEmpty: true } } } },
             { no: 4, name: "redirect_uri", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { unique: true, items: { string: { minLen: "8", uri: true } }, ignoreEmpty: true } } } },
             { no: 17, name: "default_scopes", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { unique: true, items: { string: { minLen: "1" } }, ignoreEmpty: true } } } },
             { no: 19, name: "allowed_scopes", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { unique: true, items: { string: { minLen: "1" } }, ignoreEmpty: true } } } },
@@ -3617,11 +3690,12 @@ class OAuth2ClientConfig$Type extends MessageType<OAuth2ClientConfig> {
             { no: 13, name: "jwks_uri", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "9", prefix: "https", uri: true, ignoreEmpty: true } } } },
             { no: 14, name: "image_url", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "2", maxLen: "1024", ignoreEmpty: true } } } },
             { no: 15, name: "tenant", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "2", maxLen: "254", ignoreEmpty: true } } } },
-            { no: 18, name: "hosted_domain", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "2", maxLen: "254", hostname: true, ignoreEmpty: true } } } }
+            { no: 18, name: "hosted_domain", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "2", maxLen: "254", hostname: true, ignoreEmpty: true } } } },
+            { no: 20, name: "auth_style", kind: "enum", T: () => ["indykite.config.v1beta1.AuthStyle", AuthStyle, "AUTH_STYLE_"], options: { "validate.rules": { enum: { definedOnly: true } } } }
         ]);
     }
     create(value?: PartialMessage<OAuth2ClientConfig>): OAuth2ClientConfig {
-        const message = { providerType: 0, clientId: "", clientSecret: "", redirectUri: [], defaultScopes: [], allowedScopes: [], allowSignup: false, issuer: "", authorizationEndpoint: "", tokenEndpoint: "", discoveryUrl: "", userinfoEndpoint: "", jwksUri: "", imageUrl: "", tenant: "", hostedDomain: "" };
+        const message = { providerType: 0, clientId: "", clientSecret: "", redirectUri: [], defaultScopes: [], allowedScopes: [], allowSignup: false, issuer: "", authorizationEndpoint: "", tokenEndpoint: "", discoveryUrl: "", userinfoEndpoint: "", jwksUri: "", imageUrl: "", tenant: "", hostedDomain: "", authStyle: 0 };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<OAuth2ClientConfig>(this, message, value);
@@ -3679,6 +3753,9 @@ class OAuth2ClientConfig$Type extends MessageType<OAuth2ClientConfig> {
                     break;
                 case /* string hosted_domain */ 18:
                     message.hostedDomain = reader.string();
+                    break;
+                case /* indykite.config.v1beta1.AuthStyle auth_style */ 20:
+                    message.authStyle = reader.int32();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -3740,6 +3817,9 @@ class OAuth2ClientConfig$Type extends MessageType<OAuth2ClientConfig> {
         /* string hosted_domain = 18; */
         if (message.hostedDomain !== "")
             writer.tag(18, WireType.LengthDelimited).string(message.hostedDomain);
+        /* indykite.config.v1beta1.AuthStyle auth_style = 20; */
+        if (message.authStyle !== 0)
+            writer.tag(20, WireType.Varint).int32(message.authStyle);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -4614,7 +4694,7 @@ class AuthenteqProviderConfig$Type extends MessageType<AuthenteqProviderConfig> 
         super("indykite.config.v1beta1.AuthenteqProviderConfig", [
             { no: 1, name: "default_redirect_uri", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 2, name: "client_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "12" } } } },
-            { no: 3, name: "client_secret", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "12" } } } },
+            { no: 3, name: "client_secret", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "12", ignoreEmpty: true } } } },
             { no: 4, name: "host_address", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { hostname: true } } } }
         ]);
     }
@@ -4681,7 +4761,7 @@ class SAFRProviderConfig$Type extends MessageType<SAFRProviderConfig> {
     constructor() {
         super("indykite.config.v1beta1.SAFRProviderConfig", [
             { no: 1, name: "account_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "2", maxLen: "254" } } } },
-            { no: 2, name: "password", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "4", maxLen: "254" } } } },
+            { no: 2, name: "password", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "4", maxLen: "254", ignoreEmpty: true } } } },
             { no: 3, name: "directory", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "2", maxLen: "254" } } } }
         ]);
     }
@@ -4943,7 +5023,7 @@ export const Email = new Email$Type();
 class SendGridProviderConfig$Type extends MessageType<SendGridProviderConfig> {
     constructor() {
         super("indykite.config.v1beta1.SendGridProviderConfig", [
-            { no: 1, name: "api_key", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "25", maxLen: "254" } } } },
+            { no: 1, name: "api_key", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "25", maxLen: "254", ignoreEmpty: true } } } },
             { no: 2, name: "sandbox_mode", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 3, name: "ip_pool_name", kind: "message", T: () => StringValue, options: { "validate.rules": { string: { minLen: "2", maxLen: "64", ignoreEmpty: true } } } },
             { no: 4, name: "host", kind: "message", T: () => StringValue, options: { "validate.rules": { string: { minLen: "10", maxLen: "254", uri: true, ignoreEmpty: true } } } }
@@ -5011,7 +5091,7 @@ export const SendGridProviderConfig = new SendGridProviderConfig$Type();
 class MailJetProviderConfig$Type extends MessageType<MailJetProviderConfig> {
     constructor() {
         super("indykite.config.v1beta1.MailJetProviderConfig", [
-            { no: 1, name: "api_key", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "25", maxLen: "254" } } } },
+            { no: 1, name: "api_key", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "25", maxLen: "254", ignoreEmpty: true } } } },
             { no: 2, name: "sandbox_mode", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 8, name: "url_tags", kind: "map", K: 9 /*ScalarType.STRING*/, V: { kind: "scalar", T: 9 /*ScalarType.STRING*/ } },
             { no: 4, name: "custom_campaign", kind: "message", T: () => StringValue }
@@ -5095,7 +5175,7 @@ export const MailJetProviderConfig = new MailJetProviderConfig$Type();
 class MailgunProviderConfig$Type extends MessageType<MailgunProviderConfig> {
     constructor() {
         super("indykite.config.v1beta1.MailgunProviderConfig", [
-            { no: 1, name: "api_key", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "25", maxLen: "254" } } } },
+            { no: 1, name: "api_key", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "25", maxLen: "254", ignoreEmpty: true } } } },
             { no: 2, name: "default_from_address", kind: "message", T: () => Email }
         ]);
     }
@@ -5150,7 +5230,7 @@ class AmazonSESProviderConfig$Type extends MessageType<AmazonSESProviderConfig> 
     constructor() {
         super("indykite.config.v1beta1.AmazonSESProviderConfig", [
             { no: 1, name: "access_key_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "25", maxLen: "254" } } } },
-            { no: 2, name: "secret_access_key", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "25", maxLen: "254" } } } },
+            { no: 2, name: "secret_access_key", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "25", maxLen: "254", ignoreEmpty: true } } } },
             { no: 4, name: "region", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "2", maxLen: "20" } } } },
             { no: 5, name: "configuration_set_name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "254", ignoreEmpty: true } } } },
             { no: 6, name: "default_from_address", kind: "message", T: () => Email },
@@ -6075,14 +6155,15 @@ export const IngestMappingConfig_UpsertData = new IngestMappingConfig_UpsertData
 class IngestMappingConfig_Entity$Type extends MessageType<IngestMappingConfig_Entity> {
     constructor() {
         super("indykite.config.v1beta1.IngestMappingConfig.Entity", [
-            { no: 1, name: "labels", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { minItems: "1", maxItems: "5", items: { string: { maxLen: "64", pattern: "^([A-Z][a-z]+)+$" } } } } } },
-            { no: 2, name: "external_id", kind: "message", T: () => IngestMappingConfig_Property, options: { "validate.rules": { message: { required: true } } } },
-            { no: 3, name: "properties", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => IngestMappingConfig_Property, options: { "validate.rules": { repeated: { maxItems: "20" } } } },
-            { no: 4, name: "relationships", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => IngestMappingConfig_Relationship, options: { "validate.rules": { repeated: { maxItems: "20" } } } }
+            { no: 1, name: "tenant_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$", ignoreEmpty: true } } } },
+            { no: 2, name: "labels", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { minItems: "1", maxItems: "5", items: { string: { maxLen: "64", pattern: "^([A-Z][a-z]+)+$" } } } } } },
+            { no: 3, name: "external_id", kind: "message", T: () => IngestMappingConfig_Property, options: { "validate.rules": { message: { required: true } } } },
+            { no: 4, name: "properties", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => IngestMappingConfig_Property, options: { "validate.rules": { repeated: { maxItems: "20" } } } },
+            { no: 5, name: "relationships", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => IngestMappingConfig_Relationship, options: { "validate.rules": { repeated: { maxItems: "20" } } } }
         ]);
     }
     create(value?: PartialMessage<IngestMappingConfig_Entity>): IngestMappingConfig_Entity {
-        const message = { labels: [], properties: [], relationships: [] };
+        const message = { tenantId: "", labels: [], properties: [], relationships: [] };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<IngestMappingConfig_Entity>(this, message, value);
@@ -6093,16 +6174,19 @@ class IngestMappingConfig_Entity$Type extends MessageType<IngestMappingConfig_En
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* repeated string labels */ 1:
+                case /* string tenant_id */ 1:
+                    message.tenantId = reader.string();
+                    break;
+                case /* repeated string labels */ 2:
                     message.labels.push(reader.string());
                     break;
-                case /* indykite.config.v1beta1.IngestMappingConfig.Property external_id */ 2:
+                case /* indykite.config.v1beta1.IngestMappingConfig.Property external_id */ 3:
                     message.externalId = IngestMappingConfig_Property.internalBinaryRead(reader, reader.uint32(), options, message.externalId);
                     break;
-                case /* repeated indykite.config.v1beta1.IngestMappingConfig.Property properties */ 3:
+                case /* repeated indykite.config.v1beta1.IngestMappingConfig.Property properties */ 4:
                     message.properties.push(IngestMappingConfig_Property.internalBinaryRead(reader, reader.uint32(), options));
                     break;
-                case /* repeated indykite.config.v1beta1.IngestMappingConfig.Relationship relationships */ 4:
+                case /* repeated indykite.config.v1beta1.IngestMappingConfig.Relationship relationships */ 5:
                     message.relationships.push(IngestMappingConfig_Relationship.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
@@ -6117,18 +6201,21 @@ class IngestMappingConfig_Entity$Type extends MessageType<IngestMappingConfig_En
         return message;
     }
     internalBinaryWrite(message: IngestMappingConfig_Entity, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated string labels = 1; */
+        /* string tenant_id = 1; */
+        if (message.tenantId !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.tenantId);
+        /* repeated string labels = 2; */
         for (let i = 0; i < message.labels.length; i++)
-            writer.tag(1, WireType.LengthDelimited).string(message.labels[i]);
-        /* indykite.config.v1beta1.IngestMappingConfig.Property external_id = 2; */
+            writer.tag(2, WireType.LengthDelimited).string(message.labels[i]);
+        /* indykite.config.v1beta1.IngestMappingConfig.Property external_id = 3; */
         if (message.externalId)
-            IngestMappingConfig_Property.internalBinaryWrite(message.externalId, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* repeated indykite.config.v1beta1.IngestMappingConfig.Property properties = 3; */
+            IngestMappingConfig_Property.internalBinaryWrite(message.externalId, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        /* repeated indykite.config.v1beta1.IngestMappingConfig.Property properties = 4; */
         for (let i = 0; i < message.properties.length; i++)
-            IngestMappingConfig_Property.internalBinaryWrite(message.properties[i], writer.tag(3, WireType.LengthDelimited).fork(), options).join();
-        /* repeated indykite.config.v1beta1.IngestMappingConfig.Relationship relationships = 4; */
+            IngestMappingConfig_Property.internalBinaryWrite(message.properties[i], writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+        /* repeated indykite.config.v1beta1.IngestMappingConfig.Relationship relationships = 5; */
         for (let i = 0; i < message.relationships.length; i++)
-            IngestMappingConfig_Relationship.internalBinaryWrite(message.relationships[i], writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+            IngestMappingConfig_Relationship.internalBinaryWrite(message.relationships[i], writer.tag(5, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -6145,12 +6232,11 @@ class IngestMappingConfig_Property$Type extends MessageType<IngestMappingConfig_
         super("indykite.config.v1beta1.IngestMappingConfig.Property", [
             { no: 1, name: "source_name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "1", maxLen: "256" } } } },
             { no: 2, name: "mapped_name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "1", maxLen: "256" } } } },
-            { no: 4, name: "is_required", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 5, name: "is_pii", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+            { no: 4, name: "is_required", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
     create(value?: PartialMessage<IngestMappingConfig_Property>): IngestMappingConfig_Property {
-        const message = { sourceName: "", mappedName: "", isRequired: false, isPii: false };
+        const message = { sourceName: "", mappedName: "", isRequired: false };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<IngestMappingConfig_Property>(this, message, value);
@@ -6169,9 +6255,6 @@ class IngestMappingConfig_Property$Type extends MessageType<IngestMappingConfig_
                     break;
                 case /* bool is_required */ 4:
                     message.isRequired = reader.bool();
-                    break;
-                case /* bool is_pii */ 5:
-                    message.isPii = reader.bool();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -6194,9 +6277,6 @@ class IngestMappingConfig_Property$Type extends MessageType<IngestMappingConfig_
         /* bool is_required = 4; */
         if (message.isRequired !== false)
             writer.tag(4, WireType.Varint).bool(message.isRequired);
-        /* bool is_pii = 5; */
-        if (message.isPii !== false)
-            writer.tag(5, WireType.Varint).bool(message.isPii);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

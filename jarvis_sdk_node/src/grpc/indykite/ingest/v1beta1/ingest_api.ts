@@ -25,6 +25,7 @@ import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MESSAGE_TYPE } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
+import { RecordError } from "./model";
 import { Record } from "./model";
 /**
  * @generated from protobuf message indykite.ingest.v1beta1.StreamRecordsRequest
@@ -44,9 +45,17 @@ export interface StreamRecordsRequest {
  */
 export interface StreamRecordsResponse {
     /**
-     * @generated from protobuf field: uint32 num_records = 1;
+     * @generated from protobuf field: string record_id = 1;
      */
-    numRecords: number;
+    recordId: string;
+    /**
+     * @generated from protobuf field: uint32 record_index = 2;
+     */
+    recordIndex: number;
+    /**
+     * @generated from protobuf field: indykite.ingest.v1beta1.RecordError record_error = 3;
+     */
+    recordError?: RecordError;
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class StreamRecordsRequest$Type extends MessageType<StreamRecordsRequest> {
@@ -106,11 +115,13 @@ export const StreamRecordsRequest = new StreamRecordsRequest$Type();
 class StreamRecordsResponse$Type extends MessageType<StreamRecordsResponse> {
     constructor() {
         super("indykite.ingest.v1beta1.StreamRecordsResponse", [
-            { no: 1, name: "num_records", kind: "scalar", T: 13 /*ScalarType.UINT32*/ }
+            { no: 1, name: "record_id", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 2, name: "record_index", kind: "scalar", T: 13 /*ScalarType.UINT32*/ },
+            { no: 3, name: "record_error", kind: "message", T: () => RecordError }
         ]);
     }
     create(value?: PartialMessage<StreamRecordsResponse>): StreamRecordsResponse {
-        const message = { numRecords: 0 };
+        const message = { recordId: "", recordIndex: 0 };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<StreamRecordsResponse>(this, message, value);
@@ -121,8 +132,14 @@ class StreamRecordsResponse$Type extends MessageType<StreamRecordsResponse> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint32 num_records */ 1:
-                    message.numRecords = reader.uint32();
+                case /* string record_id */ 1:
+                    message.recordId = reader.string();
+                    break;
+                case /* uint32 record_index */ 2:
+                    message.recordIndex = reader.uint32();
+                    break;
+                case /* indykite.ingest.v1beta1.RecordError record_error */ 3:
+                    message.recordError = RecordError.internalBinaryRead(reader, reader.uint32(), options, message.recordError);
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -136,9 +153,15 @@ class StreamRecordsResponse$Type extends MessageType<StreamRecordsResponse> {
         return message;
     }
     internalBinaryWrite(message: StreamRecordsResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint32 num_records = 1; */
-        if (message.numRecords !== 0)
-            writer.tag(1, WireType.Varint).uint32(message.numRecords);
+        /* string record_id = 1; */
+        if (message.recordId !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.recordId);
+        /* uint32 record_index = 2; */
+        if (message.recordIndex !== 0)
+            writer.tag(2, WireType.Varint).uint32(message.recordIndex);
+        /* indykite.ingest.v1beta1.RecordError record_error = 3; */
+        if (message.recordError)
+            RecordError.internalBinaryWrite(message.recordError, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -153,5 +176,5 @@ export const StreamRecordsResponse = new StreamRecordsResponse$Type();
  * @generated ServiceType for protobuf service indykite.ingest.v1beta1.IngestAPI
  */
 export const IngestAPI = new ServiceType("indykite.ingest.v1beta1.IngestAPI", [
-    { name: "StreamRecords", clientStreaming: true, options: {}, I: StreamRecordsRequest, O: StreamRecordsResponse }
+    { name: "StreamRecords", serverStreaming: true, clientStreaming: true, options: {}, I: StreamRecordsRequest, O: StreamRecordsResponse }
 ]);
