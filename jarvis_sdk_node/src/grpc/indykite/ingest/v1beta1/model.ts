@@ -30,28 +30,57 @@ import { Value } from "../../objects/v1beta1/struct";
  */
 export interface Record {
     /**
-     * Specifying which of the fields in the record is the unique identifier for the entity
+     * Unique identifier of the record, for client side reference
      *
-     * @generated from protobuf field: string external_id = 1;
+     * @generated from protobuf field: string id = 1;
+     */
+    id: string;
+    /**
+     * Specifying which of the fields in the record data is the unique identifier for the entity
+     *
+     * @generated from protobuf field: string external_id = 2;
      */
     externalId: string;
     /**
-     * @generated from protobuf field: map<string, indykite.objects.v1beta1.Value> data = 2;
+     * @generated from protobuf field: map<string, indykite.objects.v1beta1.Value> data = 3;
      */
     data: {
         [key: string]: Value;
+    };
+}
+/**
+ * @generated from protobuf message indykite.ingest.v1beta1.PropertyError
+ */
+export interface PropertyError {
+    /**
+     * @generated from protobuf field: repeated string messages = 1;
+     */
+    messages: string[];
+}
+/**
+ * @generated from protobuf message indykite.ingest.v1beta1.RecordError
+ */
+export interface RecordError {
+    /**
+     * map from property type to property error, if any
+     *
+     * @generated from protobuf field: map<string, indykite.ingest.v1beta1.PropertyError> property_errors = 1;
+     */
+    propertyErrors: {
+        [key: string]: PropertyError;
     };
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class Record$Type extends MessageType<Record> {
     constructor() {
         super("indykite.ingest.v1beta1.Record", [
-            { no: 1, name: "external_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "1", maxLen: "256" } } } },
-            { no: 2, name: "data", kind: "map", K: 9 /*ScalarType.STRING*/, V: { kind: "message", T: () => Value }, options: { "validate.rules": { map: { minPairs: "1", maxPairs: "20", keys: { string: { minLen: "1", maxLen: "256" } } } } } }
+            { no: 1, name: "id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "256" } } } },
+            { no: 2, name: "external_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "1", maxLen: "256" } } } },
+            { no: 3, name: "data", kind: "map", K: 9 /*ScalarType.STRING*/, V: { kind: "message", T: () => Value }, options: { "validate.rules": { map: { minPairs: "1", maxPairs: "20", keys: { string: { minLen: "1", maxLen: "256" } } } } } }
         ]);
     }
     create(value?: PartialMessage<Record>): Record {
-        const message = { externalId: "", data: {} };
+        const message = { id: "", externalId: "", data: {} };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<Record>(this, message, value);
@@ -62,11 +91,14 @@ class Record$Type extends MessageType<Record> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* string external_id */ 1:
+                case /* string id */ 1:
+                    message.id = reader.string();
+                    break;
+                case /* string external_id */ 2:
                     message.externalId = reader.string();
                     break;
-                case /* map<string, indykite.objects.v1beta1.Value> data */ 2:
-                    this.binaryReadMap2(message.data, reader, options);
+                case /* map<string, indykite.objects.v1beta1.Value> data */ 3:
+                    this.binaryReadMap3(message.data, reader, options);
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -79,7 +111,7 @@ class Record$Type extends MessageType<Record> {
         }
         return message;
     }
-    private binaryReadMap2(map: Record["data"], reader: IBinaryReader, options: BinaryReadOptions): void {
+    private binaryReadMap3(map: Record["data"], reader: IBinaryReader, options: BinaryReadOptions): void {
         let len = reader.uint32(), end = reader.pos + len, key: keyof Record["data"] | undefined, val: Record["data"][any] | undefined;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
@@ -96,12 +128,15 @@ class Record$Type extends MessageType<Record> {
         map[key ?? ""] = val ?? Value.create();
     }
     internalBinaryWrite(message: Record, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* string external_id = 1; */
+        /* string id = 1; */
+        if (message.id !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.id);
+        /* string external_id = 2; */
         if (message.externalId !== "")
-            writer.tag(1, WireType.LengthDelimited).string(message.externalId);
-        /* map<string, indykite.objects.v1beta1.Value> data = 2; */
+            writer.tag(2, WireType.LengthDelimited).string(message.externalId);
+        /* map<string, indykite.objects.v1beta1.Value> data = 3; */
         for (let k of Object.keys(message.data)) {
-            writer.tag(2, WireType.LengthDelimited).fork().tag(1, WireType.LengthDelimited).string(k);
+            writer.tag(3, WireType.LengthDelimited).fork().tag(1, WireType.LengthDelimited).string(k);
             writer.tag(2, WireType.LengthDelimited).fork();
             Value.internalBinaryWrite(message.data[k], writer, options);
             writer.join().join();
@@ -116,3 +151,117 @@ class Record$Type extends MessageType<Record> {
  * @generated MessageType for protobuf message indykite.ingest.v1beta1.Record
  */
 export const Record = new Record$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class PropertyError$Type extends MessageType<PropertyError> {
+    constructor() {
+        super("indykite.ingest.v1beta1.PropertyError", [
+            { no: 1, name: "messages", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/ }
+        ]);
+    }
+    create(value?: PartialMessage<PropertyError>): PropertyError {
+        const message = { messages: [] };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<PropertyError>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: PropertyError): PropertyError {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* repeated string messages */ 1:
+                    message.messages.push(reader.string());
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: PropertyError, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* repeated string messages = 1; */
+        for (let i = 0; i < message.messages.length; i++)
+            writer.tag(1, WireType.LengthDelimited).string(message.messages[i]);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message indykite.ingest.v1beta1.PropertyError
+ */
+export const PropertyError = new PropertyError$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class RecordError$Type extends MessageType<RecordError> {
+    constructor() {
+        super("indykite.ingest.v1beta1.RecordError", [
+            { no: 1, name: "property_errors", kind: "map", K: 9 /*ScalarType.STRING*/, V: { kind: "message", T: () => PropertyError } }
+        ]);
+    }
+    create(value?: PartialMessage<RecordError>): RecordError {
+        const message = { propertyErrors: {} };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<RecordError>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: RecordError): RecordError {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* map<string, indykite.ingest.v1beta1.PropertyError> property_errors */ 1:
+                    this.binaryReadMap1(message.propertyErrors, reader, options);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    private binaryReadMap1(map: RecordError["propertyErrors"], reader: IBinaryReader, options: BinaryReadOptions): void {
+        let len = reader.uint32(), end = reader.pos + len, key: keyof RecordError["propertyErrors"] | undefined, val: RecordError["propertyErrors"][any] | undefined;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case 1:
+                    key = reader.string();
+                    break;
+                case 2:
+                    val = PropertyError.internalBinaryRead(reader, reader.uint32(), options);
+                    break;
+                default: throw new globalThis.Error("unknown map entry field for field indykite.ingest.v1beta1.RecordError.property_errors");
+            }
+        }
+        map[key ?? ""] = val ?? PropertyError.create();
+    }
+    internalBinaryWrite(message: RecordError, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* map<string, indykite.ingest.v1beta1.PropertyError> property_errors = 1; */
+        for (let k of Object.keys(message.propertyErrors)) {
+            writer.tag(1, WireType.LengthDelimited).fork().tag(1, WireType.LengthDelimited).string(k);
+            writer.tag(2, WireType.LengthDelimited).fork();
+            PropertyError.internalBinaryWrite(message.propertyErrors[k], writer, options);
+            writer.join().join();
+        }
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message indykite.ingest.v1beta1.RecordError
+ */
+export const RecordError = new RecordError$Type();

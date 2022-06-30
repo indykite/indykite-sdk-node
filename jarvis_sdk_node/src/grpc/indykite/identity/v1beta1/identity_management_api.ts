@@ -14,6 +14,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
+import { ImportDigitalTwinsResponse } from "./import";
+import { ImportDigitalTwinsRequest } from "./import";
 import { ServiceType } from "@protobuf-ts/runtime-rpc";
 import type { BinaryWriteOptions } from "@protobuf-ts/runtime";
 import type { IBinaryWriter } from "@protobuf-ts/runtime";
@@ -4859,6 +4861,7 @@ export const IdentityManagementAPI = new ServiceType("indykite.identity.v1beta1.
     { name: "StartDigitalTwinEmailVerification", options: { "google.api.http": { post: "/identity/email/startVerification", body: "*" } }, I: StartDigitalTwinEmailVerificationRequest, O: StartDigitalTwinEmailVerificationResponse },
     { name: "VerifyDigitalTwinEmail", options: { "google.api.http": { post: "/identity/email/verify/{token}", body: "*", additionalBindings: [{ get: "/identity/email/verify/{token}" }] } }, I: VerifyDigitalTwinEmailRequest, O: VerifyDigitalTwinEmailResponse },
     { name: "SelfServiceTerminateSession", options: { "google.api.http": { post: "/identity/self-service/terminate-session", body: "*", additionalBindings: [{ get: "/identity/self-service/terminate-session" }] } }, I: SelfServiceTerminateSessionRequest, O: SelfServiceTerminateSessionResponse },
+    { name: "ImportDigitalTwins", options: {}, I: ImportDigitalTwinsRequest, O: ImportDigitalTwinsResponse },
     { name: "GetDigitalTwin", options: {}, I: GetDigitalTwinRequest, O: GetDigitalTwinResponse },
     { name: "ListDigitalTwins", options: {}, I: ListDigitalTwinsRequest, O: ListDigitalTwinsResponse },
     { name: "PatchDigitalTwin", options: {}, I: PatchDigitalTwinRequest, O: PatchDigitalTwinResponse },

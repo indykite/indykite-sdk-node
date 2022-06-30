@@ -17,8 +17,8 @@
 import { IngestAPI } from "./ingest_api";
 import type { BinaryWriteOptions } from "@protobuf-ts/runtime";
 import type { BinaryReadOptions } from "@protobuf-ts/runtime";
-import type { StreamRecordsRequest } from "./ingest_api";
 import type { StreamRecordsResponse } from "./ingest_api";
+import type { StreamRecordsRequest } from "./ingest_api";
 import * as grpc from "@grpc/grpc-js";
 /**
  * IngestAPI represents the service interface for data ingestion.
@@ -27,12 +27,10 @@ import * as grpc from "@grpc/grpc-js";
  */
 export interface IIngestAPIClient {
     /**
-     * @generated from protobuf rpc: StreamRecords(stream indykite.ingest.v1beta1.StreamRecordsRequest) returns (indykite.ingest.v1beta1.StreamRecordsResponse);
+     * @generated from protobuf rpc: StreamRecords(stream indykite.ingest.v1beta1.StreamRecordsRequest) returns (stream indykite.ingest.v1beta1.StreamRecordsResponse);
      */
-    streamRecords(metadata: grpc.Metadata, options: grpc.CallOptions, callback: (err: grpc.ServiceError | null, value?: StreamRecordsResponse) => void): grpc.ClientWritableStream<StreamRecordsRequest>;
-    streamRecords(metadata: grpc.Metadata, callback: (err: grpc.ServiceError | null, value?: StreamRecordsResponse) => void): grpc.ClientWritableStream<StreamRecordsRequest>;
-    streamRecords(options: grpc.CallOptions, callback: (err: grpc.ServiceError | null, value?: StreamRecordsResponse) => void): grpc.ClientWritableStream<StreamRecordsRequest>;
-    streamRecords(callback: (err: grpc.ServiceError | null, value?: StreamRecordsResponse) => void): grpc.ClientWritableStream<StreamRecordsRequest>;
+    streamRecords(metadata: grpc.Metadata, options?: grpc.CallOptions): grpc.ClientDuplexStream<StreamRecordsRequest, StreamRecordsResponse>;
+    streamRecords(options?: grpc.CallOptions): grpc.ClientDuplexStream<StreamRecordsRequest, StreamRecordsResponse>;
 }
 /**
  * IngestAPI represents the service interface for data ingestion.
@@ -46,10 +44,10 @@ export class IngestAPIClient extends grpc.Client implements IIngestAPIClient {
         this._binaryOptions = binaryOptions;
     }
     /**
-     * @generated from protobuf rpc: StreamRecords(stream indykite.ingest.v1beta1.StreamRecordsRequest) returns (indykite.ingest.v1beta1.StreamRecordsResponse);
+     * @generated from protobuf rpc: StreamRecords(stream indykite.ingest.v1beta1.StreamRecordsRequest) returns (stream indykite.ingest.v1beta1.StreamRecordsResponse);
      */
-    streamRecords(metadata: grpc.Metadata | grpc.CallOptions | ((err: grpc.ServiceError | null, value?: StreamRecordsResponse) => void), options?: grpc.CallOptions | ((err: grpc.ServiceError | null, value?: StreamRecordsResponse) => void), callback?: ((err: grpc.ServiceError | null, value?: StreamRecordsResponse) => void)): grpc.ClientWritableStream<StreamRecordsRequest> {
+    streamRecords(metadata?: grpc.Metadata | grpc.CallOptions, options?: grpc.CallOptions): grpc.ClientDuplexStream<StreamRecordsRequest, StreamRecordsResponse> {
         const method = IngestAPI.methods[0];
-        return this.makeClientStreamRequest<StreamRecordsRequest, StreamRecordsResponse>(`/${IngestAPI.typeName}/${method.name}`, (value: StreamRecordsRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): StreamRecordsResponse => method.O.fromBinary(value, this._binaryOptions), (metadata as any), (options as any), (callback as any));
+        return this.makeBidiStreamRequest<StreamRecordsRequest, StreamRecordsResponse>(`/${IngestAPI.typeName}/${method.name}`, (value: StreamRecordsRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): StreamRecordsResponse => method.O.fromBinary(value, this._binaryOptions), (metadata as any), options);
     }
 }

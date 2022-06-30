@@ -326,24 +326,6 @@ export interface BatchOperationResultError {
     message: string[];
 }
 /**
- * BatchError represents an error encountered while executing a batch operation.
- *
- * The Index field corresponds to the index of the failed operation in the operations array that was passed
- * to batch operation.
- *
- * @generated from protobuf message indykite.identity.v1beta1.BatchError
- */
-export interface BatchError {
-    /**
-     * @generated from protobuf field: int64 index = 1;
-     */
-    index: string;
-    /**
-     * @generated from protobuf field: repeated string message = 2;
-     */
-    message: string[];
-}
-/**
  * AssuranceLevel of Identity Proofing Requirements (NIST 800-63)
  *
  * @generated from protobuf enum indykite.identity.v1beta1.AssuranceLevel
@@ -1025,57 +1007,3 @@ class BatchOperationResultError$Type extends MessageType<BatchOperationResultErr
  * @generated MessageType for protobuf message indykite.identity.v1beta1.BatchOperationResultError
  */
 export const BatchOperationResultError = new BatchOperationResultError$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class BatchError$Type extends MessageType<BatchError> {
-    constructor() {
-        super("indykite.identity.v1beta1.BatchError", [
-            { no: 1, name: "index", kind: "scalar", T: 3 /*ScalarType.INT64*/ },
-            { no: 2, name: "message", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/ }
-        ]);
-    }
-    create(value?: PartialMessage<BatchError>): BatchError {
-        const message = { index: "0", message: [] };
-        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
-        if (value !== undefined)
-            reflectionMergePartial<BatchError>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: BatchError): BatchError {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* int64 index */ 1:
-                    message.index = reader.int64().toString();
-                    break;
-                case /* repeated string message */ 2:
-                    message.message.push(reader.string());
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: BatchError, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* int64 index = 1; */
-        if (message.index !== "0")
-            writer.tag(1, WireType.Varint).int64(message.index);
-        /* repeated string message = 2; */
-        for (let i = 0; i < message.message.length; i++)
-            writer.tag(2, WireType.LengthDelimited).string(message.message[i]);
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message indykite.identity.v1beta1.BatchError
- */
-export const BatchError = new BatchError$Type();
