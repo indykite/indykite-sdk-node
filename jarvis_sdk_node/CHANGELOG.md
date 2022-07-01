@@ -1,4 +1,22 @@
 # Changelog
+## [0.1.10](https://github.com/indykite/jarvis-sdk-node/compare/v0.1.9...v0.1.10) (2022-07-01)
+
+
+### Features
+
+* add crud + list ops for app agent and creds ([463f7f3](https://github.com/indykite/jarvis-sdk-node/commit/463f7f3ebc7d2875c4ccf9a743b0faf8b49c109b))
+* add crud operations for oauth2 applications ([96a6027](https://github.com/indykite/jarvis-sdk-node/commit/96a6027679d995fff7c9bbbcfbb13d6f7ee9e0e1))
+* allow to modify tenants and applications ([7d786a5](https://github.com/indykite/jarvis-sdk-node/commit/7d786a56b5f2a425177a26beccd9b2fa1416c7f1))
+* support token enrichment ([2f34f7e](https://github.com/indykite/jarvis-sdk-node/commit/2f34f7eb721b799c41b7d531e9a6259510e1d0e6))
+
+
+### Bug Fixes
+
+* allow to send empty string request payloads ([3008686](https://github.com/indykite/jarvis-sdk-node/commit/3008686e1a05cfb6829a910a230a2343f3c0d696))
+* create app space returns obj instead of id ([c94be99](https://github.com/indykite/jarvis-sdk-node/commit/c94be991d1de6edae665e1688a71f84fcb6dad2b))
+* fix interceptor when received message is null ([0434826](https://github.com/indykite/jarvis-sdk-node/commit/0434826de5ce811ae68ee14ef81979806e659e61))
+* fix multiple messages from 1 grpc request ([2ebdf68](https://github.com/indykite/jarvis-sdk-node/commit/2ebdf68ea10197c86c8ba97c0dae5ee1b6292ce2))
+
 ### [0.1.9](https://github.com/indykite/jarvis-sdk-node/compare/v0.1.8...v0.1.9) (2022-05-04)
 
 
