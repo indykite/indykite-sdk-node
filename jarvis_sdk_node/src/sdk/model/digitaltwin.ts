@@ -1,5 +1,6 @@
 import { stringify } from 'uuid';
 import { PropertyBatchOperation } from '../../grpc/indykite/identity/v1beta1/attributes';
+import { DigitalTwin as DigitalTwinModel } from '../../grpc/indykite/identity/v1beta1/model';
 import * as grpcId from '../../grpc/indykite/identity/v1beta1/identity_management_api';
 import { SdkErrorCode, SdkError } from '../error';
 import { Utils } from '../utils/utils';
@@ -12,10 +13,19 @@ export class DigitalTwinCore {
     public kind: number,
     public state: number,
   ) {}
+
+  static fromModel(model: DigitalTwinModel): DigitalTwinCore {
+    return new DigitalTwinCore(
+      stringify(model.id),
+      stringify(model.tenantId),
+      model.kind,
+      model.state,
+    );
+  }
 }
 export class DigitalTwin extends DigitalTwinCore {
   properties: Record<string, Property[]> = {};
-  private patchBuilder = PatchPropertiesBuilder.newBuilder();
+  protected patchBuilder = PatchPropertiesBuilder.newBuilder();
 
   constructor(
     public id: string,
@@ -140,5 +150,9 @@ export class DigitalTwin extends DigitalTwinCore {
     const ops = [...this.getPatchOperation()];
     this.resetOperations();
     return ops;
+  }
+
+  getOperationsBuilder(): PatchPropertiesBuilder {
+    return this.patchBuilder;
   }
 }
