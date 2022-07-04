@@ -27,6 +27,9 @@ import { SdkClient } from './client/client';
 import { IdentityManagementAPIClient } from '../grpc/indykite/identity/v1beta1/identity_management_api.grpc-client';
 import { Invitation } from './model/invitation';
 import { JsonValue } from '@protobuf-ts/runtime';
+import { ImportDigitalTwinsRequest } from '../grpc/indykite/identity/v1beta1/import';
+import { HashAlgorithm } from './model/hash_algorithm';
+import { ImportDigitalTwin } from './model/import_digitaltwin';
 
 export class IdentityClient {
   private client: IdentityManagementAPIClient;
@@ -687,6 +690,23 @@ export class IdentityClient {
 
       const request = EnrichTokenRequest.fromJson(jsonValue);
       this.client.enrichToken(request, (err) => {
+        if (err) reject(err);
+        else resolve();
+      });
+    });
+  }
+
+  importDigitalTwins(
+    digitalTwins: ImportDigitalTwin[],
+    hashAlgorithm: HashAlgorithm,
+  ): Promise<void> {
+    return new Promise((resolve, reject) => {
+      const request = ImportDigitalTwinsRequest.create({
+        entities: digitalTwins.map((dt) => dt.marshal()),
+        hashAlgorithm: hashAlgorithm.marshal(),
+      });
+
+      this.client.importDigitalTwins(request, (err) => {
         if (err) reject(err);
         else resolve();
       });
