@@ -29,7 +29,7 @@ import { Invitation } from './model/invitation';
 import { JsonValue } from '@protobuf-ts/runtime';
 import { ImportDigitalTwinsRequest } from '../grpc/indykite/identity/v1beta1/import';
 import { HashAlgorithm } from './model/hash_algorithm';
-import { ImportDigitalTwin } from './model/import_digitaltwin';
+import { ImportDigitalTwin, ImportResult } from './model/import_digitaltwin';
 
 export class IdentityClient {
   private client: IdentityManagementAPIClient;
@@ -699,16 +699,23 @@ export class IdentityClient {
   importDigitalTwins(
     digitalTwins: ImportDigitalTwin[],
     hashAlgorithm: HashAlgorithm,
-  ): Promise<void> {
+  ): Promise<ImportResult[]> {
     return new Promise((resolve, reject) => {
       const request = ImportDigitalTwinsRequest.create({
-        entities: digitalTwins.map((dt) => dt.marshal()),
         hashAlgorithm: hashAlgorithm.marshal(),
       });
 
-      this.client.importDigitalTwins(request, (err) => {
+      request.entities = digitalTwins.map((dt) => dt.marshal());
+
+      this.client.importDigitalTwins(request, (err, res) => {
         if (err) reject(err);
-        else resolve();
+        else if (!res) resolve([]);
+        else
+          resolve(
+            res.results
+              .map((result) => ImportResult.deserialize(result))
+              .filter((result): result is ImportResult => result !== null),
+          );
       });
     });
   }
