@@ -1,6 +1,8 @@
 import { v4 } from 'uuid';
-import { DigitalTwin } from '../digitaltwin';
-import { Property } from '../property';
+import { DigitalTwinKind, DigitalTwinState } from '../../../grpc/indykite/identity/v1beta1/model';
+import { Utils } from '../../utils/utils';
+import { DigitalTwin, DigitalTwinCore } from '../digitaltwin';
+import { PatchPropertiesBuilder, Property } from '../property';
 
 describe('properties', () => {
   let dt: DigitalTwin;
@@ -122,5 +124,44 @@ describe('properties', () => {
         expect(property).toBeUndefined();
       });
     });
+
+    describe('when the patch builder is requested', () => {
+      let patchBuilder: PatchPropertiesBuilder;
+
+      beforeEach(() => {
+        patchBuilder = dt.getOperationsBuilder();
+      });
+
+      it('contains all patches', () => {
+        const builtPatch = patchBuilder.build();
+
+        expect(builtPatch).toHaveLength(3);
+        expect(builtPatch[0].operation.oneofKind).toBe('add');
+        expect(builtPatch[1].operation.oneofKind).toBe('add');
+        expect(builtPatch[2].operation.oneofKind).toBe('add');
+      });
+    });
+  });
+});
+
+describe('when `fromModel` method is used for the instance creation', () => {
+  const id = v4();
+  const tenantId = v4();
+  let instance: DigitalTwinCore;
+
+  beforeEach(() => {
+    instance = DigitalTwin.fromModel({
+      id: Utils.uuidToBuffer(id),
+      tenantId: Utils.uuidToBuffer(tenantId),
+      kind: DigitalTwinKind.PERSON,
+      state: DigitalTwinState.ACTIVE,
+    });
+  });
+
+  it('creates a correct instance', () => {
+    expect(instance.id).toBe(id);
+    expect(instance.tenantId).toBe(tenantId);
+    expect(instance.kind).toBe(DigitalTwinKind.PERSON);
+    expect(instance.state).toBe(DigitalTwinState.ACTIVE);
   });
 });

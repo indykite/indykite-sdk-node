@@ -12,29 +12,14 @@ import {
 } from '../../grpc/indykite/identity/v1beta1/model';
 import { IdentityClient } from '../identity';
 import { TokenInfo } from '../model';
+import { applicationTokenMock } from '../utils/test_utils';
 import { Utils } from '../utils/utils';
 
 let sdk: IdentityClient;
-const applicationToken = {
-  appSpaceId: '696e6479-6b69-4465-8000-010f00000000',
-  appAgentId: '696e6479-6b69-4465-8000-050f00000000',
-  endpoint: 'jarvis.local:8043',
-  privateKeyJWK: {
-    kty: 'EC',
-    d: 'WNzV013IthOWgjef4eNVXzTQUYy6hb6DD5riu_5SZNI',
-    use: 'sig',
-    crv: 'P-256',
-    kid: 'EfUEiFnOzA5PCp8SSksp7iXv7cHRehCsIGo6NAQ9H7w',
-    x: 'sMeLa9xExlGkmo6tr2KSv4rqbYXdAM1RBkTNehZ_XfQ',
-    y: 'FqBmruVIbVykGMWjVcv4VhN_XbMxW3rLqRcJ8mAUOdY',
-    alg: 'ES256',
-  },
-};
-const userToken =
-  'eyJhbGciOiJFUzI1NiIsImN0eSI6IkpXVCIsImtpZCI6ImtRWnIyYUk1TUUwQ0o1ejR3U1AwQk9oNkRNOTI2QTVla2tfLUYtYmJBVnciLCJub25jZSI6IndiOHdnU0lTSlJ0ZFhUMDhXMU5NM3ciLCJ0eXAiOiJKV1QifQ.eyJhdWQiOlsiNjk2ZTY0NzktNmI2OS00NDY1LTgwMDAtMDIwMDAwMDAwMDAwIl0sImV4cCI6MTYyNTkwOTQ1MSwiaWF0IjoxNjI1OTA1ODUxLCJpc3MiOiJodHRwczovL2phcnZpcy1kZXYuaW5keWtpdGUuY29tL29hdXRoMi82OTZlNjQ3OS02YjY5LTQ0NjUtODAwMC0wMTAwMDAwMDAwMDAiLCJqdGkiOiI2ZmQ4NDI1NC1mODMwLTRiMzYtYWQ2YS1jZWQ4YWIxZGZmY2EjMCIsIm5iZiI6MTYyNTkwNTg1MSwic3ViIjoiNjk2ZTY0NzktNmI2OS00NDY1LTgwMDAtMDAwMDAwMDk5MDAyIn0.TPDZXU9peGYwBPrtwf-HfToIFsy1sbgjTHEXxJZqTFaOPWmlWPIyIDN6jMqNeuEI7BHG53JVAFzzh-65vi4R9Q';
+const userToken = 'user-token-token-token-token-token';
 
 beforeAll(async () => {
-  sdk = await IdentityClient.createInstance(applicationToken);
+  sdk = await IdentityClient.createInstance(applicationTokenMock);
 });
 
 describe('Introspection', () => {
@@ -106,7 +91,7 @@ describe('Introspection', () => {
       const mockResponse = TokenIntrospectResponse.fromJson({
         active: true,
         tokenInfo: {
-          appSpaceId: Utils.uuidToBase64(applicationToken.appSpaceId),
+          appSpaceId: Utils.uuidToBase64(applicationTokenMock.appSpaceId),
           applicationId: Utils.uuidToBase64(v4()),
           customerId: Utils.uuidToBase64(v4()),
           authenticationTime: new Date().toISOString(),
@@ -137,7 +122,7 @@ describe('Introspection', () => {
       if (mockResponse.tokenInfo) {
         let expected = {
           active: mockResponse.active,
-          appSpaceId: applicationToken.appSpaceId,
+          appSpaceId: applicationTokenMock.appSpaceId,
           applicationId: stringify(mockResponse.tokenInfo.applicationId),
           customerId: stringify(mockResponse.tokenInfo.customerId),
           authenticationTime: Utils.timestampToDate(mockResponse.tokenInfo.authenticationTime),
