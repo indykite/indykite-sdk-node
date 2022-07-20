@@ -1,4 +1,11 @@
 # Changelog
+## [0.1.12](https://github.com/indykite/jarvis-sdk-node/compare/v0.1.11...v0.1.12) (2022-07-20)
+
+
+### Bug Fixes
+
+* export missing import digital twin classes ([991fc12](https://github.com/indykite/jarvis-sdk-node/commit/991fc12ae706f2b688bd253748603e4c33d0ae37))
+
 ## [0.1.11](https://github.com/indykite/jarvis-sdk-node/compare/v0.1.10...v0.1.11) (2022-07-20)
 
 
