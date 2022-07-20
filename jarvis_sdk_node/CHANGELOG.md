@@ -1,4 +1,11 @@
 # Changelog
+## [0.1.11](https://github.com/indykite/jarvis-sdk-node/compare/v0.1.10...v0.1.11) (2022-07-20)
+
+
+### Features
+
+* add support for importing digital twins ([ec0f737](https://github.com/indykite/jarvis-sdk-node/commit/ec0f73796b4b62c5b5bac9240afacd80f5345f90))
+
 ## [0.1.10](https://github.com/indykite/jarvis-sdk-node/compare/v0.1.9...v0.1.10) (2022-07-01)
 
 
