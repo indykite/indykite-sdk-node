@@ -5,38 +5,44 @@ import { AuthflowFactory } from './authflow/factory';
 import { AuthFlow } from './authflow/flow';
 import { NodeConfiguration } from './configuration';
 import { EmailProviderType, EmailProviderFactory } from './email/factory';
+import { OAuth2ClientFactory } from './oauth2Client/factory';
+import { OAuth2Client } from './oauth2Client/oauth2_client';
 
-export type ConfigurationType = EmailProviderType | AuthFlow;
+export type ConfigurationType = EmailProviderType | AuthFlow | OAuth2Client;
 
 export class ConfigurationFactory {
   static createInstance(config: ConfigNode): ConfigurationType {
-    if (config.config) {
-      const meta = {
-        displayName: config.displayName,
-        etag: config.etag,
-        id: config.id,
-        customerId: config.customerId,
-        appSpaceId: config.appSpaceId,
-        tenantId: config.tenantId,
-        createTime: Utils.timestampToDate(config.createTime),
-        updateTime: Utils.timestampToDate(config.updateTime),
-      } as NodeConfiguration;
-      if (config.description) meta.description = config.description.value;
+    const meta = {
+      displayName: config.displayName,
+      etag: config.etag,
+      id: config.id,
+      customerId: config.customerId,
+      appSpaceId: config.appSpaceId,
+      tenantId: config.tenantId,
+      createTime: Utils.timestampToDate(config.createTime),
+      updateTime: Utils.timestampToDate(config.updateTime),
+    } as NodeConfiguration;
+    if (config.description) meta.description = config.description.value;
 
-      // console.log(JSON.stringify(config, null, 2));
-      switch (config.config.oneofKind) {
-        case 'emailServiceConfig': {
-          const provider = EmailProviderFactory.createInstance(
-            config.name,
-            config.config.emailServiceConfig,
-          );
-          const ret = Object.assign(provider, meta);
-          return ret;
-        }
-        case 'authFlowConfig': {
-          const flow = AuthflowFactory.createInstance(config.name, config.config.authFlowConfig);
-          return Object.assign(flow, meta);
-        }
+    switch (config.config.oneofKind) {
+      case 'emailServiceConfig': {
+        const provider = EmailProviderFactory.createInstance(
+          config.name,
+          config.config.emailServiceConfig,
+        );
+        const ret = Object.assign(provider, meta);
+        return ret;
+      }
+      case 'authFlowConfig': {
+        const flow = AuthflowFactory.createInstance(config.name, config.config.authFlowConfig);
+        return Object.assign(flow, meta);
+      }
+      case 'oauth2ClientConfig': {
+        const flow = OAuth2ClientFactory.createInstance(
+          config.name,
+          config.config.oauth2ClientConfig,
+        );
+        return Object.assign(flow, meta);
       }
     }
     throw new SdkError(

@@ -35,6 +35,7 @@ import { ApplicationAgent } from './model/config/application_agent';
 import { ApplicationAgentCredential } from './model/config/application_agent_credential';
 import { OAuth2ApplicationConfig } from './model/config/oauth2_application_config';
 import { OAuth2Application } from './model/config/oauth2_application';
+import { OAuth2Client } from './model/config/oauth2Client/oauth2_client';
 
 const endpoint = process.env.JARVIS_ENDPOINT || 'jarvis.indykite.com';
 export class ConfigClient {
@@ -1034,6 +1035,118 @@ export class ConfigClient {
         if (err) reject(err);
         else if (!response)
           reject(new SdkError(SdkErrorCode.SDK_CODE_1, 'No OAuth2 application response'));
+        else resolve();
+      });
+    });
+  }
+
+  createOAuth2Client(location: string, oauth2Client: OAuth2Client): Promise<OAuth2Client> {
+    const req = CreateConfigNodeRequest.fromJson({
+      location,
+      name: oauth2Client.name,
+    });
+    if (oauth2Client.displayName !== undefined) {
+      req.displayName = StringValue.fromJson(oauth2Client.displayName);
+    }
+    if (oauth2Client.description !== undefined) {
+      req.description = StringValue.fromJson(oauth2Client.description);
+    }
+    req.config = {
+      oneofKind: 'oauth2ClientConfig',
+      oauth2ClientConfig: oauth2Client.marshal(),
+    };
+
+    return new Promise((resolve, reject) => {
+      this.client.createConfigNode(req, (err, response) => {
+        if (err) reject(err);
+        else {
+          if (!response) {
+            reject(new SdkError(SdkErrorCode.SDK_CODE_1, 'No OAuth2 client response'));
+            return;
+          }
+
+          try {
+            oauth2Client.id = response.id;
+            oauth2Client.etag = response.etag;
+            oauth2Client.createTime = Utils.timestampToDate(response.createTime);
+            oauth2Client.updateTime = Utils.timestampToDate(response.updateTime);
+            resolve(oauth2Client);
+          } catch (err) {
+            reject(err);
+          }
+        }
+      });
+    });
+  }
+
+  readOAuth2Client(id: string): Promise<OAuth2Client> {
+    return new Promise((resolve, reject) => {
+      this.client.readConfigNode({ id }, (err, response) => {
+        if (err) reject(err);
+        else
+          try {
+            if (response && response.configNode) {
+              const ret = ConfigurationFactory.createInstance(response.configNode) as OAuth2Client;
+              resolve(ret);
+            } else {
+              reject(new SdkError(SdkErrorCode.SDK_CODE_1, 'config_error_read_oauth2client'));
+            }
+          } catch (err) {
+            reject(err);
+          }
+      });
+    });
+  }
+
+  updateOAuth2Client(config: OAuth2Client): Promise<OAuth2Client> {
+    const req = {
+      id: config.id,
+    } as UpdateConfigNodeRequest;
+    if (config.etag !== undefined) req.etag = StringValue.create({ value: config.etag });
+    if (config.displayName !== undefined)
+      req.displayName = StringValue.create({ value: config.displayName });
+    if (config.description !== undefined)
+      req.description = StringValue.create({ value: config.description });
+    req.config = {
+      oneofKind: 'oauth2ClientConfig',
+      oauth2ClientConfig: config.marshal(),
+    };
+
+    return new Promise<OAuth2Client>((resolve, reject) => {
+      this.client.updateConfigNode(req, (err, response) => {
+        if (err) reject(err);
+        else
+          try {
+            if (response && response.id === config.id) {
+              config.etag = response.etag;
+              config.updateTime = Utils.timestampToDate(response.updateTime);
+              resolve(config);
+            } else {
+              reject(
+                new SdkError(
+                  SdkErrorCode.SDK_CODE_1,
+                  `Update returned with different id: req.iq=${config.id}, res.id=${
+                    response ? response.id : 'undefined'
+                  }`,
+                ),
+              );
+            }
+          } catch (err) {
+            reject(err);
+          }
+      });
+    });
+  }
+
+  deleteOAuth2Client(config: OAuth2Client): Promise<void> {
+    const req = {
+      id: config.id,
+    } as DeleteConfigNodeRequest;
+    if (config.etag !== undefined) req.etag = StringValue.create({ value: config.etag });
+
+    return new Promise((resolve, reject) => {
+      this.client.deleteConfigNode(req, (err) => {
+        if (err) reject(err);
         else resolve();
       });
     });
