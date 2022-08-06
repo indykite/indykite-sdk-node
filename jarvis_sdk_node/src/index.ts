@@ -1,6 +1,7 @@
 export { DigitalTwinKind, DigitalTwinState } from './grpc/indykite/identity/v1beta1/model';
 export { IdentityClient } from './sdk/identity';
 export { ConfigClient } from './sdk/config';
+export { IngestClient } from './sdk/ingest';
 export * from './sdk/model';
 export {
   ChangePasswordRequest,
