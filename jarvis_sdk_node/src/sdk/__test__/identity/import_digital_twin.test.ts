@@ -57,15 +57,17 @@ describe('when the response is successful', () => {
                         kind: 0,
                         state: 0,
                       },
-                      results: {
-                        index: '0',
-                        result: {
-                          oneofKind: 'success',
-                          success: {
-                            propertyId: 'property-id',
+                      results: [
+                        {
+                          index: '0',
+                          result: {
+                            oneofKind: 'success',
+                            success: {
+                              propertyId: 'property-id',
+                            },
                           },
                         },
-                      },
+                      ],
                     },
                   },
                 },
@@ -115,9 +117,10 @@ describe('when the response is successful', () => {
         expect(results[0].digitalTwin?.kind).toEqual(0);
         expect(results[0].digitalTwin?.state).toEqual(0);
         expect(results[0].digitalTwin?.tenantId).toEqual(tenantId);
-        expect(results[0].propertiesResult?.index).toEqual('0');
-        expect(results[0].propertiesResult?.propertyId).toEqual('property-id');
-        expect(results[0].propertiesResult?.status).toEqual('success');
+        expect(results[0].propertiesResult?.length).toEqual(1);
+        expect(results[0].propertiesResult?.[0].index).toEqual('0');
+        expect(results[0].propertiesResult?.[0].propertyId).toEqual('property-id');
+        expect(results[0].propertiesResult?.[0].status).toEqual('success');
       }
     });
   });

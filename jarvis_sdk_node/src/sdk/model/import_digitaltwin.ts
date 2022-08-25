@@ -189,7 +189,9 @@ export class ImportResult {
         dt = DigitalTwinCore.fromModel(result.result.success.digitalTwin);
       }
       if (result.result.success.results) {
-        patchResult = PatchResult.deserialize(result.result.success.results);
+        patchResult = result.result.success.results.map((result) =>
+          PatchResult.deserialize(result),
+        );
       }
 
       return new ImportResultSuccess(result.index, dt, patchResult);
@@ -205,7 +207,7 @@ export class ImportResultSuccess extends ImportResult {
   constructor(
     index: string,
     public digitalTwin?: DigitalTwinCore,
-    public propertiesResult?: PatchResult,
+    public propertiesResult?: PatchResult[],
   ) {
     super(index);
   }
