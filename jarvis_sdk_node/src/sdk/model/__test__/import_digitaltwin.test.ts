@@ -329,7 +329,7 @@ describe('ImportResult', () => {
           index: '0',
           result: {
             oneofKind: 'success',
-            success: {},
+            success: {} as { results: [] },
           },
         });
       });
@@ -358,15 +358,17 @@ describe('ImportResult', () => {
                 kind: DigitalTwinKind.INVALID,
                 state: DigitalTwinState.INVALID,
               },
-              results: {
-                index: '0',
-                result: {
-                  oneofKind: 'success',
-                  success: {
-                    propertyId: 'prop-id',
+              results: [
+                {
+                  index: '0',
+                  result: {
+                    oneofKind: 'success',
+                    success: {
+                      propertyId: 'prop-id',
+                    },
                   },
                 },
-              },
+              ],
             },
           },
         });
@@ -381,11 +383,13 @@ describe('ImportResult', () => {
           kind: DigitalTwinKind.INVALID,
           state: DigitalTwinState.INVALID,
         });
-        expect(result?.isSuccess() && result.propertiesResult).toEqual({
-          index: '0',
-          propertyId: 'prop-id',
-          status: 'success',
-        });
+        expect(result?.isSuccess() && result.propertiesResult).toEqual([
+          {
+            index: '0',
+            propertyId: 'prop-id',
+            status: 'success',
+          },
+        ]);
       });
     });
   });
