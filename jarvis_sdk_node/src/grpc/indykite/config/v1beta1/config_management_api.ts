@@ -30,6 +30,8 @@ import { OAuth2ApplicationConfig } from "./model";
 import { OAuth2Provider } from "./model";
 import { OAuth2ProviderConfig } from "./model";
 import { ConfigNode } from "./model";
+import { KnowledgeGraphSchemaConfig } from "./model";
+import { AuthorizationPolicyConfig } from "./model";
 import { IngestMappingConfig } from "./model";
 import { SAFRProviderConfig } from "./model";
 import { AuthenteqProviderConfig } from "./model";
@@ -1327,6 +1329,18 @@ export interface CreateConfigNodeRequest {
          */
         ingestMappingConfig: IngestMappingConfig;
     } | {
+        oneofKind: "authorizationPolicyConfig";
+        /**
+         * @generated from protobuf field: indykite.config.v1beta1.AuthorizationPolicyConfig authorization_policy_config = 25;
+         */
+        authorizationPolicyConfig: AuthorizationPolicyConfig;
+    } | {
+        oneofKind: "knowledgeGraphSchemaConfig";
+        /**
+         * @generated from protobuf field: indykite.config.v1beta1.KnowledgeGraphSchemaConfig knowledge_graph_schema_config = 26;
+         */
+        knowledgeGraphSchemaConfig: KnowledgeGraphSchemaConfig;
+    } | {
         oneofKind: undefined;
     };
 }
@@ -1470,6 +1484,18 @@ export interface UpdateConfigNodeRequest {
          * @generated from protobuf field: indykite.config.v1beta1.IngestMappingConfig ingest_mapping_config = 24;
          */
         ingestMappingConfig: IngestMappingConfig;
+    } | {
+        oneofKind: "authorizationPolicyConfig";
+        /**
+         * @generated from protobuf field: indykite.config.v1beta1.AuthorizationPolicyConfig authorization_policy_config = 25;
+         */
+        authorizationPolicyConfig: AuthorizationPolicyConfig;
+    } | {
+        oneofKind: "knowledgeGraphSchemaConfig";
+        /**
+         * @generated from protobuf field: indykite.config.v1beta1.KnowledgeGraphSchemaConfig knowledge_graph_schema_config = 26;
+         */
+        knowledgeGraphSchemaConfig: KnowledgeGraphSchemaConfig;
     } | {
         oneofKind: undefined;
     };
@@ -3817,7 +3843,7 @@ class RegisterApplicationAgentCredentialRequest$Type extends MessageType<Registe
             { no: 2, name: "display_name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "2", maxLen: "254", ignoreEmpty: true } } } },
             { no: 3, name: "jwk", kind: "scalar", oneof: "publicKey", T: 12 /*ScalarType.BYTES*/, options: { "validate.rules": { bytes: { minLen: "96", maxLen: "8192", prefix: "ew==", suffix: "fQ==" } } } },
             { no: 4, name: "pem", kind: "scalar", oneof: "publicKey", T: 12 /*ScalarType.BYTES*/, options: { "validate.rules": { bytes: { minLen: "256", maxLen: "8192", prefix: "LS0tLS1CRUdJTiBQVUJMSUMgS0VZLS0tLS0=", suffix: "LS0tLS1FTkQgUFVCTElDIEtFWS0tLS0t" } } } },
-            { no: 5, name: "expire_time", kind: "message", T: () => Timestamp },
+            { no: 5, name: "expire_time", kind: "message", T: () => Timestamp, options: { "validate.rules": { timestamp: { required: false, gtNow: true } } } },
             { no: 6, name: "default_tenant_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^gid:[A-Za-z0-9-_:]{22,254}$", ignoreEmpty: true } } } }
         ]);
     }
@@ -4613,7 +4639,7 @@ class RegisterServiceAccountCredentialRequest$Type extends MessageType<RegisterS
             { no: 2, name: "display_name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "2", maxLen: "254", ignoreEmpty: true } } } },
             { no: 3, name: "jwk", kind: "scalar", oneof: "publicKey", T: 12 /*ScalarType.BYTES*/, options: { "validate.rules": { bytes: { minLen: "96", maxLen: "8192", prefix: "ew==", suffix: "fQ==" } } } },
             { no: 4, name: "pem", kind: "scalar", oneof: "publicKey", T: 12 /*ScalarType.BYTES*/, options: { "validate.rules": { bytes: { minLen: "256", maxLen: "8192", prefix: "LS0tLS1CRUdJTiBQVUJMSUMgS0VZLS0tLS0=", suffix: "LS0tLS1FTkQgUFVCTElDIEtFWS0tLS0t" } } } },
-            { no: 5, name: "expire_time", kind: "message", T: () => Timestamp }
+            { no: 5, name: "expire_time", kind: "message", T: () => Timestamp, options: { "validate.rules": { timestamp: { required: false, gtNow: true } } } }
         ]);
     }
     create(value?: PartialMessage<RegisterServiceAccountCredentialRequest>): RegisterServiceAccountCredentialRequest {
@@ -5504,7 +5530,9 @@ class CreateConfigNodeRequest$Type extends MessageType<CreateConfigNodeRequest> 
             { no: 21, name: "webauthn_provider_config", kind: "message", oneof: "config", T: () => WebAuthnProviderConfig },
             { no: 22, name: "authenteq_provider_config", kind: "message", oneof: "config", T: () => AuthenteqProviderConfig },
             { no: 23, name: "safr_provider_config", kind: "message", oneof: "config", T: () => SAFRProviderConfig },
-            { no: 24, name: "ingest_mapping_config", kind: "message", oneof: "config", T: () => IngestMappingConfig }
+            { no: 24, name: "ingest_mapping_config", kind: "message", oneof: "config", T: () => IngestMappingConfig },
+            { no: 25, name: "authorization_policy_config", kind: "message", oneof: "config", T: () => AuthorizationPolicyConfig },
+            { no: 26, name: "knowledge_graph_schema_config", kind: "message", oneof: "config", T: () => KnowledgeGraphSchemaConfig }
         ]);
     }
     create(value?: PartialMessage<CreateConfigNodeRequest>): CreateConfigNodeRequest {
@@ -5585,6 +5613,18 @@ class CreateConfigNodeRequest$Type extends MessageType<CreateConfigNodeRequest> 
                         ingestMappingConfig: IngestMappingConfig.internalBinaryRead(reader, reader.uint32(), options, (message.config as any).ingestMappingConfig)
                     };
                     break;
+                case /* indykite.config.v1beta1.AuthorizationPolicyConfig authorization_policy_config */ 25:
+                    message.config = {
+                        oneofKind: "authorizationPolicyConfig",
+                        authorizationPolicyConfig: AuthorizationPolicyConfig.internalBinaryRead(reader, reader.uint32(), options, (message.config as any).authorizationPolicyConfig)
+                    };
+                    break;
+                case /* indykite.config.v1beta1.KnowledgeGraphSchemaConfig knowledge_graph_schema_config */ 26:
+                    message.config = {
+                        oneofKind: "knowledgeGraphSchemaConfig",
+                        knowledgeGraphSchemaConfig: KnowledgeGraphSchemaConfig.internalBinaryRead(reader, reader.uint32(), options, (message.config as any).knowledgeGraphSchemaConfig)
+                    };
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -5636,6 +5676,12 @@ class CreateConfigNodeRequest$Type extends MessageType<CreateConfigNodeRequest> 
         /* indykite.config.v1beta1.IngestMappingConfig ingest_mapping_config = 24; */
         if (message.config.oneofKind === "ingestMappingConfig")
             IngestMappingConfig.internalBinaryWrite(message.config.ingestMappingConfig, writer.tag(24, WireType.LengthDelimited).fork(), options).join();
+        /* indykite.config.v1beta1.AuthorizationPolicyConfig authorization_policy_config = 25; */
+        if (message.config.oneofKind === "authorizationPolicyConfig")
+            AuthorizationPolicyConfig.internalBinaryWrite(message.config.authorizationPolicyConfig, writer.tag(25, WireType.LengthDelimited).fork(), options).join();
+        /* indykite.config.v1beta1.KnowledgeGraphSchemaConfig knowledge_graph_schema_config = 26; */
+        if (message.config.oneofKind === "knowledgeGraphSchemaConfig")
+            KnowledgeGraphSchemaConfig.internalBinaryWrite(message.config.knowledgeGraphSchemaConfig, writer.tag(26, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -5824,7 +5870,9 @@ class UpdateConfigNodeRequest$Type extends MessageType<UpdateConfigNodeRequest> 
             { no: 21, name: "webauthn_provider_config", kind: "message", oneof: "config", T: () => WebAuthnProviderConfig },
             { no: 22, name: "authenteq_provider_config", kind: "message", oneof: "config", T: () => AuthenteqProviderConfig },
             { no: 23, name: "safr_provider_config", kind: "message", oneof: "config", T: () => SAFRProviderConfig },
-            { no: 24, name: "ingest_mapping_config", kind: "message", oneof: "config", T: () => IngestMappingConfig }
+            { no: 24, name: "ingest_mapping_config", kind: "message", oneof: "config", T: () => IngestMappingConfig },
+            { no: 25, name: "authorization_policy_config", kind: "message", oneof: "config", T: () => AuthorizationPolicyConfig },
+            { no: 26, name: "knowledge_graph_schema_config", kind: "message", oneof: "config", T: () => KnowledgeGraphSchemaConfig }
         ]);
     }
     create(value?: PartialMessage<UpdateConfigNodeRequest>): UpdateConfigNodeRequest {
@@ -5905,6 +5953,18 @@ class UpdateConfigNodeRequest$Type extends MessageType<UpdateConfigNodeRequest> 
                         ingestMappingConfig: IngestMappingConfig.internalBinaryRead(reader, reader.uint32(), options, (message.config as any).ingestMappingConfig)
                     };
                     break;
+                case /* indykite.config.v1beta1.AuthorizationPolicyConfig authorization_policy_config */ 25:
+                    message.config = {
+                        oneofKind: "authorizationPolicyConfig",
+                        authorizationPolicyConfig: AuthorizationPolicyConfig.internalBinaryRead(reader, reader.uint32(), options, (message.config as any).authorizationPolicyConfig)
+                    };
+                    break;
+                case /* indykite.config.v1beta1.KnowledgeGraphSchemaConfig knowledge_graph_schema_config */ 26:
+                    message.config = {
+                        oneofKind: "knowledgeGraphSchemaConfig",
+                        knowledgeGraphSchemaConfig: KnowledgeGraphSchemaConfig.internalBinaryRead(reader, reader.uint32(), options, (message.config as any).knowledgeGraphSchemaConfig)
+                    };
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -5956,6 +6016,12 @@ class UpdateConfigNodeRequest$Type extends MessageType<UpdateConfigNodeRequest> 
         /* indykite.config.v1beta1.IngestMappingConfig ingest_mapping_config = 24; */
         if (message.config.oneofKind === "ingestMappingConfig")
             IngestMappingConfig.internalBinaryWrite(message.config.ingestMappingConfig, writer.tag(24, WireType.LengthDelimited).fork(), options).join();
+        /* indykite.config.v1beta1.AuthorizationPolicyConfig authorization_policy_config = 25; */
+        if (message.config.oneofKind === "authorizationPolicyConfig")
+            AuthorizationPolicyConfig.internalBinaryWrite(message.config.authorizationPolicyConfig, writer.tag(25, WireType.LengthDelimited).fork(), options).join();
+        /* indykite.config.v1beta1.KnowledgeGraphSchemaConfig knowledge_graph_schema_config = 26; */
+        if (message.config.oneofKind === "knowledgeGraphSchemaConfig")
+            KnowledgeGraphSchemaConfig.internalBinaryWrite(message.config.knowledgeGraphSchemaConfig, writer.tag(26, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

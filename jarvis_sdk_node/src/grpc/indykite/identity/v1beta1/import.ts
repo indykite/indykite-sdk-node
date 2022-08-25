@@ -136,9 +136,9 @@ export interface ImportDigitalTwinSuccess {
      * Results is set if the request contained 'properties' to import and the DigitalTwin was
      * patched after, this will contain the batch operation result.
      *
-     * @generated from protobuf field: indykite.identity.v1beta1.BatchOperationResult results = 2;
+     * @generated from protobuf field: repeated indykite.identity.v1beta1.BatchOperationResult results = 2;
      */
-    results?: BatchOperationResult;
+    results: BatchOperationResult[];
 }
 /**
  * @generated from protobuf message indykite.identity.v1beta1.ImportDigitalTwinError
@@ -718,11 +718,11 @@ class ImportDigitalTwinSuccess$Type extends MessageType<ImportDigitalTwinSuccess
     constructor() {
         super("indykite.identity.v1beta1.ImportDigitalTwinSuccess", [
             { no: 1, name: "digital_twin", kind: "message", T: () => DigitalTwin },
-            { no: 2, name: "results", kind: "message", T: () => BatchOperationResult }
+            { no: 2, name: "results", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => BatchOperationResult }
         ]);
     }
     create(value?: PartialMessage<ImportDigitalTwinSuccess>): ImportDigitalTwinSuccess {
-        const message = {};
+        const message = { results: [] };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<ImportDigitalTwinSuccess>(this, message, value);
@@ -736,8 +736,8 @@ class ImportDigitalTwinSuccess$Type extends MessageType<ImportDigitalTwinSuccess
                 case /* indykite.identity.v1beta1.DigitalTwin digital_twin */ 1:
                     message.digitalTwin = DigitalTwin.internalBinaryRead(reader, reader.uint32(), options, message.digitalTwin);
                     break;
-                case /* indykite.identity.v1beta1.BatchOperationResult results */ 2:
-                    message.results = BatchOperationResult.internalBinaryRead(reader, reader.uint32(), options, message.results);
+                case /* repeated indykite.identity.v1beta1.BatchOperationResult results */ 2:
+                    message.results.push(BatchOperationResult.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -754,9 +754,9 @@ class ImportDigitalTwinSuccess$Type extends MessageType<ImportDigitalTwinSuccess
         /* indykite.identity.v1beta1.DigitalTwin digital_twin = 1; */
         if (message.digitalTwin)
             DigitalTwin.internalBinaryWrite(message.digitalTwin, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* indykite.identity.v1beta1.BatchOperationResult results = 2; */
-        if (message.results)
-            BatchOperationResult.internalBinaryWrite(message.results, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* repeated indykite.identity.v1beta1.BatchOperationResult results = 2; */
+        for (let i = 0; i < message.results.length; i++)
+            BatchOperationResult.internalBinaryWrite(message.results[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

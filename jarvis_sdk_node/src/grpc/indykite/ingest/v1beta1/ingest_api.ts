@@ -25,6 +25,7 @@ import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MESSAGE_TYPE } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
+import { Status } from "../../../google/rpc/status";
 import { RecordError } from "./model";
 import { Record } from "./model";
 /**
@@ -53,9 +54,23 @@ export interface StreamRecordsResponse {
      */
     recordIndex: number;
     /**
-     * @generated from protobuf field: indykite.ingest.v1beta1.RecordError record_error = 3;
+     * @generated from protobuf oneof: error
      */
-    recordError?: RecordError;
+    error: {
+        oneofKind: "recordError";
+        /**
+         * @generated from protobuf field: indykite.ingest.v1beta1.RecordError record_error = 3;
+         */
+        recordError: RecordError;
+    } | {
+        oneofKind: "statusError";
+        /**
+         * @generated from protobuf field: google.rpc.Status status_error = 4;
+         */
+        statusError: Status;
+    } | {
+        oneofKind: undefined;
+    };
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class StreamRecordsRequest$Type extends MessageType<StreamRecordsRequest> {
@@ -117,11 +132,12 @@ class StreamRecordsResponse$Type extends MessageType<StreamRecordsResponse> {
         super("indykite.ingest.v1beta1.StreamRecordsResponse", [
             { no: 1, name: "record_id", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 2, name: "record_index", kind: "scalar", T: 13 /*ScalarType.UINT32*/ },
-            { no: 3, name: "record_error", kind: "message", T: () => RecordError }
+            { no: 3, name: "record_error", kind: "message", oneof: "error", T: () => RecordError },
+            { no: 4, name: "status_error", kind: "message", oneof: "error", T: () => Status }
         ]);
     }
     create(value?: PartialMessage<StreamRecordsResponse>): StreamRecordsResponse {
-        const message = { recordId: "", recordIndex: 0 };
+        const message = { recordId: "", recordIndex: 0, error: { oneofKind: undefined } };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<StreamRecordsResponse>(this, message, value);
@@ -139,7 +155,16 @@ class StreamRecordsResponse$Type extends MessageType<StreamRecordsResponse> {
                     message.recordIndex = reader.uint32();
                     break;
                 case /* indykite.ingest.v1beta1.RecordError record_error */ 3:
-                    message.recordError = RecordError.internalBinaryRead(reader, reader.uint32(), options, message.recordError);
+                    message.error = {
+                        oneofKind: "recordError",
+                        recordError: RecordError.internalBinaryRead(reader, reader.uint32(), options, (message.error as any).recordError)
+                    };
+                    break;
+                case /* google.rpc.Status status_error */ 4:
+                    message.error = {
+                        oneofKind: "statusError",
+                        statusError: Status.internalBinaryRead(reader, reader.uint32(), options, (message.error as any).statusError)
+                    };
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -160,8 +185,11 @@ class StreamRecordsResponse$Type extends MessageType<StreamRecordsResponse> {
         if (message.recordIndex !== 0)
             writer.tag(2, WireType.Varint).uint32(message.recordIndex);
         /* indykite.ingest.v1beta1.RecordError record_error = 3; */
-        if (message.recordError)
-            RecordError.internalBinaryWrite(message.recordError, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        if (message.error.oneofKind === "recordError")
+            RecordError.internalBinaryWrite(message.error.recordError, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        /* google.rpc.Status status_error = 4; */
+        if (message.error.oneofKind === "statusError")
+            Status.internalBinaryWrite(message.error.statusError, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

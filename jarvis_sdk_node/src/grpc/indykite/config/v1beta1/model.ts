@@ -24,6 +24,7 @@ import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MESSAGE_TYPE } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
+import { Policy } from "../../knowledge_graph/v1beta1/policy";
 import { Int64Value } from "../../../google/protobuf/wrappers";
 import { Value } from "../../objects/v1beta1/struct";
 import { Any } from "../../../google/protobuf/any";
@@ -791,6 +792,18 @@ export interface ConfigNode {
          */
         ingestMappingConfig: IngestMappingConfig;
     } | {
+        oneofKind: "authorizationPolicyConfig";
+        /**
+         * @generated from protobuf field: indykite.config.v1beta1.AuthorizationPolicyConfig authorization_policy_config = 23;
+         */
+        authorizationPolicyConfig: AuthorizationPolicyConfig;
+    } | {
+        oneofKind: "knowledgeGraphSchemaConfig";
+        /**
+         * @generated from protobuf field: indykite.config.v1beta1.KnowledgeGraphSchemaConfig knowledge_graph_schema_config = 24;
+         */
+        knowledgeGraphSchemaConfig: KnowledgeGraphSchemaConfig;
+    } | {
         oneofKind: undefined;
     };
 }
@@ -1524,6 +1537,10 @@ export interface EmailServiceConfig {
      * @generated from protobuf field: indykite.config.v1beta1.EmailDefinition verification_message = 11;
      */
     verificationMessage?: EmailDefinition;
+    /**
+     * @generated from protobuf field: indykite.config.v1beta1.EmailDefinition one_time_password_message = 13;
+     */
+    oneTimePasswordMessage?: EmailDefinition;
 }
 /**
  * Email holds email name and address info.
@@ -2091,6 +2108,26 @@ export enum IngestMappingConfig_Direction {
      * @generated from protobuf enum value: DIRECTION_OUTBOUND = 2;
      */
     OUTBOUND = 2
+}
+/**
+ * @generated from protobuf message indykite.config.v1beta1.AuthorizationPolicyConfig
+ */
+export interface AuthorizationPolicyConfig {
+    /**
+     * @generated from protobuf field: indykite.knowledge_graph.v1beta1.Policy policy = 1;
+     */
+    policy?: Policy;
+}
+/**
+ * @generated from protobuf message indykite.config.v1beta1.KnowledgeGraphSchemaConfig
+ */
+export interface KnowledgeGraphSchemaConfig {
+    /**
+     * Knowledge Graph Schema configuration in JSON format
+     *
+     * @generated from protobuf field: bytes source = 1;
+     */
+    source: Uint8Array;
 }
 // 
 // 
@@ -3490,7 +3527,9 @@ class ConfigNode$Type extends MessageType<ConfigNode> {
             { no: 19, name: "webauthn_provider_config", kind: "message", oneof: "config", T: () => WebAuthnProviderConfig },
             { no: 20, name: "authenteq_provider_config", kind: "message", oneof: "config", T: () => AuthenteqProviderConfig },
             { no: 21, name: "safr_provider_config", kind: "message", oneof: "config", T: () => SAFRProviderConfig },
-            { no: 22, name: "ingest_mapping_config", kind: "message", oneof: "config", T: () => IngestMappingConfig }
+            { no: 22, name: "ingest_mapping_config", kind: "message", oneof: "config", T: () => IngestMappingConfig },
+            { no: 23, name: "authorization_policy_config", kind: "message", oneof: "config", T: () => AuthorizationPolicyConfig },
+            { no: 24, name: "knowledge_graph_schema_config", kind: "message", oneof: "config", T: () => KnowledgeGraphSchemaConfig }
         ]);
     }
     create(value?: PartialMessage<ConfigNode>): ConfigNode {
@@ -3589,6 +3628,18 @@ class ConfigNode$Type extends MessageType<ConfigNode> {
                         ingestMappingConfig: IngestMappingConfig.internalBinaryRead(reader, reader.uint32(), options, (message.config as any).ingestMappingConfig)
                     };
                     break;
+                case /* indykite.config.v1beta1.AuthorizationPolicyConfig authorization_policy_config */ 23:
+                    message.config = {
+                        oneofKind: "authorizationPolicyConfig",
+                        authorizationPolicyConfig: AuthorizationPolicyConfig.internalBinaryRead(reader, reader.uint32(), options, (message.config as any).authorizationPolicyConfig)
+                    };
+                    break;
+                case /* indykite.config.v1beta1.KnowledgeGraphSchemaConfig knowledge_graph_schema_config */ 24:
+                    message.config = {
+                        oneofKind: "knowledgeGraphSchemaConfig",
+                        knowledgeGraphSchemaConfig: KnowledgeGraphSchemaConfig.internalBinaryRead(reader, reader.uint32(), options, (message.config as any).knowledgeGraphSchemaConfig)
+                    };
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -3661,6 +3712,12 @@ class ConfigNode$Type extends MessageType<ConfigNode> {
         /* indykite.config.v1beta1.IngestMappingConfig ingest_mapping_config = 22; */
         if (message.config.oneofKind === "ingestMappingConfig")
             IngestMappingConfig.internalBinaryWrite(message.config.ingestMappingConfig, writer.tag(22, WireType.LengthDelimited).fork(), options).join();
+        /* indykite.config.v1beta1.AuthorizationPolicyConfig authorization_policy_config = 23; */
+        if (message.config.oneofKind === "authorizationPolicyConfig")
+            AuthorizationPolicyConfig.internalBinaryWrite(message.config.authorizationPolicyConfig, writer.tag(23, WireType.LengthDelimited).fork(), options).join();
+        /* indykite.config.v1beta1.KnowledgeGraphSchemaConfig knowledge_graph_schema_config = 24; */
+        if (message.config.oneofKind === "knowledgeGraphSchemaConfig")
+            KnowledgeGraphSchemaConfig.internalBinaryWrite(message.config.knowledgeGraphSchemaConfig, writer.tag(24, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -4856,7 +4913,8 @@ class EmailServiceConfig$Type extends MessageType<EmailServiceConfig> {
             { no: 12, name: "authentication_message", kind: "message", T: () => EmailDefinition },
             { no: 9, name: "invitation_message", kind: "message", T: () => EmailDefinition },
             { no: 10, name: "reset_password_message", kind: "message", T: () => EmailDefinition },
-            { no: 11, name: "verification_message", kind: "message", T: () => EmailDefinition }
+            { no: 11, name: "verification_message", kind: "message", T: () => EmailDefinition },
+            { no: 13, name: "one_time_password_message", kind: "message", T: () => EmailDefinition }
         ]);
     }
     create(value?: PartialMessage<EmailServiceConfig>): EmailServiceConfig {
@@ -4913,6 +4971,9 @@ class EmailServiceConfig$Type extends MessageType<EmailServiceConfig> {
                 case /* indykite.config.v1beta1.EmailDefinition verification_message */ 11:
                     message.verificationMessage = EmailDefinition.internalBinaryRead(reader, reader.uint32(), options, message.verificationMessage);
                     break;
+                case /* indykite.config.v1beta1.EmailDefinition one_time_password_message */ 13:
+                    message.oneTimePasswordMessage = EmailDefinition.internalBinaryRead(reader, reader.uint32(), options, message.oneTimePasswordMessage);
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -4955,6 +5016,9 @@ class EmailServiceConfig$Type extends MessageType<EmailServiceConfig> {
         /* indykite.config.v1beta1.EmailDefinition verification_message = 11; */
         if (message.verificationMessage)
             EmailDefinition.internalBinaryWrite(message.verificationMessage, writer.tag(11, WireType.LengthDelimited).fork(), options).join();
+        /* indykite.config.v1beta1.EmailDefinition one_time_password_message = 13; */
+        if (message.oneTimePasswordMessage)
+            EmailDefinition.internalBinaryWrite(message.oneTimePasswordMessage, writer.tag(13, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -6355,3 +6419,97 @@ class IngestMappingConfig_Relationship$Type extends MessageType<IngestMappingCon
  * @generated MessageType for protobuf message indykite.config.v1beta1.IngestMappingConfig.Relationship
  */
 export const IngestMappingConfig_Relationship = new IngestMappingConfig_Relationship$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class AuthorizationPolicyConfig$Type extends MessageType<AuthorizationPolicyConfig> {
+    constructor() {
+        super("indykite.config.v1beta1.AuthorizationPolicyConfig", [
+            { no: 1, name: "policy", kind: "message", T: () => Policy, options: { "validate.rules": { message: { required: true } } } }
+        ]);
+    }
+    create(value?: PartialMessage<AuthorizationPolicyConfig>): AuthorizationPolicyConfig {
+        const message = {};
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<AuthorizationPolicyConfig>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: AuthorizationPolicyConfig): AuthorizationPolicyConfig {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* indykite.knowledge_graph.v1beta1.Policy policy */ 1:
+                    message.policy = Policy.internalBinaryRead(reader, reader.uint32(), options, message.policy);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: AuthorizationPolicyConfig, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* indykite.knowledge_graph.v1beta1.Policy policy = 1; */
+        if (message.policy)
+            Policy.internalBinaryWrite(message.policy, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message indykite.config.v1beta1.AuthorizationPolicyConfig
+ */
+export const AuthorizationPolicyConfig = new AuthorizationPolicyConfig$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class KnowledgeGraphSchemaConfig$Type extends MessageType<KnowledgeGraphSchemaConfig> {
+    constructor() {
+        super("indykite.config.v1beta1.KnowledgeGraphSchemaConfig", [
+            { no: 1, name: "source", kind: "scalar", T: 12 /*ScalarType.BYTES*/, options: { "validate.rules": { bytes: { maxLen: "1048576" } } } }
+        ]);
+    }
+    create(value?: PartialMessage<KnowledgeGraphSchemaConfig>): KnowledgeGraphSchemaConfig {
+        const message = { source: new Uint8Array(0) };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<KnowledgeGraphSchemaConfig>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: KnowledgeGraphSchemaConfig): KnowledgeGraphSchemaConfig {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* bytes source */ 1:
+                    message.source = reader.bytes();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: KnowledgeGraphSchemaConfig, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* bytes source = 1; */
+        if (message.source.length)
+            writer.tag(1, WireType.LengthDelimited).bytes(message.source);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message indykite.config.v1beta1.KnowledgeGraphSchemaConfig
+ */
+export const KnowledgeGraphSchemaConfig = new KnowledgeGraphSchemaConfig$Type();
