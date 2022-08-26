@@ -12,7 +12,7 @@ Thank you for reporting a possible bug in IndyKite.
 
 Please fill in as much of the template below as you can.
 
-Version: output of `go version`
+Version: output of `node version`
 Platform: output of `uname -a` (UNIX), or version and 32 or 64-bit (Windows)
 Subsystem: if known, please specify the affected core module name
 
