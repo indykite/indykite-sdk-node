@@ -1,4 +1,17 @@
 # Changelog
+## [0.1.13](https://github.com/indykite/jarvis-sdk-node/compare/v0.1.12...v0.1.13) (2022-08-26)
+
+
+### Features
+
+* add ingest support ([22715eb](https://github.com/indykite/jarvis-sdk-node/commit/22715ebf3ba63f7cae617119e8efa223656403b4))
+* add support for oauth2 client management ([878d223](https://github.com/indykite/jarvis-sdk-node/commit/878d223f62d1aa702acea96408c3497e10ddba40))
+
+
+### Bug Fixes
+
+* fix dt import according to protobuf changes ([f808e43](https://github.com/indykite/jarvis-sdk-node/commit/f808e435cad1975cd0e4ce65ad95ba8f0dcb2544))
+
 ## [0.1.12](https://github.com/indykite/jarvis-sdk-node/compare/v0.1.11...v0.1.12) (2022-07-20)
 
 
