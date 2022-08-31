@@ -1,0 +1,62 @@
+{
+  "extends": [
+    "config:base",
+    "schedule:weekly"
+  ],
+  "semanticCommits": "disabled",
+  "postUpdateOptions": [
+    "npmDedupe",
+    "yarnDedupeFewer"
+  ],
+  "commitMessagePrefix": "chore(deps): ",
+  "commitMessageAction": "update",
+  "recreateClosed": false,
+  "groupName": "everything",
+  "ignoreDeps": [],
+  "ignorePaths": [
+    "**/node_modules/**",
+    "**/examples/**",
+    "**/testdata/**"
+  ],
+  "force": {
+    "constraints": {
+      "node": "12"
+    }
+  },
+  "packageRules": [
+    {
+      "updateTypes": [
+        "major"
+      ],
+      "addLabels": [
+        "SemVer Major"
+      ]
+    },
+    {
+      "updateTypes": [
+        "minor"
+      ],
+      "addLabels": [
+        "SemVer Minor"
+      ]
+    },
+    {
+      "updateTypes": [
+        "patch",
+        "digest",
+        "bump"
+      ],
+      "addLabels": [
+        "SemVer Patch"
+      ]
+    },
+    {
+      "languages": [
+        "js"
+      ],
+      "addLabels": [
+        "JS"
+      ]
+    }
+  ]
+}

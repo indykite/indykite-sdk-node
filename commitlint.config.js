@@ -33,6 +33,7 @@ module.exports = {
         "services",
         "docs",
         "dependencies",
+        "deps",
         "auth",
         "api",
         "pkg",
