@@ -1,4 +1,11 @@
 # Changelog
+## [0.1.14](https://github.com/indykite/jarvis-sdk-node/compare/v0.1.13...v0.1.14) (2022-09-02)
+
+
+### Bug Fixes
+
+* password salt is optional ([9e2d9ad](https://github.com/indykite/jarvis-sdk-node/commit/9e2d9ad7427c222cc6c66b69a982e5f805742132))
+
 ## [0.1.13](https://github.com/indykite/jarvis-sdk-node/compare/v0.1.12...v0.1.13) (2022-08-26)
 
 
