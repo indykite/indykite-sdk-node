@@ -19,7 +19,7 @@ export interface Mobile {
 
 export interface PasswordHash {
   hash: Buffer;
-  salt: Buffer;
+  salt?: Buffer;
 }
 
 export interface PasswordCredential {
@@ -159,7 +159,7 @@ export class ImportDigitalTwin extends DigitalTwin {
         oneofKind: 'hash' as const,
         hash: {
           passwordHash: this.password.password.hash.valueOf(),
-          salt: this.password.password.salt.valueOf(),
+          salt: (this.password.password.salt ?? Buffer.from('')).valueOf(),
         },
       };
     }
