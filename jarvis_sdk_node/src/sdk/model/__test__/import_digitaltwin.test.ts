@@ -176,7 +176,6 @@ describe('when a new instance is created', () => {
           },
           password: {
             hash: Buffer.from('hashed-password'),
-            salt: Buffer.from('password-salt'),
           },
         },
       );
@@ -193,7 +192,7 @@ describe('when a new instance is created', () => {
             oneofKind: 'hash',
             hash: {
               passwordHash: Buffer.from('hashed-password'),
-              salt: Buffer.from('password-salt'),
+              salt: Buffer.from(''),
             },
           },
           uid: {
