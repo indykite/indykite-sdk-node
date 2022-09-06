@@ -13,9 +13,9 @@ export class IngestClient {
   constructor(sdk: SdkClient) {
     this.client = sdk.client as IngestAPIClient;
   }
-  static createInstance(token?: string | unknown): Promise<IngestClient> {
+  static createInstance(appCredential?: string | unknown): Promise<IngestClient> {
     return new Promise<IngestClient>((resolve, reject) => {
-      SdkClient.createServiceInstance(IngestAPIClient, token)
+      SdkClient.createIdentityInstance(IngestAPIClient, appCredential)
         .then((sdk) => {
           resolve(new IngestClient(sdk));
         })

@@ -36,8 +36,6 @@ import { ApplicationAgentCredential } from './model/config/application_agent_cre
 import { OAuth2ApplicationConfig } from './model/config/oauth2_application_config';
 import { OAuth2Application } from './model/config/oauth2_application';
 import { OAuth2Client } from './model/config/oauth2Client/oauth2_client';
-
-const endpoint = process.env.JARVIS_ENDPOINT || 'jarvis.indykite.com';
 export class ConfigClient {
   private client: ConfigManagementAPIClient;
 
@@ -45,9 +43,9 @@ export class ConfigClient {
     this.client = sdk.client as ConfigManagementAPIClient;
   }
 
-  static createInstance(token: string): Promise<ConfigClient> {
+  static createInstance(appCredential?: string): Promise<ConfigClient> {
     return new Promise<ConfigClient>((resolve, reject) => {
-      SdkClient.createIdentityInstance(ConfigManagementAPIClient, token, endpoint)
+      SdkClient.createServiceInstance(ConfigManagementAPIClient, appCredential)
         .then((sdk) => {
           resolve(new ConfigClient(sdk));
         })
