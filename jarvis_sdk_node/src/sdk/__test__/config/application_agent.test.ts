@@ -14,8 +14,7 @@ import { SdkError, SdkErrorCode } from '../../error';
 import { StringValue } from '../../../grpc/google/protobuf/wrappers';
 import { Utils } from '../../utils/utils';
 import { ApplicationAgent } from '../../model/config/application_agent';
-
-const userToken = 'user-token';
+import { serviceAccountTokenMock } from '../../utils/test_utils';
 
 afterEach(() => {
   jest.restoreAllMocks();
@@ -28,7 +27,7 @@ describe('createApplicationAgent', () => {
     let sdk: ConfigClient;
 
     beforeEach(async () => {
-      sdk = await ConfigClient.createInstance(userToken);
+      sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
       createApplicationAgentSpy = jest
         .spyOn(sdk['client'], 'createApplicationAgent')
         .mockImplementation(
@@ -117,7 +116,7 @@ describe('createApplicationAgent', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(userToken);
+      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
       jest
         .spyOn(sdk['client'], 'createApplicationAgent')
         .mockImplementation(
@@ -155,7 +154,7 @@ describe('createApplicationAgent', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(userToken);
+      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
       jest
         .spyOn(sdk['client'], 'createApplicationAgent')
         .mockImplementation(
@@ -196,7 +195,7 @@ describe('readApplicationAgentById', () => {
     let readApplicationAgentSpy: jest.SpyInstance;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(userToken);
+      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
       readApplicationAgentSpy = jest
         .spyOn(sdk['client'], 'readApplicationAgent')
         .mockImplementation(
@@ -276,7 +275,7 @@ describe('readApplicationAgentById', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(userToken);
+      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
       jest
         .spyOn(sdk['client'], 'readApplicationAgent')
         .mockImplementation(
@@ -307,7 +306,7 @@ describe('readApplicationAgentById', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(userToken);
+      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
       jest
         .spyOn(sdk['client'], 'readApplicationAgent')
         .mockImplementation(
@@ -341,7 +340,7 @@ describe('readApplicationAgentByName', () => {
     let readApplicationSpy: jest.SpyInstance;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(userToken);
+      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
       readApplicationSpy = jest
         .spyOn(sdk['client'], 'readApplicationAgent')
         .mockImplementation(
@@ -427,7 +426,7 @@ describe('readApplicationAgentByName', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(userToken);
+      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
       jest
         .spyOn(sdk['client'], 'readApplicationAgent')
         .mockImplementation(
@@ -460,7 +459,7 @@ describe('readApplicationAgentByName', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(userToken);
+      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
       jest
         .spyOn(sdk['client'], 'readApplicationAgent')
         .mockImplementation(
@@ -497,7 +496,7 @@ describe('updateApplicationAgent', () => {
     let sdk: ConfigClient;
 
     beforeEach(async () => {
-      sdk = await ConfigClient.createInstance(userToken);
+      sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
       updateApplicationAgentSpy = jest
         .spyOn(sdk['client'], 'updateApplicationAgent')
         .mockImplementation(
@@ -610,7 +609,7 @@ describe('updateApplicationAgent', () => {
     let thrownError: SdkError;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(userToken);
+      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
       jest
         .spyOn(sdk['client'], 'updateApplicationAgent')
         .mockImplementation(
@@ -661,7 +660,7 @@ describe('updateApplicationAgent', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(userToken);
+      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
       jest
         .spyOn(sdk['client'], 'updateApplicationAgent')
         .mockImplementation(
@@ -702,7 +701,7 @@ describe('updateApplicationAgent', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(userToken);
+      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
       jest
         .spyOn(sdk['client'], 'updateApplicationAgent')
         .mockImplementation(
@@ -748,7 +747,7 @@ describe('readApplicationAgentList', () => {
     let listApplicationAgentsSpy: jest.SpyInstance;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(userToken);
+      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
       const eventEmitter = Object.assign(new EventEmitter(), {});
       listApplicationAgentsSpy = jest
         .spyOn(sdk['client'], 'listApplicationAgents')
@@ -823,7 +822,7 @@ describe('readApplicationAgentList', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(userToken);
+      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
       const eventEmitter = Object.assign(new EventEmitter(), { read: jest.fn() });
       jest.spyOn(sdk['client'], 'listApplicationAgents').mockImplementation(() => {
         setTimeout(() => eventEmitter.emit('error', error), 0);
@@ -847,7 +846,7 @@ describe('deleteApplicationAgent', () => {
     let sdk: ConfigClient;
 
     beforeEach(async () => {
-      sdk = await ConfigClient.createInstance(userToken);
+      sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
       deleteApplicationAgentSpy = jest
         .spyOn(sdk['client'], 'deleteApplicationAgent')
         .mockImplementation(
@@ -889,7 +888,7 @@ describe('deleteApplicationAgent', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(userToken);
+      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
       jest
         .spyOn(sdk['client'], 'deleteApplicationAgent')
         .mockImplementation(
@@ -920,7 +919,7 @@ describe('deleteApplicationAgent', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(userToken);
+      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
       jest
         .spyOn(sdk['client'], 'deleteApplicationAgent')
         .mockImplementation(

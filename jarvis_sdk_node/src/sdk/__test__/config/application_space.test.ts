@@ -13,8 +13,7 @@ import { ApplicationSpace } from '../../model/config/application_space';
 import { SdkError, SdkErrorCode } from '../../error';
 import { StringValue } from '../../../grpc/google/protobuf/wrappers';
 import { Utils } from '../../utils/utils';
-
-const userToken = 'user-token';
+import { serviceAccountTokenMock } from '../../utils/test_utils';
 
 afterEach(() => {
   jest.restoreAllMocks();
@@ -27,7 +26,7 @@ describe('createApplicationSpace', () => {
     let sdk: ConfigClient;
 
     beforeEach(async () => {
-      sdk = await ConfigClient.createInstance(userToken);
+      sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
       createApplicationSpaceSpy = jest
         .spyOn(sdk['client'], 'createApplicationSpace')
         .mockImplementation(
@@ -120,7 +119,7 @@ describe('createApplicationSpace', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(userToken);
+      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
       jest
         .spyOn(sdk['client'], 'createApplicationSpace')
         .mockImplementation(
@@ -158,7 +157,7 @@ describe('createApplicationSpace', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(userToken);
+      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
       jest
         .spyOn(sdk['client'], 'createApplicationSpace')
         .mockImplementation(
@@ -199,7 +198,7 @@ describe('readApplicationSpaceById', () => {
     let readApplicationSpaceSpy: jest.SpyInstance;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(userToken);
+      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
       readApplicationSpaceSpy = jest
         .spyOn(sdk['client'], 'readApplicationSpace')
         .mockImplementation(
@@ -269,7 +268,7 @@ describe('readApplicationSpaceById', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(userToken);
+      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
       jest
         .spyOn(sdk['client'], 'readApplicationSpace')
         .mockImplementation(
@@ -300,7 +299,7 @@ describe('readApplicationSpaceById', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(userToken);
+      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
       jest
         .spyOn(sdk['client'], 'readApplicationSpace')
         .mockImplementation(
@@ -334,7 +333,7 @@ describe('readApplicationSpaceByName', () => {
     let readApplicationSpaceSpy: jest.SpyInstance;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(userToken);
+      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
       readApplicationSpaceSpy = jest
         .spyOn(sdk['client'], 'readApplicationSpace')
         .mockImplementation(
@@ -410,7 +409,7 @@ describe('readApplicationSpaceByName', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(userToken);
+      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
       jest
         .spyOn(sdk['client'], 'readApplicationSpace')
         .mockImplementation(
@@ -443,7 +442,7 @@ describe('readApplicationSpaceByName', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(userToken);
+      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
       jest
         .spyOn(sdk['client'], 'readApplicationSpace')
         .mockImplementation(
@@ -479,7 +478,7 @@ describe('readApplicationSpaceList', () => {
     let listApplicationSpacesSpy: jest.SpyInstance;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(userToken);
+      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
       const readMock = jest
         .fn()
         .mockImplementationOnce(() => ({
@@ -543,7 +542,7 @@ describe('readApplicationSpaceList', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(userToken);
+      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
       const eventEmitter = Object.assign(new EventEmitter(), { read: jest.fn() });
       jest.spyOn(sdk['client'], 'listApplicationSpaces').mockImplementation(() => {
         setTimeout(() => eventEmitter.emit('error', error), 0);
@@ -568,7 +567,7 @@ describe('updateApplicationSpace', () => {
     let sdk: ConfigClient;
 
     beforeEach(async () => {
-      sdk = await ConfigClient.createInstance(userToken);
+      sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
       updateApplicationSpaceSpy = jest
         .spyOn(sdk['client'], 'updateApplicationSpace')
         .mockImplementation(
@@ -671,7 +670,7 @@ describe('updateApplicationSpace', () => {
     let thrownError: SdkError;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(userToken);
+      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
       jest
         .spyOn(sdk['client'], 'updateApplicationSpace')
         .mockImplementation(
@@ -721,7 +720,7 @@ describe('updateApplicationSpace', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(userToken);
+      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
       jest
         .spyOn(sdk['client'], 'updateApplicationSpace')
         .mockImplementation(
@@ -761,7 +760,7 @@ describe('updateApplicationSpace', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(userToken);
+      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
       jest
         .spyOn(sdk['client'], 'updateApplicationSpace')
         .mockImplementation(
@@ -806,7 +805,7 @@ describe('deleteApplicationSpace', () => {
     let deleteApplicationSpaceSpy: jest.SpyInstance;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(userToken);
+      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
       deleteApplicationSpaceSpy = jest
         .spyOn(sdk['client'], 'deleteApplicationSpace')
         .mockImplementation(
@@ -853,7 +852,7 @@ describe('deleteApplicationSpace', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(userToken);
+      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
       jest
         .spyOn(sdk['client'], 'deleteApplicationSpace')
         .mockImplementation(

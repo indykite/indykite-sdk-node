@@ -1,9 +1,7 @@
-// import { ConfigManagementAPIClient } from '../../grpc/indykite/config/v1beta1/inge';
 import { IngestAPIClient } from '../../../grpc/indykite/ingest/v1beta1/ingest_api.grpc-client';
 import { SdkClient } from '../../client/client';
 import { IngestClient } from '../../ingest';
-
-const userToken = 'user-token';
+import { applicationTokenMock } from '../../utils/test_utils';
 
 afterEach(() => {
   jest.restoreAllMocks();
@@ -15,14 +13,17 @@ describe('when a new client is created', () => {
 
     beforeEach(async () => {
       jest
-        .spyOn(SdkClient, 'createServiceInstance')
+        .spyOn(SdkClient, 'createIdentityInstance')
         .mockImplementation(() => Promise.resolve({ client: {} } as SdkClient));
 
-      returnedValue = await IngestClient.createInstance(userToken);
+      returnedValue = await IngestClient.createInstance(JSON.stringify(applicationTokenMock));
     });
 
     it('creates a new instance', () => {
-      expect(SdkClient.createServiceInstance).toBeCalledWith(IngestAPIClient, userToken);
+      expect(SdkClient.createIdentityInstance).toBeCalledWith(
+        IngestAPIClient,
+        JSON.stringify(applicationTokenMock),
+      );
       expect(returnedValue).toBeInstanceOf(IngestClient);
     });
   });
@@ -33,17 +34,20 @@ describe('when a new client is created', () => {
 
     beforeEach(async () => {
       jest
-        .spyOn(SdkClient, 'createServiceInstance')
+        .spyOn(SdkClient, 'createIdentityInstance')
         .mockImplementation(() => Promise.reject(error));
       try {
-        await IngestClient.createInstance(userToken);
+        await IngestClient.createInstance(JSON.stringify(applicationTokenMock));
       } catch (err) {
         caughtError = err as Error;
       }
     });
 
     it('throws an error', () => {
-      expect(SdkClient.createServiceInstance).toBeCalledWith(IngestAPIClient, userToken);
+      expect(SdkClient.createIdentityInstance).toBeCalledWith(
+        IngestAPIClient,
+        JSON.stringify(applicationTokenMock),
+      );
       expect(caughtError).toBe(error);
     });
   });

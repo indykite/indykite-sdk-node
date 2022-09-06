@@ -17,11 +17,11 @@ import { AuthFlowConfig_Format } from '../../grpc/indykite/config/v1beta1/model'
 import { ConfigClient } from '../config';
 import { SdkError, SdkErrorCode } from '../error';
 import { AuthFlow } from '../model/config/authflow/flow';
+import { serviceAccountTokenMock } from '../utils/test_utils';
 import { Utils } from '../utils/utils';
 
 let sdk: ConfigClient;
 
-const userToken = 'USER_TOKEN';
 const proto = {
   typeUrl: 'TYPE_URL',
   value: Buffer.from('PROTO_VALUE'),
@@ -29,7 +29,7 @@ const proto = {
 
 beforeAll(async () => {
   process.env.JARVIS_ENDPOINT = 'NOT_USED';
-  sdk = await ConfigClient.createInstance(userToken);
+  sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
 });
 
 afterEach(() => {

@@ -86,12 +86,13 @@ describe('Introspection', () => {
       kind: DigitalTwinKind.PERSON,
       state: DigitalTwinState.ACTIVE,
     };
+    const appSpaceId = v4();
 
     ['subject', 'impersonated'].forEach(async (dtType) => {
       const mockResponse = TokenIntrospectResponse.fromJson({
         active: true,
         tokenInfo: {
-          appSpaceId: Utils.uuidToBase64(applicationTokenMock.appSpaceId),
+          appSpaceId: Utils.uuidToBase64(appSpaceId),
           applicationId: Utils.uuidToBase64(v4()),
           customerId: Utils.uuidToBase64(v4()),
           authenticationTime: new Date().toISOString(),
@@ -122,7 +123,7 @@ describe('Introspection', () => {
       if (mockResponse.tokenInfo) {
         let expected = {
           active: mockResponse.active,
-          appSpaceId: applicationTokenMock.appSpaceId,
+          appSpaceId,
           applicationId: stringify(mockResponse.tokenInfo.applicationId),
           customerId: stringify(mockResponse.tokenInfo.customerId),
           authenticationTime: Utils.timestampToDate(mockResponse.tokenInfo.authenticationTime),
