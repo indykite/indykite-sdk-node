@@ -24,16 +24,16 @@ import { SdkError, SdkErrorCode } from '../error';
 import { EmailMessage, SendgridEmailProvider } from '../model';
 import { AuthFlow } from '../model/config/authflow/flow';
 import { EmailTemplate } from '../model/config/email/template';
+import { serviceAccountTokenMock } from '../utils/test_utils';
 import { Utils } from '../utils/utils';
 
 let sdk: ConfigClient;
 
-const userToken = 'USER_TOKEN';
 const TEST_TO_EMAIL = { address: 'test+to@indykite.com', name: 'Test To' };
 
 beforeAll(async () => {
   process.env.JARVIS_ENDPOINT = 'NOT_USED';
-  sdk = await ConfigClient.createInstance(userToken);
+  sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
 });
 
 afterEach(() => {

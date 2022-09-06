@@ -83,7 +83,7 @@ describe('application credentials', () => {
   });
 
   it('as string', () => {
-    const sdk = SdkClient.createServiceInstance(
+    const sdk = SdkClient.createIdentityInstance(
       ConfigManagementAPIClient,
       JSON.stringify(appCredential),
     );
@@ -92,12 +92,60 @@ describe('application credentials', () => {
 
   it('as env', () => {
     process.env.INDYKITE_APPLICATION_CREDENTIALS = JSON.stringify(appCredential);
-    const sdk = SdkClient.createServiceInstance(ConfigManagementAPIClient);
+    const sdk = SdkClient.createIdentityInstance(ConfigManagementAPIClient);
     expect(sdk).resolves.toBeInstanceOf(SdkClient);
   });
 
   it('as file', () => {
     process.env.INDYKITE_APPLICATION_CREDENTIALS_FILE = 'file';
+    const mockFunc = jest.fn(
+      (
+        path: fs.PathOrFileDescriptor,
+        options?:
+          | (fs.ObjectEncodingOptions & { flag?: string | undefined })
+          | BufferEncoding
+          | null
+          | undefined,
+      ): Buffer => {
+        return Buffer.from(JSON.stringify(appCredential));
+      },
+    );
+
+    jest.spyOn(fs, 'readFileSync').mockImplementation(mockFunc);
+    const sdk = SdkClient.createIdentityInstance(ConfigManagementAPIClient);
+    expect(sdk).resolves.toBeInstanceOf(SdkClient);
+  });
+
+  it('missing', () => {
+    const sdk = SdkClient.createIdentityInstance(ConfigManagementAPIClient);
+    expect(sdk).rejects.toEqual(
+      new SdkError(SdkErrorCode.SDK_CODE_1, 'missing application credentials'),
+    );
+  });
+});
+
+describe('service account credentials', () => {
+  beforeEach(() => {
+    delete process.env.INDYKITE_SERVICE_ACCOUNT_CREDENTIALS;
+    delete process.env.INDYKITE_SERVICE_ACCOUNT_CREDENTIALS_FILE;
+  });
+
+  it('as string', () => {
+    const sdk = SdkClient.createServiceInstance(
+      ConfigManagementAPIClient,
+      JSON.stringify(appCredential),
+    );
+    expect(sdk).resolves.toBeInstanceOf(SdkClient);
+  });
+
+  it('as env', () => {
+    process.env.INDYKITE_SERVICE_ACCOUNT_CREDENTIALS = JSON.stringify(appCredential);
+    const sdk = SdkClient.createServiceInstance(ConfigManagementAPIClient);
+    expect(sdk).resolves.toBeInstanceOf(SdkClient);
+  });
+
+  it('as file', () => {
+    process.env.INDYKITE_SERVICE_ACCOUNT_CREDENTIALS_FILE = 'file';
     const mockFunc = jest.fn(
       (
         path: fs.PathOrFileDescriptor,
@@ -119,7 +167,7 @@ describe('application credentials', () => {
   it('missing', () => {
     const sdk = SdkClient.createServiceInstance(ConfigManagementAPIClient);
     expect(sdk).rejects.toEqual(
-      new SdkError(SdkErrorCode.SDK_CODE_1, 'missing application credentials'),
+      new SdkError(SdkErrorCode.SDK_CODE_1, 'missing service account credentials'),
     );
   });
 });
@@ -140,7 +188,10 @@ describe('channel credential', () => {
   });
 
   it('identity instance', () => {
-    const sdk = SdkClient.createIdentityInstance(ConfigManagementAPIClient, 'TOKEN', 'ENDPOINT');
+    const sdk = SdkClient.createIdentityInstance(
+      ConfigManagementAPIClient,
+      '{ "mocked": "example" }',
+    );
     expect(sdk).rejects.toEqual(err);
   });
 
@@ -186,10 +237,9 @@ describe('call credential', () => {
     ) => ClientInterceptors.InterceptingCall;
 
     beforeEach(async () => {
-      const sdk = await SdkClient.createIdentityInstance(
+      const sdk = await SdkClient.createServiceInstance(
         IdentityManagementAPIClientMock,
-        'TOKEN',
-        'ENDPOINT',
+        appCredential,
       );
       const client = sdk.client as IdentityManagementAPIClientMock;
       expect(client.interceptors).toHaveLength(2);
@@ -199,7 +249,11 @@ describe('call credential', () => {
     it('credentials interceptor', () => {
       credentialsInterceptor({} as InterceptorOptions, (options: InterceptorOptions) => {
         const credentials = options.credentials as CallCredentialsMock;
-        expect(credentials.metadata?.get('authorization')).toEqual(['Bearer TOKEN']);
+        expect(
+          /^Bearer [a-zA-Z0-9.]{8,}/.test(
+            credentials.metadata?.get('authorization')?.[0].toString() ?? '',
+          ),
+        ).toBeTruthy();
         expect(credentials.metadata?.get('iksdk-version')).toEqual([LIB_VERSION]);
         return new InterceptingCallMock(
           {} as InterceptorOptions,

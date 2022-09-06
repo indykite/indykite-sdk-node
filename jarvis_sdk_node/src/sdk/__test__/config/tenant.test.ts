@@ -13,8 +13,7 @@ import { SdkError, SdkErrorCode } from '../../error';
 import { StringValue } from '../../../grpc/google/protobuf/wrappers';
 import { Utils } from '../../utils/utils';
 import { Tenant } from '../../model/config/tenant';
-
-const userToken = 'user-token';
+import { serviceAccountTokenMock } from '../../utils/test_utils';
 
 afterEach(() => {
   jest.restoreAllMocks();
@@ -27,7 +26,7 @@ describe('createTenant', () => {
     let sdk: ConfigClient;
 
     beforeEach(async () => {
-      sdk = await ConfigClient.createInstance(userToken);
+      sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
       createTenantSpy = jest
         .spyOn(sdk['client'], 'createTenant')
         .mockImplementation(
@@ -122,7 +121,7 @@ describe('createTenant', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(userToken);
+      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
       jest
         .spyOn(sdk['client'], 'createTenant')
         .mockImplementation(
@@ -155,7 +154,7 @@ describe('createTenant', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(userToken);
+      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
       jest
         .spyOn(sdk['client'], 'createTenant')
         .mockImplementation(
@@ -191,7 +190,7 @@ describe('readTenantById', () => {
     let readTenantSpy: jest.SpyInstance;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(userToken);
+      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
       readTenantSpy = jest
         .spyOn(sdk['client'], 'readTenant')
         .mockImplementation(
@@ -263,7 +262,7 @@ describe('readTenantById', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(userToken);
+      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
       jest
         .spyOn(sdk['client'], 'readTenant')
         .mockImplementation(
@@ -294,7 +293,7 @@ describe('readTenantById', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(userToken);
+      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
       jest
         .spyOn(sdk['client'], 'readTenant')
         .mockImplementation(
@@ -328,7 +327,7 @@ describe('readTenantByName', () => {
     let readTenantSpy: jest.SpyInstance;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(userToken);
+      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
       readTenantSpy = jest
         .spyOn(sdk['client'], 'readTenant')
         .mockImplementation(
@@ -402,7 +401,7 @@ describe('readTenantByName', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(userToken);
+      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
       jest
         .spyOn(sdk['client'], 'readTenant')
         .mockImplementation(
@@ -433,7 +432,7 @@ describe('readTenantByName', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(userToken);
+      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
       jest
         .spyOn(sdk['client'], 'readTenant')
         .mockImplementation(
@@ -467,7 +466,7 @@ describe('readTenantList', () => {
     let listTenantsSpy: jest.SpyInstance;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(userToken);
+      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
       const eventEmitter = Object.assign(new EventEmitter(), {});
       listTenantsSpy = jest.spyOn(sdk['client'], 'listTenants').mockImplementation(() => {
         setTimeout(
@@ -530,7 +529,7 @@ describe('readTenantList', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(userToken);
+      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
       const eventEmitter = Object.assign(new EventEmitter(), { read: jest.fn() });
       jest.spyOn(sdk['client'], 'listTenants').mockImplementation(() => {
         setTimeout(() => eventEmitter.emit('error', error), 0);
@@ -555,7 +554,7 @@ describe('updateTenant', () => {
     let sdk: ConfigClient;
 
     beforeEach(async () => {
-      sdk = await ConfigClient.createInstance(userToken);
+      sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
       updateTenantSpy = jest
         .spyOn(sdk['client'], 'updateTenant')
         .mockImplementation(
@@ -657,7 +656,7 @@ describe('updateTenant', () => {
     let thrownError: SdkError;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(userToken);
+      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
       jest
         .spyOn(sdk['client'], 'updateTenant')
         .mockImplementation(
@@ -708,7 +707,7 @@ describe('updateTenant', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(userToken);
+      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
       jest
         .spyOn(sdk['client'], 'updateTenant')
         .mockImplementation(
@@ -749,7 +748,7 @@ describe('updateTenant', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(userToken);
+      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
       jest
         .spyOn(sdk['client'], 'updateTenant')
         .mockImplementation(

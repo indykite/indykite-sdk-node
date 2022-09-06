@@ -16,8 +16,7 @@ import {
   ClientSubjectType,
   TokenEndpointAuthMethod,
 } from '../../model/config/oauth2_application_config';
-
-const userToken = 'user-token';
+import { serviceAccountTokenMock } from '../../utils/test_utils';
 
 let configExample: OAuth2ApplicationConfig;
 
@@ -50,7 +49,7 @@ describe('createOAuth2Application', () => {
     let sdk: ConfigClient;
 
     beforeEach(async () => {
-      sdk = await ConfigClient.createInstance(userToken);
+      sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
       createOAuth2ApplicationSpy = jest
         .spyOn(sdk['client'], 'createOAuth2Application')
         .mockImplementation(
@@ -190,7 +189,7 @@ describe('createOAuth2Application', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(userToken);
+      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
       jest
         .spyOn(sdk['client'], 'createOAuth2Application')
         .mockImplementation(
@@ -223,7 +222,7 @@ describe('createOAuth2Application', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(userToken);
+      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
       jest
         .spyOn(sdk['client'], 'createOAuth2Application')
         .mockImplementation(
@@ -259,7 +258,7 @@ describe('readOAuth2Application', () => {
     let readOAuth2ApplicationSpy: jest.SpyInstance;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(userToken);
+      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
       readOAuth2ApplicationSpy = jest
         .spyOn(sdk['client'], 'readOAuth2Application')
         .mockImplementation(
@@ -354,7 +353,7 @@ describe('readOAuth2Application', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(userToken);
+      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
       jest
         .spyOn(sdk['client'], 'readOAuth2Application')
         .mockImplementation(
@@ -385,7 +384,7 @@ describe('readOAuth2Application', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(userToken);
+      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
       jest
         .spyOn(sdk['client'], 'readOAuth2Application')
         .mockImplementation(
@@ -420,7 +419,7 @@ describe('updateOAuth2Application', () => {
     let sdk: ConfigClient;
 
     beforeEach(async () => {
-      sdk = await ConfigClient.createInstance(userToken);
+      sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
       updateOAuth2ApplicationSpy = jest
         .spyOn(sdk['client'], 'updateOAuth2Application')
         .mockImplementation(
@@ -525,7 +524,7 @@ describe('updateOAuth2Application', () => {
     let thrownError: SdkError;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(userToken);
+      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
       jest
         .spyOn(sdk['client'], 'updateOAuth2Application')
         .mockImplementation(
@@ -567,7 +566,7 @@ describe('updateOAuth2Application', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(userToken);
+      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
       jest
         .spyOn(sdk['client'], 'updateOAuth2Application')
         .mockImplementation(
@@ -599,7 +598,7 @@ describe('updateOAuth2Application', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(userToken);
+      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
       jest
         .spyOn(sdk['client'], 'updateOAuth2Application')
         .mockImplementation(
@@ -636,7 +635,7 @@ describe('deleteOAuth2Application', () => {
     let sdk: ConfigClient;
 
     beforeEach(async () => {
-      sdk = await ConfigClient.createInstance(userToken);
+      sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
       deleteOAuth2ApplicationSpy = jest
         .spyOn(sdk['client'], 'deleteOAuth2Application')
         .mockImplementation(
@@ -678,7 +677,7 @@ describe('deleteOAuth2Application', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(userToken);
+      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
       jest
         .spyOn(sdk['client'], 'deleteOAuth2Application')
         .mockImplementation(
@@ -709,7 +708,7 @@ describe('deleteOAuth2Application', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(userToken);
+      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
       jest
         .spyOn(sdk['client'], 'deleteOAuth2Application')
         .mockImplementation(

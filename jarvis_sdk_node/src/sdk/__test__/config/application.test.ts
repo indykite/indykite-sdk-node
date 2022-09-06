@@ -13,8 +13,7 @@ import { SdkError, SdkErrorCode } from '../../error';
 import { StringValue } from '../../../grpc/google/protobuf/wrappers';
 import { Utils } from '../../utils/utils';
 import { Application } from '../../model/config/application';
-
-const userToken = 'user-token';
+import { serviceAccountTokenMock } from '../../utils/test_utils';
 
 afterEach(() => {
   jest.restoreAllMocks();
@@ -27,7 +26,7 @@ describe('createApplication', () => {
     let sdk: ConfigClient;
 
     beforeEach(async () => {
-      sdk = await ConfigClient.createInstance(userToken);
+      sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
       createApplicationSpy = jest
         .spyOn(sdk['client'], 'createApplication')
         .mockImplementation(
@@ -116,7 +115,7 @@ describe('createApplication', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(userToken);
+      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
       jest
         .spyOn(sdk['client'], 'createApplication')
         .mockImplementation(
@@ -154,7 +153,7 @@ describe('createApplication', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(userToken);
+      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
       jest
         .spyOn(sdk['client'], 'createApplication')
         .mockImplementation(
@@ -195,7 +194,7 @@ describe('readApplicationById', () => {
     let readApplicationSpy: jest.SpyInstance;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(userToken);
+      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
       readApplicationSpy = jest
         .spyOn(sdk['client'], 'readApplication')
         .mockImplementation(
@@ -265,7 +264,7 @@ describe('readApplicationById', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(userToken);
+      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
       jest
         .spyOn(sdk['client'], 'readApplication')
         .mockImplementation(
@@ -296,7 +295,7 @@ describe('readApplicationById', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(userToken);
+      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
       jest
         .spyOn(sdk['client'], 'readApplication')
         .mockImplementation(
@@ -330,7 +329,7 @@ describe('readApplicationByName', () => {
     let readApplicationSpy: jest.SpyInstance;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(userToken);
+      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
       readApplicationSpy = jest
         .spyOn(sdk['client'], 'readApplication')
         .mockImplementation(
@@ -405,7 +404,7 @@ describe('readApplicationByName', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(userToken);
+      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
       jest
         .spyOn(sdk['client'], 'readApplication')
         .mockImplementation(
@@ -436,7 +435,7 @@ describe('readApplicationByName', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(userToken);
+      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
       jest
         .spyOn(sdk['client'], 'readApplication')
         .mockImplementation(
@@ -470,7 +469,7 @@ describe('readApplicationList', () => {
     let listApplicationsSpy: jest.SpyInstance;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(userToken);
+      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
       const eventEmitter = Object.assign(new EventEmitter(), {});
       listApplicationsSpy = jest.spyOn(sdk['client'], 'listApplications').mockImplementation(() => {
         setTimeout(
@@ -533,7 +532,7 @@ describe('readApplicationList', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(userToken);
+      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
       const eventEmitter = Object.assign(new EventEmitter(), { read: jest.fn() });
       jest.spyOn(sdk['client'], 'listApplications').mockImplementation(() => {
         setTimeout(() => eventEmitter.emit('error', error), 0);
@@ -558,7 +557,7 @@ describe('updateApplication', () => {
     let sdk: ConfigClient;
 
     beforeEach(async () => {
-      sdk = await ConfigClient.createInstance(userToken);
+      sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
       updateApplicationSpy = jest
         .spyOn(sdk['client'], 'updateApplication')
         .mockImplementation(
@@ -666,7 +665,7 @@ describe('updateApplication', () => {
     let thrownError: SdkError;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(userToken);
+      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
       jest
         .spyOn(sdk['client'], 'updateApplication')
         .mockImplementation(
@@ -716,7 +715,7 @@ describe('updateApplication', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(userToken);
+      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
       jest
         .spyOn(sdk['client'], 'updateApplication')
         .mockImplementation(
@@ -756,7 +755,7 @@ describe('updateApplication', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(userToken);
+      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
       jest
         .spyOn(sdk['client'], 'updateApplication')
         .mockImplementation(

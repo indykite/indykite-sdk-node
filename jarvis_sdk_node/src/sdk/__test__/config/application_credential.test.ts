@@ -9,11 +9,10 @@ import {
 import { ConfigClient } from '../../config';
 import { Utils } from '../../utils/utils';
 import { ApplicationAgentCredential } from '../../model/config/application_agent_credential';
-
-const userToken = 'user-token';
+import { serviceAccountTokenMock } from '../../utils/test_utils';
 
 afterEach(() => {
-  jest.restoreAllMocks();
+  jest.clearAllMocks();
 });
 
 describe('registerApplicationCredential', () => {
@@ -23,7 +22,7 @@ describe('registerApplicationCredential', () => {
     let sdk: ConfigClient;
 
     beforeEach(async () => {
-      sdk = await ConfigClient.createInstance(userToken);
+      sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
       registerApplicationAgentCredentialSpy = jest
         .spyOn(sdk['client'], 'registerApplicationAgentCredential')
         .mockImplementation(
@@ -208,7 +207,7 @@ describe('registerApplicationCredential', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(userToken);
+      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
       jest
         .spyOn(sdk['client'], 'registerApplicationAgentCredential')
         .mockImplementation(
@@ -244,7 +243,7 @@ describe('registerApplicationCredential', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(userToken);
+      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
       jest
         .spyOn(sdk['client'], 'registerApplicationAgentCredential')
         .mockImplementation(
@@ -283,7 +282,7 @@ describe('readApplicationAgentCredential', () => {
     let readApplicationAgentCredentialSpy: jest.SpyInstance;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(userToken);
+      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
       readApplicationAgentCredentialSpy = jest
         .spyOn(sdk['client'], 'readApplicationAgentCredential')
         .mockImplementation(
@@ -351,7 +350,7 @@ describe('readApplicationAgentCredential', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(userToken);
+      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
       jest
         .spyOn(sdk['client'], 'readApplicationAgentCredential')
         .mockImplementation(
@@ -385,7 +384,7 @@ describe('readApplicationAgentCredential', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(userToken);
+      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
       jest
         .spyOn(sdk['client'], 'readApplicationAgentCredential')
         .mockImplementation(
@@ -422,7 +421,7 @@ describe('deleteApplicationAgentCredential', () => {
     let sdk: ConfigClient;
 
     beforeEach(async () => {
-      sdk = await ConfigClient.createInstance(userToken);
+      sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
       deleteApplicationAgentCredentialSpy = jest
         .spyOn(sdk['client'], 'deleteApplicationAgentCredential')
         .mockImplementation(
@@ -467,7 +466,7 @@ describe('deleteApplicationAgentCredential', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(userToken);
+      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
       jest
         .spyOn(sdk['client'], 'deleteApplicationAgentCredential')
         .mockImplementation(
@@ -501,7 +500,7 @@ describe('deleteApplicationAgentCredential', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(userToken);
+      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
       jest
         .spyOn(sdk['client'], 'deleteApplicationAgentCredential')
         .mockImplementation(
