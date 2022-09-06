@@ -40,16 +40,16 @@ export class IdentityClient {
 
   /**
    * @decrecated Use createInstance instead
-   * @param token
+   * @param appCredential
    * @returns
    */
-  static newClient(token?: string | unknown): Promise<IdentityClient> {
-    return this.createInstance(token);
+  static newClient(appCredential?: string | unknown): Promise<IdentityClient> {
+    return this.createInstance(appCredential);
   }
 
-  static createInstance(token?: string | unknown): Promise<IdentityClient> {
+  static createInstance(appCredential?: string | unknown): Promise<IdentityClient> {
     return new Promise<IdentityClient>((resolve, reject) => {
-      SdkClient.createServiceInstance(IdentityManagementAPIClient, token)
+      SdkClient.createIdentityInstance(IdentityManagementAPIClient, appCredential)
         .then((sdk) => {
           resolve(new IdentityClient(sdk));
         })

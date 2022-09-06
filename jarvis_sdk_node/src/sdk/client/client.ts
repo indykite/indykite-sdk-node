@@ -11,11 +11,12 @@ import { Status } from '@grpc/grpc-js/build/src/constants';
 import { readFileSync } from 'fs';
 
 import { SdkErrorCode, SdkError } from '../error';
-import { ApplicationCredential } from '../utils/credential';
 import { LIB_VERSION } from '../../version';
 import { IdentityManagementAPIClient } from '../../grpc/indykite/identity/v1beta1/identity_management_api.grpc-client';
 import { ConfigManagementAPIClient } from '../../grpc/indykite/config/v1beta1/config_management_api.grpc-client';
 import { IngestAPIClient } from '../../grpc/indykite/ingest/v1beta1/ingest_api.grpc-client';
+import { ApplicationCredential } from '../utils/application_credential';
+import { ServiceAccountCredential } from '../utils/service_account_credential';
 
 type ClientType = IdentityManagementAPIClient | ConfigManagementAPIClient | IngestAPIClient;
 type ClientConstructor = new (
@@ -71,6 +72,26 @@ export class SdkClient {
       return ApplicationCredential.fromBuffer(token);
     } else {
       throw new SdkError(SdkErrorCode.SDK_CODE_1, 'missing application credentials');
+    }
+  }
+
+  private static getServiceAccountCredential(
+    serviceCredential?: string | unknown,
+  ): ServiceAccountCredential {
+    if (serviceCredential) {
+      if (typeof serviceCredential === 'string') {
+        return ServiceAccountCredential.fromString(serviceCredential);
+      } else {
+        return ServiceAccountCredential.fromObject(serviceCredential);
+      }
+    } else if (process.env.INDYKITE_SERVICE_ACCOUNT_CREDENTIALS) {
+      const token = process.env.INDYKITE_SERVICE_ACCOUNT_CREDENTIALS;
+      return ServiceAccountCredential.fromString(token);
+    } else if (process.env.INDYKITE_SERVICE_ACCOUNT_CREDENTIALS_FILE) {
+      const token = readFileSync(process.env.INDYKITE_SERVICE_ACCOUNT_CREDENTIALS_FILE);
+      return ServiceAccountCredential.fromBuffer(token);
+    } else {
+      throw new SdkError(SdkErrorCode.SDK_CODE_1, 'missing service account credentials');
     }
   }
 
@@ -144,16 +165,18 @@ export class SdkClient {
 
   static async createIdentityInstance(
     c: ClientConstructor,
-    identityToken: string,
-    endpoint: string,
+    appCredential?: string | unknown,
   ): Promise<SdkClient> {
+    const credential = SdkClient.getApplicationCredential(appCredential);
+
     const createCallCredential = async () => {
-      return SdkClient.newCallCredentials(identityToken);
+      const builtCredential = await credential.buildToken();
+      return SdkClient.newCallCredentials(builtCredential.token);
     };
 
     return new SdkClient(
       c,
-      endpoint,
+      credential.getEndpoint(),
       this.newChannelCredentials(),
       await createCallCredential(),
       createCallCredential,
@@ -162,17 +185,18 @@ export class SdkClient {
 
   static async createServiceInstance(
     c: ClientConstructor,
-    appCredential?: string | unknown,
+    serviceAccountCredential?: string | unknown,
   ): Promise<SdkClient> {
+    const credential = SdkClient.getServiceAccountCredential(serviceAccountCredential);
+
     const createCallCredential = async () => {
-      const builtCredential = await applicationCredential.buildToken();
+      const builtCredential = await credential.buildToken();
       return SdkClient.newCallCredentials(builtCredential.token);
     };
 
-    const applicationCredential = SdkClient.getApplicationCredential(appCredential);
     return new SdkClient(
       c,
-      applicationCredential.getEndpoint(),
+      credential.getEndpoint(),
       this.newChannelCredentials(),
       await createCallCredential(),
       createCallCredential,
