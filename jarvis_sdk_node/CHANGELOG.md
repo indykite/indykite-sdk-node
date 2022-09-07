@@ -1,4 +1,11 @@
 # Changelog
+## [0.1.15](https://github.com/indykite/jarvis-sdk-node/compare/v0.1.14...v0.1.15) (2022-09-07)
+
+
+### Features
+
+* support the new credentials file format ([ccdf281](https://github.com/indykite/jarvis-sdk-node/commit/ccdf281fa471f30ba56d69c1e2ac2eba87a35ad5))
+
 ## [0.1.14](https://github.com/indykite/jarvis-sdk-node/compare/v0.1.13...v0.1.14) (2022-09-02)
 
 
