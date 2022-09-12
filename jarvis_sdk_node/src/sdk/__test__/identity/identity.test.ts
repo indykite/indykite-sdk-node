@@ -34,7 +34,7 @@ import { SdkError, SdkErrorCode } from '../../error';
 import { IdentityClient } from '../../identity';
 import * as sdkTypes from '../../model';
 import { Status } from '@grpc/grpc-js/build/src/constants';
-import { PatchResult } from '../../model';
+import { PatchResult, PropertyMetaData } from '../../model';
 import { CallOptions, Metadata } from '@grpc/grpc-js';
 import { Utils } from '../../utils/utils';
 import { applicationTokenMock } from '../../utils/test_utils';
@@ -193,10 +193,11 @@ describe('Digital Twin', () => {
       emailProperty.definition?.property ?? '',
       emailProperty.id,
     ).withValue(emailProperty.value.objectValue.value.stringValue);
-    email.meta = {
+    email.meta = new PropertyMetaData();
+    Object.assign(email.meta, {
       ...emailProperty.meta,
       verificationTime: Utils.timestampToDate(emailProperty.meta.verificationTime),
-    };
+    });
 
     expectedDT.addProperty(email);
 
@@ -292,11 +293,12 @@ describe('Digital Twin', () => {
       const email = new sdkTypes.Property('email', originalEmailId).withValue(
         'test+to@indykite.com',
       );
-      email.meta = {
+      email.meta = new PropertyMetaData();
+      Object.assign(email.meta, {
         assuranceLevel: AssuranceLevel.LOW,
         issuer: 'indykite.id',
         primary: true,
-      };
+      });
       dt.updateProperty(email);
       dt.addProperty(new sdkTypes.Property('lastName').withMetadata(true).withValue('LAST_NAME'));
 

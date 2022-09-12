@@ -1,4 +1,4 @@
-import { stringify } from 'uuid';
+import { parse, stringify } from 'uuid';
 import { PropertyBatchOperation } from '../../grpc/indykite/identity/v1beta1/attributes';
 import { DigitalTwin as DigitalTwinModel } from '../../grpc/indykite/identity/v1beta1/model';
 import * as grpcId from '../../grpc/indykite/identity/v1beta1/identity_management_api';
@@ -21,6 +21,15 @@ export class DigitalTwinCore {
       model.kind,
       model.state,
     );
+  }
+
+  marshal(): DigitalTwinModel {
+    return {
+      id: Uint8Array.from(parse(this.id)),
+      tenantId: Uint8Array.from(parse(this.tenantId)),
+      kind: this.kind,
+      state: this.state,
+    };
   }
 }
 export class DigitalTwin extends DigitalTwinCore {

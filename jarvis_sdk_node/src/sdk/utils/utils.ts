@@ -100,7 +100,11 @@ export class Utils {
     return new Date(seconds + milis);
   }
 
-  static dateToTimestamp(date: Date): Timestamp {
+  static dateToTimestamp(date: Date): Timestamp;
+  static dateToTimestamp(date?: Date): Timestamp | undefined;
+  static dateToTimestamp(date?: Date): Timestamp | undefined {
+    if (!date) return;
+
     const time = date.getTime();
     const seconds = Math.floor(time / 1000);
     const nanos = (time % 1000) * 1000000;
