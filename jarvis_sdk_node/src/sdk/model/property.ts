@@ -21,6 +21,24 @@ export class PropertyMetaData {
     m.verificationTime = Utils.timestampToDate(meta.verificationTime);
     return m;
   }
+
+  marshal(): grpcAttr.PropertyMetadata {
+    if (
+      this.assuranceLevel === undefined ||
+      this.issuer === undefined ||
+      this.verifier === undefined
+    ) {
+      throw new SdkError(SdkErrorCode.SDK_CODE_1, "Can't marshal property metadata");
+    }
+
+    return {
+      assuranceLevel: this.assuranceLevel,
+      issuer: this.issuer,
+      verifier: this.verifier,
+      primary: this.primary,
+      verificationTime: Utils.dateToTimestamp(this.verificationTime),
+    };
+  }
 }
 
 export class Property {
@@ -72,17 +90,52 @@ export class Property {
 
   setMetadata(primary: boolean): void {
     if (!this.meta) {
-      this.meta = {
-        primary,
-      };
-    } else {
-      this.meta.primary = primary;
+      this.meta = new PropertyMetaData();
     }
+    this.meta.primary = primary;
   }
 
   withMetadata(primary: boolean): Property {
     this.setMetadata(primary);
     return this;
+  }
+
+  marshal(): grpcAttr.Property {
+    if (!this.id) {
+      throw new SdkError(SdkErrorCode.SDK_CODE_1, "Can't marshal the property without an ID");
+    }
+
+    let value: grpcAttr.Property['value'] = {
+      oneofKind: undefined,
+    };
+
+    if (this.value) {
+      value = {
+        oneofKind: 'objectValue',
+        objectValue: Utils.objectToValue(this.value),
+      };
+    } else if (this.reference) {
+      value = {
+        oneofKind: 'referenceValue',
+        referenceValue: this.reference,
+      };
+    }
+
+    let definition: grpcAttr.Property['definition'];
+    if (this.context !== undefined && this.property !== undefined && this.type !== undefined) {
+      definition = {
+        context: this.context,
+        property: this.property,
+        type: this.type,
+      };
+    }
+
+    return {
+      id: this.id,
+      value,
+      definition,
+      meta: this.meta?.marshal(),
+    };
   }
 
   static deserialize(property: grpcAttr.Property): Property {

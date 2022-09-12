@@ -164,4 +164,13 @@ describe('when `fromModel` method is used for the instance creation', () => {
     expect(instance.kind).toBe(DigitalTwinKind.PERSON);
     expect(instance.state).toBe(DigitalTwinState.ACTIVE);
   });
+
+  it('marshals the instance correctly', () => {
+    expect(instance.marshal()).toEqual({
+      id: Uint8Array.from(Utils.uuidToBuffer(id)),
+      tenantId: Uint8Array.from(Utils.uuidToBuffer(tenantId)),
+      kind: DigitalTwinKind.PERSON,
+      state: DigitalTwinState.ACTIVE,
+    });
+  });
 });

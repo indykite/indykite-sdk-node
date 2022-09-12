@@ -10,6 +10,7 @@ import {
   DigitalTwinIdentifier,
   EnrichTokenRequest,
   GetDigitalTwinRequest,
+  IsAuthorizedRequest,
   PatchDigitalTwinRequest,
   ResendInvitationRequest,
   StartDigitalTwinEmailVerificationRequest,
@@ -22,7 +23,13 @@ import * as sdkTypes from './model';
 
 import { SdkErrorCode, SdkError } from './error';
 import { Utils } from './utils/utils';
-import { ConsentChallenge, ConsentChallengeDenial, PatchResult, Property } from './model';
+import {
+  ConsentChallenge,
+  ConsentChallengeDenial,
+  DigitalTwinCore,
+  PatchResult,
+  Property,
+} from './model';
 import { SdkClient } from './client/client';
 import { IdentityManagementAPIClient } from '../grpc/indykite/identity/v1beta1/identity_management_api.grpc-client';
 import { Invitation } from './model/invitation';
@@ -30,6 +37,7 @@ import { JsonValue } from '@protobuf-ts/runtime';
 import { ImportDigitalTwinsRequest } from '../grpc/indykite/identity/v1beta1/import';
 import { HashAlgorithm } from './model/hash_algorithm';
 import { ImportDigitalTwin, ImportResult } from './model/import_digitaltwin';
+import { AuthorizationDecisions } from './model/authorization_decisions';
 
 export class IdentityClient {
   private client: IdentityManagementAPIClient;
@@ -716,6 +724,58 @@ export class IdentityClient {
               .map((result) => ImportResult.deserialize(result))
               .filter((result): result is ImportResult => result !== null),
           );
+      });
+    });
+  }
+
+  isAuthorized(
+    subject: DigitalTwinCore | Property | string,
+    resources: Record<'id' | 'label', string>[] = [],
+    actions: string[] = [],
+  ): Promise<AuthorizationDecisions> {
+    return new Promise((resolve, reject) => {
+      let request = IsAuthorizedRequest.create({
+        subject: {
+          filter: {
+            oneofKind: undefined,
+          },
+        },
+      });
+      if (subject instanceof DigitalTwinCore) {
+        request = IsAuthorizedRequest.create({
+          subject: {
+            filter: {
+              oneofKind: 'digitalTwin',
+              digitalTwin: subject.marshal(),
+            },
+          },
+        });
+      } else if (subject instanceof Property) {
+        request = IsAuthorizedRequest.create({
+          subject: {
+            filter: {
+              oneofKind: 'property',
+              property: subject.marshal(),
+            },
+          },
+        });
+      } else {
+        request = IsAuthorizedRequest.create({
+          subject: {
+            filter: {
+              oneofKind: 'accessToken',
+              accessToken: subject,
+            },
+          },
+        });
+      }
+      request.resources = resources;
+      request.actions = actions;
+
+      this.client.isAuthorized(request, (err, res) => {
+        if (err) reject(err);
+        else if (!res) resolve(new AuthorizationDecisions({}));
+        else resolve(AuthorizationDecisions.deserialize(res));
       });
     });
   }

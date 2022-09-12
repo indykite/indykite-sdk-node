@@ -106,6 +106,29 @@ describe('properties', () => {
     expect(sdkProp).toHaveProperty('value');
     expect(sdkProp).not.toHaveProperty('reference');
     expect(sdkProp.value).toEqual('test+email@indykite.com');
+    expect(sdkProp.marshal()).toEqual({
+      id: prop.id,
+      definition: {
+        context: '',
+        property: 'email',
+        type: '',
+      },
+      value: {
+        oneofKind: 'objectValue',
+        objectValue: {
+          value: {
+            oneofKind: 'stringValue',
+            stringValue: 'test+email@indykite.com',
+          },
+        },
+      },
+      meta: {
+        assuranceLevel: 0,
+        issuer: '',
+        primary: true,
+        verifier: '',
+      },
+    });
 
     sdkProp.withReference('SOME_REFERANCE');
     expect(sdkProp).toHaveProperty('reference');
@@ -115,6 +138,24 @@ describe('properties', () => {
     expect(sdkProp.isPrimary()).toBeTruthy();
     sdkProp.withMetadata(false);
     expect(sdkProp.isPrimary()).toBeFalsy();
+    expect(sdkProp.marshal()).toEqual({
+      id: prop.id,
+      definition: {
+        context: '',
+        property: 'email',
+        type: '',
+      },
+      value: {
+        oneofKind: 'referenceValue',
+        referenceValue: 'SOME_REFERANCE',
+      },
+      meta: {
+        assuranceLevel: 0,
+        issuer: '',
+        primary: false,
+        verifier: '',
+      },
+    });
 
     const builder = PatchPropertiesBuilder.newBuilder().updateProperty(sdkProp);
     expect(builder.operations).toHaveLength(1);
@@ -210,5 +251,25 @@ describe('builder', () => {
     const b1 = PatchPropertiesBuilder.newBuilder();
     expect(b1.deleteProperty(p)).toBe(b1);
     expect(b1.operations).toHaveLength(0);
+  });
+
+  it('marshal property without id', () => {
+    const p = new Property('email');
+    let caughtError: Error | null = null;
+    try {
+      p.marshal();
+    } catch (err) {
+      caughtError = err as Error;
+    }
+    expect(caughtError?.message).toBe("Can't marshal the property without an ID");
+
+    p.withMetadata(false);
+    p.id = 'some-id';
+    try {
+      p.marshal();
+    } catch (err) {
+      caughtError = err as Error;
+    }
+    expect(caughtError?.message).toBe("Can't marshal property metadata");
   });
 });
