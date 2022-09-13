@@ -53,6 +53,12 @@ The IndyKite SDK reads config properties from a JSON formatted configuration fil
 export INDYKITE_APPLICATION_CREDENTIALS_FILE=<path_to_config_file>/config.json
 ```
 
+### Service account config 
+In order to make some changes to your spaces you have to have a file with your service account credentials. You can create this file using the indykite.id platform where you need to select your customer space, select the `Service accounts` item from the left menu and finally add a new service account. Then you have to create the `INDYKITE_SERVICE_ACCOUNT_CREDENTIALS_FILE` environment variable with the path to the credentials file you have downloaded.
+```shell
+export INDYKITE_SERVICE_ACCOUNT_CREDENTIALS_FILE=<path_to_service_account_file>/service_account.json
+```
+
 ### Import the SDK into your application
 ```typescript
 import { IdentityClient, TokenInfo } from '@indykiteone/jarvis-sdk-node';
