@@ -2,9 +2,7 @@ import { ConfigClient } from '../sdk/config';
 import { EmailMessage } from '../sdk/model/config/email/message';
 import { SendgridEmailProvider } from '../sdk/model/config/email/providers/sendgrid';
 
-const userToken = process.env.USER_TOKEN || 'MISSING_TOKEN';
-
-ConfigClient.createInstance(userToken)
+ConfigClient.createInstance()
   .then(async (sdk) => {
     /** CREATE new Email Configuration **/
     const sendgrid = new SendgridEmailProvider(
