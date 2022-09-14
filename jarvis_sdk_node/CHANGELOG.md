@@ -1,4 +1,11 @@
 # Changelog
+## [0.1.16](https://github.com/indykite/jarvis-sdk-node/compare/v0.1.15...v0.1.16) (2022-09-14)
+
+
+### Features
+
+* add is-authorized api ([49f0bb5](https://github.com/indykite/jarvis-sdk-node/commit/49f0bb515c6442070118338f6f69d27c374cb330))
+
 ## [0.1.15](https://github.com/indykite/jarvis-sdk-node/compare/v0.1.14...v0.1.15) (2022-09-07)
 
 
