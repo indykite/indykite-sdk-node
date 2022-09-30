@@ -4,12 +4,14 @@ import {
   CreateApplicationSpaceRequest,
   CreateConfigNodeRequest,
   CreateOAuth2ApplicationRequest,
+  CreateOAuth2ProviderRequest,
   CreateTenantRequest,
   DeleteApplicationAgentCredentialRequest,
   DeleteApplicationAgentRequest,
   DeleteApplicationSpaceRequest,
   DeleteConfigNodeRequest,
   DeleteOAuth2ApplicationRequest,
+  DeleteOAuth2ProviderRequest,
   ReadApplicationAgentCredentialRequest,
   RegisterApplicationAgentCredentialRequest,
   UpdateApplicationAgentRequest,
@@ -17,6 +19,7 @@ import {
   UpdateApplicationSpaceRequest,
   UpdateConfigNodeRequest,
   UpdateOAuth2ApplicationRequest,
+  UpdateOAuth2ProviderRequest,
   UpdateTenantRequest,
 } from '../grpc/indykite/config/v1beta1/config_management_api';
 import { SdkClient } from './client/client';
@@ -35,7 +38,9 @@ import { ApplicationAgent } from './model/config/application_agent';
 import { ApplicationAgentCredential } from './model/config/application_agent_credential';
 import { OAuth2ApplicationConfig } from './model/config/oauth2_application_config';
 import { OAuth2Application } from './model/config/oauth2_application';
-import { OAuth2Client } from './model/config/oauth2Client/oauth2_client';
+import { OAuth2Client } from './model/config/oauth2_client/oauth2_client';
+import { OAuth2ProviderConfig } from './model/config/oauth2_provider_config';
+import { OAuth2Provider } from './model/config/oauth2_provider';
 export class ConfigClient {
   private client: ConfigManagementAPIClient;
 
@@ -926,6 +931,122 @@ export class ConfigClient {
         if (err) reject(err);
         else if (!response)
           reject(new SdkError(SdkErrorCode.SDK_CODE_1, 'No application agent credential response'));
+        else resolve();
+      });
+    });
+  }
+
+  createOAuth2Provider(
+    appSpaceId: string,
+    name: string,
+    config: OAuth2ProviderConfig,
+    displayName?: string,
+    description?: string,
+  ): Promise<OAuth2Provider> {
+    return new Promise((resolve, reject) => {
+      const req: CreateOAuth2ProviderRequest = {
+        appSpaceId,
+        name,
+        config: {
+          ...config,
+          responseTypes: config.responseTypes ?? [],
+          scopes: config.scopes ?? [],
+          tokenEndpointAuthMethod: config.tokenEndpointAuthMethod ?? [],
+          tokenEndpointAuthSigningAlg: config.tokenEndpointAuthSigningAlg ?? [],
+          requestUris: config.requestUris ?? [],
+          requestObjectSigningAlg: config.requestObjectSigningAlg ?? '',
+          frontChannelConsentUri: config.frontChannelConsentUri ?? {},
+          frontChannelLoginUri: config.frontChannelLoginUri ?? {},
+        },
+      };
+
+      if (displayName !== undefined) req.displayName = StringValue.create({ value: displayName });
+      if (description !== undefined) req.description = StringValue.create({ value: description });
+
+      this.client.createOAuth2Provider(req, (err, response) => {
+        if (err) reject(err);
+        else if (!response)
+          reject(new SdkError(SdkErrorCode.SDK_CODE_1, 'No OAuth2 provider response'));
+        else
+          resolve(
+            OAuth2Provider.deserialize(
+              response,
+              name,
+              appSpaceId,
+              config,
+              displayName,
+              description,
+            ),
+          );
+      });
+    });
+  }
+
+  readOAuth2Provider(id: string): Promise<OAuth2Provider> {
+    return new Promise((resolve, reject) => {
+      this.client.readOAuth2Provider({ id }, (err, response) => {
+        if (err) reject(err);
+        else if (!response) {
+          reject(new SdkError(SdkErrorCode.SDK_CODE_1, 'No OAuth2 provider response'));
+        } else {
+          resolve(OAuth2Provider.deserialize(response));
+        }
+      });
+    });
+  }
+
+  updateOAuth2Provider(oauth2Provider: OAuth2Provider): Promise<OAuth2Provider> {
+    return new Promise((resolve, reject) => {
+      const req: UpdateOAuth2ProviderRequest = {
+        id: oauth2Provider.id,
+      };
+
+      if (oauth2Provider.etag !== undefined)
+        req.etag = StringValue.create({ value: oauth2Provider.etag });
+      if (oauth2Provider.displayName !== undefined)
+        req.displayName = StringValue.create({ value: oauth2Provider.displayName });
+      if (oauth2Provider.description !== undefined)
+        req.description = StringValue.create({ value: oauth2Provider.description });
+
+      const config = oauth2Provider.config?.marshal();
+      if (config) req.config = config;
+
+      this.client.updateOAuth2Provider(req, (err, response) => {
+        if (err) reject(err);
+        else {
+          try {
+            if (response && response.id === oauth2Provider.id) {
+              oauth2Provider.etag = response.etag;
+              oauth2Provider.updateTime = Utils.timestampToDate(response.updateTime);
+              resolve(oauth2Provider);
+            } else {
+              reject(
+                new SdkError(
+                  SdkErrorCode.SDK_CODE_1,
+                  `Update returned with different id: req.iq=${oauth2Provider.id}, res.id=${
+                    response ? response.id : 'undefined'
+                  }`,
+                ),
+              );
+            }
+          } catch (err) {
+            reject(err);
+          }
+        }
+      });
+    });
+  }
+
+  deleteOAuth2Provider(id: string): Promise<void> {
+    return new Promise((resolve, reject) => {
+      const req: DeleteOAuth2ProviderRequest = {
+        id,
+      };
+
+      this.client.deleteOAuth2Provider(req, (err, response) => {
+        if (err) reject(err);
+        else if (!response)
+          reject(new SdkError(SdkErrorCode.SDK_CODE_1, 'No OAuth2 provider response'));
         else resolve();
       });
     });
