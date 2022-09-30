@@ -5,7 +5,7 @@ import {
 } from '../../../../grpc/indykite/config/v1beta1/model';
 import { NodeConfiguration } from '../configuration';
 
-type IOptions = {
+type IOAuth2ClientConfigOptions = {
   providerType: ProviderType;
   clientId: string;
   clientSecret: string;
@@ -47,7 +47,7 @@ export class OAuth2Client extends NodeConfiguration {
   public hostedDomain: string;
   public authStyle: AuthStyle;
 
-  constructor(options: IOptions) {
+  constructor(options: IOAuth2ClientConfigOptions) {
     super(options.name);
 
     this.providerType = options.providerType;

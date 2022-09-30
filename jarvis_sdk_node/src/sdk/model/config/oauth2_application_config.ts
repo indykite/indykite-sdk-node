@@ -7,7 +7,7 @@ import {
 } from '../../../grpc/indykite/config/v1beta1/model';
 import { SdkError, SdkErrorCode } from '../../error';
 
-export type IOptions = {
+export type IOAuth2ApplicationConfigOptions = {
   clientId: string;
   displayName: string;
   redirectUris: string[];
@@ -73,9 +73,9 @@ export class OAuth2ApplicationConfig {
     userinfoSignedResponseAlg?: string,
     clientSecret?: string,
   );
-  constructor(options: IOptions);
+  constructor(options: IOAuth2ApplicationConfigOptions);
   constructor(
-    clientIdOrOptions: string | IOptions,
+    clientIdOrOptions: string | IOAuth2ApplicationConfigOptions,
     displayName?: string,
     redirectUris?: string[],
     owner?: string,

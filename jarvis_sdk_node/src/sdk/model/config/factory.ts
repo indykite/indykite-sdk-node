@@ -5,8 +5,8 @@ import { AuthflowFactory } from './authflow/factory';
 import { AuthFlow } from './authflow/flow';
 import { NodeConfiguration } from './configuration';
 import { EmailProviderType, EmailProviderFactory } from './email/factory';
-import { OAuth2ClientFactory } from './oauth2Client/factory';
-import { OAuth2Client } from './oauth2Client/oauth2_client';
+import { OAuth2ClientFactory } from './oauth2_client/factory';
+import { OAuth2Client } from './oauth2_client/oauth2_client';
 
 export type ConfigurationType = EmailProviderType | AuthFlow | OAuth2Client;
 

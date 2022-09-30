@@ -1,4 +1,16 @@
 export * from './';
 export * from './email/providers/sendgrid';
 export * from './email/message';
+export * from './application_agent_credential';
+export * from './application_agent';
+export * from './application_space';
+export * from './application';
+export * from './configuration';
+export * from './customer';
+export * from './factory';
+export * from './oauth2_application_config';
+export * from './oauth2_application';
+export * from './tenant';
+export * from './oauth2_client/factory';
+export * from './oauth2_client/oauth2_client';
 export { EmailProviderType } from './email/factory';

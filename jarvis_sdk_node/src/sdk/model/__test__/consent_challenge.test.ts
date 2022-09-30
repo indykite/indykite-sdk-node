@@ -1,5 +1,5 @@
 import { v4 } from 'uuid';
-import { Audience } from '..';
+import { ConsentChallengeAudience } from '..';
 import { DigitalTwinKind, DigitalTwinState } from '../../../grpc/indykite/identity/v1beta1/model';
 import { Utils } from '../../utils/utils';
 import { ConsentChallenge } from '../consent_challenge';
@@ -9,7 +9,7 @@ describe('properties', () => {
   const clientId = v4();
   const scopes = [{ name: 'openid', description: '', displayName: '', required: false }];
   const requestUrl = 'http://www.example.com/oauth';
-  const audiences = [] as Audience[];
+  const audiences = [] as ConsentChallengeAudience[];
   const appSpace = v4();
   const acrs = [] as string[];
   const subject = 'Subject';
@@ -106,7 +106,7 @@ describe('deserialization', () => {
   const clientId = v4();
   const scopes = [{ name: 'openid', description: '', displayName: '', required: false }];
   const requestUrl = 'http://www.example.com/oauth';
-  const audiences = [] as Audience[];
+  const audiences = [] as ConsentChallengeAudience[];
   const appSpace = v4();
   const acrs = [] as string[];
   const subject = 'Subject';
