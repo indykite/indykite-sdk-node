@@ -7,7 +7,7 @@ import {
 import { SdkError, SdkErrorCode } from '../../../error';
 import { Utils } from '../../../utils/utils';
 import { ConfigurationFactory, ConfigurationType } from '../factory';
-import { OAuth2Client } from '../oauth2Client/oauth2_client';
+import { OAuth2Client } from '../oauth2_client/oauth2_client';
 
 describe('createInstance', () => {
   let instance: ConfigurationType;

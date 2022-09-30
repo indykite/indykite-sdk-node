@@ -10,7 +10,7 @@ import {
 import { ConfigClient } from '../../config';
 import { SdkError, SdkErrorCode } from '../../error';
 import { Utils } from '../../utils/utils';
-import { OAuth2Client } from '../../model/config/oauth2Client/oauth2_client';
+import { OAuth2Client } from '../../model/config/oauth2_client/oauth2_client';
 import { AuthStyle, ProviderType } from '../../../grpc/indykite/config/v1beta1/model';
 import { StringValue } from '../../../grpc/google/protobuf/wrappers';
 import { serviceAccountTokenMock } from '../../utils/test_utils';

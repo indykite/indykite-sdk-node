@@ -4,14 +4,14 @@ import { DigitalTwin } from './digitaltwin';
 import { SdkError, SdkErrorCode } from '../error';
 import { Utils } from '../utils/utils';
 
-export interface Scope {
+export interface ConsentChallengeScope {
   name: string;
   displayName: string;
   description: string;
   required: boolean;
 }
 
-export interface Audience {
+export interface ConsentChallengeAudience {
   userSupportEmailAddress: string;
   clientId: string;
   displayName: string;
@@ -54,9 +54,9 @@ export class ConsentChallenge {
   constructor(
     public challenge: string,
     public clientId: string,
-    public scopes: Scope[],
+    public scopes: ConsentChallengeScope[],
     public requestUrl: string,
-    public audiences: Audience[],
+    public audiences: ConsentChallengeAudience[],
     public appSpaceId: string,
     public acrs: string[],
     public subjectIdentifier: string,

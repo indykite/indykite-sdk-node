@@ -9,7 +9,7 @@ import {
 import { IdentityClient } from '../../identity';
 import * as sdkTypes from '../../model';
 import { Status } from '@grpc/grpc-js/build/src/constants';
-import { Audience } from '../../model';
+import { ConsentChallengeAudience } from '../../model';
 import { CallOptions, Metadata } from '@grpc/grpc-js';
 import { Utils } from '../../utils/utils';
 import { JsonObject } from '@protobuf-ts/runtime';
@@ -31,7 +31,7 @@ describe('Consent', () => {
     const clientId = v4();
     const scopes = [{ name: 'openid', description: '', displayName: '', required: false }];
     const requestUrl = 'http://www.example.com/oauth';
-    const audiences = [] as Audience[];
+    const audiences = [] as ConsentChallengeAudience[];
     const appSpace = v4();
     const acrs = [] as string[];
     const subject = 'Subject';
