@@ -1,0 +1,37 @@
+{
+  "$schema": "https://typedoc.org/schema.json",
+  "entryPoints": ["./src/index.ts"],
+  "out": "../docs",
+  "categoryOrder": ["Clients", "*"],
+  "kindSortOrder": [
+    "Reference",
+    "Project",
+    "Module",
+    "Namespace",
+    "Class",
+    "Enum",
+    "EnumMember",
+    "Interface",
+    "TypeAlias",
+    "Constructor",
+    "Property",
+    "Variable",
+    "Function",
+    "Accessor",
+    "Method",
+    "ObjectLiteral",
+    "Parameter",
+    "TypeParameter",
+    "TypeLiteral",
+    "CallSignature",
+    "ConstructorSignature",
+    "IndexSignature",
+    "GetSignature",
+    "SetSignature",
+  ],
+  "sort": [
+    "kind",
+    "static-first",
+    "alphabetical"
+  ]
+}

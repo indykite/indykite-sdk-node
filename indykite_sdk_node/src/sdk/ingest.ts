@@ -10,6 +10,12 @@ import { Readable } from 'stream';
 import { IngestResults } from './model/ingest/ingest_response';
 import { IndexFixer, streamKeeper } from './utils/stream';
 
+/**
+ * @category Clients
+ * @example
+ * // Example how to create a new ingest client
+ * const sdk = await IngestClient.createInstance();
+ */
 export class IngestClient {
   private client: IngestAPIClient;
   constructor(sdk: SdkClient) {
