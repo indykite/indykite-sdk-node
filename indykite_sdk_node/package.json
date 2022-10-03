@@ -21,7 +21,8 @@
     "coverage": "jest --coverage --silent",
     "coverage-ci": "jest --ci --silent --coverage --coverageReporters=json",
     "coverage-html": "jest --coverage --silent --coverageReporters=html",
-    "buf-generate": "buf generate --template ../buf.gen.yaml buf.build/indykite/indykiteapis -o .."
+    "buf-generate": "buf generate --template ../buf.gen.yaml buf.build/indykite/indykiteapis -o ..",
+    "doc-generate": "typedoc --options typedoc.json"
   },
   "devDependencies": {
     "@babel/core": "7.20.2",
@@ -49,6 +50,7 @@
     "rimraf": "3.0.2",
     "ts-jest": "29.0.3",
     "ts-node": "10.9.1",
+    "typedoc": "0.23.23",
     "typescript": "4.9.3"
   },
   "dependencies": {

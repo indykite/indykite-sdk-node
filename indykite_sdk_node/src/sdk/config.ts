@@ -59,6 +59,12 @@ import {
   Tenant,
 } from './model';
 
+/**
+ * @category Clients
+ * @example
+ * // Example how to create a new config client
+ * const sdk = await ConfigClient.createInstance();
+ */
 export class ConfigClient {
   private client: ConfigManagementAPIClient;
   private lastBookmark = '';

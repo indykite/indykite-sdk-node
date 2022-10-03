@@ -49,6 +49,12 @@ import { BoolValue } from '../grpc/google/protobuf/wrappers';
 import { Readable } from 'stream';
 import { IndexFixer, streamSplitter } from './utils/stream';
 
+/**
+ * @category Clients
+ * @example
+ * // Example how to create a new identity client
+ * const sdk = await IdentityClient.createInstance();
+ */
 export class IdentityClient {
   private client: IdentityManagementAPIClient;
 
