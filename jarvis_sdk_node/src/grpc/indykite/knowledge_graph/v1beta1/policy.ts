@@ -24,6 +24,8 @@ import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MESSAGE_TYPE } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
+import { Timestamp } from "../../../google/protobuf/timestamp";
+import { AssuranceLevel } from "../../identity/v1beta1/attributes";
 /**
  * @generated from protobuf message indykite.knowledge_graph.v1beta1.Policy
  */
@@ -74,6 +76,60 @@ export interface Path_Entity {
      * @generated from protobuf field: repeated string labels = 2;
      */
     labels: string[];
+    /**
+     * @generated from protobuf field: repeated indykite.knowledge_graph.v1beta1.Path.Entity.IdentityProperty identity_properties = 4;
+     */
+    identityProperties: Path_Entity_IdentityProperty[];
+    /**
+     * @generated from protobuf field: repeated indykite.knowledge_graph.v1beta1.Path.Entity.KnowledgeProperty knowledge_properties = 5;
+     */
+    knowledgeProperties: Path_Entity_KnowledgeProperty[];
+}
+/**
+ * @generated from protobuf message indykite.knowledge_graph.v1beta1.Path.Entity.IdentityProperty
+ */
+export interface Path_Entity_IdentityProperty {
+    /**
+     * @generated from protobuf field: string property = 1;
+     */
+    property: string;
+    /**
+     * @generated from protobuf field: string value = 2;
+     */
+    value: string;
+    /**
+     * @generated from protobuf field: indykite.identity.v1beta1.AssuranceLevel minimum_assurance_level = 3;
+     */
+    minimumAssuranceLevel: AssuranceLevel;
+    /**
+     * @generated from protobuf field: repeated string allowed_issuers = 4;
+     */
+    allowedIssuers: string[];
+    /**
+     * @generated from protobuf field: google.protobuf.Timestamp verification_time = 5;
+     */
+    verificationTime?: Timestamp;
+    /**
+     * @generated from protobuf field: repeated string allowed_verifiers = 6;
+     */
+    allowedVerifiers: string[];
+    /**
+     * @generated from protobuf field: bool must_be_primary = 7;
+     */
+    mustBePrimary: boolean;
+}
+/**
+ * @generated from protobuf message indykite.knowledge_graph.v1beta1.Path.Entity.KnowledgeProperty
+ */
+export interface Path_Entity_KnowledgeProperty {
+    /**
+     * @generated from protobuf field: string property = 1;
+     */
+    property: string;
+    /**
+     * @generated from protobuf field: string value = 2;
+     */
+    value: string;
 }
 /**
  * @generated from protobuf message indykite.knowledge_graph.v1beta1.Path.Relationship
@@ -230,11 +286,13 @@ class Path_Entity$Type extends MessageType<Path_Entity> {
     constructor() {
         super("indykite.knowledge_graph.v1beta1.Path.Entity", [
             { no: 1, name: "id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "2", maxLen: "50" } } } },
-            { no: 2, name: "labels", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { minItems: "1", maxItems: "32", items: { string: { minLen: "2", maxLen: "50", pattern: "^(?:[A-Z][a-z]+)+$" } } } } } }
+            { no: 2, name: "labels", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { minItems: "1", maxItems: "32", unique: true, items: { string: { minLen: "2", maxLen: "50", pattern: "^(?:[A-Z][a-z]+)+$" } } } } } },
+            { no: 4, name: "identity_properties", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Path_Entity_IdentityProperty },
+            { no: 5, name: "knowledge_properties", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Path_Entity_KnowledgeProperty }
         ]);
     }
     create(value?: PartialMessage<Path_Entity>): Path_Entity {
-        const message = { id: "", labels: [] };
+        const message = { id: "", labels: [], identityProperties: [], knowledgeProperties: [] };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<Path_Entity>(this, message, value);
@@ -250,6 +308,12 @@ class Path_Entity$Type extends MessageType<Path_Entity> {
                     break;
                 case /* repeated string labels */ 2:
                     message.labels.push(reader.string());
+                    break;
+                case /* repeated indykite.knowledge_graph.v1beta1.Path.Entity.IdentityProperty identity_properties */ 4:
+                    message.identityProperties.push(Path_Entity_IdentityProperty.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                case /* repeated indykite.knowledge_graph.v1beta1.Path.Entity.KnowledgeProperty knowledge_properties */ 5:
+                    message.knowledgeProperties.push(Path_Entity_KnowledgeProperty.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -269,6 +333,12 @@ class Path_Entity$Type extends MessageType<Path_Entity> {
         /* repeated string labels = 2; */
         for (let i = 0; i < message.labels.length; i++)
             writer.tag(2, WireType.LengthDelimited).string(message.labels[i]);
+        /* repeated indykite.knowledge_graph.v1beta1.Path.Entity.IdentityProperty identity_properties = 4; */
+        for (let i = 0; i < message.identityProperties.length; i++)
+            Path_Entity_IdentityProperty.internalBinaryWrite(message.identityProperties[i], writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+        /* repeated indykite.knowledge_graph.v1beta1.Path.Entity.KnowledgeProperty knowledge_properties = 5; */
+        for (let i = 0; i < message.knowledgeProperties.length; i++)
+            Path_Entity_KnowledgeProperty.internalBinaryWrite(message.knowledgeProperties[i], writer.tag(5, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -280,12 +350,155 @@ class Path_Entity$Type extends MessageType<Path_Entity> {
  */
 export const Path_Entity = new Path_Entity$Type();
 // @generated message type with reflection information, may provide speed optimized methods
+class Path_Entity_IdentityProperty$Type extends MessageType<Path_Entity_IdentityProperty> {
+    constructor() {
+        super("indykite.knowledge_graph.v1beta1.Path.Entity.IdentityProperty", [
+            { no: 1, name: "property", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "2", maxLen: "256", pattern: "^[a-zA-Z_][a-zA-Z0-9_]+$" } } } },
+            { no: 2, name: "value", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 3, name: "minimum_assurance_level", kind: "enum", T: () => ["indykite.identity.v1beta1.AssuranceLevel", AssuranceLevel, "ASSURANCE_LEVEL_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
+            { no: 4, name: "allowed_issuers", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/ },
+            { no: 5, name: "verification_time", kind: "message", T: () => Timestamp },
+            { no: 6, name: "allowed_verifiers", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/ },
+            { no: 7, name: "must_be_primary", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+        ]);
+    }
+    create(value?: PartialMessage<Path_Entity_IdentityProperty>): Path_Entity_IdentityProperty {
+        const message = { property: "", value: "", minimumAssuranceLevel: 0, allowedIssuers: [], allowedVerifiers: [], mustBePrimary: false };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<Path_Entity_IdentityProperty>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: Path_Entity_IdentityProperty): Path_Entity_IdentityProperty {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string property */ 1:
+                    message.property = reader.string();
+                    break;
+                case /* string value */ 2:
+                    message.value = reader.string();
+                    break;
+                case /* indykite.identity.v1beta1.AssuranceLevel minimum_assurance_level */ 3:
+                    message.minimumAssuranceLevel = reader.int32();
+                    break;
+                case /* repeated string allowed_issuers */ 4:
+                    message.allowedIssuers.push(reader.string());
+                    break;
+                case /* google.protobuf.Timestamp verification_time */ 5:
+                    message.verificationTime = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.verificationTime);
+                    break;
+                case /* repeated string allowed_verifiers */ 6:
+                    message.allowedVerifiers.push(reader.string());
+                    break;
+                case /* bool must_be_primary */ 7:
+                    message.mustBePrimary = reader.bool();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: Path_Entity_IdentityProperty, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string property = 1; */
+        if (message.property !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.property);
+        /* string value = 2; */
+        if (message.value !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.value);
+        /* indykite.identity.v1beta1.AssuranceLevel minimum_assurance_level = 3; */
+        if (message.minimumAssuranceLevel !== 0)
+            writer.tag(3, WireType.Varint).int32(message.minimumAssuranceLevel);
+        /* repeated string allowed_issuers = 4; */
+        for (let i = 0; i < message.allowedIssuers.length; i++)
+            writer.tag(4, WireType.LengthDelimited).string(message.allowedIssuers[i]);
+        /* google.protobuf.Timestamp verification_time = 5; */
+        if (message.verificationTime)
+            Timestamp.internalBinaryWrite(message.verificationTime, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
+        /* repeated string allowed_verifiers = 6; */
+        for (let i = 0; i < message.allowedVerifiers.length; i++)
+            writer.tag(6, WireType.LengthDelimited).string(message.allowedVerifiers[i]);
+        /* bool must_be_primary = 7; */
+        if (message.mustBePrimary !== false)
+            writer.tag(7, WireType.Varint).bool(message.mustBePrimary);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message indykite.knowledge_graph.v1beta1.Path.Entity.IdentityProperty
+ */
+export const Path_Entity_IdentityProperty = new Path_Entity_IdentityProperty$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class Path_Entity_KnowledgeProperty$Type extends MessageType<Path_Entity_KnowledgeProperty> {
+    constructor() {
+        super("indykite.knowledge_graph.v1beta1.Path.Entity.KnowledgeProperty", [
+            { no: 1, name: "property", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "2", maxLen: "256", pattern: "^[a-zA-Z_][a-zA-Z0-9_]+$" } } } },
+            { no: 2, name: "value", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "2" } } } }
+        ]);
+    }
+    create(value?: PartialMessage<Path_Entity_KnowledgeProperty>): Path_Entity_KnowledgeProperty {
+        const message = { property: "", value: "" };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<Path_Entity_KnowledgeProperty>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: Path_Entity_KnowledgeProperty): Path_Entity_KnowledgeProperty {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string property */ 1:
+                    message.property = reader.string();
+                    break;
+                case /* string value */ 2:
+                    message.value = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: Path_Entity_KnowledgeProperty, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string property = 1; */
+        if (message.property !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.property);
+        /* string value = 2; */
+        if (message.value !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.value);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message indykite.knowledge_graph.v1beta1.Path.Entity.KnowledgeProperty
+ */
+export const Path_Entity_KnowledgeProperty = new Path_Entity_KnowledgeProperty$Type();
+// @generated message type with reflection information, may provide speed optimized methods
 class Path_Relationship$Type extends MessageType<Path_Relationship> {
     constructor() {
         super("indykite.knowledge_graph.v1beta1.Path.Relationship", [
             { no: 1, name: "source", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "2", maxLen: "50" } } } },
             { no: 2, name: "target", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "2", maxLen: "50" } } } },
-            { no: 3, name: "types", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { minItems: "0", maxItems: "32", items: { string: { minLen: "2", maxLen: "50", pattern: "^[A-Z]+(?:_[A-Z]+)*$" } } } } } },
+            { no: 3, name: "types", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { minItems: "0", maxItems: "32", unique: true, items: { string: { minLen: "2", maxLen: "50", pattern: "^[A-Z]+(?:_[A-Z]+)*$" } } } } } },
             { no: 4, name: "non_directional", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
         ]);
     }

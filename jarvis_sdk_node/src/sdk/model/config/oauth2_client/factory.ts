@@ -22,6 +22,9 @@ export class OAuth2ClientFactory {
       tenant: config.tenant,
       hostedDomain: config.hostedDomain,
       authStyle: config.authStyle,
+      privateKeyId: config.privateKeyId,
+      privateKeyPem: Buffer.from(config.privateKeyPem),
+      teamId: config.teamId,
     });
     return client;
   }

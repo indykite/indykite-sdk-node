@@ -24,6 +24,7 @@ import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MESSAGE_TYPE } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
+import { Schema } from "../../knowledge_graph/v1beta1/schema";
 import { Policy } from "../../knowledge_graph/v1beta1/policy";
 import { Int64Value } from "../../../google/protobuf/wrappers";
 import { Value } from "../../objects/v1beta1/struct";
@@ -865,7 +866,7 @@ export interface OAuth2ClientConfig {
      */
     authorizationEndpoint: string;
     /**
-     * RL of the OP's OAuth 2.0 Token Endpoint
+     * URL of the OP's OAuth 2.0 Token Endpoint
      *
      * @generated from protobuf field: string token_endpoint = 11;
      */
@@ -918,6 +919,30 @@ export interface OAuth2ClientConfig {
      * @generated from protobuf field: indykite.config.v1beta1.AuthStyle auth_style = 20;
      */
     authStyle: AuthStyle;
+    /**
+     * Required if using Apple as provider. Used to sign JWT token which acts as client_secret for
+     * authorization code - token exchange.
+     * Private key pem must be provided when creating a new client config but is optional when updating.
+     * If provided when updating, stored secret value will be updated with new value.
+     * If not provided when updating, stored secret value will be kept.
+     * When reading back client config, private key pem will always be set to null.
+     *
+     * @generated from protobuf field: bytes private_key_pem = 21;
+     */
+    privateKeyPem: Uint8Array;
+    /**
+     * Required if using Apple as provider. Used to sign JWT token which acts as client_secret for
+     * authorization code - token exchange.
+     *
+     * @generated from protobuf field: string private_key_id = 22;
+     */
+    privateKeyId: string;
+    /**
+     * Required if using Apple as provider. Used to generate JWT token for authorization code - token exchange.
+     *
+     * @generated from protobuf field: string team_id = 23;
+     */
+    teamId: string;
 }
 /**
  * @generated from protobuf message indykite.config.v1beta1.OAuth2Application
@@ -2123,11 +2148,9 @@ export interface AuthorizationPolicyConfig {
  */
 export interface KnowledgeGraphSchemaConfig {
     /**
-     * Knowledge Graph Schema configuration in JSON format
-     *
-     * @generated from protobuf field: bytes source = 1;
+     * @generated from protobuf field: indykite.knowledge_graph.v1beta1.Schema schema = 1;
      */
-    source: Uint8Array;
+    schema?: Schema;
 }
 // 
 // 
@@ -2154,6 +2177,22 @@ export enum ProviderType {
      */
     AMAZONCOGNITO_COM = 34,
     /**
+     * @generated from protobuf enum value: PROVIDER_TYPE_APPLE_COM = 41;
+     */
+    APPLE_COM = 41,
+    /**
+     * @generated from protobuf enum value: PROVIDER_TYPE_AUTHENTEQ_COM = 33;
+     */
+    AUTHENTEQ_COM = 33,
+    /**
+     * @generated from protobuf enum value: PROVIDER_TYPE_BANKID_COM = 38;
+     */
+    BANKID_COM = 38,
+    /**
+     * @generated from protobuf enum value: PROVIDER_TYPE_BANKID_NO = 37;
+     */
+    BANKID_NO = 37,
+    /**
      * @generated from protobuf enum value: PROVIDER_TYPE_BITBUCKET = 2;
      */
     BITBUCKET = 2,
@@ -2161,6 +2200,10 @@ export enum ProviderType {
      * @generated from protobuf enum value: PROVIDER_TYPE_CERN_CH = 3;
      */
     CERN_CH = 3,
+    /**
+     * @generated from protobuf enum value: PROVIDER_TYPE_CUSTOM = 39;
+     */
+    CUSTOM = 39,
     /**
      * @generated from protobuf enum value: PROVIDER_TYPE_FACEBOOK_COM = 4;
      */
@@ -2193,6 +2236,14 @@ export enum ProviderType {
      * @generated from protobuf enum value: PROVIDER_TYPE_HIPCHAT_COM = 11;
      */
     HIPCHAT_COM = 11,
+    /**
+     * @generated from protobuf enum value: PROVIDER_TYPE_INDYKITE_ID = 35;
+     */
+    INDYKITE_ID = 35,
+    /**
+     * @generated from protobuf enum value: PROVIDER_TYPE_INDYKITE_ME = 36;
+     */
+    INDYKITE_ME = 36,
     /**
      * @generated from protobuf enum value: PROVIDER_TYPE_INSTAGRAM_COM = 12;
      */
@@ -2266,6 +2317,10 @@ export enum ProviderType {
      */
     UBER_COM = 28,
     /**
+     * @generated from protobuf enum value: PROVIDER_TYPE_VIPPS_NO = 40;
+     */
+    VIPPS_NO = 40,
+    /**
      * @generated from protobuf enum value: PROVIDER_TYPE_VK_COM = 29;
      */
     VK_COM = 29,
@@ -2276,35 +2331,7 @@ export enum ProviderType {
     /**
      * @generated from protobuf enum value: PROVIDER_TYPE_YANDEX_COM = 31;
      */
-    YANDEX_COM = 31,
-    /**
-     * @generated from protobuf enum value: PROVIDER_TYPE_AUTHENTEQ_COM = 33;
-     */
-    AUTHENTEQ_COM = 33,
-    /**
-     * @generated from protobuf enum value: PROVIDER_TYPE_INDYKITE_ID = 35;
-     */
-    INDYKITE_ID = 35,
-    /**
-     * @generated from protobuf enum value: PROVIDER_TYPE_INDYKITE_ME = 36;
-     */
-    INDYKITE_ME = 36,
-    /**
-     * @generated from protobuf enum value: PROVIDER_TYPE_BANKID_NO = 37;
-     */
-    BANKID_NO = 37,
-    /**
-     * @generated from protobuf enum value: PROVIDER_TYPE_BANKID_COM = 38;
-     */
-    BANKID_COM = 38,
-    /**
-     * @generated from protobuf enum value: PROVIDER_TYPE_CUSTOM = 39;
-     */
-    CUSTOM = 39,
-    /**
-     * @generated from protobuf enum value: PROVIDER_TYPE_VIPPS_NO = 40;
-     */
-    VIPPS_NO = 40
+    YANDEX_COM = 31
 }
 /**
  * AuthStyle represents how requests for tokens are authenticated
@@ -3748,11 +3775,14 @@ class OAuth2ClientConfig$Type extends MessageType<OAuth2ClientConfig> {
             { no: 14, name: "image_url", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "2", maxLen: "1024", ignoreEmpty: true } } } },
             { no: 15, name: "tenant", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "2", maxLen: "254", ignoreEmpty: true } } } },
             { no: 18, name: "hosted_domain", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "2", maxLen: "254", hostname: true, ignoreEmpty: true } } } },
-            { no: 20, name: "auth_style", kind: "enum", T: () => ["indykite.config.v1beta1.AuthStyle", AuthStyle, "AUTH_STYLE_"], options: { "validate.rules": { enum: { definedOnly: true } } } }
+            { no: 20, name: "auth_style", kind: "enum", T: () => ["indykite.config.v1beta1.AuthStyle", AuthStyle, "AUTH_STYLE_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
+            { no: 21, name: "private_key_pem", kind: "scalar", T: 12 /*ScalarType.BYTES*/, options: { "validate.rules": { bytes: { minLen: "85", maxLen: "8192", prefix: "LS0tLS1CRUdJTiBQUklWQVRFIEtFWS0tLS0t", suffix: "LS0tLS1FTkQgUFJJVkFURSBLRVktLS0tLQ==", ignoreEmpty: true } } } },
+            { no: 22, name: "private_key_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "2", maxLen: "254", ignoreEmpty: true } } } },
+            { no: 23, name: "team_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "2", maxLen: "254", ignoreEmpty: true } } } }
         ]);
     }
     create(value?: PartialMessage<OAuth2ClientConfig>): OAuth2ClientConfig {
-        const message = { providerType: 0, clientId: "", clientSecret: "", redirectUri: [], defaultScopes: [], allowedScopes: [], allowSignup: false, issuer: "", authorizationEndpoint: "", tokenEndpoint: "", discoveryUrl: "", userinfoEndpoint: "", jwksUri: "", imageUrl: "", tenant: "", hostedDomain: "", authStyle: 0 };
+        const message = { providerType: 0, clientId: "", clientSecret: "", redirectUri: [], defaultScopes: [], allowedScopes: [], allowSignup: false, issuer: "", authorizationEndpoint: "", tokenEndpoint: "", discoveryUrl: "", userinfoEndpoint: "", jwksUri: "", imageUrl: "", tenant: "", hostedDomain: "", authStyle: 0, privateKeyPem: new Uint8Array(0), privateKeyId: "", teamId: "" };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<OAuth2ClientConfig>(this, message, value);
@@ -3813,6 +3843,15 @@ class OAuth2ClientConfig$Type extends MessageType<OAuth2ClientConfig> {
                     break;
                 case /* indykite.config.v1beta1.AuthStyle auth_style */ 20:
                     message.authStyle = reader.int32();
+                    break;
+                case /* bytes private_key_pem */ 21:
+                    message.privateKeyPem = reader.bytes();
+                    break;
+                case /* string private_key_id */ 22:
+                    message.privateKeyId = reader.string();
+                    break;
+                case /* string team_id */ 23:
+                    message.teamId = reader.string();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -3877,6 +3916,15 @@ class OAuth2ClientConfig$Type extends MessageType<OAuth2ClientConfig> {
         /* indykite.config.v1beta1.AuthStyle auth_style = 20; */
         if (message.authStyle !== 0)
             writer.tag(20, WireType.Varint).int32(message.authStyle);
+        /* bytes private_key_pem = 21; */
+        if (message.privateKeyPem.length)
+            writer.tag(21, WireType.LengthDelimited).bytes(message.privateKeyPem);
+        /* string private_key_id = 22; */
+        if (message.privateKeyId !== "")
+            writer.tag(22, WireType.LengthDelimited).string(message.privateKeyId);
+        /* string team_id = 23; */
+        if (message.teamId !== "")
+            writer.tag(23, WireType.LengthDelimited).string(message.teamId);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -6470,11 +6518,11 @@ export const AuthorizationPolicyConfig = new AuthorizationPolicyConfig$Type();
 class KnowledgeGraphSchemaConfig$Type extends MessageType<KnowledgeGraphSchemaConfig> {
     constructor() {
         super("indykite.config.v1beta1.KnowledgeGraphSchemaConfig", [
-            { no: 1, name: "source", kind: "scalar", T: 12 /*ScalarType.BYTES*/, options: { "validate.rules": { bytes: { maxLen: "1048576" } } } }
+            { no: 1, name: "schema", kind: "message", T: () => Schema, options: { "validate.rules": { message: { required: true } } } }
         ]);
     }
     create(value?: PartialMessage<KnowledgeGraphSchemaConfig>): KnowledgeGraphSchemaConfig {
-        const message = { source: new Uint8Array(0) };
+        const message = {};
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<KnowledgeGraphSchemaConfig>(this, message, value);
@@ -6485,8 +6533,8 @@ class KnowledgeGraphSchemaConfig$Type extends MessageType<KnowledgeGraphSchemaCo
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* bytes source */ 1:
-                    message.source = reader.bytes();
+                case /* indykite.knowledge_graph.v1beta1.Schema schema */ 1:
+                    message.schema = Schema.internalBinaryRead(reader, reader.uint32(), options, message.schema);
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -6500,9 +6548,9 @@ class KnowledgeGraphSchemaConfig$Type extends MessageType<KnowledgeGraphSchemaCo
         return message;
     }
     internalBinaryWrite(message: KnowledgeGraphSchemaConfig, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* bytes source = 1; */
-        if (message.source.length)
-            writer.tag(1, WireType.LengthDelimited).bytes(message.source);
+        /* indykite.knowledge_graph.v1beta1.Schema schema = 1; */
+        if (message.schema)
+            Schema.internalBinaryWrite(message.schema, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
