@@ -24,6 +24,9 @@ describe('createInstance', () => {
       tenant: 'tenant',
       hostedDomain: 'https://example.com',
       authStyle: AuthStyle.AUTO_DETECT,
+      privateKeyId: 'private-key-id',
+      privateKeyPem: Buffer.from('private-key-pem'),
+      teamId: 'team-id',
     });
   });
 
@@ -46,5 +49,8 @@ describe('createInstance', () => {
     expect(client.tenant).toBe('tenant');
     expect(client.hostedDomain).toBe('https://example.com');
     expect(client.authStyle).toBe(AuthStyle.AUTO_DETECT);
+    expect(client.privateKeyId).toBe('private-key-id');
+    expect(client.privateKeyPem?.toString()).toBe('private-key-pem');
+    expect(client.teamId).toBe('team-id');
   });
 });

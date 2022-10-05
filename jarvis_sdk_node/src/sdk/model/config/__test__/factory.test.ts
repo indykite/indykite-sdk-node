@@ -45,6 +45,9 @@ describe('createInstance', () => {
             tenant: 'tenant',
             hostedDomain: 'https://example.com',
             authStyle: AuthStyle.AUTO_DETECT,
+            privateKeyId: '',
+            privateKeyPem: new Uint8Array(),
+            teamId: '',
           },
         },
       });
@@ -81,6 +84,9 @@ describe('createInstance', () => {
         appSpaceId: 'app-space-id',
         tenantId: 'tenant-id',
         name: 'instance-name',
+        privateKeyId: '',
+        privateKeyPem: Buffer.from(''),
+        teamId: '',
       });
     });
   });

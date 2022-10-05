@@ -1,12 +1,14 @@
 import {
-  AuthStyle,
-  ProviderType,
+  AuthStyle as OAuth2AuthStyle,
+  ProviderType as OAuth2ProviderType,
   OAuth2ClientConfig as OAuth2ClientConfigModel,
 } from '../../../../grpc/indykite/config/v1beta1/model';
 import { NodeConfiguration } from '../configuration';
 
-type IOAuth2ClientConfigOptions = {
-  providerType: ProviderType;
+export { OAuth2AuthStyle, OAuth2ProviderType };
+
+export type IOAuth2ClientConfigOptions = {
+  providerType: OAuth2ProviderType;
   clientId: string;
   clientSecret: string;
   redirectUri: string[];
@@ -22,14 +24,17 @@ type IOAuth2ClientConfigOptions = {
   imageUrl: string;
   tenant: string;
   hostedDomain: string;
-  authStyle: AuthStyle;
+  authStyle: OAuth2AuthStyle;
   name: string;
   displayName?: string;
   description?: string;
+  privateKeyId?: string;
+  privateKeyPem?: Buffer;
+  teamId?: string;
 };
 
 export class OAuth2Client extends NodeConfiguration {
-  public providerType: ProviderType;
+  public providerType: OAuth2ProviderType;
   public clientId: string;
   public clientSecret: string;
   public redirectUri: string[];
@@ -45,7 +50,10 @@ export class OAuth2Client extends NodeConfiguration {
   public imageUrl: string;
   public tenant: string;
   public hostedDomain: string;
-  public authStyle: AuthStyle;
+  public authStyle: OAuth2AuthStyle;
+  public privateKeyId?: string;
+  public privateKeyPem?: Buffer;
+  public teamId?: string;
 
   constructor(options: IOAuth2ClientConfigOptions) {
     super(options.name);
@@ -69,6 +77,9 @@ export class OAuth2Client extends NodeConfiguration {
     this.authStyle = options.authStyle;
     this.displayName = options.displayName;
     this.description = options.description;
+    this.privateKeyId = options.privateKeyId;
+    this.privateKeyPem = options.privateKeyPem;
+    this.teamId = options.teamId;
   }
 
   marshal(): OAuth2ClientConfigModel {
@@ -90,6 +101,9 @@ export class OAuth2Client extends NodeConfiguration {
       tenant: this.tenant,
       hostedDomain: this.hostedDomain,
       authStyle: this.authStyle,
+      privateKeyId: this.privateKeyId ?? '',
+      privateKeyPem: Uint8Array.from(this.privateKeyPem ?? []),
+      teamId: this.teamId ?? '',
     };
   }
 }
