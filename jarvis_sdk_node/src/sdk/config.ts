@@ -5,6 +5,7 @@ import {
   CreateConfigNodeRequest,
   CreateOAuth2ApplicationRequest,
   CreateOAuth2ProviderRequest,
+  CreateServiceAccountRequest,
   CreateTenantRequest,
   DeleteApplicationAgentCredentialRequest,
   DeleteApplicationAgentRequest,
@@ -12,6 +13,7 @@ import {
   DeleteConfigNodeRequest,
   DeleteOAuth2ApplicationRequest,
   DeleteOAuth2ProviderRequest,
+  DeleteServiceAccountRequest,
   ReadApplicationAgentCredentialRequest,
   RegisterApplicationAgentCredentialRequest,
   UpdateApplicationAgentRequest,
@@ -20,6 +22,7 @@ import {
   UpdateConfigNodeRequest,
   UpdateOAuth2ApplicationRequest,
   UpdateOAuth2ProviderRequest,
+  UpdateServiceAccountRequest,
   UpdateTenantRequest,
 } from '../grpc/indykite/config/v1beta1/config_management_api';
 import { SdkClient } from './client/client';
@@ -41,6 +44,7 @@ import { OAuth2Application } from './model/config/oauth2_application';
 import { OAuth2Client } from './model/config/oauth2_client/oauth2_client';
 import { OAuth2ProviderConfig } from './model/config/oauth2_provider_config';
 import { OAuth2Provider } from './model/config/oauth2_provider';
+import { ServiceAccount } from './model/config/service_account';
 export class ConfigClient {
   private client: ConfigManagementAPIClient;
 
@@ -1266,6 +1270,127 @@ export class ConfigClient {
     return new Promise((resolve, reject) => {
       this.client.deleteConfigNode(req, (err) => {
         if (err) reject(err);
+        else resolve();
+      });
+    });
+  }
+
+  createServiceAccount(
+    location: string,
+    name: string,
+    role: string,
+    displayName?: string,
+    description?: string,
+  ): Promise<ServiceAccount> {
+    return new Promise((resolve, reject) => {
+      const req: CreateServiceAccountRequest = {
+        location,
+        name,
+        role,
+      };
+
+      if (displayName !== undefined) req.displayName = StringValue.create({ value: displayName });
+      if (description !== undefined) req.description = StringValue.create({ value: description });
+
+      this.client.createServiceAccount(req, (err, response) => {
+        if (err) reject(err);
+        else if (!response)
+          reject(new SdkError(SdkErrorCode.SDK_CODE_1, 'No service account response'));
+        else resolve(ServiceAccount.deserialize(response, name, displayName, description));
+      });
+    });
+  }
+
+  readServiceAccountById(id: string): Promise<ServiceAccount> {
+    return new Promise((resolve, reject) => {
+      this.client.readServiceAccount(
+        {
+          identifier: {
+            oneofKind: 'id',
+            id,
+          },
+        },
+        (err, response) => {
+          if (err) reject(err);
+          else if (!response) {
+            reject(new SdkError(SdkErrorCode.SDK_CODE_1, 'No service account response'));
+          } else {
+            resolve(ServiceAccount.deserialize(response));
+          }
+        },
+      );
+    });
+  }
+
+  readServiceAccountByName(location: string, name: string): Promise<ServiceAccount> {
+    return new Promise((resolve, reject) => {
+      this.client.readServiceAccount(
+        {
+          identifier: {
+            oneofKind: 'name',
+            name: {
+              location,
+              name,
+            },
+          },
+        },
+        (err, response) => {
+          if (err) reject(err);
+          else if (!response) {
+            reject(new SdkError(SdkErrorCode.SDK_CODE_1, 'No service account response'));
+          } else {
+            resolve(ServiceAccount.deserialize(response));
+          }
+        },
+      );
+    });
+  }
+
+  updateServiceAccount(serviceAccount: ServiceAccount): Promise<ServiceAccount> {
+    return new Promise((resolve, reject) => {
+      const req: UpdateServiceAccountRequest = {
+        id: serviceAccount.id,
+      };
+
+      if (serviceAccount.etag !== undefined)
+        req.etag = StringValue.create({ value: serviceAccount.etag });
+      if (serviceAccount.displayName !== undefined)
+        req.displayName = StringValue.create({ value: serviceAccount.displayName });
+      if (serviceAccount.description !== undefined)
+        req.description = StringValue.create({ value: serviceAccount.description });
+
+      this.client.updateServiceAccount(req, (err, response) => {
+        if (err) reject(err);
+        else {
+          if (response && response.id === serviceAccount.id) {
+            serviceAccount.etag = response.etag;
+            serviceAccount.updateTime = Utils.timestampToDate(response.updateTime);
+            resolve(serviceAccount);
+          } else {
+            reject(
+              new SdkError(
+                SdkErrorCode.SDK_CODE_1,
+                `Update returned with different id: req.iq=${serviceAccount.id}, res.id=${
+                  response ? response.id : 'undefined'
+                }`,
+              ),
+            );
+          }
+        }
+      });
+    });
+  }
+
+  deleteServiceAccount(id: string): Promise<void> {
+    return new Promise((resolve, reject) => {
+      const req: DeleteServiceAccountRequest = {
+        id,
+      };
+
+      this.client.deleteServiceAccount(req, (err, response) => {
+        if (err) reject(err);
+        else if (!response)
+          reject(new SdkError(SdkErrorCode.SDK_CODE_1, 'No service account response'));
         else resolve();
       });
     });
