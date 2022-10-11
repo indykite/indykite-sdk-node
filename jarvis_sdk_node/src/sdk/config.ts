@@ -1,4 +1,5 @@
 import {
+  AssignPermissionsRequest,
   CreateApplicationAgentRequest,
   CreateApplicationRequest,
   CreateApplicationSpaceRequest,
@@ -14,8 +15,10 @@ import {
   DeleteOAuth2ApplicationRequest,
   DeleteOAuth2ProviderRequest,
   DeleteServiceAccountRequest,
+  ListPermissionsRequest,
   ReadApplicationAgentCredentialRequest,
   RegisterApplicationAgentCredentialRequest,
+  RevokePermissionsRequest,
   UpdateApplicationAgentRequest,
   UpdateApplicationRequest,
   UpdateApplicationSpaceRequest,
@@ -27,24 +30,27 @@ import {
 } from '../grpc/indykite/config/v1beta1/config_management_api';
 import { SdkClient } from './client/client';
 import { SdkErrorCode, SdkError } from './error';
-import { AuthFlow } from './model/config/authflow/flow';
-import { EmailProviderType } from './model/config/email/factory';
-import { ConfigurationFactory } from './model/config/factory';
-import { Customer } from './model/config/customer';
 import { ApplicationSpace } from './model/config/application_space';
 import { ConfigManagementAPIClient } from '../grpc/indykite/config/v1beta1/config_management_api.grpc-client';
 import { StringValue } from '../grpc/google/protobuf/wrappers';
 import { Utils } from './utils/utils';
 import { Tenant } from './model/config/tenant';
-import { Application } from './model/config/application';
-import { ApplicationAgent } from './model/config/application_agent';
-import { ApplicationAgentCredential } from './model/config/application_agent_credential';
-import { OAuth2ApplicationConfig } from './model/config/oauth2_application_config';
-import { OAuth2Application } from './model/config/oauth2_application';
-import { OAuth2Client } from './model/config/oauth2_client/oauth2_client';
-import { OAuth2ProviderConfig } from './model/config/oauth2_provider_config';
-import { OAuth2Provider } from './model/config/oauth2_provider';
-import { ServiceAccount } from './model/config/service_account';
+import {
+  Application,
+  ApplicationAgent,
+  ApplicationAgentCredential,
+  AuthFlow,
+  ConfigurationFactory,
+  Customer,
+  EmailProviderType,
+  OAuth2Application,
+  OAuth2ApplicationConfig,
+  OAuth2Client,
+  OAuth2Provider,
+  OAuth2ProviderConfig,
+  PermissionsList,
+  ServiceAccount,
+} from './model';
 export class ConfigClient {
   private client: ConfigManagementAPIClient;
 
@@ -1392,6 +1398,87 @@ export class ConfigClient {
         else if (!response)
           reject(new SdkError(SdkErrorCode.SDK_CODE_1, 'No service account response'));
         else resolve();
+      });
+    });
+  }
+
+  /**
+   * Assign permissions to a digital twin.
+   * @param target The target is gid identifier of Service Account or DigitalTwin
+   * @param role Permission role id to be assigned
+   * @param customerId CustomerId under which to assign permissions
+   * @param objectId Object to which Permission will be linked to. Can be Customer, AppSpace or Tenant
+   * @returns The success status
+   */
+  assignPermission(
+    target: string,
+    role: string,
+    customerId: string,
+    objectId: string,
+  ): Promise<boolean> {
+    return new Promise((resolve, reject) => {
+      const req: AssignPermissionsRequest = {
+        targetIdentifier: target,
+        role,
+        customerId,
+        objectId,
+      };
+
+      this.client.assignPermissions(req, (err, response) => {
+        if (err) reject(err);
+        else if (!response)
+          reject(new SdkError(SdkErrorCode.SDK_CODE_1, 'No assign permissions response'));
+        else resolve(response.success);
+      });
+    });
+  }
+
+  /**
+   * Revoke permissions for a digital twin.
+   * @param target The target is gid identifier of Service Account or DigitalTwin
+   * @param role Permission role id to be assigned
+   * @param customerId CustomerId under which to assign permissions.
+   * @param objectId Object to which Permission will be linked to. Can be Customer, AppSpace or Tenant
+   * @returns The success status
+   */
+  revokePermission(
+    target: string,
+    role: string,
+    customerId: string,
+    objectId: string,
+  ): Promise<boolean> {
+    return new Promise((resolve, reject) => {
+      const req: RevokePermissionsRequest = {
+        targetIdentifier: target,
+        role,
+        customerId,
+        objectId,
+      };
+
+      this.client.revokePermissions(req, (err, response) => {
+        if (err) reject(err);
+        else if (!response)
+          reject(new SdkError(SdkErrorCode.SDK_CODE_1, 'No revoke permissions response'));
+        else resolve(response.success);
+      });
+    });
+  }
+
+  /**
+   * List permissions of Digital twins and Invitations related to a customer.
+   * @param location Location under which to retrieve permissions. Can be Customer.
+   */
+  listPermissions(location: string): Promise<PermissionsList> {
+    return new Promise((resolve, reject) => {
+      const req: ListPermissionsRequest = {
+        location,
+      };
+
+      this.client.listPermissions(req, (err, response) => {
+        if (err) reject(err);
+        else if (!response)
+          reject(new SdkError(SdkErrorCode.SDK_CODE_1, 'No list permissions response'));
+        else resolve(PermissionsList.deserialize(response));
       });
     });
   }

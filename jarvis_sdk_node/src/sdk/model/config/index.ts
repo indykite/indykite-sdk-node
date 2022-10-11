@@ -1,4 +1,6 @@
 export * from './';
+export * from './authflow/factory';
+export * from './authflow/flow';
 export * from './email/providers/sendgrid';
 export * from './email/message';
 export * from './application_agent_credential';
@@ -12,6 +14,8 @@ export * from './oauth2_application_config';
 export * from './oauth2_application';
 export * from './oauth2_provider_config';
 export * from './oauth2_provider';
+export * from './permissions';
+export * from './service_account';
 export * from './tenant';
 export * from './oauth2_client/factory';
 export * from './oauth2_client/oauth2_client';
