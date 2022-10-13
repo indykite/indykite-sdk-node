@@ -22,11 +22,6 @@ import { Utils } from '../utils/utils';
 
 let sdk: ConfigClient;
 
-const proto = {
-  typeUrl: 'TYPE_URL',
-  value: Buffer.from('PROTO_VALUE'),
-};
-
 beforeAll(async () => {
   process.env.JARVIS_ENDPOINT = 'NOT_USED';
   sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
@@ -60,7 +55,7 @@ describe('Authentication Flow', () => {
 
     const authFlow = new AuthFlow(
       'nodejs-authflow-name',
-      AuthFlowConfig_Format.RICH_JSON,
+      AuthFlowConfig_Format.BARE_JSON,
       Buffer.from('The Flow'),
       true,
     );
@@ -89,7 +84,7 @@ describe('Authentication Flow', () => {
 
     const authFlow = new AuthFlow(
       'nodejs-authflow-name',
-      AuthFlowConfig_Format.RICH_JSON,
+      AuthFlowConfig_Format.BARE_JSON,
       Buffer.from('The Flow'),
       true,
     );
@@ -119,7 +114,7 @@ describe('Authentication Flow', () => {
       mockResp.configNode.config = {
         oneofKind: 'authFlowConfig',
         authFlowConfig: {
-          sourceFormat: AuthFlowConfig_Format.RICH_JSON,
+          sourceFormat: AuthFlowConfig_Format.BARE_JSON,
           source: Buffer.from('AUTH_FLOW'),
         },
       };
@@ -139,7 +134,7 @@ describe('Authentication Flow', () => {
     jest.spyOn(sdk['client'], 'readConfigNode').mockImplementation(mockFunc);
     const expectedAuthFlow = new AuthFlow(
       'nodejs-authflow-name',
-      AuthFlowConfig_Format.RICH_JSON,
+      AuthFlowConfig_Format.BARE_JSON,
       Buffer.from('AUTH_FLOW'),
       false,
     );
@@ -219,10 +214,9 @@ describe('Authentication Flow', () => {
       mockResp.configNode.config = {
         oneofKind: 'authFlowConfig',
         authFlowConfig: {
-          sourceFormat: AuthFlowConfig_Format.RICH_JSON,
+          sourceFormat: AuthFlowConfig_Format.BARE_JSON,
           source: Buffer.from('AUTH_FLOW'),
           default: BoolValue.fromJson(true),
-          proto,
         },
       };
     }
@@ -241,7 +235,7 @@ describe('Authentication Flow', () => {
     jest.spyOn(sdk['client'], 'readConfigNode').mockImplementation(mockFunc);
     const expectedAuthFlow = new AuthFlow(
       'nodejs-authflow-name',
-      AuthFlowConfig_Format.RICH_JSON,
+      AuthFlowConfig_Format.BARE_JSON,
       Buffer.from('AUTH_FLOW'),
       true,
     );
@@ -254,7 +248,6 @@ describe('Authentication Flow', () => {
       expectedAuthFlow.customerId = mockResp.configNode.customerId;
       expectedAuthFlow.appSpaceId = mockResp.configNode.appSpaceId;
       expectedAuthFlow.tenantId = mockResp.configNode.tenantId;
-      expectedAuthFlow.proto = proto;
     }
 
     const resp = await sdk.readAuthflowConfiguration(objectId);
@@ -271,7 +264,7 @@ describe('Authentication Flow', () => {
 
     const authFlow = new AuthFlow(
       'nodejs-authflow-name',
-      AuthFlowConfig_Format.RICH_JSON,
+      AuthFlowConfig_Format.BARE_JSON,
       Buffer.from('THE_FLOW'),
       true,
     );
@@ -309,7 +302,7 @@ describe('Authentication Flow', () => {
 
     const authFlow = new AuthFlow(
       'nodejs-authflow-name',
-      AuthFlowConfig_Format.RICH_JSON,
+      AuthFlowConfig_Format.BARE_JSON,
       Buffer.from('THE_FLOW'),
       true,
     );
@@ -318,7 +311,6 @@ describe('Authentication Flow', () => {
     authFlow.updateTime = Utils.timestampToDate(mockResp.updateTime);
     authFlow.etag = mockResp.etag;
     authFlow.description = 'NEW_DESCRIPTION';
-    authFlow.proto = proto;
 
     const mockFunc = jest.fn(
       (
@@ -342,7 +334,7 @@ describe('Authentication Flow', () => {
   it('Update - no response', async () => {
     const authFlow = new AuthFlow(
       'nodejs-authflow-name',
-      AuthFlowConfig_Format.RICH_JSON,
+      AuthFlowConfig_Format.BARE_JSON,
       Buffer.from('THE_FLOW'),
       true,
     );
@@ -351,7 +343,6 @@ describe('Authentication Flow', () => {
     authFlow.updateTime = new Date();
     authFlow.etag = new Date().toISOString();
     authFlow.description = 'NEW_DESCRIPTION';
-    authFlow.proto = proto;
 
     const mockFunc = jest.fn(
       (
@@ -378,7 +369,7 @@ describe('Authentication Flow', () => {
   it('Delete - true', async () => {
     const authFlow = new AuthFlow(
       'nodejs-authflow-name',
-      AuthFlowConfig_Format.RICH_JSON,
+      AuthFlowConfig_Format.BARE_JSON,
       Buffer.from('THE_FLOW'),
       true,
     );
@@ -406,7 +397,7 @@ describe('Authentication Flow', () => {
   it('Delete - false', async () => {
     const authFlow = new AuthFlow(
       'nodejs-authflow-name',
-      AuthFlowConfig_Format.RICH_JSON,
+      AuthFlowConfig_Format.BARE_JSON,
       Buffer.from('THE_FLOW'),
       true,
     );
