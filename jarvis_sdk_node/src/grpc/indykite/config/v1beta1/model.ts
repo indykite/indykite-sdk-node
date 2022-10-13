@@ -28,7 +28,6 @@ import { Schema } from "../../knowledge_graph/v1beta1/schema";
 import { Policy } from "../../knowledge_graph/v1beta1/policy";
 import { Int64Value } from "../../../google/protobuf/wrappers";
 import { Value } from "../../objects/v1beta1/struct";
-import { Any } from "../../../google/protobuf/any";
 import { BoolValue } from "../../../google/protobuf/wrappers";
 import { Duration } from "../../../google/protobuf/duration";
 import { Timestamp } from "../../../google/protobuf/timestamp";
@@ -1342,9 +1341,9 @@ export interface OAuth2ProviderConfig {
  */
 export interface WebAuthnProviderConfig {
     /**
-     * @generated from protobuf field: map<string, string> relaying_parties = 1;
+     * @generated from protobuf field: map<string, string> relying_parties = 1;
      */
-    relayingParties: {
+    relyingParties: {
         [key: string]: string;
     };
     /**
@@ -1408,7 +1407,11 @@ export interface AuthFlowConfig {
      */
     sourceFormat: AuthFlowConfig_Format;
     /**
-     * JSON from Console UI of the Flow diagram
+     * Source of AuthFlow definition.
+     * During Write, developer can send only JSON or YAML and must set appropriate format in source_format field.
+     *
+     * When reading, format is always specified by source_format field. However, also Rich JSON might be returned.
+     * This situation happen, when AuthFlow was designed via Drag'n'Drop tool in Console UI.
      *
      * @generated from protobuf field: bytes source = 2;
      */
@@ -1417,21 +1420,15 @@ export interface AuthFlowConfig {
      * @generated from protobuf field: google.protobuf.BoolValue default = 3;
      */
     default?: BoolValue;
-    /**
-     * Proto soon to deprecate once the rich_json can be parsed and compiled.
-     *
-     * @generated from protobuf field: google.protobuf.Any proto = 4;
-     */
-    proto?: Any;
 }
 /**
  * @generated from protobuf enum indykite.config.v1beta1.AuthFlowConfig.Format
  */
 export enum AuthFlowConfig_Format {
     /**
-     * @generated from protobuf enum value: FORMAT_BARE_INVALID = 0;
+     * @generated from protobuf enum value: FORMAT_INVALID = 0;
      */
-    BARE_INVALID = 0,
+    INVALID = 0,
     /**
      * @generated from protobuf enum value: FORMAT_BARE_YAML = 1;
      */
@@ -4556,7 +4553,7 @@ export const OAuth2ProviderConfig = new OAuth2ProviderConfig$Type();
 class WebAuthnProviderConfig$Type extends MessageType<WebAuthnProviderConfig> {
     constructor() {
         super("indykite.config.v1beta1.WebAuthnProviderConfig", [
-            { no: 1, name: "relaying_parties", kind: "map", K: 9 /*ScalarType.STRING*/, V: { kind: "scalar", T: 9 /*ScalarType.STRING*/ }, options: { "validate.rules": { map: { minPairs: "1", keys: { string: { uri: true } }, values: { string: { minLen: "1", maxLen: "256" } } } } } },
+            { no: 1, name: "relying_parties", kind: "map", K: 9 /*ScalarType.STRING*/, V: { kind: "scalar", T: 9 /*ScalarType.STRING*/ }, options: { "validate.rules": { map: { minPairs: "1", keys: { string: { uri: true } }, values: { string: { minLen: "1", maxLen: "256" } } } } } },
             { no: 2, name: "attestation_preference", kind: "enum", T: () => ["indykite.config.v1beta1.ConveyancePreference", ConveyancePreference, "CONVEYANCE_PREFERENCE_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
             { no: 3, name: "authenticator_attachment", kind: "enum", T: () => ["indykite.config.v1beta1.AuthenticatorAttachment", AuthenticatorAttachment, "AUTHENTICATOR_ATTACHMENT_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
             { no: 7, name: "require_resident_key", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
@@ -4566,7 +4563,7 @@ class WebAuthnProviderConfig$Type extends MessageType<WebAuthnProviderConfig> {
         ]);
     }
     create(value?: PartialMessage<WebAuthnProviderConfig>): WebAuthnProviderConfig {
-        const message = { relayingParties: {}, attestationPreference: 0, authenticatorAttachment: 0, requireResidentKey: false, userVerification: 0 };
+        const message = { relyingParties: {}, attestationPreference: 0, authenticatorAttachment: 0, requireResidentKey: false, userVerification: 0 };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<WebAuthnProviderConfig>(this, message, value);
@@ -4577,8 +4574,8 @@ class WebAuthnProviderConfig$Type extends MessageType<WebAuthnProviderConfig> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* map<string, string> relaying_parties */ 1:
-                    this.binaryReadMap1(message.relayingParties, reader, options);
+                case /* map<string, string> relying_parties */ 1:
+                    this.binaryReadMap1(message.relyingParties, reader, options);
                     break;
                 case /* indykite.config.v1beta1.ConveyancePreference attestation_preference */ 2:
                     message.attestationPreference = reader.int32();
@@ -4609,8 +4606,8 @@ class WebAuthnProviderConfig$Type extends MessageType<WebAuthnProviderConfig> {
         }
         return message;
     }
-    private binaryReadMap1(map: WebAuthnProviderConfig["relayingParties"], reader: IBinaryReader, options: BinaryReadOptions): void {
-        let len = reader.uint32(), end = reader.pos + len, key: keyof WebAuthnProviderConfig["relayingParties"] | undefined, val: WebAuthnProviderConfig["relayingParties"][any] | undefined;
+    private binaryReadMap1(map: WebAuthnProviderConfig["relyingParties"], reader: IBinaryReader, options: BinaryReadOptions): void {
+        let len = reader.uint32(), end = reader.pos + len, key: keyof WebAuthnProviderConfig["relyingParties"] | undefined, val: WebAuthnProviderConfig["relyingParties"][any] | undefined;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
@@ -4620,15 +4617,15 @@ class WebAuthnProviderConfig$Type extends MessageType<WebAuthnProviderConfig> {
                 case 2:
                     val = reader.string();
                     break;
-                default: throw new globalThis.Error("unknown map entry field for field indykite.config.v1beta1.WebAuthnProviderConfig.relaying_parties");
+                default: throw new globalThis.Error("unknown map entry field for field indykite.config.v1beta1.WebAuthnProviderConfig.relying_parties");
             }
         }
         map[key ?? ""] = val ?? "";
     }
     internalBinaryWrite(message: WebAuthnProviderConfig, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* map<string, string> relaying_parties = 1; */
-        for (let k of Object.keys(message.relayingParties))
-            writer.tag(1, WireType.LengthDelimited).fork().tag(1, WireType.LengthDelimited).string(k).tag(2, WireType.LengthDelimited).string(message.relayingParties[k]).join();
+        /* map<string, string> relying_parties = 1; */
+        for (let k of Object.keys(message.relyingParties))
+            writer.tag(1, WireType.LengthDelimited).fork().tag(1, WireType.LengthDelimited).string(k).tag(2, WireType.LengthDelimited).string(message.relyingParties[k]).join();
         /* indykite.config.v1beta1.ConveyancePreference attestation_preference = 2; */
         if (message.attestationPreference !== 0)
             writer.tag(2, WireType.Varint).int32(message.attestationPreference);
@@ -4731,8 +4728,7 @@ class AuthFlowConfig$Type extends MessageType<AuthFlowConfig> {
         super("indykite.config.v1beta1.AuthFlowConfig", [
             { no: 1, name: "source_format", kind: "enum", T: () => ["indykite.config.v1beta1.AuthFlowConfig.Format", AuthFlowConfig_Format, "FORMAT_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
             { no: 2, name: "source", kind: "scalar", T: 12 /*ScalarType.BYTES*/, options: { "validate.rules": { bytes: { maxLen: "1048576" } } } },
-            { no: 3, name: "default", kind: "message", T: () => BoolValue },
-            { no: 4, name: "proto", kind: "message", T: () => Any, options: { "validate.rules": { any: { in: ["type.googleapis.com/id.indykite.jarvis.flow.FlowDescription", "type.googleapis.com/indykite.flow.v1beta1.FlowDescription"] } } } }
+            { no: 3, name: "default", kind: "message", T: () => BoolValue }
         ]);
     }
     create(value?: PartialMessage<AuthFlowConfig>): AuthFlowConfig {
@@ -4756,9 +4752,6 @@ class AuthFlowConfig$Type extends MessageType<AuthFlowConfig> {
                 case /* google.protobuf.BoolValue default */ 3:
                     message.default = BoolValue.internalBinaryRead(reader, reader.uint32(), options, message.default);
                     break;
-                case /* google.protobuf.Any proto */ 4:
-                    message.proto = Any.internalBinaryRead(reader, reader.uint32(), options, message.proto);
-                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -4780,9 +4773,6 @@ class AuthFlowConfig$Type extends MessageType<AuthFlowConfig> {
         /* google.protobuf.BoolValue default = 3; */
         if (message.default)
             BoolValue.internalBinaryWrite(message.default, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
-        /* google.protobuf.Any proto = 4; */
-        if (message.proto)
-            Any.internalBinaryWrite(message.proto, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

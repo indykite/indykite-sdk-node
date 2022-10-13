@@ -9,7 +9,6 @@ export class AuthflowFactory {
       Buffer.from(config.source),
       config.default ? config.default.value : false,
     );
-    if (config.proto) flow.proto = config.proto;
     return flow;
   }
 }
