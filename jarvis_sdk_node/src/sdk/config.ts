@@ -14,10 +14,13 @@ import {
   DeleteConfigNodeRequest,
   DeleteOAuth2ApplicationRequest,
   DeleteOAuth2ProviderRequest,
+  DeleteServiceAccountCredentialRequest,
   DeleteServiceAccountRequest,
   ListPermissionsRequest,
   ReadApplicationAgentCredentialRequest,
+  ReadServiceAccountCredentialRequest,
   RegisterApplicationAgentCredentialRequest,
+  RegisterServiceAccountCredentialRequest,
   RevokePermissionsRequest,
   UpdateApplicationAgentRequest,
   UpdateApplicationRequest,
@@ -30,15 +33,14 @@ import {
 } from '../grpc/indykite/config/v1beta1/config_management_api';
 import { SdkClient } from './client/client';
 import { SdkErrorCode, SdkError } from './error';
-import { ApplicationSpace } from './model/config/application_space';
 import { ConfigManagementAPIClient } from '../grpc/indykite/config/v1beta1/config_management_api.grpc-client';
 import { StringValue } from '../grpc/google/protobuf/wrappers';
 import { Utils } from './utils/utils';
-import { Tenant } from './model/config/tenant';
 import {
   Application,
   ApplicationAgent,
   ApplicationAgentCredential,
+  ApplicationSpace,
   AuthFlow,
   ConfigurationFactory,
   Customer,
@@ -50,6 +52,8 @@ import {
   OAuth2ProviderConfig,
   PermissionsList,
   ServiceAccount,
+  ServiceAccountCredential,
+  Tenant,
 } from './model';
 export class ConfigClient {
   private client: ConfigManagementAPIClient;
@@ -1397,6 +1401,90 @@ export class ConfigClient {
         if (err) reject(err);
         else if (!response)
           reject(new SdkError(SdkErrorCode.SDK_CODE_1, 'No service account response'));
+        else resolve();
+      });
+    });
+  }
+
+  /**
+   * Create new credentials for given Service Account. Methods either accept Public key,
+   * which is registered with credentials. Or will generate new Public-Private pair and
+   * Private key is returned in Response. Be aware, that in this case, Private key is sent
+   * back only once and cannot be retrieved ever again.
+   */
+  registerServiceAccountCredential(
+    serviceAccountId: string,
+    displayName: string,
+    publicKeyType?: 'jwk' | 'pem',
+    publicKey?: Buffer,
+    expireTime?: Date,
+  ): Promise<ServiceAccountCredential> {
+    return new Promise((resolve, reject) => {
+      let publicKeyObject = {
+        oneofKind: undefined,
+      } as RegisterServiceAccountCredentialRequest['publicKey'];
+      if (publicKeyType !== undefined && publicKey !== undefined) {
+        switch (publicKeyType) {
+          case 'jwk':
+            publicKeyObject = { oneofKind: 'jwk', jwk: publicKey };
+            break;
+          case 'pem':
+            publicKeyObject = { oneofKind: 'pem', pem: publicKey };
+            break;
+        }
+      }
+
+      const req: RegisterServiceAccountCredentialRequest = {
+        serviceAccountId,
+        displayName,
+        publicKey: publicKeyObject,
+      };
+
+      if (expireTime !== undefined) req.expireTime = Utils.dateToTimestamp(expireTime);
+
+      this.client.registerServiceAccountCredential(req, (err, response) => {
+        if (err) reject(err);
+        else if (!response)
+          reject(new SdkError(SdkErrorCode.SDK_CODE_1, 'No service account credential response'));
+        else resolve(ServiceAccountCredential.deserialize(response, displayName, serviceAccountId));
+      });
+    });
+  }
+
+  /**
+   * Read service account credential by ID and returns all attributes.
+   * But not Private or Public key, so keep them saved.
+   * @param serviceAccountId Id contains the Globally Unique Identifier of the object with server generated id.
+   */
+  readServiceAccountCredential(serviceAccountId: string): Promise<ServiceAccountCredential> {
+    return new Promise((resolve, reject) => {
+      const req: ReadServiceAccountCredentialRequest = {
+        id: serviceAccountId,
+      };
+
+      this.client.readServiceAccountCredential(req, (err, response) => {
+        if (err) reject(err);
+        else if (!response)
+          reject(new SdkError(SdkErrorCode.SDK_CODE_1, 'No service account credential response'));
+        else resolve(ServiceAccountCredential.deserialize(response));
+      });
+    });
+  }
+
+  /**
+   * Delete service account credential by ID.
+   * @param serviceAccountId Id is the Globally unique identifier of object to delete.
+   */
+  deleteServiceAccountCredential(serviceAccountId: string): Promise<void> {
+    return new Promise((resolve, reject) => {
+      const req: DeleteServiceAccountCredentialRequest = {
+        id: serviceAccountId,
+      };
+
+      this.client.deleteServiceAccountCredential(req, (err, response) => {
+        if (err) reject(err);
+        else if (!response)
+          reject(new SdkError(SdkErrorCode.SDK_CODE_1, 'No service account credential response'));
         else resolve();
       });
     });
