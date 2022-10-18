@@ -10,12 +10,14 @@ import {
   DigitalTwinIdentifier,
   EnrichTokenRequest,
   GetDigitalTwinRequest,
+  GetPasswordCredentialRequest,
   IsAuthorizedRequest,
   PatchDigitalTwinRequest,
   ResendInvitationRequest,
   StartDigitalTwinEmailVerificationRequest,
   StartForgottenPasswordFlowRequest,
   TokenIntrospectRequest,
+  UpdatePasswordCredentialRequest,
   VerifyDigitalTwinEmailRequest,
 } from '../grpc/indykite/identity/v1beta1/identity_management_api';
 import { DigitalTwin, IdentityTokenInfo } from '../grpc/indykite/identity/v1beta1/model';
@@ -38,6 +40,7 @@ import { ImportDigitalTwinsRequest } from '../grpc/indykite/identity/v1beta1/imp
 import { HashAlgorithm } from './model/hash_algorithm';
 import { ImportDigitalTwin, ImportResult } from './model/import_digitaltwin';
 import { AuthorizationDecisions } from './model/authorization_decisions';
+import { BoolValue } from '../grpc/google/protobuf/wrappers';
 
 export class IdentityClient {
   private client: IdentityManagementAPIClient;
@@ -776,6 +779,107 @@ export class IdentityClient {
         if (err) reject(err);
         else if (!res) resolve(new AuthorizationDecisions({}));
         else resolve(AuthorizationDecisions.deserialize(res));
+      });
+    });
+  }
+
+  /**
+   * This function is experimental and not implemented yet
+   * @experimental
+   */
+  getPasswordCredential(digitalTwin: DigitalTwinCore): Promise<void> {
+    const request = GetPasswordCredentialRequest.create({
+      digitalTwin: digitalTwin.marshal(),
+    });
+
+    return new Promise((resolve, reject) => {
+      this.client.getPasswordCredential(request, (err, response) => {
+        if (err) reject(err);
+        else if (!response) {
+          reject(new SdkError(SdkErrorCode.SDK_CODE_1, 'Missing get password credential response'));
+        } else {
+          resolve();
+        }
+      });
+    });
+  }
+
+  /**
+   * This function is experimental and not implemented yet
+   * @experimental
+   */
+  updateEmailPasswordCredential(
+    email: string,
+    loginProperties: Buffer[],
+    locked?: boolean,
+    mustChange?: boolean,
+  ): Promise<void> {
+    const request = UpdatePasswordCredentialRequest.create({
+      loginProperties: loginProperties.map((property) => Uint8Array.from(property)),
+      primary: {
+        oneofKind: 'email',
+        email,
+      },
+    });
+
+    if (locked !== undefined) {
+      request.locked = BoolValue.create({ value: locked });
+    }
+
+    if (mustChange !== undefined) {
+      request.mustChange = BoolValue.create({ value: mustChange });
+    }
+
+    return new Promise((resolve, reject) => {
+      this.client.updatePasswordCredential(request, (err, response) => {
+        if (err) reject(err);
+        else if (!response) {
+          reject(
+            new SdkError(SdkErrorCode.SDK_CODE_1, 'Missing update password credential response'),
+          );
+        } else {
+          resolve();
+        }
+      });
+    });
+  }
+
+  /**
+   * This function is experimental and not implemented yet
+   * @experimental
+   */
+  updateMobilePasswordCredential(
+    mobile: string,
+    loginProperties: Buffer[],
+    locked?: boolean,
+    mustChange?: boolean,
+  ): Promise<void> {
+    const request = UpdatePasswordCredentialRequest.create({
+      loginProperties: loginProperties.map((property) => Uint8Array.from(property)),
+      primary: {
+        oneofKind: 'mobile',
+        mobile,
+      },
+    });
+
+    if (locked !== undefined) {
+      request.locked = BoolValue.create({ value: locked });
+    }
+
+    if (mustChange !== undefined) {
+      request.mustChange = BoolValue.create({ value: mustChange });
+    }
+
+    return new Promise((resolve, reject) => {
+      this.client.updatePasswordCredential(request, (err, response) => {
+        if (err) reject(err);
+        else if (!response) {
+          reject(
+            new SdkError(SdkErrorCode.SDK_CODE_1, 'Missing update password credential response'),
+          );
+        } else {
+          resolve();
+        }
       });
     });
   }
