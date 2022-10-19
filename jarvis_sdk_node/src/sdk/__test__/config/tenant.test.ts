@@ -787,3 +787,87 @@ describe('updateTenant', () => {
     });
   });
 });
+
+describe('deleteTenant', () => {
+  describe('when no error is returned', () => {
+    let returnedValue: boolean;
+    let deleteTenantSpy: jest.SpyInstance;
+
+    beforeEach(async () => {
+      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
+      deleteTenantSpy = jest
+        .spyOn(sdk['client'], 'deleteTenant')
+        .mockImplementation(
+          (req, res: Metadata | CallOptions | ((err: ServiceError | null) => void)) => {
+            if (typeof res === 'function') {
+              res(null);
+            }
+            return {} as SurfaceCall;
+          },
+        );
+      const tenant = new Tenant(
+        'tenant-id',
+        'tenant-name',
+        'customer-id',
+        'app-space-id',
+        'Tenant',
+        'issuer-id',
+        'etag-token',
+      );
+      returnedValue = await sdk.deleteTenant(tenant);
+    });
+
+    it('sends correct request', () => {
+      expect(deleteTenantSpy).toBeCalledWith(
+        {
+          id: 'tenant-id',
+          etag: { value: 'etag-token' },
+        },
+        expect.any(Function),
+      );
+    });
+
+    it('returns true', () => {
+      expect(returnedValue).toBe(true);
+    });
+  });
+
+  describe('when an error is returned', () => {
+    const error = {
+      code: Status.NOT_FOUND,
+      details: 'DETAILS',
+      metadata: {},
+    } as ServiceError;
+    let thrownError: Error;
+
+    beforeEach(async () => {
+      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
+      jest
+        .spyOn(sdk['client'], 'deleteTenant')
+        .mockImplementation(
+          (req, res: Metadata | CallOptions | ((err: ServiceError | null) => void)) => {
+            if (typeof res === 'function') {
+              res(error);
+            }
+            return {} as SurfaceCall;
+          },
+        );
+      const tenant = new Tenant(
+        'tenant-id',
+        'tenant-name',
+        'customer-id',
+        'app-space-id',
+        'Tenant',
+        'issuer-id',
+        'etag-token',
+      );
+      sdk.deleteTenant(tenant).catch((err) => {
+        thrownError = err;
+      });
+    });
+
+    it('throws an error', () => {
+      expect(thrownError).toBe(error);
+    });
+  });
+});

@@ -793,3 +793,85 @@ describe('updateApplication', () => {
     });
   });
 });
+
+describe('deleteApplication', () => {
+  describe('when no error is returned', () => {
+    let returnedValue: boolean;
+    let deleteApplicationSpy: jest.SpyInstance;
+
+    beforeEach(async () => {
+      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
+      deleteApplicationSpy = jest
+        .spyOn(sdk['client'], 'deleteApplication')
+        .mockImplementation(
+          (req, res: Metadata | CallOptions | ((err: ServiceError | null) => void)) => {
+            if (typeof res === 'function') {
+              res(null);
+            }
+            return {} as SurfaceCall;
+          },
+        );
+      const application = new Application(
+        'application-id',
+        'application-name',
+        'app-space-id',
+        'customer-id',
+        'Application',
+        'etag-token',
+      );
+      returnedValue = await sdk.deleteApplication(application);
+    });
+
+    it('sends correct request', () => {
+      expect(deleteApplicationSpy).toBeCalledWith(
+        {
+          id: 'application-id',
+          etag: { value: 'etag-token' },
+        },
+        expect.any(Function),
+      );
+    });
+
+    it('returns true', () => {
+      expect(returnedValue).toBe(true);
+    });
+  });
+
+  describe('when an error is returned', () => {
+    const error = {
+      code: Status.NOT_FOUND,
+      details: 'DETAILS',
+      metadata: {},
+    } as ServiceError;
+    let thrownError: Error;
+
+    beforeEach(async () => {
+      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
+      jest
+        .spyOn(sdk['client'], 'deleteApplication')
+        .mockImplementation(
+          (req, res: Metadata | CallOptions | ((err: ServiceError | null) => void)) => {
+            if (typeof res === 'function') {
+              res(error);
+            }
+            return {} as SurfaceCall;
+          },
+        );
+      const application = new Application(
+        'application-id',
+        'application-name',
+        'app-space-id',
+        'customer-id',
+        'Application',
+        'etag-token',
+      );
+      sdk.deleteApplication(application).catch((err) => {
+        thrownError = err;
+      });
+    });
+
+    it('throws an error', () => {
+      expect(thrownError).toBe(error);
+    });
+  });
+});
