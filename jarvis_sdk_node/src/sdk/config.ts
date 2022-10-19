@@ -10,12 +10,14 @@ import {
   CreateTenantRequest,
   DeleteApplicationAgentCredentialRequest,
   DeleteApplicationAgentRequest,
+  DeleteApplicationRequest,
   DeleteApplicationSpaceRequest,
   DeleteConfigNodeRequest,
   DeleteOAuth2ApplicationRequest,
   DeleteOAuth2ProviderRequest,
   DeleteServiceAccountCredentialRequest,
   DeleteServiceAccountRequest,
+  DeleteTenantRequest,
   ListPermissionsRequest,
   ReadApplicationAgentCredentialRequest,
   ReadServiceAccountCredentialRequest,
@@ -598,6 +600,21 @@ export class ConfigClient {
     });
   }
 
+  deleteTenant(tenant: Tenant): Promise<boolean> {
+    const req = {
+      id: tenant.id,
+    } as DeleteTenantRequest;
+
+    if (tenant.etag !== undefined) req.etag = StringValue.create({ value: tenant.etag });
+
+    return new Promise<boolean>((resolve, reject) => {
+      this.client.deleteTenant(req, (err) => {
+        if (err) reject(err);
+        else resolve(true);
+      });
+    });
+  }
+
   createApplication(
     appSpaceId: string,
     name: string,
@@ -725,6 +742,21 @@ export class ConfigClient {
         .on('end', () => {
           resolve(list);
         });
+    });
+  }
+
+  deleteApplication(application: Application): Promise<boolean> {
+    const req = {
+      id: application.id,
+    } as DeleteApplicationRequest;
+
+    if (application.etag !== undefined) req.etag = StringValue.create({ value: application.etag });
+
+    return new Promise<boolean>((resolve, reject) => {
+      this.client.deleteApplication(req, (err) => {
+        if (err) reject(err);
+        else resolve(true);
+      });
     });
   }
 
