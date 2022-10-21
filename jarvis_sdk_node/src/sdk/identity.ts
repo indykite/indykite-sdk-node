@@ -12,6 +12,7 @@ import {
   GetDigitalTwinRequest,
   GetPasswordCredentialRequest,
   IsAuthorizedRequest,
+  ListDigitalTwinsRequest,
   PatchDigitalTwinRequest,
   ResendInvitationRequest,
   StartDigitalTwinEmailVerificationRequest,
@@ -169,6 +170,49 @@ export class IdentityClient {
             reject(err);
           }
         }
+      });
+    });
+  }
+
+  /**
+   * This function lists DigitalTwins matching the filter.
+   * @param tenantId The Tenant ID.
+   * @param collectionId CollectionId, relative to `parent`, to list.
+   * @param properties The requested property values.
+   * @param pageSize The maximum number of documents to return.
+   * @param pageToken The `nextPageToken` value returned from a previous List request.
+   * @param orderBy Expression to sort results by. For example: `priority desc, name`.
+   */
+  listDigitalTwins(
+    tenantId: string | Buffer,
+    collectionId: string,
+    properties: string[],
+    pageSize?: number,
+    pageToken?: string,
+    orderBy?: string,
+  ): Promise<{ digitalTwins: sdkTypes.DigitalTwin[]; nextPageToken?: string }> {
+    return new Promise((resolve, reject) => {
+      const tId = Utils.uuidToBuffer(tenantId);
+      const request = ListDigitalTwinsRequest.create({
+        tenantId: tId,
+        properties: Property.fromPropertiesList(properties),
+        collectionId,
+      });
+
+      if (pageToken !== undefined) request.pageToken = pageToken;
+      if (orderBy !== undefined) request.orderBy = orderBy;
+      if (pageSize !== undefined) request.pageSize = pageSize;
+
+      this.client.listDigitalTwins(request, (err, res) => {
+        if (err) reject(err);
+        else if (!res) resolve({ digitalTwins: [] });
+        else
+          resolve({
+            digitalTwins: res.digitalTwin.map((result) =>
+              sdkTypes.DigitalTwin.deserialize({ digitalTwin: result }),
+            ),
+            nextPageToken: res.nextPageToken,
+          });
       });
     });
   }
