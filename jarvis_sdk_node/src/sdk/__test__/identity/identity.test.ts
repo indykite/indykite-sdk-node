@@ -3,6 +3,7 @@ import { parse, stringify, v4 } from 'uuid';
 import {
   AssuranceLevel,
   BatchOperationResult,
+  Property,
 } from '../../../grpc/indykite/identity/v1beta1/attributes';
 import {
   ChangePasswordRequest,
@@ -11,6 +12,8 @@ import {
   DeleteDigitalTwinResponse,
   GetDigitalTwinRequest,
   GetDigitalTwinResponse,
+  ListDigitalTwinsRequest,
+  ListDigitalTwinsResponse,
   PatchDigitalTwinRequest,
   PatchDigitalTwinResponse,
   StartDigitalTwinEmailVerificationRequest,
@@ -851,6 +854,122 @@ describe('Digital Twin', () => {
 
       resp = sdk.deleteDigitalTwin(dtId, tId);
       expect(mockFunc).toBeCalledTimes(2);
+      if (clb.expected) expect(resp).resolves.toEqual(clb.expected);
+      else expect(resp).rejects.toEqual(clb.err);
+    });
+  });
+
+  it('list digital twins', () => {
+    const dtId = v4();
+    const tId = v4();
+    const collectionId = v4();
+    const propertyId = v4();
+    const emailVerificationTime = new Date();
+    const createTime = new Date();
+    const emailProperty = Property.create({
+      id: propertyId,
+      definition: { property: 'email' },
+      meta: {
+        assuranceLevel: AssuranceLevel.LOW,
+        issuer: 'indykite.id',
+        primary: true,
+        verifier: 'indykite.id',
+        verificationTime: Utils.dateToTimestamp(emailVerificationTime),
+      },
+      value: {
+        oneofKind: 'objectValue',
+        objectValue: {
+          value: {
+            oneofKind: 'stringValue',
+            stringValue: 'test+email@indykite.com',
+          },
+        },
+      },
+    });
+    const mockResp = ListDigitalTwinsResponse.fromJson({
+      nextPageToken: 'next-page-token',
+      digitalTwin: [
+        {
+          digitalTwin: {
+            id: Utils.uuidToBase64(dtId),
+            tenantId: Utils.uuidToBase64(tId),
+            kind: DigitalTwinKind.PERSON,
+            state: DigitalTwinState.ACTIVE,
+          },
+          createTime: createTime.toISOString(),
+          properties: [Property.toJson(emailProperty)],
+        },
+      ],
+    });
+
+    const expectedDigitalTwin = new sdkTypes.DigitalTwin(
+      dtId,
+      tId,
+      DigitalTwinKind.PERSON,
+      DigitalTwinState.ACTIVE,
+      createTime,
+    );
+    const expectedDigitalTwinProperty = Object.assign(
+      new sdkTypes.Property('email', propertyId).withValue('test+email@indykite.com'),
+      { context: '', type: '' },
+    );
+    expectedDigitalTwinProperty.meta = Object.assign(new sdkTypes.PropertyMetaData(), {
+      assuranceLevel: 1,
+      issuer: 'indykite.id',
+      primary: true,
+      verificationTime: emailVerificationTime,
+      verifier: 'indykite.id',
+    });
+    expectedDigitalTwin.properties = { email: [expectedDigitalTwinProperty] };
+
+    const clbs = [
+      {
+        svcerr: null,
+        err: null,
+        res: mockResp,
+        expected: {
+          digitalTwins: [expectedDigitalTwin],
+          nextPageToken: 'next-page-token',
+        },
+      },
+      {
+        svcerr: { code: Status.NOT_FOUND, details: 'no details', metadata: {} } as ServiceError,
+        err: { code: Status.NOT_FOUND, details: 'no details', metadata: {} } as ServiceError,
+        expected: false,
+      },
+      {
+        svcerr: null,
+        err: null,
+        expected: {
+          digitalTwins: [],
+        },
+      },
+    ];
+
+    clbs.forEach((clb) => {
+      const mockFunc = jest.fn(
+        (
+          request: ListDigitalTwinsRequest,
+          callback:
+            | Metadata
+            | CallOptions
+            | ((error: ServiceError | null, response?: ListDigitalTwinsResponse) => void),
+        ): SurfaceCall => {
+          if (typeof callback === 'function') callback(clb.svcerr, clb.res);
+          return {} as SurfaceCall;
+        },
+      );
+      jest.spyOn(sdk['client'], 'listDigitalTwins').mockImplementation(mockFunc);
+
+      const resp = sdk.listDigitalTwins(
+        tId,
+        collectionId,
+        ['email'],
+        10,
+        'page-token-request',
+        'name',
+      );
+      expect(mockFunc).toBeCalled();
       if (clb.expected) expect(resp).resolves.toEqual(clb.expected);
       else expect(resp).rejects.toEqual(clb.err);
     });
