@@ -15,6 +15,7 @@ import {
   ListDigitalTwinsRequest,
   PatchDigitalTwinRequest,
   ResendInvitationRequest,
+  SessionIntrospectRequest,
   StartDigitalTwinEmailVerificationRequest,
   StartForgottenPasswordFlowRequest,
   TokenIntrospectRequest,
@@ -88,6 +89,39 @@ export class IdentityClient {
         } catch (err) {
           reject(err);
         }
+      });
+    });
+  }
+
+  /**
+   * This function is experimental and not implemented yet
+   * @experimental
+   * @param token The string value of the token. For access tokens, this
+   * is the "access_token" value returned from the token endpoint
+   * defined in OAuth 2.0. For refresh tokens, this is the "refresh_token"
+   * value returned.
+   */
+  sessionIntrospect(
+    tenantId: string | Buffer,
+    token: string,
+  ): Promise<{ tokenInfo: sdkTypes.TokenInfo; providers: string[] }> {
+    return new Promise((resolve, reject) => {
+      const tId = Utils.uuidToBuffer(tenantId);
+      const request = SessionIntrospectRequest.create({
+        tenantId: tId,
+        token,
+      });
+
+      this.client.sessionIntrospect(request, (err, res) => {
+        if (err) reject(err);
+        if (!res) {
+          reject(new SdkError(SdkErrorCode.SDK_CODE_1, 'Missing session introspect response'));
+          return;
+        }
+        resolve({
+          tokenInfo: sdkTypes.TokenInfo.deserialize(res),
+          providers: res.providerData,
+        });
       });
     });
   }
