@@ -1,4 +1,17 @@
 # Changelog
+## [0.1.17](https://github.com/indykite/jarvis-sdk-node/compare/v0.1.16...v0.1.17) (2022-10-24)
+
+
+### Features
+
+* add list digital twins function ([c6d7cf5](https://github.com/indykite/jarvis-sdk-node/commit/c6d7cf50bef4479cbdaaf07fd4175fd54da13d96))
+* add missing delete application and tenant fn ([9314cf6](https://github.com/indykite/jarvis-sdk-node/commit/9314cf6e047404548d186af0bc9ffb88a7f0341f))
+* allow to configure password credentials ([3ea1dbe](https://github.com/indykite/jarvis-sdk-node/commit/3ea1dbe018a13f81b9acb74a723a309147b905ba))
+* allow to configure service account creds ([d537333](https://github.com/indykite/jarvis-sdk-node/commit/d53733368aeea841d67f89f4a3213e45cabef513))
+* support oauth2 provider configuration ([6ea0ead](https://github.com/indykite/jarvis-sdk-node/commit/6ea0eade7bfa29032f31984f923401c6ae31e06e))
+* support permissions configuration ([374da6f](https://github.com/indykite/jarvis-sdk-node/commit/374da6f53ba59670e78e997ed6698674172a7c2b))
+* support service account configuration ([dfd05fc](https://github.com/indykite/jarvis-sdk-node/commit/dfd05fcdbdad8845d92ede6dcddcfa709bf5e7e7))
+
 ## [0.1.16](https://github.com/indykite/jarvis-sdk-node/compare/v0.1.15...v0.1.16) (2022-09-14)
 
 
