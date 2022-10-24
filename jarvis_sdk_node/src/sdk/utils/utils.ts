@@ -82,6 +82,18 @@ export class Utils {
   }
 
   /**
+   * Returns the Uint8Array instance containing the id.
+   * @param uuid The value may be either `Buffer`, `Array`, `UUIDv4 string` or `base64 string`.
+   */
+  static uuidToUint8Array(uuid: string | Uint8Array | Buffer): Uint8Array {
+    if (uuid instanceof Uint8Array) {
+      return uuid;
+    }
+
+    return Uint8Array.from(this.uuidToBuffer(uuid));
+  }
+
+  /**
    * Returns the Date instance equal to the passed Timestamp object.
    */
   static timestampToDate(timestamp: Timestamp): Date;
