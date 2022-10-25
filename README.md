@@ -7,6 +7,8 @@ IndyKite is a cloud identity platform built to secure and manage human & non-per
 
 [![NPM version](https://img.shields.io/npm/v/@indykiteone/jarvis-sdk-node.svg?style=flat-square)](https://www.npmjs.com/package/@indykiteone/jarvis-sdk-node)
 ![npm type definitions](https://img.shields.io/npm/types/@indykiteone/jarvis-sdk-node?style=flat-square)
+[![codecov](https://codecov.io/gh/indykite/jarvis-sdk-node/branch/master/graph/badge.svg?token=G6T2UWO9G1)](https://codecov.io/gh/indykite/jarvis-sdk-node)
+
 
 Examples of functionality available in SDK:
 * Token Introspection
@@ -49,6 +51,18 @@ The IndyKite SDK reads config properties from a JSON formatted configuration fil
 
 ```shell
 export INDYKITE_APPLICATION_CREDENTIALS_FILE=<path_to_config_file>/config.json
+```
+
+### Service account config 
+In order to make some changes to your spaces you have to have a file with your service account credentials. You can create this file using the indykite.id platform where you need to select your customer space, select the `Service accounts` item from the left menu and finally add a new service account. Then you have to create the `INDYKITE_SERVICE_ACCOUNT_CREDENTIALS_FILE` environment variable with the path to the credentials file you have downloaded.
+```shell
+export INDYKITE_SERVICE_ACCOUNT_CREDENTIALS_FILE=<path_to_service_account_file>/service_account.json
+```
+
+### Custom SSL certificate
+In case you want to use your own SSL certificate for the communication with the server, you can create the `GRPC_DEFAULT_SSL_ROOTS_FILE_PATH` environment variable with the path to to the certificate.
+```shell
+export GRPC_DEFAULT_SSL_ROOTS_FILE_PATH=<path_to_certificate>/ca.pem
 ```
 
 ### Import the SDK into your application
@@ -268,9 +282,30 @@ async function updateProp(sdk:IdentityClient) {
 }
 ```
 
+### Enriching access token
 
+You can enrich an access token with token claims and session claims with the following code:
+```typescript
+async function enrichToken(sdk:IdentityClient) {
+  const tokenClaims = {
+    stringClaim: "stringValue",
+    numberClaim: 42,
+    mapClaim: {
+      key: "value",
+    },
+  };
 
+  const sessionClaims = {
+    boolClaim: true,
+    nullClaim: null,
+    arrayClaim: ["stringValue"]
+  };
 
+  await sdk.enrichToken(userToken, tokenClaims, sessionClaims);
+}
+```
+
+> Note: You need to refresh the access token so that the access token is enriched with the claims.
 
 ## SDK Development
 
@@ -283,7 +318,7 @@ any typescript definitions.
 Commit message follows [commit guidelines](./doc/guides/commit-message.md#commit-message-guidelines)
 
 ## Roadmap 
-Checkout our roadmap on our [issues page](https://github.com/indykite/jarvis-sdk-nodejs-proto/issues)
+Checkout our roadmap on our [issues page](https://github.com/indykite/jarvis-sdk-node/issues)
 
 ## Contributing 
 [Contribution guidelines for this project](contributing.md)
@@ -291,7 +326,7 @@ Checkout our roadmap on our [issues page](https://github.com/indykite/jarvis-sdk
 ## Support, Feedback, Connect with other developers
 We'd love to have you connect with us or other community developers over at [IndyKite.one](https://indykite.one) 
 
-Feel free to file a bug, submit an issue or give us feedback on our [issues page](https://github.com/indykite/jarvis-sdk-nodejs-proto/issues)
+Feel free to file a bug, submit an issue or give us feedback on our [issues page](https://github.com/indykite/jarvis-sdk-node/issues)
 
 ## Vulnerability Reporting
 [Responsible Disclosure](responsible_disclosure.md)
