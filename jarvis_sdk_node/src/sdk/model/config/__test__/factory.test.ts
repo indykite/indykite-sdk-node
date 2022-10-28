@@ -2,15 +2,150 @@ import { StringValue } from '../../../../grpc/google/protobuf/wrappers';
 import {
   AuthFlowConfig_Format,
   AuthStyle,
+  IngestMappingConfig_Direction,
   ProviderType,
 } from '../../../../grpc/indykite/config/v1beta1/model';
 import { SdkError, SdkErrorCode } from '../../../error';
 import { Utils } from '../../../utils/utils';
 import { ConfigurationFactory, ConfigurationType } from '../factory';
 import { OAuth2Client } from '../oauth2_client/oauth2_client';
+import { IngestMapping } from '../ingest_mapping/ingest_mapping';
+import { IngestMappingEntityType } from '../ingest_mapping/ingest_mapping_entity';
 
 describe('createInstance', () => {
   let instance: ConfigurationType;
+
+  describe('when the kind is "ingestMappingConfig"', () => {
+    beforeEach(() => {
+      instance = ConfigurationFactory.createInstance({
+        displayName: 'Instance Name',
+        description: StringValue.fromJson('Instance description'),
+        etag: 'etag-token',
+        id: 'instance-id',
+        createTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 6, 21, 11, 13))),
+        updateTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 6, 21, 11, 14))),
+        customerId: 'customer-id',
+        appSpaceId: 'app-space-id',
+        tenantId: 'tenant-id',
+        name: 'instance-name',
+        config: {
+          oneofKind: 'ingestMappingConfig',
+          ingestMappingConfig: {
+            ingestType: {
+              oneofKind: 'upsert',
+              upsert: {
+                entities: [
+                  {
+                    externalId: {
+                      isRequired: true,
+                      mappedName: 'ExternalId',
+                      sourceName: 'fodselsnummer',
+                    },
+                    labels: ['DigitalTwin'],
+                    tenantId: 'gid:tenantId',
+                    properties: [
+                      {
+                        isRequired: false,
+                        mappedName: 'nickname',
+                        sourceName: 'kallenavn',
+                      },
+                    ],
+                    relationships: [
+                      {
+                        externalId: 'familienummer',
+                        type: 'MEMBER_OF',
+                        direction: IngestMappingConfig_Direction.INBOUND,
+                        matchLabel: 'Family',
+                      },
+                      {
+                        externalId: 'mors_fodselsnummer',
+                        type: 'MOTHER_OF',
+                        direction: IngestMappingConfig_Direction.OUTBOUND,
+                        matchLabel: 'DigitalTwin',
+                      },
+                    ],
+                  },
+                  {
+                    externalId: {
+                      isRequired: true,
+                      mappedName: 'ExternalId',
+                      sourceName: 'familienummer',
+                    },
+                    labels: ['Family'],
+                    tenantId: 'gid:tenantId',
+                    properties: [],
+                    relationships: [],
+                  },
+                ],
+              },
+            },
+          },
+        },
+      });
+    });
+
+    it('creates a correct instance', () => {
+      const typedInstance = instance as IngestMapping;
+
+      expect(typedInstance).toEqual({
+        displayName: 'Instance Name',
+        description: 'Instance description',
+        etag: 'etag-token',
+        id: 'instance-id',
+        createTime: new Date(Date.UTC(2022, 6, 21, 11, 13)),
+        updateTime: new Date(Date.UTC(2022, 6, 21, 11, 14)),
+        customerId: 'customer-id',
+        appSpaceId: 'app-space-id',
+        tenantId: 'tenant-id',
+        name: 'instance-name',
+        upsertEntities: [
+          {
+            entityType: IngestMappingEntityType.UPSERT,
+            externalId: {
+              isRequired: true,
+              mappedName: 'ExternalId',
+              sourceName: 'fodselsnummer',
+            },
+            labels: ['DigitalTwin'],
+            properties: [
+              {
+                isRequired: false,
+                mappedName: 'nickname',
+                sourceName: 'kallenavn',
+              },
+            ],
+            relationships: [
+              {
+                direction: 1,
+                externalId: 'familienummer',
+                matchLabel: 'Family',
+                type: 'MEMBER_OF',
+              },
+              {
+                direction: 2,
+                externalId: 'mors_fodselsnummer',
+                matchLabel: 'DigitalTwin',
+                type: 'MOTHER_OF',
+              },
+            ],
+            tenantId: 'gid:tenantId',
+          },
+          {
+            entityType: IngestMappingEntityType.UPSERT,
+            externalId: {
+              isRequired: true,
+              mappedName: 'ExternalId',
+              sourceName: 'familienummer',
+            },
+            labels: ['Family'],
+            properties: [],
+            relationships: [],
+            tenantId: 'gid:tenantId',
+          },
+        ],
+      });
+    });
+  });
 
   describe('when the kind is "oauth2ClientConfig"', () => {
     beforeEach(() => {
