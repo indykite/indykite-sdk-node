@@ -35,6 +35,7 @@ import {
 } from '../grpc/indykite/config/v1beta1/config_management_api';
 import { SdkClient } from './client/client';
 import { SdkErrorCode, SdkError } from './error';
+import { IngestMapping } from './model/config/ingest_mapping/ingest_mapping';
 import { ConfigManagementAPIClient } from '../grpc/indykite/config/v1beta1/config_management_api.grpc-client';
 import { StringValue } from '../grpc/google/protobuf/wrappers';
 import { Utils } from './utils/utils';
@@ -186,7 +187,7 @@ export class ConfigClient {
       oneofKind: 'authFlowConfig',
       authFlowConfig: config.marshal(),
     };
-    // console.log(JSON.stringify(nr, null, 2));
+
     return new Promise((resolve, reject) => {
       this.client.createConfigNode(req, (err, response) => {
         if (err) reject(err);
@@ -280,6 +281,110 @@ export class ConfigClient {
     return new Promise<boolean>((resolve, reject) => {
       this.client.deleteConfigNode(req, (err) => {
         if (err) reject(false);
+        else resolve(true);
+      });
+    });
+  }
+
+  createIngestMappingConfiguration(
+    location: string,
+    config: IngestMapping,
+  ): Promise<IngestMapping> {
+    const req = CreateConfigNodeRequest.fromJson({
+      location,
+      name: config.name,
+    });
+    req.config = {
+      oneofKind: 'ingestMappingConfig',
+      ingestMappingConfig: config.marshal(),
+    };
+
+    if (config.displayName !== undefined) {
+      req.displayName = StringValue.fromJson(config.displayName);
+    }
+    if (config.description !== undefined) {
+      req.description = StringValue.fromJson(config.description);
+    }
+
+    return new Promise((resolve, reject) => {
+      this.client.createConfigNode(req, (err, response) => {
+        if (err) reject(err);
+        else {
+          if (!response) {
+            reject(new SdkError(SdkErrorCode.SDK_CODE_1, 'No ingest mapping response'));
+            return;
+          }
+
+          config.id = response.id;
+          config.etag = response.etag;
+          config.createTime = Utils.timestampToDate(response.createTime);
+          config.updateTime = Utils.timestampToDate(response.updateTime);
+          resolve(config);
+        }
+      });
+    });
+  }
+
+  readIngestMappingConfiguration(id: string): Promise<IngestMapping> {
+    return new Promise((resolve, reject) => {
+      this.client.readConfigNode({ id }, (err, response) => {
+        if (err) reject(err);
+        else if (response && response.configNode) {
+          const ret = ConfigurationFactory.createInstance(response.configNode) as IngestMapping;
+          resolve(ret);
+        } else {
+          reject(
+            new SdkError(SdkErrorCode.SDK_CODE_1, 'config_error_read_ingestmappingconfiguration'),
+          );
+        }
+      });
+    });
+  }
+
+  updateIngestMappingConfiguration(config: IngestMapping): Promise<IngestMapping> {
+    const req = {
+      id: config.id,
+    } as UpdateConfigNodeRequest;
+    if (config.etag !== undefined) req.etag = StringValue.create({ value: config.etag });
+    if (config.displayName !== undefined)
+      req.displayName = StringValue.create({ value: config.displayName });
+    if (config.description !== undefined)
+      req.description = StringValue.create({ value: config.description });
+    req.config = {
+      oneofKind: 'ingestMappingConfig',
+      ingestMappingConfig: config.marshal(),
+    };
+
+    return new Promise<IngestMapping>((resolve, reject) => {
+      this.client.updateConfigNode(req, (err, response) => {
+        if (err) reject(err);
+        else if (response && response.id === config.id) {
+          config.etag = response.etag;
+          config.updateTime = Utils.timestampToDate(response.updateTime);
+          resolve(config);
+        } else {
+          reject(
+            new SdkError(
+              SdkErrorCode.SDK_CODE_1,
+              `Update returned with different id: req.iq=${config.id}, res.id=${
+                response ? response.id : 'undefined'
+              }`,
+            ),
+          );
+        }
+      });
+    });
+  }
+
+  deleteIngestMappingConfiguration(config: IngestMapping): Promise<boolean> {
+    const req = {
+      id: config.id,
+    } as DeleteConfigNodeRequest;
+    if (config.etag !== undefined) req.etag = StringValue.create({ value: config.etag });
+
+    return new Promise<boolean>((resolve, reject) => {
+      this.client.deleteConfigNode(req, (err) => {
+        if (err) reject(err);
         else resolve(true);
       });
     });
