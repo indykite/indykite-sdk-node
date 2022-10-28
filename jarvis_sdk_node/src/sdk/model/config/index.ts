@@ -20,4 +20,5 @@ export * from './service_account_credential';
 export * from './tenant';
 export * from './oauth2_client/factory';
 export * from './oauth2_client/oauth2_client';
+export * from './ingest_mapping';
 export { EmailProviderType } from './email/factory';
