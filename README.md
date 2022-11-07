@@ -307,6 +307,51 @@ async function enrichToken(sdk:IdentityClient) {
 
 > Note: You need to refresh the access token so that the access token is enriched with the claims.
 
+### Read after write consistency (Config client only)
+
+To make sure you are not reading cached data, use the bookmark feature. Every function which makes a change in the database returns a bookmark. This will ensure that you are not getting data from before this bookmark was created. See the following examples for more information.
+```ts
+ConfigClient.createInstance()
+  .then(async (sdk) => {
+    const appSpace = await sdk.readApplicationSpaceByName('customer-id', 'my-app-space');
+    appSpace.description = 'My new description';
+    await sdk.updateApplicationSpace(appSpace);
+
+    // This will return a bookmark created after the last call
+    const bookmark = sdk.getLastBookmark();
+
+    // Using the bookmark, we will use the database state after the `updateApplicationSpace` call
+    const updatedAppSpace = await sdk.readApplicationSpaceByName(
+      'customer-id',
+      'my-app-space',
+      [ bookmark ],
+    );
+  })
+  .catch((err) => console.error(err));
+```
+a different approach
+```ts
+ConfigClient.createInstance()
+  .then(async (sdk) => {
+    const appSpace = await sdk.readApplicationSpaceByName('customer-id', 'my-app-space');
+    appSpace.description = 'My new description';
+
+    // This will create an empty array where all created bookmarks will be stored
+    sdk.startBookmarkRecording();
+    await sdk.updateApplicationSpace(appSpace);
+
+    // This will return the list of bookmarks
+    const bookmarks = sdk.stopBookmarkRecording();
+
+    const updatedAppSpace = await sdk.readApplicationSpaceByName(
+      'customer-id',
+      'my-app-space',
+      bookmarks,
+    );
+  })
+  .catch((err) => console.error(err));
+```
+
 ## SDK Development
 
 Look into using `npm link` in case you want to develop the lib with the app  

@@ -80,14 +80,27 @@ export class ConfigClient {
     });
   }
 
+  /**
+   * Get a bookmark created after the last call changing the database state.
+   * The returned value may be an empty string. This happens when no database changing
+   * function was called.
+   */
   getLastBookmark(): string {
     return this.lastBookmark;
   }
 
+  /**
+   * Create an empty list of bookmarks. Each function changing the database state which returns
+   * a bookmark will store the bookmark into this array. Use `stopBookmarkRecording` function
+   * to get the list of bookmarks.
+   */
   startBookmarkRecording(): void {
     this.bookmarkList = [];
   }
 
+  /**
+   * Get a list of created bookmarks since the last `startBookmarkRecording` function call.
+   */
   stopBookmarkRecording(): string[] {
     const bookmarkList = this.bookmarkList ?? [];
     this.bookmarkList = null;
