@@ -117,7 +117,7 @@ import * as grpc from "@grpc/grpc-js";
  */
 export interface IConfigManagementAPIClient {
     /**
-     * ReadCustomer by ID or name and returns all attributes.
+     * ReadCustomer by ID or name, or gets it from a service account and returns all attributes.
      *
      * @generated from protobuf rpc: ReadCustomer(indykite.config.v1beta1.ReadCustomerRequest) returns (indykite.config.v1beta1.ReadCustomerResponse);
      */
@@ -546,7 +546,7 @@ export class ConfigManagementAPIClient extends grpc.Client implements IConfigMan
         this._binaryOptions = binaryOptions;
     }
     /**
-     * ReadCustomer by ID or name and returns all attributes.
+     * ReadCustomer by ID or name, or gets it from a service account and returns all attributes.
      *
      * @generated from protobuf rpc: ReadCustomer(indykite.config.v1beta1.ReadCustomerRequest) returns (indykite.config.v1beta1.ReadCustomerResponse);
      */
