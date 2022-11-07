@@ -35,6 +35,7 @@ describe('createserviceAccount', () => {
               res(null, {
                 id: 'new-service-account-id',
                 etag: '111',
+                bookmark: 'bookmark-token',
               });
             }
             return {} as SurfaceCall;
@@ -57,6 +58,7 @@ describe('createserviceAccount', () => {
             location: 'customer-id',
             name: 'service-account-name',
             role: 'all_editor',
+            bookmarks: [],
           },
           expect.any(Function),
         );
@@ -92,6 +94,7 @@ describe('createserviceAccount', () => {
             role: 'all_editor',
             displayName: { value: 'Display Name' },
             description: { value: 'Description' },
+            bookmarks: [],
           },
           expect.any(Function),
         );
@@ -223,6 +226,7 @@ describe('readServiceAccountById', () => {
             oneofKind: 'id',
             id: 'service-account-id-request',
           },
+          bookmarks: [],
         },
         expect.any(Function),
       );
@@ -361,6 +365,7 @@ describe('readServiceAccountByName', () => {
               name: 'service-account-name',
             },
           },
+          bookmarks: [],
         },
         expect.any(Function),
       );
@@ -473,6 +478,7 @@ describe('updateServiceAccount', () => {
                 etag: 'new-etag-id',
                 id: 'service-account-id',
                 updateTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 16)),
+                bookmark: 'bookmark-token',
               });
             }
             return {} as SurfaceCall;
@@ -490,6 +496,7 @@ describe('updateServiceAccount', () => {
         expect(updateServiceAccountSpy).toBeCalledWith(
           {
             id: 'service-account-id',
+            bookmarks: [],
           },
           expect.any(Function),
         );
@@ -530,6 +537,7 @@ describe('updateServiceAccount', () => {
             etag: { value: 'etag-token' },
             displayName: { value: 'Service Account Name' },
             description: { value: 'Description' },
+            bookmarks: [],
           },
           expect.any(Function),
         );
@@ -573,6 +581,7 @@ describe('updateServiceAccount', () => {
                 etag: '777',
                 id: 'different-service-account-id',
                 updateTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 16)),
+                bookmark: 'bookmark-token',
               });
             }
             return {} as SurfaceCall;
@@ -681,8 +690,7 @@ describe('deleteServiceAccount', () => {
           ) => {
             if (typeof res === 'function') {
               res(null, {
-                id: 'service-account-id',
-                etag: 'etag-id',
+                bookmark: 'bookmark-token',
               });
             }
             return {} as SurfaceCall;
@@ -695,6 +703,7 @@ describe('deleteServiceAccount', () => {
       expect(deleteServiceAccountSpy).toBeCalledWith(
         {
           id: 'service-account-id',
+          bookmarks: [],
         },
         expect.any(Function),
       );

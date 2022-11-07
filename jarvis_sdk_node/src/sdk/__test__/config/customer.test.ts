@@ -50,6 +50,7 @@ describe('readCustomerById', () => {
             oneofKind: 'id',
             id: 'customer-id-request',
           },
+          bookmarks: [],
         },
         expect.any(Function),
       );
@@ -171,6 +172,7 @@ describe('readCustomerByName', () => {
             oneofKind: 'name',
             name: 'customer-name-request',
           },
+          bookmarks: [],
         },
         expect.any(Function),
       );

@@ -603,6 +603,7 @@ describe('Read, Update, Delete - Email Configuration', () => {
     const mockResp = UpdateConfigNodeResponse.fromJson({
       id: sendgrid.id,
       updateTime: new Date().toISOString(),
+      bookmark: 'bookmark-token',
     });
 
     const mockFunc = jest.fn(
@@ -635,6 +636,7 @@ describe('Read, Update, Delete - Email Configuration', () => {
       id: sendgrid.id,
       etag: sendgrid.etag,
       updateTime: new Date().toISOString(),
+      bookmark: 'bookmark-token',
     });
 
     const mockFunc = jest.fn(
@@ -726,7 +728,7 @@ describe('Read, Update, Delete - Email Configuration', () => {
           | CallOptions
           | ((error: ServiceError | null, response?: UpdateConfigNodeResponse) => void),
       ): ClientUnaryCall => {
-        if (typeof callback === 'function') callback(null);
+        if (typeof callback === 'function') callback(null, {} as UpdateConfigNodeResponse);
         return {} as ClientUnaryCall;
       },
     );
@@ -754,7 +756,7 @@ describe('Read, Update, Delete - Email Configuration', () => {
           | CallOptions
           | ((error: ServiceError | null, response: DeleteConfigNodeResponse) => void),
       ): ClientUnaryCall => {
-        expect(request).toEqual({ id: sendgrid.id, etag: undefined });
+        expect(request).toEqual({ id: sendgrid.id, etag: undefined, bookmarks: [] });
         if (typeof callback === 'function') callback(null, mockResp);
         return {} as ClientUnaryCall;
       },
@@ -780,7 +782,7 @@ describe('Read, Update, Delete - Email Configuration', () => {
           | CallOptions
           | ((error: ServiceError | null, response: DeleteConfigNodeResponse) => void),
       ): ClientUnaryCall => {
-        expect(request).toEqual({ id: sendgrid.id, etag: { value: sendgrid.etag } });
+        expect(request).toEqual({ id: sendgrid.id, etag: { value: sendgrid.etag }, bookmarks: [] });
         if (typeof callback === 'function') {
           callback(
             { code: Status.NOT_FOUND, details: 'no details', metadata: {} } as ServiceError,

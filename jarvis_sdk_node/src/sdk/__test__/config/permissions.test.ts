@@ -31,6 +31,7 @@ describe('assignPermission', () => {
             if (typeof res === 'function') {
               res(null, {
                 success: true,
+                bookmark: 'bookmark-token',
               });
             }
             return {} as SurfaceCall;
@@ -51,6 +52,7 @@ describe('assignPermission', () => {
           objectId: 'object-id',
           role: 'role-name',
           targetIdentifier: 'target-id',
+          bookmarks: [],
         },
         expect.any(Function),
       );
@@ -150,6 +152,7 @@ describe('revokePermission', () => {
             if (typeof res === 'function') {
               res(null, {
                 success: false,
+                bookmark: 'bookmark-token',
               });
             }
             return {} as SurfaceCall;
@@ -170,6 +173,7 @@ describe('revokePermission', () => {
           objectId: 'object-id',
           role: 'role-name',
           targetIdentifier: 'target-id',
+          bookmarks: [],
         },
         expect.any(Function),
       );
@@ -315,6 +319,7 @@ describe('listPermissions', () => {
       expect(listPermissionsSpy).toBeCalledWith(
         {
           location: 'location-id',
+          bookmarks: [],
         },
         expect.any(Function),
       );

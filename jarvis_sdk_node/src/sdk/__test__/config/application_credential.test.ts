@@ -49,6 +49,7 @@ describe('registerApplicationCredential', () => {
                 ),
                 createTime: Utils.dateToTimestamp(new Date(2022, 5, 20, 11, 27)),
                 expireTime: req.expireTime,
+                bookmark: 'bookmark-token',
               });
             }
             return {} as SurfaceCall;
@@ -72,6 +73,7 @@ describe('registerApplicationCredential', () => {
             displayName: 'Agent Credentials',
             defaultTenantId: 'default-tenant-id',
             publicKey: { oneofKind: undefined },
+            bookmarks: [],
           },
           expect.any(Function),
         );
@@ -120,6 +122,7 @@ describe('registerApplicationCredential', () => {
             defaultTenantId: 'default-tenant-id',
             publicKey: { oneofKind: 'jwk', jwk: publicKey },
             expireTime: Utils.dateToTimestamp(expireTime),
+            bookmarks: [],
           },
           expect.any(Function),
         );
@@ -170,6 +173,7 @@ describe('registerApplicationCredential', () => {
             defaultTenantId: 'default-tenant-id',
             publicKey: { oneofKind: 'pem', pem: publicKey },
             expireTime: Utils.dateToTimestamp(expireTime),
+            bookmarks: [],
           },
           expect.any(Function),
         );
@@ -322,6 +326,7 @@ describe('readApplicationAgentCredential', () => {
       expect(readApplicationAgentCredentialSpy).toBeCalledWith(
         {
           id: 'app-agent-credential-id',
+          bookmarks: [],
         },
         expect.any(Function),
       );
@@ -437,8 +442,7 @@ describe('deleteApplicationAgentCredential', () => {
           ) => {
             if (typeof res === 'function') {
               res(null, {
-                id: 'app-agent-id',
-                etag: 'etag-id',
+                bookmark: 'bookmark-token',
               });
             }
             return {} as SurfaceCall;
@@ -451,6 +455,7 @@ describe('deleteApplicationAgentCredential', () => {
       expect(deleteApplicationAgentCredentialSpy).toBeCalledWith(
         {
           id: 'app-agent-credential-id',
+          bookmarks: [],
         },
         expect.any(Function),
       );

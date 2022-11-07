@@ -49,6 +49,7 @@ describe('registerServiceAccountCredential', () => {
                 createTime: Utils.dateToTimestamp(new Date(2022, 5, 20, 11, 27)),
                 expireTime: req.expireTime,
                 serviceAccountId: 'service-account-id',
+                bookmark: 'bookmark-token',
               });
             }
             return {} as SurfaceCall;
@@ -70,6 +71,7 @@ describe('registerServiceAccountCredential', () => {
             serviceAccountId: 'service-account-id',
             displayName: 'Service Account Credentials',
             publicKey: { oneofKind: undefined },
+            bookmarks: [],
           },
           expect.any(Function),
         );
@@ -115,6 +117,7 @@ describe('registerServiceAccountCredential', () => {
             displayName: 'Service Account Credentials',
             publicKey: { oneofKind: 'jwk', jwk: publicKey },
             expireTime: Utils.dateToTimestamp(expireTime),
+            bookmarks: [],
           },
           expect.any(Function),
         );
@@ -162,6 +165,7 @@ describe('registerServiceAccountCredential', () => {
             displayName: 'Service Account Credentials',
             publicKey: { oneofKind: 'pem', pem: publicKey },
             expireTime: Utils.dateToTimestamp(expireTime),
+            bookmarks: [],
           },
           expect.any(Function),
         );
@@ -312,6 +316,7 @@ describe('readServiceAccountCredential', () => {
       expect(readServiceAccountCredentialSpy).toBeCalledWith(
         {
           id: 'service-account-credential-id',
+          bookmarks: [],
         },
         expect.any(Function),
       );
@@ -426,8 +431,7 @@ describe('deleteServiceAccountCredential', () => {
           ) => {
             if (typeof res === 'function') {
               res(null, {
-                id: 'service-account-credential-id',
-                etag: 'etag-id',
+                bookmark: 'bookmark-token',
               });
             }
             return {} as SurfaceCall;
@@ -440,6 +444,7 @@ describe('deleteServiceAccountCredential', () => {
       expect(deleteServiceAccountCredentialSpy).toBeCalledWith(
         {
           id: 'service-account-credential-id',
+          bookmarks: [],
         },
         expect.any(Function),
       );

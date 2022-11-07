@@ -87,6 +87,7 @@ describe('deserialize', () => {
         {
           etag: 'etag',
           id: 'app-agent-id',
+          bookmark: 'bookmark-token',
         },
         'application-id',
         'app-agent-name',

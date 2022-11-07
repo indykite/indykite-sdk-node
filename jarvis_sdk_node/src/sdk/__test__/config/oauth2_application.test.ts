@@ -66,6 +66,7 @@ describe('createOAuth2Application', () => {
                 etag: '111',
                 clientId: 'client-id-token',
                 clientSecret: 'client-secret-token',
+                bookmark: 'bookmark-token',
               });
             }
             return {} as SurfaceCall;
@@ -110,6 +111,7 @@ describe('createOAuth2Application', () => {
               audiences: [],
               userinfoSignedResponseAlg: '',
             },
+            bookmarks: [],
           },
           expect.any(Function),
         );
@@ -165,6 +167,7 @@ describe('createOAuth2Application', () => {
             },
             displayName: { value: 'Display Name' },
             description: { value: 'Description' },
+            bookmarks: [],
           },
           expect.any(Function),
         );
@@ -297,6 +300,7 @@ describe('readOAuth2Application', () => {
       expect(readOAuth2ApplicationSpy).toBeCalledWith(
         {
           id: 'oauth2-app-id-request',
+          bookmarks: [],
         },
         expect.any(Function),
       );
@@ -435,6 +439,7 @@ describe('updateOAuth2Application', () => {
                 etag: 'new-etag-id',
                 id: 'oauth2-app-id',
                 updateTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 16)),
+                bookmark: 'bookmark-token',
               });
             }
             return {} as SurfaceCall;
@@ -452,6 +457,7 @@ describe('updateOAuth2Application', () => {
         expect(updateOAuth2ApplicationSpy).toBeCalledWith(
           {
             id: 'oauth2-app-id',
+            bookmarks: [],
           },
           expect.any(Function),
         );
@@ -495,6 +501,7 @@ describe('updateOAuth2Application', () => {
             displayName: { value: 'OAuth2 Application Name' },
             description: { value: 'Description' },
             config: configExample.marshal(),
+            bookmarks: [],
           },
           expect.any(Function),
         );
@@ -540,6 +547,7 @@ describe('updateOAuth2Application', () => {
                 etag: '777',
                 id: 'different-oauth2-app-id',
                 updateTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 16)),
+                bookmark: 'bookmark-token',
               });
             }
             return {} as SurfaceCall;
@@ -648,8 +656,7 @@ describe('deleteOAuth2Application', () => {
           ) => {
             if (typeof res === 'function') {
               res(null, {
-                id: 'oauth2-app-id',
-                etag: 'etag-id',
+                bookmark: 'bookmark-token',
               });
             }
             return {} as SurfaceCall;
@@ -662,6 +669,7 @@ describe('deleteOAuth2Application', () => {
       expect(deleteOAuth2ApplicationSpy).toBeCalledWith(
         {
           id: 'oauth2-app-id',
+          bookmarks: [],
         },
         expect.any(Function),
       );
