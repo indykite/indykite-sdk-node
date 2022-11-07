@@ -68,6 +68,7 @@ describe('createOAuth2Client', () => {
                 etag: 'etag-token',
                 createTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 6, 21, 13, 5))),
                 updateTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 6, 21, 13, 6))),
+                bookmark: 'bookmark-token',
               });
             }
             return {} as SurfaceCall;
@@ -110,6 +111,7 @@ describe('createOAuth2Client', () => {
                 teamId: '',
               },
             },
+            bookmarks: [],
           },
           expect.any(Function),
         );
@@ -163,6 +165,7 @@ describe('createOAuth2Client', () => {
                 teamId: '',
               },
             },
+            bookmarks: [],
           },
           expect.any(Function),
         );
@@ -314,6 +317,7 @@ describe('readOAuth2Client', () => {
       expect(readConfigNodeSpy).toBeCalledWith(
         {
           id: 'oauth2-client-id-request',
+          bookmarks: [],
         },
         expect.any(Function),
       );
@@ -446,6 +450,7 @@ describe('updateOAuth2Client', () => {
                 etag: 'new-etag-token',
                 id: 'oauth2-client-id',
                 updateTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 6, 21, 14, 56))),
+                bookmark: 'bookmark-token',
               });
             }
             return {} as SurfaceCall;
@@ -488,6 +493,7 @@ describe('updateOAuth2Client', () => {
                 teamId: '',
               },
             },
+            bookmarks: [],
           },
           expect.any(Function),
         );
@@ -561,6 +567,7 @@ describe('updateOAuth2Client', () => {
                 teamId: '',
               },
             },
+            bookmarks: [],
           },
           expect.any(Function),
         );
@@ -616,6 +623,7 @@ describe('updateOAuth2Client', () => {
                 etag: '777',
                 id: 'different-oauth2-client-id',
                 updateTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 16)),
+                bookmark: 'bookmark-token',
               });
             }
             return {} as SurfaceCall;
@@ -725,8 +733,7 @@ describe('deleteOAuth2Client', () => {
             ) => {
               if (typeof res === 'function') {
                 res(null, {
-                  id: 'oauth2-client-id',
-                  etag: 'etag-id',
+                  bookmark: 'bookmark-token',
                 });
               }
               return {} as SurfaceCall;
@@ -740,6 +747,7 @@ describe('deleteOAuth2Client', () => {
         expect(deleteConfigNodeSpy).toBeCalledWith(
           {
             id: 'oauth2-client-id',
+            bookmarks: [],
           },
           expect.any(Function),
         );
@@ -761,8 +769,7 @@ describe('deleteOAuth2Client', () => {
             ) => {
               if (typeof res === 'function') {
                 res(null, {
-                  id: 'oauth2-client-id',
-                  etag: 'new-etag-token',
+                  bookmark: 'bookmark-token',
                 });
               }
               return {} as SurfaceCall;
@@ -778,6 +785,7 @@ describe('deleteOAuth2Client', () => {
           {
             id: 'oauth2-client-id',
             etag: StringValue.fromJson('etag-token'),
+            bookmarks: [],
           },
           expect.any(Function),
         );

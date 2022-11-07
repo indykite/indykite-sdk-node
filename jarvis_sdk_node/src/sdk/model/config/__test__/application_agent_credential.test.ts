@@ -58,6 +58,7 @@ describe('deserialize', () => {
               'utf-8',
             ),
           ),
+          bookmark: 'bookmark-token',
         },
         'Application Agent Credential',
         'app-agent-id',

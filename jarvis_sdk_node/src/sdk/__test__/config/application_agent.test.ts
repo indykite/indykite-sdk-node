@@ -42,6 +42,7 @@ describe('createApplicationAgent', () => {
               res(null, {
                 id: 'new-app-agent-id',
                 etag: '111',
+                bookmark: 'bookmark-token',
               });
             }
             return {} as SurfaceCall;
@@ -59,6 +60,7 @@ describe('createApplicationAgent', () => {
           {
             applicationId: 'application-id',
             name: 'app-agent-name',
+            bookmarks: [],
           },
           expect.any(Function),
         );
@@ -91,6 +93,7 @@ describe('createApplicationAgent', () => {
             name: 'app-agent-name',
             displayName: StringValue.create({ value: 'My Application Agent' }),
             description: StringValue.create({ value: 'Application Agent description' }),
+            bookmarks: [],
           },
           expect.any(Function),
         );
@@ -237,6 +240,7 @@ describe('readApplicationAgentById', () => {
             oneofKind: 'id',
             id: 'app-agent-id-request',
           },
+          bookmarks: [],
         },
         expect.any(Function),
       );
@@ -388,6 +392,7 @@ describe('readApplicationAgentByName', () => {
               name: 'application-name-request',
             },
           },
+          bookmarks: [],
         },
         expect.any(Function),
       );
@@ -512,6 +517,7 @@ describe('updateApplicationAgent', () => {
                 etag: 'new-etag-id',
                 id: 'app-agent-id',
                 updateTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 16)),
+                bookmark: 'bookmark-token',
               });
             }
             return {} as SurfaceCall;
@@ -533,6 +539,7 @@ describe('updateApplicationAgent', () => {
         expect(updateApplicationAgentSpy).toBeCalledWith(
           {
             id: 'app-agent-id',
+            bookmarks: [],
           },
           expect.any(Function),
         );
@@ -579,6 +586,7 @@ describe('updateApplicationAgent', () => {
             etag: { value: 'etag-id' },
             displayName: { value: 'Application Agent Name' },
             description: { value: 'Agent Description' },
+            bookmarks: [],
           },
           expect.any(Function),
         );
@@ -625,6 +633,7 @@ describe('updateApplicationAgent', () => {
                 etag: '777',
                 id: 'different-app-agent-id',
                 updateTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 16)),
+                bookmark: 'bookmark-token',
               });
             }
             return {} as SurfaceCall;
@@ -785,6 +794,7 @@ describe('readApplicationAgentList', () => {
       expect(listApplicationAgentsSpy).toBeCalledWith({
         appSpaceId: 'app-space-id-request',
         match: ['app-agent-name'],
+        bookmarks: [],
       });
     });
 
@@ -859,8 +869,7 @@ describe('deleteApplicationAgent', () => {
           ) => {
             if (typeof res === 'function') {
               res(null, {
-                id: 'app-agent-id',
-                etag: 'etag-id',
+                bookmark: 'bookmark-token',
               });
             }
             return {} as SurfaceCall;
@@ -873,6 +882,7 @@ describe('deleteApplicationAgent', () => {
       expect(deleteApplicationAgentSpy).toBeCalledWith(
         {
           id: 'app-agent-id',
+          bookmarks: [],
         },
         expect.any(Function),
       );

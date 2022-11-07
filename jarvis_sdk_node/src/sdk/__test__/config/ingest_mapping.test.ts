@@ -87,6 +87,7 @@ describe('createIngestMappingConfiguration', () => {
                 etag: 'etag-token',
                 createTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 6, 21, 13, 5))),
                 updateTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 6, 21, 13, 6))),
+                bookmark: 'bookmark-token',
               });
             }
             return {} as SurfaceCall;
@@ -146,6 +147,7 @@ describe('createIngestMappingConfiguration', () => {
                 },
               },
             },
+            bookmarks: [],
           },
           expect.any(Function),
         );
@@ -216,6 +218,7 @@ describe('createIngestMappingConfiguration', () => {
                 },
               },
             },
+            bookmarks: [],
           },
           expect.any(Function),
         );
@@ -384,6 +387,7 @@ describe('readIngestMappingConfiguration', () => {
       expect(readConfigNodeSpy).toBeCalledWith(
         {
           id: 'ingest-mapping-id-request',
+          bookmarks: [],
         },
         expect.any(Function),
       );
@@ -529,6 +533,7 @@ describe('updateIngestMappingConfiguration', () => {
                 etag: 'new-etag-token',
                 id: 'ingest-mapping-id',
                 updateTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 6, 21, 14, 56))),
+                bookmark: 'bookmark-token',
               });
             }
             return {} as SurfaceCall;
@@ -588,6 +593,7 @@ describe('updateIngestMappingConfiguration', () => {
                 },
               },
             },
+            bookmarks: [],
           },
           expect.any(Function),
         );
@@ -696,6 +702,7 @@ describe('updateIngestMappingConfiguration', () => {
                 },
               },
             },
+            bookmarks: [],
           },
           expect.any(Function),
         );
@@ -767,6 +774,7 @@ describe('updateIngestMappingConfiguration', () => {
                 etag: '777',
                 id: 'different-ingest-mapping-id',
                 updateTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 16)),
+                bookmark: 'bookmark-token',
               });
             }
             return {} as SurfaceCall;
@@ -879,8 +887,7 @@ describe('deleteIngestMappingConfiguration', () => {
             ) => {
               if (typeof res === 'function') {
                 res(null, {
-                  id: 'ingest-mapping-id',
-                  etag: 'etag-id',
+                  bookmark: 'bookmark-token',
                 });
               }
               return {} as SurfaceCall;
@@ -894,6 +901,7 @@ describe('deleteIngestMappingConfiguration', () => {
         expect(deleteConfigNodeSpy).toBeCalledWith(
           {
             id: 'ingest-mapping-id',
+            bookmarks: [],
           },
           expect.any(Function),
         );
@@ -919,8 +927,7 @@ describe('deleteIngestMappingConfiguration', () => {
             ) => {
               if (typeof res === 'function') {
                 res(null, {
-                  id: 'ingest-mapping-id',
-                  etag: 'new-etag-token',
+                  bookmark: 'bookmark-token',
                 });
               }
               return {} as SurfaceCall;
@@ -936,6 +943,7 @@ describe('deleteIngestMappingConfiguration', () => {
           {
             id: 'ingest-mapping-id',
             etag: StringValue.fromJson('etag-token'),
+            bookmarks: [],
           },
           expect.any(Function),
         );

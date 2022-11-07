@@ -4,6 +4,7 @@ import { ClientReadableStream, ServiceError, SurfaceCall } from '@grpc/grpc-js/b
 import { Status } from '@grpc/grpc-js/build/src/constants';
 import {
   CreateApplicationResponse,
+  DeleteApplicationResponse,
   ListApplicationsResponse,
   ReadApplicationResponse,
   UpdateApplicationResponse,
@@ -41,6 +42,7 @@ describe('createApplication', () => {
               res(null, {
                 id: 'new-application-id',
                 etag: '111',
+                bookmark: 'bookmark-token',
               });
             }
             return {} as SurfaceCall;
@@ -58,6 +60,7 @@ describe('createApplication', () => {
           {
             appSpaceId: 'app-space-id',
             name: 'application-name',
+            bookmarks: [],
           },
           expect.any(Function),
         );
@@ -90,6 +93,7 @@ describe('createApplication', () => {
             name: 'application-name',
             displayName: StringValue.create({ value: 'My Application' }),
             description: StringValue.create({ value: 'Application description' }),
+            bookmarks: [],
           },
           expect.any(Function),
         );
@@ -235,6 +239,7 @@ describe('readApplicationById', () => {
             oneofKind: 'id',
             id: 'application-id-request',
           },
+          bookmarks: [],
         },
         expect.any(Function),
       );
@@ -375,6 +380,7 @@ describe('readApplicationByName', () => {
               name: 'application-name-request',
             },
           },
+          bookmarks: [],
         },
         expect.any(Function),
       );
@@ -502,6 +508,7 @@ describe('readApplicationList', () => {
       expect(listApplicationsSpy).toBeCalledWith({
         appSpaceId: 'app-space-id-request',
         match: ['application-name'],
+        bookmarks: [],
       });
     });
 
@@ -573,6 +580,7 @@ describe('updateApplication', () => {
                 etag: '777',
                 id: 'application-id',
                 updateTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 16)),
+                bookmark: 'bookmark-token',
               });
             }
             return {} as SurfaceCall;
@@ -595,6 +603,7 @@ describe('updateApplication', () => {
         expect(updateApplicationSpy).toBeCalledWith(
           {
             id: 'application-id',
+            bookmarks: [],
           },
           expect.any(Function),
         );
@@ -638,6 +647,7 @@ describe('updateApplication', () => {
             etag: { value: '555' },
             displayName: { value: 'Application Name' },
             description: { value: 'Description' },
+            bookmarks: [],
           },
           expect.any(Function),
         );
@@ -681,6 +691,7 @@ describe('updateApplication', () => {
                 etag: '777',
                 id: 'different-application-id',
                 updateTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 16)),
+                bookmark: 'bookmark-token',
               });
             }
             return {} as SurfaceCall;
@@ -804,9 +815,15 @@ describe('deleteApplication', () => {
       deleteApplicationSpy = jest
         .spyOn(sdk['client'], 'deleteApplication')
         .mockImplementation(
-          (req, res: Metadata | CallOptions | ((err: ServiceError | null) => void)) => {
+          (
+            req,
+            res:
+              | Metadata
+              | CallOptions
+              | ((err: ServiceError | null, response?: DeleteApplicationResponse) => void),
+          ) => {
             if (typeof res === 'function') {
-              res(null);
+              res(null, { bookmark: 'bookmark-token' });
             }
             return {} as SurfaceCall;
           },
@@ -827,6 +844,7 @@ describe('deleteApplication', () => {
         {
           id: 'application-id',
           etag: { value: 'etag-token' },
+          bookmarks: [],
         },
         expect.any(Function),
       );

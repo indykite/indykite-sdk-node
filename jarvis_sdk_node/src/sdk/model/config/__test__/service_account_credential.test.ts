@@ -56,6 +56,7 @@ describe('deserialize', () => {
               'utf-8',
             ),
           ),
+          bookmark: 'bookmark-token',
         },
         'Service Account Credential',
         'service-account-id',

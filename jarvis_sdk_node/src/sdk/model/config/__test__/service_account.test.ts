@@ -87,6 +87,7 @@ describe('deserialize', () => {
           etag: 'etag-token',
           createTime: Utils.dateToTimestamp(new Date(2022, 5, 28, 11, 54)),
           updateTime: Utils.dateToTimestamp(new Date(2022, 5, 28, 11, 55)),
+          bookmark: 'bookmark-token',
         },
         'service-account-name',
         'Service Account Name',
@@ -117,6 +118,7 @@ describe('deserialize', () => {
           etag: 'etag-token',
           createTime: Utils.dateToTimestamp(new Date(2022, 5, 28, 11, 54)),
           updateTime: Utils.dateToTimestamp(new Date(2022, 5, 28, 11, 55)),
+          bookmark: 'bookmark-token',
         },
         'service-account-name',
       );
@@ -144,6 +146,7 @@ describe('deserialize', () => {
             etag: 'etag-token',
             createTime: Utils.dateToTimestamp(new Date(2022, 5, 28, 11, 54)),
             updateTime: Utils.dateToTimestamp(new Date(2022, 5, 28, 11, 55)),
+            bookmark: 'bookmark-token',
           },
           undefined as unknown as string,
         );

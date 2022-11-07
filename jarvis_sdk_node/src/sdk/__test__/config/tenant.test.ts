@@ -4,6 +4,7 @@ import { ClientReadableStream, ServiceError, SurfaceCall } from '@grpc/grpc-js/b
 import { Status } from '@grpc/grpc-js/build/src/constants';
 import {
   CreateTenantResponse,
+  DeleteTenantResponse,
   ListTenantsResponse,
   ReadTenantResponse,
   UpdateTenantResponse,
@@ -43,6 +44,7 @@ describe('createTenant', () => {
                 etag: '111',
                 createTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 12)),
                 updateTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 13)),
+                bookmark: 'bookmark-token',
               });
             }
             return {} as SurfaceCall;
@@ -60,6 +62,7 @@ describe('createTenant', () => {
           {
             issuerId: 'issuer-id',
             name: 'new-tenant',
+            bookmarks: [],
           },
           expect.any(Function),
         );
@@ -94,6 +97,7 @@ describe('createTenant', () => {
             name: 'new-tenant',
             displayName: StringValue.create({ value: 'New Tenant' }),
             description: StringValue.create({ value: 'Tenant description' }),
+            bookmarks: [],
           },
           expect.any(Function),
         );
@@ -232,6 +236,7 @@ describe('readTenantById', () => {
             oneofKind: 'id',
             id: 'tenant-id-request',
           },
+          bookmarks: [],
         },
         expect.any(Function),
       );
@@ -371,6 +376,7 @@ describe('readTenantByName', () => {
               name: 'tenant-name-request',
             },
           },
+          bookmarks: [],
         },
         expect.any(Function),
       );
@@ -500,6 +506,7 @@ describe('readTenantList', () => {
       expect(listTenantsSpy).toBeCalledWith({
         appSpaceId: 'app-space-id-request',
         match: ['tenant-name'],
+        bookmarks: [],
       });
     });
 
@@ -570,6 +577,7 @@ describe('updateTenant', () => {
                 etag: '777',
                 id: 'tenant-id',
                 updateTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 16)),
+                bookmark: 'bookmark-token',
               });
             }
             return {} as SurfaceCall;
@@ -587,6 +595,7 @@ describe('updateTenant', () => {
         expect(updateTenantSpy).toBeCalledWith(
           {
             id: 'tenant-id',
+            bookmarks: [],
           },
           expect.any(Function),
         );
@@ -630,6 +639,7 @@ describe('updateTenant', () => {
             etag: { value: '555' },
             displayName: { value: 'Tenant Name' },
             description: { value: 'Description' },
+            bookmarks: [],
           },
           expect.any(Function),
         );
@@ -672,6 +682,7 @@ describe('updateTenant', () => {
                 etag: '777',
                 id: 'different-tenant-id',
                 updateTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 16)),
+                bookmark: 'bookmark-token',
               });
             }
             return {} as SurfaceCall;
@@ -798,9 +809,15 @@ describe('deleteTenant', () => {
       deleteTenantSpy = jest
         .spyOn(sdk['client'], 'deleteTenant')
         .mockImplementation(
-          (req, res: Metadata | CallOptions | ((err: ServiceError | null) => void)) => {
+          (
+            req,
+            res:
+              | Metadata
+              | CallOptions
+              | ((err: ServiceError | null, response?: DeleteTenantResponse) => void),
+          ) => {
             if (typeof res === 'function') {
-              res(null);
+              res(null, { bookmark: 'bookmark-token' });
             }
             return {} as SurfaceCall;
           },
@@ -822,6 +839,7 @@ describe('deleteTenant', () => {
         {
           id: 'tenant-id',
           etag: { value: 'etag-token' },
+          bookmarks: [],
         },
         expect.any(Function),
       );

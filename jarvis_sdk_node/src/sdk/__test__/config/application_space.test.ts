@@ -4,6 +4,7 @@ import { ClientReadableStream, ServiceError, SurfaceCall } from '@grpc/grpc-js/b
 import { Status } from '@grpc/grpc-js/build/src/constants';
 import {
   CreateApplicationSpaceResponse,
+  DeleteApplicationSpaceResponse,
   ListApplicationSpacesResponse,
   ReadApplicationSpaceResponse,
   UpdateApplicationSpaceResponse,
@@ -43,6 +44,7 @@ describe('createApplicationSpace', () => {
                 etag: '111',
                 createTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 12)),
                 updateTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 13)),
+                bookmark: 'bookmark-token',
               });
             }
             return {} as SurfaceCall;
@@ -60,6 +62,7 @@ describe('createApplicationSpace', () => {
           {
             customerId: 'customer-id',
             name: 'new-app-space',
+            bookmarks: [],
           },
           expect.any(Function),
         );
@@ -93,6 +96,7 @@ describe('createApplicationSpace', () => {
             name: 'new-app-space',
             displayName: StringValue.create({ value: 'New App Space' }),
             description: StringValue.create({ value: 'App space description' }),
+            bookmarks: [],
           },
           expect.any(Function),
         );
@@ -239,6 +243,7 @@ describe('readApplicationSpaceById', () => {
             oneofKind: 'id',
             id: 'app-space-id-request',
           },
+          bookmarks: [],
         },
         expect.any(Function),
       );
@@ -380,6 +385,7 @@ describe('readApplicationSpaceByName', () => {
               name: 'app-space-name-request',
             },
           },
+          bookmarks: [],
         },
         expect.any(Function),
       );
@@ -514,6 +520,7 @@ describe('readApplicationSpaceList', () => {
       expect(listApplicationSpacesSpy).toBeCalledWith({
         customerId: 'customer-id-request',
         match: ['app-space-name'],
+        bookmarks: [],
       });
     });
 
@@ -583,6 +590,7 @@ describe('updateApplicationSpace', () => {
                 etag: '777',
                 id: 'app-space-id',
                 updateTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 16)),
+                bookmark: 'bookmark-token',
               });
             }
             return {} as SurfaceCall;
@@ -600,6 +608,7 @@ describe('updateApplicationSpace', () => {
         expect(updateApplicationSpaceSpy).toBeCalledWith(
           {
             id: 'app-space-id',
+            bookmarks: [],
           },
           expect.any(Function),
         );
@@ -643,6 +652,7 @@ describe('updateApplicationSpace', () => {
             etag: { value: '555' },
             displayName: { value: 'App Space' },
             description: { value: 'Description' },
+            bookmarks: [],
           },
           expect.any(Function),
         );
@@ -686,6 +696,7 @@ describe('updateApplicationSpace', () => {
                 etag: '777',
                 id: 'different-app-space-id',
                 updateTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 16)),
+                bookmark: 'bookmark-token',
               });
             }
             return {} as SurfaceCall;
@@ -809,9 +820,15 @@ describe('deleteApplicationSpace', () => {
       deleteApplicationSpaceSpy = jest
         .spyOn(sdk['client'], 'deleteApplicationSpace')
         .mockImplementation(
-          (req, res: Metadata | CallOptions | ((err: ServiceError | null) => void)) => {
+          (
+            req,
+            res:
+              | Metadata
+              | CallOptions
+              | ((err: ServiceError | null, response?: DeleteApplicationSpaceResponse) => void),
+          ) => {
             if (typeof res === 'function') {
-              res(null);
+              res(null, { bookmark: 'bookmark-token' });
             }
             return {} as SurfaceCall;
           },
@@ -833,6 +850,7 @@ describe('deleteApplicationSpace', () => {
         {
           id: 'app-space-id',
           etag: { value: '555' },
+          bookmarks: [],
         },
         expect.any(Function),
       );

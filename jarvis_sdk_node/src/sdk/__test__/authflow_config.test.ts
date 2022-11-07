@@ -38,6 +38,7 @@ describe('Authentication Flow', () => {
       etag: new Date().toISOString(),
       createTime: new Date().toISOString(),
       updateTime: new Date().toISOString(),
+      bookmark: 'bookmark-token',
     });
     const mockFunc = jest.fn(
       (
@@ -61,7 +62,7 @@ describe('Authentication Flow', () => {
     );
     const resp = await sdk.createAuthflowConfiguration('gid:KAEyEGluZHlraURlgAAAAAAAAA8', authFlow);
 
-    const expectedResp = Object.assign(mockResp, authFlow);
+    const expectedResp = Object.assign(mockResp, authFlow, { bookmark: undefined });
 
     expect(mockFunc).toBeCalled();
     expect(resp).toEqual(expectedResp);
