@@ -58,8 +58,11 @@ import {
   ServiceAccountCredential,
   Tenant,
 } from './model';
+
 export class ConfigClient {
   private client: ConfigManagementAPIClient;
+  private lastBookmark = '';
+  private bookmarkList: string[] | null = null;
 
   constructor(sdk: SdkClient) {
     this.client = sdk.client as ConfigManagementAPIClient;
@@ -77,25 +80,42 @@ export class ConfigClient {
     });
   }
 
+  getLastBookmark(): string {
+    return this.lastBookmark;
+  }
+
+  startBookmarkRecording(): void {
+    this.bookmarkList = [];
+  }
+
+  stopBookmarkRecording(): string[] {
+    const bookmarkList = this.bookmarkList ?? [];
+    this.bookmarkList = null;
+    return bookmarkList;
+  }
+
   createEmailServiceConfiguration(
     location: string,
     config: EmailProviderType,
+    bookmarks: string[] = [],
   ): Promise<EmailProviderType> {
     const req = CreateConfigNodeRequest.fromJson({
       location,
       name: config.name,
+      bookmarks,
     });
     req.config = {
       oneofKind: 'emailServiceConfig',
       emailServiceConfig: config.marshal(),
     };
-    // console.log(JSON.stringify(nr, null, 2));
     return new Promise<EmailProviderType>((resolve, reject) => {
       this.client.createConfigNode(req, (err, response) => {
         if (err) reject(err);
+        else if (!response) new SdkError(SdkErrorCode.SDK_CODE_1, 'No email config response');
         else
           try {
-            resolve(response as EmailProviderType);
+            this.saveReturnedBookmark(response.bookmark);
+            resolve(response as unknown as EmailProviderType);
           } catch (err) {
             reject(err);
           }
@@ -103,9 +123,9 @@ export class ConfigClient {
     });
   }
 
-  readEmailServiceConfiguration(id: string): Promise<EmailProviderType> {
+  readEmailServiceConfiguration(id: string, bookmarks: string[] = []): Promise<EmailProviderType> {
     return new Promise((resolve, reject) => {
-      this.client.readConfigNode({ id }, (err, response) => {
+      this.client.readConfigNode({ id, bookmarks }, (err, response) => {
         if (err) reject(err);
         else
           try {
@@ -124,9 +144,13 @@ export class ConfigClient {
     });
   }
 
-  updateEmailServiceConfiguration(config: EmailProviderType): Promise<EmailProviderType> {
+  updateEmailServiceConfiguration(
+    config: EmailProviderType,
+    bookmarks: string[] = [],
+  ): Promise<EmailProviderType> {
     const req = {
       id: config.id,
+      bookmarks,
     } as UpdateConfigNodeRequest;
     if (config.etag) req.etag = StringValue.create({ value: config.etag });
     if (config.displayName !== undefined)
@@ -146,6 +170,7 @@ export class ConfigClient {
             if (response && response.id === config.id) {
               config.etag = response.etag;
               config.updateTime = Utils.timestampToDate(response.updateTime);
+              this.saveReturnedBookmark(response.bookmark);
               resolve(config);
             } else {
               reject(
@@ -164,24 +189,38 @@ export class ConfigClient {
     });
   }
 
-  deleteEmailServiceConfiguration(config: EmailProviderType): Promise<boolean> {
+  deleteEmailServiceConfiguration(
+    config: EmailProviderType,
+    bookmarks: string[] = [],
+  ): Promise<boolean> {
     const req = {
       id: config.id,
+      bookmarks,
     } as DeleteConfigNodeRequest;
     if (config.etag !== undefined) req.etag = StringValue.create({ value: config.etag });
 
     return new Promise<boolean>((resolve, reject) => {
-      this.client.deleteConfigNode(req, (err) => {
+      this.client.deleteConfigNode(req, (err, response) => {
         if (err) reject(false);
-        else resolve(true);
+        else if (!response)
+          reject(new SdkError(SdkErrorCode.SDK_CODE_1, 'No email config response'));
+        else {
+          this.saveReturnedBookmark(response.bookmark);
+          resolve(true);
+        }
       });
     });
   }
 
-  createAuthflowConfiguration(location: string, config: AuthFlow): Promise<AuthFlow> {
+  createAuthflowConfiguration(
+    location: string,
+    config: AuthFlow,
+    bookmarks: string[] = [],
+  ): Promise<AuthFlow> {
     const req = CreateConfigNodeRequest.fromJson({
       location,
       name: config.name,
+      bookmarks,
     });
     req.config = {
       oneofKind: 'authFlowConfig',
@@ -202,6 +241,7 @@ export class ConfigClient {
             config.etag = response.etag;
             config.createTime = Utils.timestampToDate(response.createTime);
             config.updateTime = Utils.timestampToDate(response.updateTime);
+            this.saveReturnedBookmark(response.bookmark);
             resolve(config);
           } catch (err) {
             reject(err);
@@ -211,9 +251,9 @@ export class ConfigClient {
     });
   }
 
-  readAuthflowConfiguration(id: string): Promise<AuthFlow> {
+  readAuthflowConfiguration(id: string, bookmarks: string[] = []): Promise<AuthFlow> {
     return new Promise((resolve, reject) => {
-      this.client.readConfigNode({ id }, (err, response) => {
+      this.client.readConfigNode({ id, bookmarks }, (err, response) => {
         if (err) reject(err);
         else
           try {
@@ -232,9 +272,10 @@ export class ConfigClient {
     });
   }
 
-  updateAuthflowConfiguration(config: AuthFlow): Promise<AuthFlow> {
+  updateAuthflowConfiguration(config: AuthFlow, bookmarks: string[] = []): Promise<AuthFlow> {
     const req = {
       id: config.id,
+      bookmarks,
     } as UpdateConfigNodeRequest;
     if (config.etag !== undefined) req.etag = StringValue.create({ value: config.etag });
     if (config.displayName !== undefined)
@@ -254,6 +295,7 @@ export class ConfigClient {
             if (response && response.id === config.id) {
               config.etag = response.etag;
               config.updateTime = Utils.timestampToDate(response.updateTime);
+              this.saveReturnedBookmark(response.bookmark);
               resolve(config);
             } else {
               reject(
@@ -272,16 +314,22 @@ export class ConfigClient {
     });
   }
 
-  deleteAuthflowConfiguration(config: AuthFlow): Promise<boolean> {
+  deleteAuthflowConfiguration(config: AuthFlow, bookmarks: string[] = []): Promise<boolean> {
     const req = {
       id: config.id,
+      bookmarks,
     } as DeleteConfigNodeRequest;
     if (config.etag !== undefined) req.etag = StringValue.create({ value: config.etag });
 
     return new Promise<boolean>((resolve, reject) => {
-      this.client.deleteConfigNode(req, (err) => {
+      this.client.deleteConfigNode(req, (err, response) => {
         if (err) reject(false);
-        else resolve(true);
+        else if (!response)
+          reject(new SdkError(SdkErrorCode.SDK_CODE_1, 'No auth flow config response'));
+        else {
+          this.saveReturnedBookmark(response.bookmark);
+          resolve(true);
+        }
       });
     });
   }
@@ -289,10 +337,12 @@ export class ConfigClient {
   createIngestMappingConfiguration(
     location: string,
     config: IngestMapping,
+    bookmarks: string[] = [],
   ): Promise<IngestMapping> {
     const req = CreateConfigNodeRequest.fromJson({
       location,
       name: config.name,
+      bookmarks,
     });
     req.config = {
       oneofKind: 'ingestMappingConfig',
@@ -325,9 +375,9 @@ export class ConfigClient {
     });
   }
 
-  readIngestMappingConfiguration(id: string): Promise<IngestMapping> {
+  readIngestMappingConfiguration(id: string, bookmarks: string[] = []): Promise<IngestMapping> {
     return new Promise((resolve, reject) => {
-      this.client.readConfigNode({ id }, (err, response) => {
+      this.client.readConfigNode({ id, bookmarks }, (err, response) => {
         if (err) reject(err);
         else if (response && response.configNode) {
           const ret = ConfigurationFactory.createInstance(response.configNode) as IngestMapping;
@@ -341,9 +391,13 @@ export class ConfigClient {
     });
   }
 
-  updateIngestMappingConfiguration(config: IngestMapping): Promise<IngestMapping> {
+  updateIngestMappingConfiguration(
+    config: IngestMapping,
+    bookmarks: string[] = [],
+  ): Promise<IngestMapping> {
     const req = {
       id: config.id,
+      bookmarks,
     } as UpdateConfigNodeRequest;
     if (config.etag !== undefined) req.etag = StringValue.create({ value: config.etag });
     if (config.displayName !== undefined)
@@ -376,9 +430,13 @@ export class ConfigClient {
     });
   }
 
-  deleteIngestMappingConfiguration(config: IngestMapping): Promise<boolean> {
+  deleteIngestMappingConfiguration(
+    config: IngestMapping,
+    bookmarks: string[] = [],
+  ): Promise<boolean> {
     const req = {
       id: config.id,
+      bookmarks,
     } as DeleteConfigNodeRequest;
     if (config.etag !== undefined) req.etag = StringValue.create({ value: config.etag });
 
@@ -390,7 +448,7 @@ export class ConfigClient {
     });
   }
 
-  readCustomerById(id: string): Promise<Customer> {
+  readCustomerById(id: string, bookmarks: string[] = []): Promise<Customer> {
     return new Promise((resolve, reject) => {
       this.client.readCustomer(
         {
@@ -398,6 +456,7 @@ export class ConfigClient {
             oneofKind: 'id',
             id,
           },
+          bookmarks,
         },
         (err, response) => {
           if (err) reject(err);
@@ -408,7 +467,7 @@ export class ConfigClient {
     });
   }
 
-  readCustomerByName(name: string): Promise<Customer> {
+  readCustomerByName(name: string, bookmarks: string[] = []): Promise<Customer> {
     return new Promise((resolve, reject) => {
       this.client.readCustomer(
         {
@@ -416,6 +475,7 @@ export class ConfigClient {
             oneofKind: 'name',
             name,
           },
+          bookmarks,
         },
         (err, response) => {
           if (err) reject(err);
@@ -431,11 +491,13 @@ export class ConfigClient {
     name: string,
     displayName?: string,
     description?: string,
+    bookmarks: string[] = [],
   ): Promise<ApplicationSpace> {
     return new Promise((resolve, reject) => {
       const req: CreateApplicationSpaceRequest = {
         customerId,
         name,
+        bookmarks,
       };
 
       if (displayName !== undefined) req.displayName = StringValue.create({ value: displayName });
@@ -445,15 +507,17 @@ export class ConfigClient {
         if (err) reject(err);
         else if (!response)
           reject(new SdkError(SdkErrorCode.SDK_CODE_1, 'No application space response'));
-        else
+        else {
+          this.saveReturnedBookmark(response.bookmark);
           resolve(
             ApplicationSpace.deserialize(response, customerId, name, displayName, description),
           );
+        }
       });
     });
   }
 
-  readApplicationSpaceById(id: string): Promise<ApplicationSpace> {
+  readApplicationSpaceById(id: string, bookmarks: string[] = []): Promise<ApplicationSpace> {
     return new Promise((resolve, reject) => {
       this.client.readApplicationSpace(
         {
@@ -461,6 +525,7 @@ export class ConfigClient {
             oneofKind: 'id',
             id,
           },
+          bookmarks,
         },
         (err, response) => {
           if (err) reject(err);
@@ -474,7 +539,11 @@ export class ConfigClient {
     });
   }
 
-  readApplicationSpaceByName(location: string, name: string): Promise<ApplicationSpace> {
+  readApplicationSpaceByName(
+    location: string,
+    name: string,
+    bookmarks: string[] = [],
+  ): Promise<ApplicationSpace> {
     return new Promise((resolve, reject) => {
       this.client.readApplicationSpace(
         {
@@ -485,6 +554,7 @@ export class ConfigClient {
               name,
             },
           },
+          bookmarks,
         },
         (err, response) => {
           if (err) reject(err);
@@ -501,6 +571,7 @@ export class ConfigClient {
   readApplicationSpaceList(
     customerId: string,
     appSpaceNames: string[],
+    bookmarks: string[] = [],
   ): Promise<ApplicationSpace[]> {
     return new Promise((resolve, reject) => {
       const list: ApplicationSpace[] = [];
@@ -508,6 +579,7 @@ export class ConfigClient {
         .listApplicationSpaces({
           customerId,
           match: appSpaceNames,
+          bookmarks,
         })
         .on('readable', () => {
           const value = stream.read();
@@ -524,10 +596,14 @@ export class ConfigClient {
     });
   }
 
-  updateApplicationSpace(appSpace: ApplicationSpace): Promise<ApplicationSpace> {
+  updateApplicationSpace(
+    appSpace: ApplicationSpace,
+    bookmarks: string[] = [],
+  ): Promise<ApplicationSpace> {
     return new Promise((resolve, reject) => {
       const req: UpdateApplicationSpaceRequest = {
         id: appSpace.id,
+        bookmarks,
       };
 
       if (appSpace.etag !== undefined) req.etag = StringValue.create({ value: appSpace.etag });
@@ -543,6 +619,7 @@ export class ConfigClient {
             if (response && response.id === appSpace.id) {
               appSpace.etag = response.etag;
               appSpace.updateTime = Utils.timestampToDate(response.updateTime);
+              this.saveReturnedBookmark(response.bookmark);
               resolve(appSpace);
             } else {
               reject(
@@ -562,17 +639,23 @@ export class ConfigClient {
     });
   }
 
-  deleteApplicationSpace(appSpace: ApplicationSpace): Promise<boolean> {
+  deleteApplicationSpace(appSpace: ApplicationSpace, bookmarks: string[] = []): Promise<boolean> {
     const req = {
       id: appSpace.id,
+      bookmarks,
     } as DeleteApplicationSpaceRequest;
 
     if (appSpace.etag !== undefined) req.etag = StringValue.create({ value: appSpace.etag });
 
     return new Promise<boolean>((resolve, reject) => {
-      this.client.deleteApplicationSpace(req, (err) => {
+      this.client.deleteApplicationSpace(req, (err, response) => {
         if (err) reject(err);
-        else resolve(true);
+        else if (!response)
+          reject(new SdkError(SdkErrorCode.SDK_CODE_1, 'No application space response'));
+        else {
+          this.saveReturnedBookmark(response.bookmark);
+          resolve(true);
+        }
       });
     });
   }
@@ -582,11 +665,13 @@ export class ConfigClient {
     name: string,
     displayName?: string,
     description?: string,
+    bookmarks: string[] = [],
   ): Promise<Tenant> {
     return new Promise((resolve, reject) => {
       const req: CreateTenantRequest = {
         issuerId,
         name,
+        bookmarks,
       };
 
       if (displayName !== undefined) req.displayName = StringValue.create({ value: displayName });
@@ -595,12 +680,15 @@ export class ConfigClient {
       this.client.createTenant(req, (err, response) => {
         if (err) reject(err);
         else if (!response) reject(new SdkError(SdkErrorCode.SDK_CODE_1, 'No tenant response'));
-        else resolve(Tenant.deserialize(response, issuerId, name, displayName, description));
+        else {
+          this.saveReturnedBookmark(response.bookmark);
+          resolve(Tenant.deserialize(response, issuerId, name, displayName, description));
+        }
       });
     });
   }
 
-  readTenantById(id: string): Promise<Tenant> {
+  readTenantById(id: string, bookmarks: string[] = []): Promise<Tenant> {
     return new Promise((resolve, reject) => {
       this.client.readTenant(
         {
@@ -608,6 +696,7 @@ export class ConfigClient {
             oneofKind: 'id',
             id,
           },
+          bookmarks,
         },
         (err, response) => {
           if (err) reject(err);
@@ -621,7 +710,7 @@ export class ConfigClient {
     });
   }
 
-  readTenantByName(location: string, name: string): Promise<Tenant> {
+  readTenantByName(location: string, name: string, bookmarks: string[] = []): Promise<Tenant> {
     return new Promise((resolve, reject) => {
       this.client.readTenant(
         {
@@ -632,6 +721,7 @@ export class ConfigClient {
               name,
             },
           },
+          bookmarks,
         },
         (err, response) => {
           if (err) reject(err);
@@ -645,10 +735,11 @@ export class ConfigClient {
     });
   }
 
-  updateTenant(tenant: Tenant): Promise<Tenant> {
+  updateTenant(tenant: Tenant, bookmarks: string[] = []): Promise<Tenant> {
     return new Promise((resolve, reject) => {
       const req: UpdateTenantRequest = {
         id: tenant.id,
+        bookmarks,
       };
 
       if (tenant.etag !== undefined) req.etag = StringValue.create({ value: tenant.etag });
@@ -664,6 +755,7 @@ export class ConfigClient {
             if (response && response.id === tenant.id) {
               tenant.etag = response.etag;
               tenant.updateTime = Utils.timestampToDate(response.updateTime);
+              this.saveReturnedBookmark(response.bookmark);
               resolve(tenant);
             } else {
               reject(
@@ -683,13 +775,18 @@ export class ConfigClient {
     });
   }
 
-  readTenantList(appSpaceId: string, tenantIds: string[]): Promise<Tenant[]> {
+  readTenantList(
+    appSpaceId: string,
+    tenantIds: string[],
+    bookmarks: string[] = [],
+  ): Promise<Tenant[]> {
     return new Promise((resolve, reject) => {
       const list: Tenant[] = [];
       this.client
         .listTenants({
           appSpaceId,
           match: tenantIds,
+          bookmarks,
         })
         .on('error', (err) => {
           reject(err);
@@ -705,17 +802,22 @@ export class ConfigClient {
     });
   }
 
-  deleteTenant(tenant: Tenant): Promise<boolean> {
+  deleteTenant(tenant: Tenant, bookmarks: string[] = []): Promise<boolean> {
     const req = {
       id: tenant.id,
+      bookmarks,
     } as DeleteTenantRequest;
 
     if (tenant.etag !== undefined) req.etag = StringValue.create({ value: tenant.etag });
 
     return new Promise<boolean>((resolve, reject) => {
-      this.client.deleteTenant(req, (err) => {
+      this.client.deleteTenant(req, (err, response) => {
         if (err) reject(err);
-        else resolve(true);
+        else if (!response) reject(new SdkError(SdkErrorCode.SDK_CODE_1, 'No tenant response'));
+        else {
+          this.saveReturnedBookmark(response.bookmark);
+          resolve(true);
+        }
       });
     });
   }
@@ -725,11 +827,13 @@ export class ConfigClient {
     name: string,
     displayName?: string,
     description?: string,
+    bookmarks: string[] = [],
   ): Promise<Application> {
     return new Promise((resolve, reject) => {
       const req: CreateApplicationRequest = {
         appSpaceId,
         name,
+        bookmarks,
       };
 
       if (displayName !== undefined) req.displayName = StringValue.create({ value: displayName });
@@ -739,12 +843,15 @@ export class ConfigClient {
         if (err) reject(err);
         else if (!response)
           reject(new SdkError(SdkErrorCode.SDK_CODE_1, 'No application response'));
-        else resolve(Application.deserialize(response, appSpaceId, name, displayName, description));
+        else {
+          this.saveReturnedBookmark(response.bookmark);
+          resolve(Application.deserialize(response, appSpaceId, name, displayName, description));
+        }
       });
     });
   }
 
-  readApplicationById(applicationId: string): Promise<Application> {
+  readApplicationById(applicationId: string, bookmarks: string[] = []): Promise<Application> {
     return new Promise((resolve, reject) => {
       this.client.readApplication(
         {
@@ -752,6 +859,7 @@ export class ConfigClient {
             oneofKind: 'id',
             id: applicationId,
           },
+          bookmarks,
         },
         (err, response) => {
           if (err) reject(err);
@@ -765,7 +873,11 @@ export class ConfigClient {
     });
   }
 
-  readApplicationByName(appSpaceId: string, name: string): Promise<Application> {
+  readApplicationByName(
+    appSpaceId: string,
+    name: string,
+    bookmarks: string[] = [],
+  ): Promise<Application> {
     return new Promise((resolve, reject) => {
       this.client.readApplication(
         {
@@ -776,6 +888,7 @@ export class ConfigClient {
               name,
             },
           },
+          bookmarks,
         },
         (err, response) => {
           if (err) reject(err);
@@ -789,10 +902,11 @@ export class ConfigClient {
     });
   }
 
-  updateApplication(application: Application): Promise<Application> {
+  updateApplication(application: Application, bookmarks: string[] = []): Promise<Application> {
     return new Promise((resolve, reject) => {
       const req: UpdateApplicationRequest = {
         id: application.id,
+        bookmarks,
       };
 
       if (application.etag !== undefined)
@@ -809,6 +923,7 @@ export class ConfigClient {
             if (response && response.id === application.id) {
               application.etag = response.etag;
               application.updateTime = Utils.timestampToDate(response.updateTime);
+              this.saveReturnedBookmark(response.bookmark);
               resolve(application);
             } else {
               reject(
@@ -828,13 +943,18 @@ export class ConfigClient {
     });
   }
 
-  readApplicationList(appSpaceId: string, applicationIds: string[]): Promise<Application[]> {
+  readApplicationList(
+    appSpaceId: string,
+    applicationIds: string[],
+    bookmarks: string[] = [],
+  ): Promise<Application[]> {
     return new Promise((resolve, reject) => {
       const list: Application[] = [];
       this.client
         .listApplications({
           appSpaceId,
           match: applicationIds,
+          bookmarks,
         })
         .on('error', (err) => {
           reject(err);
@@ -850,17 +970,23 @@ export class ConfigClient {
     });
   }
 
-  deleteApplication(application: Application): Promise<boolean> {
+  deleteApplication(application: Application, bookmarks: string[] = []): Promise<boolean> {
     const req = {
       id: application.id,
+      bookmarks,
     } as DeleteApplicationRequest;
 
     if (application.etag !== undefined) req.etag = StringValue.create({ value: application.etag });
 
     return new Promise<boolean>((resolve, reject) => {
-      this.client.deleteApplication(req, (err) => {
+      this.client.deleteApplication(req, (err, response) => {
         if (err) reject(err);
-        else resolve(true);
+        else if (!response)
+          reject(new SdkError(SdkErrorCode.SDK_CODE_1, 'No application response'));
+        else {
+          this.saveReturnedBookmark(response.bookmark);
+          resolve(true);
+        }
       });
     });
   }
@@ -870,11 +996,13 @@ export class ConfigClient {
     name: string,
     displayName?: string,
     description?: string,
+    bookmarks: string[] = [],
   ): Promise<ApplicationAgent> {
     return new Promise((resolve, reject) => {
       const req: CreateApplicationAgentRequest = {
         applicationId,
         name,
+        bookmarks,
       };
 
       if (displayName !== undefined) req.displayName = StringValue.create({ value: displayName });
@@ -892,7 +1020,10 @@ export class ConfigClient {
     });
   }
 
-  readApplicationAgentById(applicationAgentId: string): Promise<ApplicationAgent> {
+  readApplicationAgentById(
+    applicationAgentId: string,
+    bookmarks: string[] = [],
+  ): Promise<ApplicationAgent> {
     return new Promise((resolve, reject) => {
       this.client.readApplicationAgent(
         {
@@ -900,6 +1031,7 @@ export class ConfigClient {
             oneofKind: 'id',
             id: applicationAgentId,
           },
+          bookmarks,
         },
         (err, response) => {
           if (err) reject(err);
@@ -913,7 +1045,11 @@ export class ConfigClient {
     });
   }
 
-  readApplicationAgentByName(appSpaceId: string, name: string): Promise<ApplicationAgent> {
+  readApplicationAgentByName(
+    appSpaceId: string,
+    name: string,
+    bookmarks: string[] = [],
+  ): Promise<ApplicationAgent> {
     return new Promise((resolve, reject) => {
       this.client.readApplicationAgent(
         {
@@ -924,6 +1060,7 @@ export class ConfigClient {
               name,
             },
           },
+          bookmarks,
         },
         (err, response) => {
           if (err) reject(err);
@@ -937,10 +1074,14 @@ export class ConfigClient {
     });
   }
 
-  updateApplicationAgent(applicationAgent: ApplicationAgent): Promise<ApplicationAgent> {
+  updateApplicationAgent(
+    applicationAgent: ApplicationAgent,
+    bookmarks: string[] = [],
+  ): Promise<ApplicationAgent> {
     return new Promise((resolve, reject) => {
       const req: UpdateApplicationAgentRequest = {
         id: applicationAgent.id,
+        bookmarks,
       };
 
       if (applicationAgent.etag !== undefined)
@@ -957,6 +1098,7 @@ export class ConfigClient {
             if (response && response.id === applicationAgent.id) {
               applicationAgent.etag = response.etag;
               applicationAgent.updateTime = Utils.timestampToDate(response.updateTime);
+              this.saveReturnedBookmark(response.bookmark);
               resolve(applicationAgent);
             } else {
               reject(
@@ -979,6 +1121,7 @@ export class ConfigClient {
   readApplicationAgentList(
     appSpaceId: string,
     applicationAgentIds: string[],
+    bookmarks: string[] = [],
   ): Promise<ApplicationAgent[]> {
     return new Promise((resolve, reject) => {
       const list: ApplicationAgent[] = [];
@@ -986,6 +1129,7 @@ export class ConfigClient {
         .listApplicationAgents({
           appSpaceId,
           match: applicationAgentIds,
+          bookmarks,
         })
         .on('error', (err) => {
           reject(err);
@@ -1001,17 +1145,21 @@ export class ConfigClient {
     });
   }
 
-  deleteApplicationAgent(appAgentId: string): Promise<void> {
+  deleteApplicationAgent(appAgentId: string, bookmarks: string[] = []): Promise<void> {
     return new Promise((resolve, reject) => {
       const req: DeleteApplicationAgentRequest = {
         id: appAgentId,
+        bookmarks,
       };
 
       this.client.deleteApplicationAgent(req, (err, response) => {
         if (err) reject(err);
         else if (!response)
           reject(new SdkError(SdkErrorCode.SDK_CODE_1, 'No application agent response'));
-        else resolve();
+        else {
+          this.saveReturnedBookmark(response.bookmark);
+          resolve();
+        }
       });
     });
   }
@@ -1023,6 +1171,7 @@ export class ConfigClient {
     publicKeyType?: 'jwk' | 'pem',
     publicKey?: Buffer,
     expireTime?: Date,
+    bookmarks: string[] = [],
   ): Promise<ApplicationAgentCredential> {
     return new Promise((resolve, reject) => {
       let publicKeyObject = {
@@ -1044,6 +1193,7 @@ export class ConfigClient {
         displayName,
         defaultTenantId,
         publicKey: publicKeyObject,
+        bookmarks,
       };
 
       if (expireTime !== undefined) req.expireTime = Utils.dateToTimestamp(expireTime);
@@ -1052,15 +1202,22 @@ export class ConfigClient {
         if (err) reject(err);
         else if (!response)
           reject(new SdkError(SdkErrorCode.SDK_CODE_1, 'No application agent credential response'));
-        else resolve(ApplicationAgentCredential.deserialize(response, displayName, appAgentId));
+        else {
+          this.saveReturnedBookmark(response.bookmark);
+          resolve(ApplicationAgentCredential.deserialize(response, displayName, appAgentId));
+        }
       });
     });
   }
 
-  readApplicationAgentCredential(appCredentialId: string): Promise<ApplicationAgentCredential> {
+  readApplicationAgentCredential(
+    appCredentialId: string,
+    bookmarks: string[] = [],
+  ): Promise<ApplicationAgentCredential> {
     return new Promise((resolve, reject) => {
       const req: ReadApplicationAgentCredentialRequest = {
         id: appCredentialId,
+        bookmarks,
       };
 
       this.client.readApplicationAgentCredential(req, (err, response) => {
@@ -1072,17 +1229,24 @@ export class ConfigClient {
     });
   }
 
-  deleteApplicationAgentCredential(appCredentialId: string): Promise<void> {
+  deleteApplicationAgentCredential(
+    appCredentialId: string,
+    bookmarks: string[] = [],
+  ): Promise<void> {
     return new Promise((resolve, reject) => {
       const req: DeleteApplicationAgentCredentialRequest = {
         id: appCredentialId,
+        bookmarks,
       };
 
       this.client.deleteApplicationAgentCredential(req, (err, response) => {
         if (err) reject(err);
         else if (!response)
           reject(new SdkError(SdkErrorCode.SDK_CODE_1, 'No application agent credential response'));
-        else resolve();
+        else {
+          this.saveReturnedBookmark(response.bookmark);
+          resolve();
+        }
       });
     });
   }
@@ -1093,6 +1257,7 @@ export class ConfigClient {
     config: OAuth2ProviderConfig,
     displayName?: string,
     description?: string,
+    bookmarks: string[] = [],
   ): Promise<OAuth2Provider> {
     return new Promise((resolve, reject) => {
       const req: CreateOAuth2ProviderRequest = {
@@ -1109,6 +1274,7 @@ export class ConfigClient {
           frontChannelConsentUri: config.frontChannelConsentUri ?? {},
           frontChannelLoginUri: config.frontChannelLoginUri ?? {},
         },
+        bookmarks,
       };
 
       if (displayName !== undefined) req.displayName = StringValue.create({ value: displayName });
@@ -1118,7 +1284,8 @@ export class ConfigClient {
         if (err) reject(err);
         else if (!response)
           reject(new SdkError(SdkErrorCode.SDK_CODE_1, 'No OAuth2 provider response'));
-        else
+        else {
+          this.saveReturnedBookmark(response.bookmark);
           resolve(
             OAuth2Provider.deserialize(
               response,
@@ -1129,13 +1296,14 @@ export class ConfigClient {
               description,
             ),
           );
+        }
       });
     });
   }
 
-  readOAuth2Provider(id: string): Promise<OAuth2Provider> {
+  readOAuth2Provider(id: string, bookmarks: string[] = []): Promise<OAuth2Provider> {
     return new Promise((resolve, reject) => {
-      this.client.readOAuth2Provider({ id }, (err, response) => {
+      this.client.readOAuth2Provider({ id, bookmarks }, (err, response) => {
         if (err) reject(err);
         else if (!response) {
           reject(new SdkError(SdkErrorCode.SDK_CODE_1, 'No OAuth2 provider response'));
@@ -1146,10 +1314,14 @@ export class ConfigClient {
     });
   }
 
-  updateOAuth2Provider(oauth2Provider: OAuth2Provider): Promise<OAuth2Provider> {
+  updateOAuth2Provider(
+    oauth2Provider: OAuth2Provider,
+    bookmarks: string[] = [],
+  ): Promise<OAuth2Provider> {
     return new Promise((resolve, reject) => {
       const req: UpdateOAuth2ProviderRequest = {
         id: oauth2Provider.id,
+        bookmarks,
       };
 
       if (oauth2Provider.etag !== undefined)
@@ -1169,6 +1341,7 @@ export class ConfigClient {
             if (response && response.id === oauth2Provider.id) {
               oauth2Provider.etag = response.etag;
               oauth2Provider.updateTime = Utils.timestampToDate(response.updateTime);
+              this.saveReturnedBookmark(response.bookmark);
               resolve(oauth2Provider);
             } else {
               reject(
@@ -1188,17 +1361,21 @@ export class ConfigClient {
     });
   }
 
-  deleteOAuth2Provider(id: string): Promise<void> {
+  deleteOAuth2Provider(id: string, bookmarks: string[] = []): Promise<void> {
     return new Promise((resolve, reject) => {
       const req: DeleteOAuth2ProviderRequest = {
         id,
+        bookmarks,
       };
 
       this.client.deleteOAuth2Provider(req, (err, response) => {
         if (err) reject(err);
         else if (!response)
           reject(new SdkError(SdkErrorCode.SDK_CODE_1, 'No OAuth2 provider response'));
-        else resolve();
+        else {
+          this.saveReturnedBookmark(response.bookmark);
+          resolve();
+        }
       });
     });
   }
@@ -1209,11 +1386,13 @@ export class ConfigClient {
     config: OAuth2ApplicationConfig,
     displayName?: string,
     description?: string,
+    bookmarks: string[] = [],
   ): Promise<OAuth2Application> {
     return new Promise((resolve, reject) => {
       const req: CreateOAuth2ApplicationRequest = {
         oauth2ProviderId,
         name,
+        bookmarks,
         config: {
           ...config,
           audiences: config.audiences ?? [],
@@ -1234,15 +1413,17 @@ export class ConfigClient {
         if (err) reject(err);
         else if (!response)
           reject(new SdkError(SdkErrorCode.SDK_CODE_1, 'No OAuth2 client response'));
-        else
+        else {
+          this.saveReturnedBookmark(response.bookmark);
           resolve(OAuth2Application.deserialize(response, name, config, displayName, description));
+        }
       });
     });
   }
 
-  readOAuth2Application(id: string): Promise<OAuth2Application> {
+  readOAuth2Application(id: string, bookmarks: string[] = []): Promise<OAuth2Application> {
     return new Promise((resolve, reject) => {
-      this.client.readOAuth2Application({ id }, (err, response) => {
+      this.client.readOAuth2Application({ id, bookmarks }, (err, response) => {
         if (err) reject(err);
         else if (!response) {
           reject(new SdkError(SdkErrorCode.SDK_CODE_1, 'No OAuth2 client response'));
@@ -1253,10 +1434,14 @@ export class ConfigClient {
     });
   }
 
-  updateOAuth2Application(oauth2Client: OAuth2Application): Promise<OAuth2Application> {
+  updateOAuth2Application(
+    oauth2Client: OAuth2Application,
+    bookmarks: string[] = [],
+  ): Promise<OAuth2Application> {
     return new Promise((resolve, reject) => {
       const req: UpdateOAuth2ApplicationRequest = {
         id: oauth2Client.id,
+        bookmarks,
       };
 
       if (oauth2Client.etag !== undefined)
@@ -1276,6 +1461,7 @@ export class ConfigClient {
             if (response && response.id === oauth2Client.id) {
               oauth2Client.etag = response.etag;
               oauth2Client.updateTime = Utils.timestampToDate(response.updateTime);
+              this.saveReturnedBookmark(response.bookmark);
               resolve(oauth2Client);
             } else {
               reject(
@@ -1295,25 +1481,34 @@ export class ConfigClient {
     });
   }
 
-  deleteOAuth2Application(id: string): Promise<void> {
+  deleteOAuth2Application(id: string, bookmarks: string[] = []): Promise<void> {
     return new Promise((resolve, reject) => {
       const req: DeleteOAuth2ApplicationRequest = {
         id: id,
+        bookmarks,
       };
 
       this.client.deleteOAuth2Application(req, (err, response) => {
         if (err) reject(err);
         else if (!response)
           reject(new SdkError(SdkErrorCode.SDK_CODE_1, 'No OAuth2 application response'));
-        else resolve();
+        else {
+          this.saveReturnedBookmark(response.bookmark);
+          resolve();
+        }
       });
     });
   }
 
-  createOAuth2Client(location: string, oauth2Client: OAuth2Client): Promise<OAuth2Client> {
+  createOAuth2Client(
+    location: string,
+    oauth2Client: OAuth2Client,
+    bookmarks: string[] = [],
+  ): Promise<OAuth2Client> {
     const req = CreateConfigNodeRequest.fromJson({
       location,
       name: oauth2Client.name,
+      bookmarks,
     });
     if (oauth2Client.displayName !== undefined) {
       req.displayName = StringValue.fromJson(oauth2Client.displayName);
@@ -1340,6 +1535,7 @@ export class ConfigClient {
             oauth2Client.etag = response.etag;
             oauth2Client.createTime = Utils.timestampToDate(response.createTime);
             oauth2Client.updateTime = Utils.timestampToDate(response.updateTime);
+            this.saveReturnedBookmark(response.bookmark);
             resolve(oauth2Client);
           } catch (err) {
             reject(err);
@@ -1349,9 +1545,9 @@ export class ConfigClient {
     });
   }
 
-  readOAuth2Client(id: string): Promise<OAuth2Client> {
+  readOAuth2Client(id: string, bookmarks: string[] = []): Promise<OAuth2Client> {
     return new Promise((resolve, reject) => {
-      this.client.readConfigNode({ id }, (err, response) => {
+      this.client.readConfigNode({ id, bookmarks }, (err, response) => {
         if (err) reject(err);
         else
           try {
@@ -1368,9 +1564,10 @@ export class ConfigClient {
     });
   }
 
-  updateOAuth2Client(config: OAuth2Client): Promise<OAuth2Client> {
+  updateOAuth2Client(config: OAuth2Client, bookmarks: string[] = []): Promise<OAuth2Client> {
     const req = {
       id: config.id,
+      bookmarks,
     } as UpdateConfigNodeRequest;
     if (config.etag !== undefined) req.etag = StringValue.create({ value: config.etag });
     if (config.displayName !== undefined)
@@ -1390,6 +1587,7 @@ export class ConfigClient {
             if (response && response.id === config.id) {
               config.etag = response.etag;
               config.updateTime = Utils.timestampToDate(response.updateTime);
+              this.saveReturnedBookmark(response.bookmark);
               resolve(config);
             } else {
               reject(
@@ -1408,16 +1606,22 @@ export class ConfigClient {
     });
   }
 
-  deleteOAuth2Client(config: OAuth2Client): Promise<void> {
+  deleteOAuth2Client(config: OAuth2Client, bookmarks: string[] = []): Promise<void> {
     const req = {
       id: config.id,
+      bookmarks,
     } as DeleteConfigNodeRequest;
     if (config.etag !== undefined) req.etag = StringValue.create({ value: config.etag });
 
     return new Promise((resolve, reject) => {
-      this.client.deleteConfigNode(req, (err) => {
+      this.client.deleteConfigNode(req, (err, response) => {
         if (err) reject(err);
-        else resolve();
+        else if (!response)
+          reject(new SdkError(SdkErrorCode.SDK_CODE_1, 'No OAuth2 client response'));
+        else {
+          this.saveReturnedBookmark(response.bookmark);
+          resolve();
+        }
       });
     });
   }
@@ -1428,12 +1632,14 @@ export class ConfigClient {
     role: string,
     displayName?: string,
     description?: string,
+    bookmarks: string[] = [],
   ): Promise<ServiceAccount> {
     return new Promise((resolve, reject) => {
       const req: CreateServiceAccountRequest = {
         location,
         name,
         role,
+        bookmarks,
       };
 
       if (displayName !== undefined) req.displayName = StringValue.create({ value: displayName });
@@ -1443,12 +1649,15 @@ export class ConfigClient {
         if (err) reject(err);
         else if (!response)
           reject(new SdkError(SdkErrorCode.SDK_CODE_1, 'No service account response'));
-        else resolve(ServiceAccount.deserialize(response, name, displayName, description));
+        else {
+          this.saveReturnedBookmark(response.bookmark);
+          resolve(ServiceAccount.deserialize(response, name, displayName, description));
+        }
       });
     });
   }
 
-  readServiceAccountById(id: string): Promise<ServiceAccount> {
+  readServiceAccountById(id: string, bookmarks: string[] = []): Promise<ServiceAccount> {
     return new Promise((resolve, reject) => {
       this.client.readServiceAccount(
         {
@@ -1456,6 +1665,7 @@ export class ConfigClient {
             oneofKind: 'id',
             id,
           },
+          bookmarks,
         },
         (err, response) => {
           if (err) reject(err);
@@ -1469,7 +1679,11 @@ export class ConfigClient {
     });
   }
 
-  readServiceAccountByName(location: string, name: string): Promise<ServiceAccount> {
+  readServiceAccountByName(
+    location: string,
+    name: string,
+    bookmarks: string[] = [],
+  ): Promise<ServiceAccount> {
     return new Promise((resolve, reject) => {
       this.client.readServiceAccount(
         {
@@ -1480,6 +1694,7 @@ export class ConfigClient {
               name,
             },
           },
+          bookmarks,
         },
         (err, response) => {
           if (err) reject(err);
@@ -1493,10 +1708,14 @@ export class ConfigClient {
     });
   }
 
-  updateServiceAccount(serviceAccount: ServiceAccount): Promise<ServiceAccount> {
+  updateServiceAccount(
+    serviceAccount: ServiceAccount,
+    bookmarks: string[] = [],
+  ): Promise<ServiceAccount> {
     return new Promise((resolve, reject) => {
       const req: UpdateServiceAccountRequest = {
         id: serviceAccount.id,
+        bookmarks,
       };
 
       if (serviceAccount.etag !== undefined)
@@ -1512,6 +1731,7 @@ export class ConfigClient {
           if (response && response.id === serviceAccount.id) {
             serviceAccount.etag = response.etag;
             serviceAccount.updateTime = Utils.timestampToDate(response.updateTime);
+            this.saveReturnedBookmark(response.bookmark);
             resolve(serviceAccount);
           } else {
             reject(
@@ -1528,17 +1748,21 @@ export class ConfigClient {
     });
   }
 
-  deleteServiceAccount(id: string): Promise<void> {
+  deleteServiceAccount(id: string, bookmarks: string[] = []): Promise<void> {
     return new Promise((resolve, reject) => {
       const req: DeleteServiceAccountRequest = {
         id,
+        bookmarks,
       };
 
       this.client.deleteServiceAccount(req, (err, response) => {
         if (err) reject(err);
         else if (!response)
           reject(new SdkError(SdkErrorCode.SDK_CODE_1, 'No service account response'));
-        else resolve();
+        else {
+          this.saveReturnedBookmark(response.bookmark);
+          resolve();
+        }
       });
     });
   }
@@ -1548,6 +1772,8 @@ export class ConfigClient {
    * which is registered with credentials. Or will generate new Public-Private pair and
    * Private key is returned in Response. Be aware, that in this case, Private key is sent
    * back only once and cannot be retrieved ever again.
+   * @param bookmarks Database bookmarks to handle Read-after-Write consistency. Insert
+   * one or multiple bookmarks returned from the previous Write operation if needed.
    */
   registerServiceAccountCredential(
     serviceAccountId: string,
@@ -1555,6 +1781,7 @@ export class ConfigClient {
     publicKeyType?: 'jwk' | 'pem',
     publicKey?: Buffer,
     expireTime?: Date,
+    bookmarks: string[] = [],
   ): Promise<ServiceAccountCredential> {
     return new Promise((resolve, reject) => {
       let publicKeyObject = {
@@ -1575,6 +1802,7 @@ export class ConfigClient {
         serviceAccountId,
         displayName,
         publicKey: publicKeyObject,
+        bookmarks,
       };
 
       if (expireTime !== undefined) req.expireTime = Utils.dateToTimestamp(expireTime);
@@ -1583,7 +1811,10 @@ export class ConfigClient {
         if (err) reject(err);
         else if (!response)
           reject(new SdkError(SdkErrorCode.SDK_CODE_1, 'No service account credential response'));
-        else resolve(ServiceAccountCredential.deserialize(response, displayName, serviceAccountId));
+        else {
+          this.saveReturnedBookmark(response.bookmark);
+          resolve(ServiceAccountCredential.deserialize(response, displayName, serviceAccountId));
+        }
       });
     });
   }
@@ -1592,11 +1823,17 @@ export class ConfigClient {
    * Read service account credential by ID and returns all attributes.
    * But not Private or Public key, so keep them saved.
    * @param serviceAccountId Id contains the Globally Unique Identifier of the object with server generated id.
+   * @param bookmarks Database bookmarks to handle Read-after-Write consistency. Insert
+   * one or multiple bookmarks returned from the previous Write operation if needed.
    */
-  readServiceAccountCredential(serviceAccountId: string): Promise<ServiceAccountCredential> {
+  readServiceAccountCredential(
+    serviceAccountId: string,
+    bookmarks: string[] = [],
+  ): Promise<ServiceAccountCredential> {
     return new Promise((resolve, reject) => {
       const req: ReadServiceAccountCredentialRequest = {
         id: serviceAccountId,
+        bookmarks,
       };
 
       this.client.readServiceAccountCredential(req, (err, response) => {
@@ -1611,18 +1848,27 @@ export class ConfigClient {
   /**
    * Delete service account credential by ID.
    * @param serviceAccountId Id is the Globally unique identifier of object to delete.
+   * @param bookmarks Database bookmarks to handle Read-after-Write consistency. Insert
+   * one or multiple bookmarks returned from the previous Write operation if needed.
    */
-  deleteServiceAccountCredential(serviceAccountId: string): Promise<void> {
+  deleteServiceAccountCredential(
+    serviceAccountId: string,
+    bookmarks: string[] = [],
+  ): Promise<void> {
     return new Promise((resolve, reject) => {
       const req: DeleteServiceAccountCredentialRequest = {
         id: serviceAccountId,
+        bookmarks,
       };
 
       this.client.deleteServiceAccountCredential(req, (err, response) => {
         if (err) reject(err);
         else if (!response)
           reject(new SdkError(SdkErrorCode.SDK_CODE_1, 'No service account credential response'));
-        else resolve();
+        else {
+          this.saveReturnedBookmark(response.bookmark);
+          resolve();
+        }
       });
     });
   }
@@ -1633,6 +1879,8 @@ export class ConfigClient {
    * @param role Permission role id to be assigned
    * @param customerId CustomerId under which to assign permissions
    * @param objectId Object to which Permission will be linked to. Can be Customer, AppSpace or Tenant
+   * @param bookmarks Database bookmarks to handle Read-after-Write consistency. Insert
+   * one or multiple bookmarks returned from the previous Write operation if needed.
    * @returns The success status
    */
   assignPermission(
@@ -1640,6 +1888,7 @@ export class ConfigClient {
     role: string,
     customerId: string,
     objectId: string,
+    bookmarks: string[] = [],
   ): Promise<boolean> {
     return new Promise((resolve, reject) => {
       const req: AssignPermissionsRequest = {
@@ -1647,13 +1896,17 @@ export class ConfigClient {
         role,
         customerId,
         objectId,
+        bookmarks,
       };
 
       this.client.assignPermissions(req, (err, response) => {
         if (err) reject(err);
         else if (!response)
           reject(new SdkError(SdkErrorCode.SDK_CODE_1, 'No assign permissions response'));
-        else resolve(response.success);
+        else {
+          this.saveReturnedBookmark(response.bookmark);
+          resolve(response.success);
+        }
       });
     });
   }
@@ -1664,6 +1917,8 @@ export class ConfigClient {
    * @param role Permission role id to be assigned
    * @param customerId CustomerId under which to assign permissions.
    * @param objectId Object to which Permission will be linked to. Can be Customer, AppSpace or Tenant
+   * @param bookmarks Database bookmarks to handle Read-after-Write consistency. Insert
+   * one or multiple bookmarks returned from the previous Write operation if needed.
    * @returns The success status
    */
   revokePermission(
@@ -1671,6 +1926,7 @@ export class ConfigClient {
     role: string,
     customerId: string,
     objectId: string,
+    bookmarks: string[] = [],
   ): Promise<boolean> {
     return new Promise((resolve, reject) => {
       const req: RevokePermissionsRequest = {
@@ -1678,13 +1934,17 @@ export class ConfigClient {
         role,
         customerId,
         objectId,
+        bookmarks,
       };
 
       this.client.revokePermissions(req, (err, response) => {
         if (err) reject(err);
         else if (!response)
           reject(new SdkError(SdkErrorCode.SDK_CODE_1, 'No revoke permissions response'));
-        else resolve(response.success);
+        else {
+          this.saveReturnedBookmark(response.bookmark);
+          resolve(response.success);
+        }
       });
     });
   }
@@ -1692,11 +1952,14 @@ export class ConfigClient {
   /**
    * List permissions of Digital twins and Invitations related to a customer.
    * @param location Location under which to retrieve permissions. Can be Customer.
+   * @param bookmarks Database bookmarks to handle Read-after-Write consistency. Insert
+   * one or multiple bookmarks returned from the previous Write operation if needed.
    */
-  listPermissions(location: string): Promise<PermissionsList> {
+  listPermissions(location: string, bookmarks: string[] = []): Promise<PermissionsList> {
     return new Promise((resolve, reject) => {
       const req: ListPermissionsRequest = {
         location,
+        bookmarks,
       };
 
       this.client.listPermissions(req, (err, response) => {
@@ -1706,5 +1969,12 @@ export class ConfigClient {
         else resolve(PermissionsList.deserialize(response));
       });
     });
+  }
+
+  private saveReturnedBookmark(bookmark: string): void {
+    this.lastBookmark = bookmark;
+    if (this.bookmarkList !== null) {
+      this.bookmarkList.push(bookmark);
+    }
   }
 }
