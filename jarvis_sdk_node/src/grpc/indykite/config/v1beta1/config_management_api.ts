@@ -79,6 +79,13 @@ export interface ReadCustomerRequest {
     } | {
         oneofKind: undefined;
     };
+    /**
+     * Database bookmarks to handle Read-after-Write consistency.
+     * Insert one or multiple bookmarks returned from the previous Write operation if needed.
+     *
+     * @generated from protobuf field: repeated string bookmarks = 3;
+     */
+    bookmarks: string[];
 }
 /**
  * @generated from protobuf message indykite.config.v1beta1.ReadCustomerResponse
@@ -117,6 +124,13 @@ export interface CreateApplicationSpaceRequest {
      * @generated from protobuf field: google.protobuf.StringValue description = 4;
      */
     description?: StringValue;
+    /**
+     * Database bookmarks to handle Read-after-Write consistency.
+     * Insert one or multiple bookmarks returned from the previous Write operation if needed.
+     *
+     * @generated from protobuf field: repeated string bookmarks = 5;
+     */
+    bookmarks: string[];
 }
 /**
  * @generated from protobuf message indykite.config.v1beta1.CreateApplicationSpaceResponse
@@ -148,6 +162,12 @@ export interface CreateApplicationSpaceResponse {
      * @generated from protobuf field: string etag = 4;
      */
     etag: string;
+    /**
+     * Database bookmark to handle Read-after-Write consistency.
+     *
+     * @generated from protobuf field: string bookmark = 5;
+     */
+    bookmark: string;
 }
 /**
  * @generated from protobuf message indykite.config.v1beta1.ReadApplicationSpaceRequest
@@ -175,6 +195,13 @@ export interface ReadApplicationSpaceRequest {
     } | {
         oneofKind: undefined;
     };
+    /**
+     * Database bookmarks to handle Read-after-Write consistency.
+     * Insert one or multiple bookmarks returned from the previous Write operation if needed.
+     *
+     * @generated from protobuf field: repeated string bookmarks = 3;
+     */
+    bookmarks: string[];
 }
 /**
  * @generated from protobuf message indykite.config.v1beta1.ReadApplicationSpaceResponse
@@ -201,6 +228,13 @@ export interface ListApplicationSpacesRequest {
      * @generated from protobuf field: repeated string match = 2;
      */
     match: string[];
+    /**
+     * Database bookmarks to handle Read-after-Write consistency.
+     * Insert one or multiple bookmarks returned from the previous Write operation if needed.
+     *
+     * @generated from protobuf field: repeated string bookmarks = 3;
+     */
+    bookmarks: string[];
 }
 /**
  * @generated from protobuf message indykite.config.v1beta1.ListApplicationSpacesResponse
@@ -237,6 +271,13 @@ export interface UpdateApplicationSpaceRequest {
      * @generated from protobuf field: google.protobuf.StringValue description = 4;
      */
     description?: StringValue;
+    /**
+     * Database bookmarks to handle Read-after-Write consistency.
+     * Insert one or multiple bookmarks returned from the previous Write operation if needed.
+     *
+     * @generated from protobuf field: repeated string bookmarks = 5;
+     */
+    bookmarks: string[];
 }
 /**
  * @generated from protobuf message indykite.config.v1beta1.UpdateApplicationSpaceResponse
@@ -260,6 +301,12 @@ export interface UpdateApplicationSpaceResponse {
      * @generated from protobuf field: string etag = 3;
      */
     etag: string;
+    /**
+     * Database bookmark to handle Read-after-Write consistency.
+     *
+     * @generated from protobuf field: string bookmark = 4;
+     */
+    bookmark: string;
 }
 /**
  * @generated from protobuf message indykite.config.v1beta1.DeleteApplicationSpaceRequest
@@ -275,11 +322,24 @@ export interface DeleteApplicationSpaceRequest {
      * @generated from protobuf field: google.protobuf.StringValue etag = 2;
      */
     etag?: StringValue;
+    /**
+     * Database bookmarks to handle Read-after-Write consistency.
+     * Insert one or multiple bookmarks returned from the previous Write operation if needed.
+     *
+     * @generated from protobuf field: repeated string bookmarks = 3;
+     */
+    bookmarks: string[];
 }
 /**
  * @generated from protobuf message indykite.config.v1beta1.DeleteApplicationSpaceResponse
  */
 export interface DeleteApplicationSpaceResponse {
+    /**
+     * Database bookmark to handle Read-after-Write consistency.
+     *
+     * @generated from protobuf field: string bookmark = 1;
+     */
+    bookmark: string;
 }
 /**
  * @generated from protobuf message indykite.config.v1beta1.CreateApplicationRequest
@@ -309,6 +369,13 @@ export interface CreateApplicationRequest {
      * @generated from protobuf field: google.protobuf.StringValue description = 4;
      */
     description?: StringValue;
+    /**
+     * Database bookmarks to handle Read-after-Write consistency.
+     * Insert one or multiple bookmarks returned from the previous Write operation if needed.
+     *
+     * @generated from protobuf field: repeated string bookmarks = 5;
+     */
+    bookmarks: string[];
 }
 /**
  * @generated from protobuf message indykite.config.v1beta1.CreateApplicationResponse
@@ -340,6 +407,12 @@ export interface CreateApplicationResponse {
      * @generated from protobuf field: string etag = 4;
      */
     etag: string;
+    /**
+     * Database bookmark to handle Read-after-Write consistency.
+     *
+     * @generated from protobuf field: string bookmark = 5;
+     */
+    bookmark: string;
 }
 /**
  * @generated from protobuf message indykite.config.v1beta1.ReadApplicationRequest
@@ -367,6 +440,13 @@ export interface ReadApplicationRequest {
     } | {
         oneofKind: undefined;
     };
+    /**
+     * Database bookmarks to handle Read-after-Write consistency.
+     * Insert one or multiple bookmarks returned from the previous Write operation if needed.
+     *
+     * @generated from protobuf field: repeated string bookmarks = 3;
+     */
+    bookmarks: string[];
 }
 /**
  * @generated from protobuf message indykite.config.v1beta1.ReadApplicationResponse
@@ -393,6 +473,13 @@ export interface ListApplicationsRequest {
      * @generated from protobuf field: repeated string match = 2;
      */
     match: string[];
+    /**
+     * Database bookmarks to handle Read-after-Write consistency.
+     * Insert one or multiple bookmarks returned from the previous Write operation if needed.
+     *
+     * @generated from protobuf field: repeated string bookmarks = 3;
+     */
+    bookmarks: string[];
 }
 /**
  * @generated from protobuf message indykite.config.v1beta1.ListApplicationsResponse
@@ -429,6 +516,13 @@ export interface UpdateApplicationRequest {
      * @generated from protobuf field: google.protobuf.StringValue description = 4;
      */
     description?: StringValue;
+    /**
+     * Database bookmarks to handle Read-after-Write consistency.
+     * Insert one or multiple bookmarks returned from the previous Write operation if needed.
+     *
+     * @generated from protobuf field: repeated string bookmarks = 5;
+     */
+    bookmarks: string[];
 }
 /**
  * @generated from protobuf message indykite.config.v1beta1.UpdateApplicationResponse
@@ -454,6 +548,12 @@ export interface UpdateApplicationResponse {
      * @generated from protobuf field: string etag = 3;
      */
     etag: string;
+    /**
+     * Database bookmark to handle Read-after-Write consistency.
+     *
+     * @generated from protobuf field: string bookmark = 4;
+     */
+    bookmark: string;
 }
 /**
  * @generated from protobuf message indykite.config.v1beta1.DeleteApplicationRequest
@@ -469,11 +569,24 @@ export interface DeleteApplicationRequest {
      * @generated from protobuf field: google.protobuf.StringValue etag = 2;
      */
     etag?: StringValue;
+    /**
+     * Database bookmarks to handle Read-after-Write consistency.
+     * Insert one or multiple bookmarks returned from the previous Write operation if needed.
+     *
+     * @generated from protobuf field: repeated string bookmarks = 3;
+     */
+    bookmarks: string[];
 }
 /**
  * @generated from protobuf message indykite.config.v1beta1.DeleteApplicationResponse
  */
 export interface DeleteApplicationResponse {
+    /**
+     * Database bookmark to handle Read-after-Write consistency.
+     *
+     * @generated from protobuf field: string bookmark = 1;
+     */
+    bookmark: string;
 }
 /**
  * @generated from protobuf message indykite.config.v1beta1.CreateApplicationAgentRequest
@@ -503,6 +616,13 @@ export interface CreateApplicationAgentRequest {
      * @generated from protobuf field: google.protobuf.StringValue description = 4;
      */
     description?: StringValue;
+    /**
+     * Database bookmarks to handle Read-after-Write consistency.
+     * Insert one or multiple bookmarks returned from the previous Write operation if needed.
+     *
+     * @generated from protobuf field: repeated string bookmarks = 5;
+     */
+    bookmarks: string[];
 }
 /**
  * @generated from protobuf message indykite.config.v1beta1.CreateApplicationAgentResponse
@@ -534,6 +654,12 @@ export interface CreateApplicationAgentResponse {
      * @generated from protobuf field: string etag = 5;
      */
     etag: string;
+    /**
+     * Database bookmark to handle Read-after-Write consistency.
+     *
+     * @generated from protobuf field: string bookmark = 6;
+     */
+    bookmark: string;
 }
 /**
  * @generated from protobuf message indykite.config.v1beta1.ReadApplicationAgentRequest
@@ -561,6 +687,13 @@ export interface ReadApplicationAgentRequest {
     } | {
         oneofKind: undefined;
     };
+    /**
+     * Database bookmarks to handle Read-after-Write consistency.
+     * Insert one or multiple bookmarks returned from the previous Write operation if needed.
+     *
+     * @generated from protobuf field: repeated string bookmarks = 3;
+     */
+    bookmarks: string[];
 }
 /**
  * @generated from protobuf message indykite.config.v1beta1.ReadApplicationAgentResponse
@@ -587,6 +720,13 @@ export interface ListApplicationAgentsRequest {
      * @generated from protobuf field: repeated string match = 2;
      */
     match: string[];
+    /**
+     * Database bookmarks to handle Read-after-Write consistency.
+     * Insert one or multiple bookmarks returned from the previous Write operation if needed.
+     *
+     * @generated from protobuf field: repeated string bookmarks = 3;
+     */
+    bookmarks: string[];
 }
 /**
  * @generated from protobuf message indykite.config.v1beta1.ListApplicationAgentsResponse
@@ -623,6 +763,13 @@ export interface UpdateApplicationAgentRequest {
      * @generated from protobuf field: google.protobuf.StringValue description = 4;
      */
     description?: StringValue;
+    /**
+     * Database bookmarks to handle Read-after-Write consistency.
+     * Insert one or multiple bookmarks returned from the previous Write operation if needed.
+     *
+     * @generated from protobuf field: repeated string bookmarks = 5;
+     */
+    bookmarks: string[];
 }
 /**
  * @generated from protobuf message indykite.config.v1beta1.UpdateApplicationAgentResponse
@@ -648,6 +795,12 @@ export interface UpdateApplicationAgentResponse {
      * @generated from protobuf field: string etag = 3;
      */
     etag: string;
+    /**
+     * Database bookmark to handle Read-after-Write consistency.
+     *
+     * @generated from protobuf field: string bookmark = 4;
+     */
+    bookmark: string;
 }
 /**
  * @generated from protobuf message indykite.config.v1beta1.DeleteApplicationAgentRequest
@@ -663,11 +816,24 @@ export interface DeleteApplicationAgentRequest {
      * @generated from protobuf field: google.protobuf.StringValue etag = 2;
      */
     etag?: StringValue;
+    /**
+     * Database bookmarks to handle Read-after-Write consistency.
+     * Insert one or multiple bookmarks returned from the previous Write operation if needed.
+     *
+     * @generated from protobuf field: repeated string bookmarks = 3;
+     */
+    bookmarks: string[];
 }
 /**
  * @generated from protobuf message indykite.config.v1beta1.DeleteApplicationAgentResponse
  */
 export interface DeleteApplicationAgentResponse {
+    /**
+     * Database bookmark to handle Read-after-Write consistency.
+     *
+     * @generated from protobuf field: string bookmark = 1;
+     */
+    bookmark: string;
 }
 /**
  * @generated from protobuf message indykite.config.v1beta1.RegisterApplicationAgentCredentialRequest
@@ -707,6 +873,13 @@ export interface RegisterApplicationAgentCredentialRequest {
      * @generated from protobuf field: string default_tenant_id = 6;
      */
     defaultTenantId: string;
+    /**
+     * Database bookmarks to handle Read-after-Write consistency.
+     * Insert one or multiple bookmarks returned from the previous Write operation if needed.
+     *
+     * @generated from protobuf field: repeated string bookmarks = 7;
+     */
+    bookmarks: string[];
 }
 /**
  * @generated from protobuf message indykite.config.v1beta1.RegisterApplicationAgentCredentialResponse
@@ -736,6 +909,12 @@ export interface RegisterApplicationAgentCredentialResponse {
      * @generated from protobuf field: google.protobuf.Timestamp expire_time = 6;
      */
     expireTime?: Timestamp;
+    /**
+     * Database bookmark to handle Read-after-Write consistency.
+     *
+     * @generated from protobuf field: string bookmark = 7;
+     */
+    bookmark: string;
 }
 /**
  * @generated from protobuf message indykite.config.v1beta1.ReadApplicationAgentCredentialRequest
@@ -747,6 +926,13 @@ export interface ReadApplicationAgentCredentialRequest {
      * @generated from protobuf field: string id = 1;
      */
     id: string;
+    /**
+     * Database bookmarks to handle Read-after-Write consistency.
+     * Insert one or multiple bookmarks returned from the previous Write operation if needed.
+     *
+     * @generated from protobuf field: repeated string bookmarks = 2;
+     */
+    bookmarks: string[];
 }
 /**
  * @generated from protobuf message indykite.config.v1beta1.ReadApplicationAgentCredentialResponse
@@ -767,11 +953,24 @@ export interface DeleteApplicationAgentCredentialRequest {
      * @generated from protobuf field: string id = 1;
      */
     id: string;
+    /**
+     * Database bookmarks to handle Read-after-Write consistency.
+     * Insert one or multiple bookmarks returned from the previous Write operation if needed.
+     *
+     * @generated from protobuf field: repeated string bookmarks = 2;
+     */
+    bookmarks: string[];
 }
 /**
  * @generated from protobuf message indykite.config.v1beta1.DeleteApplicationAgentCredentialResponse
  */
 export interface DeleteApplicationAgentCredentialResponse {
+    /**
+     * Database bookmark to handle Read-after-Write consistency.
+     *
+     * @generated from protobuf field: string bookmark = 1;
+     */
+    bookmark: string;
 }
 /**
  * @generated from protobuf message indykite.config.v1beta1.CreateServiceAccountRequest
@@ -807,6 +1006,13 @@ export interface CreateServiceAccountRequest {
      * @generated from protobuf field: string role = 5;
      */
     role: string;
+    /**
+     * Database bookmarks to handle Read-after-Write consistency.
+     * Insert one or multiple bookmarks returned from the previous Write operation if needed.
+     *
+     * @generated from protobuf field: repeated string bookmarks = 6;
+     */
+    bookmarks: string[];
 }
 /**
  * @generated from protobuf message indykite.config.v1beta1.CreateServiceAccountResponse
@@ -838,6 +1044,12 @@ export interface CreateServiceAccountResponse {
      * @generated from protobuf field: string etag = 4;
      */
     etag: string;
+    /**
+     * Database bookmark to handle Read-after-Write consistency.
+     *
+     * @generated from protobuf field: string bookmark = 5;
+     */
+    bookmark: string;
 }
 /**
  * @generated from protobuf message indykite.config.v1beta1.ReadServiceAccountRequest
@@ -865,6 +1077,13 @@ export interface ReadServiceAccountRequest {
     } | {
         oneofKind: undefined;
     };
+    /**
+     * Database bookmarks to handle Read-after-Write consistency.
+     * Insert one or multiple bookmarks returned from the previous Write operation if needed.
+     *
+     * @generated from protobuf field: repeated string bookmarks = 3;
+     */
+    bookmarks: string[];
 }
 /**
  * @generated from protobuf message indykite.config.v1beta1.ReadServiceAccountResponse
@@ -901,6 +1120,13 @@ export interface UpdateServiceAccountRequest {
      * @generated from protobuf field: google.protobuf.StringValue description = 4;
      */
     description?: StringValue;
+    /**
+     * Database bookmarks to handle Read-after-Write consistency.
+     * Insert one or multiple bookmarks returned from the previous Write operation if needed.
+     *
+     * @generated from protobuf field: repeated string bookmarks = 5;
+     */
+    bookmarks: string[];
 }
 /**
  * @generated from protobuf message indykite.config.v1beta1.UpdateServiceAccountResponse
@@ -926,6 +1152,12 @@ export interface UpdateServiceAccountResponse {
      * @generated from protobuf field: string etag = 3;
      */
     etag: string;
+    /**
+     * Database bookmark to handle Read-after-Write consistency.
+     *
+     * @generated from protobuf field: string bookmark = 4;
+     */
+    bookmark: string;
 }
 /**
  * @generated from protobuf message indykite.config.v1beta1.DeleteServiceAccountRequest
@@ -941,11 +1173,24 @@ export interface DeleteServiceAccountRequest {
      * @generated from protobuf field: google.protobuf.StringValue etag = 2;
      */
     etag?: StringValue;
+    /**
+     * Database bookmarks to handle Read-after-Write consistency.
+     * Insert one or multiple bookmarks returned from the previous Write operation if needed.
+     *
+     * @generated from protobuf field: repeated string bookmarks = 3;
+     */
+    bookmarks: string[];
 }
 /**
  * @generated from protobuf message indykite.config.v1beta1.DeleteServiceAccountResponse
  */
 export interface DeleteServiceAccountResponse {
+    /**
+     * Database bookmark to handle Read-after-Write consistency.
+     *
+     * @generated from protobuf field: string bookmark = 1;
+     */
+    bookmark: string;
 }
 /**
  * @generated from protobuf message indykite.config.v1beta1.RegisterServiceAccountCredentialRequest
@@ -981,6 +1226,13 @@ export interface RegisterServiceAccountCredentialRequest {
      * @generated from protobuf field: google.protobuf.Timestamp expire_time = 5;
      */
     expireTime?: Timestamp;
+    /**
+     * Database bookmarks to handle Read-after-Write consistency.
+     * Insert one or multiple bookmarks returned from the previous Write operation if needed.
+     *
+     * @generated from protobuf field: repeated string bookmarks = 6;
+     */
+    bookmarks: string[];
 }
 /**
  * @generated from protobuf message indykite.config.v1beta1.RegisterServiceAccountCredentialResponse
@@ -1010,6 +1262,12 @@ export interface RegisterServiceAccountCredentialResponse {
      * @generated from protobuf field: google.protobuf.Timestamp expire_time = 6;
      */
     expireTime?: Timestamp;
+    /**
+     * Database bookmark to handle Read-after-Write consistency.
+     *
+     * @generated from protobuf field: string bookmark = 7;
+     */
+    bookmark: string;
 }
 /**
  * @generated from protobuf message indykite.config.v1beta1.ReadServiceAccountCredentialRequest
@@ -1021,6 +1279,13 @@ export interface ReadServiceAccountCredentialRequest {
      * @generated from protobuf field: string id = 1;
      */
     id: string;
+    /**
+     * Database bookmarks to handle Read-after-Write consistency.
+     * Insert one or multiple bookmarks returned from the previous Write operation if needed.
+     *
+     * @generated from protobuf field: repeated string bookmarks = 2;
+     */
+    bookmarks: string[];
 }
 /**
  * @generated from protobuf message indykite.config.v1beta1.ReadServiceAccountCredentialResponse
@@ -1041,11 +1306,24 @@ export interface DeleteServiceAccountCredentialRequest {
      * @generated from protobuf field: string id = 1;
      */
     id: string;
+    /**
+     * Database bookmarks to handle Read-after-Write consistency.
+     * Insert one or multiple bookmarks returned from the previous Write operation if needed.
+     *
+     * @generated from protobuf field: repeated string bookmarks = 2;
+     */
+    bookmarks: string[];
 }
 /**
  * @generated from protobuf message indykite.config.v1beta1.DeleteServiceAccountCredentialResponse
  */
 export interface DeleteServiceAccountCredentialResponse {
+    /**
+     * Database bookmark to handle Read-after-Write consistency.
+     *
+     * @generated from protobuf field: string bookmark = 1;
+     */
+    bookmark: string;
 }
 /**
  * @generated from protobuf message indykite.config.v1beta1.CreateTenantRequest
@@ -1075,6 +1353,13 @@ export interface CreateTenantRequest {
      * @generated from protobuf field: google.protobuf.StringValue description = 4;
      */
     description?: StringValue;
+    /**
+     * Database bookmarks to handle Read-after-Write consistency.
+     * Insert one or multiple bookmarks returned from the previous Write operation if needed.
+     *
+     * @generated from protobuf field: repeated string bookmarks = 6;
+     */
+    bookmarks: string[];
 }
 /**
  * @generated from protobuf message indykite.config.v1beta1.CreateTenantResponse
@@ -1106,6 +1391,12 @@ export interface CreateTenantResponse {
      * @generated from protobuf field: string etag = 4;
      */
     etag: string;
+    /**
+     * Database bookmark to handle Read-after-Write consistency.
+     *
+     * @generated from protobuf field: string bookmark = 5;
+     */
+    bookmark: string;
 }
 /**
  * @generated from protobuf message indykite.config.v1beta1.ReadTenantRequest
@@ -1133,6 +1424,13 @@ export interface ReadTenantRequest {
     } | {
         oneofKind: undefined;
     };
+    /**
+     * Database bookmarks to handle Read-after-Write consistency.
+     * Insert one or multiple bookmarks returned from the previous Write operation if needed.
+     *
+     * @generated from protobuf field: repeated string bookmarks = 3;
+     */
+    bookmarks: string[];
 }
 /**
  * @generated from protobuf message indykite.config.v1beta1.ReadTenantResponse
@@ -1159,6 +1457,13 @@ export interface ListTenantsRequest {
      * @generated from protobuf field: repeated string match = 2;
      */
     match: string[];
+    /**
+     * Database bookmarks to handle Read-after-Write consistency.
+     * Insert one or multiple bookmarks returned from the previous Write operation if needed.
+     *
+     * @generated from protobuf field: repeated string bookmarks = 3;
+     */
+    bookmarks: string[];
 }
 /**
  * @generated from protobuf message indykite.config.v1beta1.ListTenantsResponse
@@ -1195,6 +1500,13 @@ export interface UpdateTenantRequest {
      * @generated from protobuf field: google.protobuf.StringValue description = 4;
      */
     description?: StringValue;
+    /**
+     * Database bookmarks to handle Read-after-Write consistency.
+     * Insert one or multiple bookmarks returned from the previous Write operation if needed.
+     *
+     * @generated from protobuf field: repeated string bookmarks = 5;
+     */
+    bookmarks: string[];
 }
 /**
  * @generated from protobuf message indykite.config.v1beta1.UpdateTenantResponse
@@ -1220,6 +1532,12 @@ export interface UpdateTenantResponse {
      * @generated from protobuf field: string etag = 3;
      */
     etag: string;
+    /**
+     * Database bookmark to handle Read-after-Write consistency.
+     *
+     * @generated from protobuf field: string bookmark = 4;
+     */
+    bookmark: string;
 }
 /**
  * @generated from protobuf message indykite.config.v1beta1.DeleteTenantRequest
@@ -1235,11 +1553,24 @@ export interface DeleteTenantRequest {
      * @generated from protobuf field: google.protobuf.StringValue etag = 2;
      */
     etag?: StringValue;
+    /**
+     * Database bookmarks to handle Read-after-Write consistency.
+     * Insert one or multiple bookmarks returned from the previous Write operation if needed.
+     *
+     * @generated from protobuf field: repeated string bookmarks = 3;
+     */
+    bookmarks: string[];
 }
 /**
  * @generated from protobuf message indykite.config.v1beta1.DeleteTenantResponse
  */
 export interface DeleteTenantResponse {
+    /**
+     * Database bookmark to handle Read-after-Write consistency.
+     *
+     * @generated from protobuf field: string bookmark = 1;
+     */
+    bookmark: string;
 }
 /**
  * @generated from protobuf message indykite.config.v1beta1.CreateConfigNodeRequest
@@ -1343,6 +1674,13 @@ export interface CreateConfigNodeRequest {
     } | {
         oneofKind: undefined;
     };
+    /**
+     * Database bookmarks to handle Read-after-Write consistency.
+     * Insert one or multiple bookmarks returned from the previous Write operation if needed.
+     *
+     * @generated from protobuf field: repeated string bookmarks = 7;
+     */
+    bookmarks: string[];
 }
 /**
  * @generated from protobuf message indykite.config.v1beta1.CreateConfigNodeResponse
@@ -1374,6 +1712,12 @@ export interface CreateConfigNodeResponse {
      * @generated from protobuf field: string etag = 4;
      */
     etag: string;
+    /**
+     * Database bookmark to handle Read-after-Write consistency.
+     *
+     * @generated from protobuf field: string bookmark = 5;
+     */
+    bookmark: string;
 }
 /**
  * ReadConfigNodeRequest represents a request to find a new Configuration object.
@@ -1385,6 +1729,13 @@ export interface ReadConfigNodeRequest {
      * @generated from protobuf field: string id = 1;
      */
     id: string;
+    /**
+     * Database bookmarks to handle Read-after-Write consistency.
+     * Insert one or multiple bookmarks returned from the previous Write operation if needed.
+     *
+     * @generated from protobuf field: repeated string bookmarks = 2;
+     */
+    bookmarks: string[];
 }
 /**
  * ReadConfigNodeResponse represents a result of operation request.
@@ -1499,6 +1850,13 @@ export interface UpdateConfigNodeRequest {
     } | {
         oneofKind: undefined;
     };
+    /**
+     * Database bookmarks to handle Read-after-Write consistency.
+     * Insert one or multiple bookmarks returned from the previous Write operation if needed.
+     *
+     * @generated from protobuf field: repeated string bookmarks = 5;
+     */
+    bookmarks: string[];
 }
 /**
  * UpdateConfigNodeResponse represents a result of operation request.
@@ -1526,6 +1884,12 @@ export interface UpdateConfigNodeResponse {
      * @generated from protobuf field: string etag = 3;
      */
     etag: string;
+    /**
+     * Database bookmark to handle Read-after-Write consistency.
+     *
+     * @generated from protobuf field: string bookmark = 4;
+     */
+    bookmark: string;
 }
 /**
  * DeleteConfigNodeRequest represents a request to delete a Configuration object.
@@ -1543,11 +1907,24 @@ export interface DeleteConfigNodeRequest {
      * @generated from protobuf field: google.protobuf.StringValue etag = 3;
      */
     etag?: StringValue;
+    /**
+     * Database bookmarks to handle Read-after-Write consistency.
+     * Insert one or multiple bookmarks returned from the previous Write operation if needed.
+     *
+     * @generated from protobuf field: repeated string bookmarks = 4;
+     */
+    bookmarks: string[];
 }
 /**
  * @generated from protobuf message indykite.config.v1beta1.DeleteConfigNodeResponse
  */
 export interface DeleteConfigNodeResponse {
+    /**
+     * Database bookmark to handle Read-after-Write consistency.
+     *
+     * @generated from protobuf field: string bookmark = 1;
+     */
+    bookmark: string;
 }
 /**
  * CreateOAuth2ProviderRequest represents a request to create a new Configuration object.
@@ -1583,6 +1960,13 @@ export interface CreateOAuth2ProviderRequest {
      * @generated from protobuf field: indykite.config.v1beta1.OAuth2ProviderConfig config = 5;
      */
     config?: OAuth2ProviderConfig;
+    /**
+     * Database bookmarks to handle Read-after-Write consistency.
+     * Insert one or multiple bookmarks returned from the previous Write operation if needed.
+     *
+     * @generated from protobuf field: repeated string bookmarks = 6;
+     */
+    bookmarks: string[];
 }
 /**
  * CreateOAuth2ProviderResponse represents a result of operation request.
@@ -1616,6 +2000,12 @@ export interface CreateOAuth2ProviderResponse {
      * @generated from protobuf field: string etag = 4;
      */
     etag: string;
+    /**
+     * Database bookmark to handle Read-after-Write consistency.
+     *
+     * @generated from protobuf field: string bookmark = 5;
+     */
+    bookmark: string;
 }
 /**
  * ReadOAuth2ProviderRequest represents a request to find a new Configuration object.
@@ -1627,6 +2017,13 @@ export interface ReadOAuth2ProviderRequest {
      * @generated from protobuf field: string id = 1;
      */
     id: string;
+    /**
+     * Database bookmarks to handle Read-after-Write consistency.
+     * Insert one or multiple bookmarks returned from the previous Write operation if needed.
+     *
+     * @generated from protobuf field: repeated string bookmarks = 2;
+     */
+    bookmarks: string[];
 }
 /**
  * ReadOAuth2ProviderResponse represents a result of operation request.
@@ -1671,6 +2068,13 @@ export interface UpdateOAuth2ProviderRequest {
      * @generated from protobuf field: indykite.config.v1beta1.OAuth2ProviderConfig config = 5;
      */
     config?: OAuth2ProviderConfig;
+    /**
+     * Database bookmarks to handle Read-after-Write consistency.
+     * Insert one or multiple bookmarks returned from the previous Write operation if needed.
+     *
+     * @generated from protobuf field: repeated string bookmarks = 6;
+     */
+    bookmarks: string[];
 }
 /**
  * UpdateOAuth2ProviderResponse represents a result of operation request.
@@ -1698,6 +2102,12 @@ export interface UpdateOAuth2ProviderResponse {
      * @generated from protobuf field: string etag = 3;
      */
     etag: string;
+    /**
+     * Database bookmark to handle Read-after-Write consistency.
+     *
+     * @generated from protobuf field: string bookmark = 4;
+     */
+    bookmark: string;
 }
 /**
  * DeleteOAuth2ProviderRequest represents a request to delete a Configuration object.
@@ -1715,11 +2125,24 @@ export interface DeleteOAuth2ProviderRequest {
      * @generated from protobuf field: google.protobuf.StringValue etag = 2;
      */
     etag?: StringValue;
+    /**
+     * Database bookmarks to handle Read-after-Write consistency.
+     * Insert one or multiple bookmarks returned from the previous Write operation if needed.
+     *
+     * @generated from protobuf field: repeated string bookmarks = 3;
+     */
+    bookmarks: string[];
 }
 /**
  * @generated from protobuf message indykite.config.v1beta1.DeleteOAuth2ProviderResponse
  */
 export interface DeleteOAuth2ProviderResponse {
+    /**
+     * Database bookmark to handle Read-after-Write consistency.
+     *
+     * @generated from protobuf field: string bookmark = 1;
+     */
+    bookmark: string;
 }
 /**
  * CreateOAuth2ApplicationRequest represents a request to create a new Configuration object.
@@ -1755,6 +2178,13 @@ export interface CreateOAuth2ApplicationRequest {
      * @generated from protobuf field: indykite.config.v1beta1.OAuth2ApplicationConfig config = 5;
      */
     config?: OAuth2ApplicationConfig;
+    /**
+     * Database bookmarks to handle Read-after-Write consistency.
+     * Insert one or multiple bookmarks returned from the previous Write operation if needed.
+     *
+     * @generated from protobuf field: repeated string bookmarks = 6;
+     */
+    bookmarks: string[];
 }
 /**
  * CreateOAuth2ApplicationResponse represents a result of operation request.
@@ -1800,6 +2230,12 @@ export interface CreateOAuth2ApplicationResponse {
      * @generated from protobuf field: string client_secret = 6;
      */
     clientSecret: string;
+    /**
+     * Database bookmark to handle Read-after-Write consistency.
+     *
+     * @generated from protobuf field: string bookmark = 7;
+     */
+    bookmark: string;
 }
 /**
  * ReadOAuth2ApplicationRequest represents a request to find a new Configuration object.
@@ -1811,6 +2247,13 @@ export interface ReadOAuth2ApplicationRequest {
      * @generated from protobuf field: string id = 1;
      */
     id: string;
+    /**
+     * Database bookmarks to handle Read-after-Write consistency.
+     * Insert one or multiple bookmarks returned from the previous Write operation if needed.
+     *
+     * @generated from protobuf field: repeated string bookmarks = 2;
+     */
+    bookmarks: string[];
 }
 /**
  * ReadOAuth2ApplicationResponse represents a result of operation request.
@@ -1855,6 +2298,13 @@ export interface UpdateOAuth2ApplicationRequest {
      * @generated from protobuf field: indykite.config.v1beta1.OAuth2ApplicationConfig config = 5;
      */
     config?: OAuth2ApplicationConfig;
+    /**
+     * Database bookmarks to handle Read-after-Write consistency.
+     * Insert one or multiple bookmarks returned from the previous Write operation if needed.
+     *
+     * @generated from protobuf field: repeated string bookmarks = 6;
+     */
+    bookmarks: string[];
 }
 /**
  * UpdateOAuth2ApplicationResponse represents a result of operation request.
@@ -1882,6 +2332,12 @@ export interface UpdateOAuth2ApplicationResponse {
      * @generated from protobuf field: string etag = 3;
      */
     etag: string;
+    /**
+     * Database bookmark to handle Read-after-Write consistency.
+     *
+     * @generated from protobuf field: string bookmark = 4;
+     */
+    bookmark: string;
 }
 /**
  * DeleteOAuth2ApplicationRequest represents a request to delete a Configuration object.
@@ -1899,11 +2355,24 @@ export interface DeleteOAuth2ApplicationRequest {
      * @generated from protobuf field: google.protobuf.StringValue etag = 2;
      */
     etag?: StringValue;
+    /**
+     * Database bookmarks to handle Read-after-Write consistency.
+     * Insert one or multiple bookmarks returned from the previous Write operation if needed.
+     *
+     * @generated from protobuf field: repeated string bookmarks = 3;
+     */
+    bookmarks: string[];
 }
 /**
  * @generated from protobuf message indykite.config.v1beta1.DeleteOAuth2ApplicationResponse
  */
 export interface DeleteOAuth2ApplicationResponse {
+    /**
+     * Database bookmark to handle Read-after-Write consistency.
+     *
+     * @generated from protobuf field: string bookmark = 1;
+     */
+    bookmark: string;
 }
 /**
  * @generated from protobuf message indykite.config.v1beta1.AssignPermissionsRequest
@@ -1933,6 +2402,13 @@ export interface AssignPermissionsRequest {
      * @generated from protobuf field: string object_id = 4;
      */
     objectId: string;
+    /**
+     * Database bookmarks to handle Read-after-Write consistency.
+     * Insert one or multiple bookmarks returned from the previous Write operation if needed.
+     *
+     * @generated from protobuf field: repeated string bookmarks = 5;
+     */
+    bookmarks: string[];
 }
 /**
  * @generated from protobuf message indykite.config.v1beta1.AssignPermissionsResponse
@@ -1942,6 +2418,12 @@ export interface AssignPermissionsResponse {
      * @generated from protobuf field: bool success = 1;
      */
     success: boolean;
+    /**
+     * Database bookmark to handle Read-after-Write consistency.
+     *
+     * @generated from protobuf field: string bookmark = 2;
+     */
+    bookmark: string;
 }
 /**
  * @generated from protobuf message indykite.config.v1beta1.RevokePermissionsRequest
@@ -1971,6 +2453,13 @@ export interface RevokePermissionsRequest {
      * @generated from protobuf field: string object_id = 4;
      */
     objectId: string;
+    /**
+     * Database bookmarks to handle Read-after-Write consistency.
+     * Insert one or multiple bookmarks returned from the previous Write operation if needed.
+     *
+     * @generated from protobuf field: repeated string bookmarks = 5;
+     */
+    bookmarks: string[];
 }
 /**
  * @generated from protobuf message indykite.config.v1beta1.RevokePermissionsResponse
@@ -1980,6 +2469,12 @@ export interface RevokePermissionsResponse {
      * @generated from protobuf field: bool success = 1;
      */
     success: boolean;
+    /**
+     * Database bookmark to handle Read-after-Write consistency.
+     *
+     * @generated from protobuf field: string bookmark = 2;
+     */
+    bookmark: string;
 }
 /**
  * @generated from protobuf message indykite.config.v1beta1.ListPermissionsRequest
@@ -1991,6 +2486,13 @@ export interface ListPermissionsRequest {
      * @generated from protobuf field: string location = 1;
      */
     location: string;
+    /**
+     * Database bookmarks to handle Read-after-Write consistency.
+     * Insert one or multiple bookmarks returned from the previous Write operation if needed.
+     *
+     * @generated from protobuf field: repeated string bookmarks = 2;
+     */
+    bookmarks: string[];
 }
 /**
  * @generated from protobuf message indykite.config.v1beta1.ListPermissionsResponse
@@ -2074,11 +2576,12 @@ class ReadCustomerRequest$Type extends MessageType<ReadCustomerRequest> {
     constructor() {
         super("indykite.config.v1beta1.ReadCustomerRequest", [
             { no: 1, name: "id", kind: "scalar", oneof: "identifier", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
-            { no: 2, name: "name", kind: "scalar", oneof: "identifier", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "2", maxLen: "63", pattern: "^[a-z](?:[-a-z0-9]{0,61}[a-z0-9])$" } } } }
+            { no: 2, name: "name", kind: "scalar", oneof: "identifier", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "2", maxLen: "63", pattern: "^[a-z](?:[-a-z0-9]{0,61}[a-z0-9])$" } } } },
+            { no: 3, name: "bookmarks", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { items: { string: { minLen: "40", pattern: "^[a-zA-Z0-9_-]{40,}$" } } } } } }
         ]);
     }
     create(value?: PartialMessage<ReadCustomerRequest>): ReadCustomerRequest {
-        const message = { identifier: { oneofKind: undefined } };
+        const message = { identifier: { oneofKind: undefined }, bookmarks: [] };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<ReadCustomerRequest>(this, message, value);
@@ -2101,6 +2604,9 @@ class ReadCustomerRequest$Type extends MessageType<ReadCustomerRequest> {
                         name: reader.string()
                     };
                     break;
+                case /* repeated string bookmarks */ 3:
+                    message.bookmarks.push(reader.string());
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -2119,6 +2625,9 @@ class ReadCustomerRequest$Type extends MessageType<ReadCustomerRequest> {
         /* string name = 2; */
         if (message.identifier.oneofKind === "name")
             writer.tag(2, WireType.LengthDelimited).string(message.identifier.name);
+        /* repeated string bookmarks = 3; */
+        for (let i = 0; i < message.bookmarks.length; i++)
+            writer.tag(3, WireType.LengthDelimited).string(message.bookmarks[i]);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -2183,11 +2692,12 @@ class CreateApplicationSpaceRequest$Type extends MessageType<CreateApplicationSp
             { no: 1, name: "customer_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
             { no: 2, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "2", maxLen: "63", pattern: "^[a-z](?:[-a-z0-9]{0,61}[a-z0-9])$" } } } },
             { no: 3, name: "display_name", kind: "message", T: () => StringValue, options: { "validate.rules": { string: { minLen: "2", maxLen: "254" } } } },
-            { no: 4, name: "description", kind: "message", T: () => StringValue, options: { "validate.rules": { string: { minLen: "2", maxLen: "254" } } } }
+            { no: 4, name: "description", kind: "message", T: () => StringValue, options: { "validate.rules": { string: { minLen: "2", maxLen: "254" } } } },
+            { no: 5, name: "bookmarks", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { items: { string: { minLen: "40", pattern: "^[a-zA-Z0-9_-]{40,}$" } } } } } }
         ]);
     }
     create(value?: PartialMessage<CreateApplicationSpaceRequest>): CreateApplicationSpaceRequest {
-        const message = { customerId: "", name: "" };
+        const message = { customerId: "", name: "", bookmarks: [] };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<CreateApplicationSpaceRequest>(this, message, value);
@@ -2209,6 +2719,9 @@ class CreateApplicationSpaceRequest$Type extends MessageType<CreateApplicationSp
                     break;
                 case /* google.protobuf.StringValue description */ 4:
                     message.description = StringValue.internalBinaryRead(reader, reader.uint32(), options, message.description);
+                    break;
+                case /* repeated string bookmarks */ 5:
+                    message.bookmarks.push(reader.string());
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -2234,6 +2747,9 @@ class CreateApplicationSpaceRequest$Type extends MessageType<CreateApplicationSp
         /* google.protobuf.StringValue description = 4; */
         if (message.description)
             StringValue.internalBinaryWrite(message.description, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+        /* repeated string bookmarks = 5; */
+        for (let i = 0; i < message.bookmarks.length; i++)
+            writer.tag(5, WireType.LengthDelimited).string(message.bookmarks[i]);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -2251,11 +2767,12 @@ class CreateApplicationSpaceResponse$Type extends MessageType<CreateApplicationS
             { no: 1, name: "id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
             { no: 2, name: "create_time", kind: "message", T: () => Timestamp },
             { no: 3, name: "update_time", kind: "message", T: () => Timestamp },
-            { no: 4, name: "etag", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+            { no: 4, name: "etag", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 5, name: "bookmark", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
         ]);
     }
     create(value?: PartialMessage<CreateApplicationSpaceResponse>): CreateApplicationSpaceResponse {
-        const message = { id: "", etag: "" };
+        const message = { id: "", etag: "", bookmark: "" };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<CreateApplicationSpaceResponse>(this, message, value);
@@ -2277,6 +2794,9 @@ class CreateApplicationSpaceResponse$Type extends MessageType<CreateApplicationS
                     break;
                 case /* string etag */ 4:
                     message.etag = reader.string();
+                    break;
+                case /* string bookmark */ 5:
+                    message.bookmark = reader.string();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -2302,6 +2822,9 @@ class CreateApplicationSpaceResponse$Type extends MessageType<CreateApplicationS
         /* string etag = 4; */
         if (message.etag !== "")
             writer.tag(4, WireType.LengthDelimited).string(message.etag);
+        /* string bookmark = 5; */
+        if (message.bookmark !== "")
+            writer.tag(5, WireType.LengthDelimited).string(message.bookmark);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -2317,11 +2840,12 @@ class ReadApplicationSpaceRequest$Type extends MessageType<ReadApplicationSpaceR
     constructor() {
         super("indykite.config.v1beta1.ReadApplicationSpaceRequest", [
             { no: 1, name: "id", kind: "scalar", oneof: "identifier", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
-            { no: 2, name: "name", kind: "message", oneof: "identifier", T: () => UniqueNameIdentifier }
+            { no: 2, name: "name", kind: "message", oneof: "identifier", T: () => UniqueNameIdentifier },
+            { no: 3, name: "bookmarks", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { items: { string: { minLen: "40", pattern: "^[a-zA-Z0-9_-]{40,}$" } } } } } }
         ]);
     }
     create(value?: PartialMessage<ReadApplicationSpaceRequest>): ReadApplicationSpaceRequest {
-        const message = { identifier: { oneofKind: undefined } };
+        const message = { identifier: { oneofKind: undefined }, bookmarks: [] };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<ReadApplicationSpaceRequest>(this, message, value);
@@ -2344,6 +2868,9 @@ class ReadApplicationSpaceRequest$Type extends MessageType<ReadApplicationSpaceR
                         name: UniqueNameIdentifier.internalBinaryRead(reader, reader.uint32(), options, (message.identifier as any).name)
                     };
                     break;
+                case /* repeated string bookmarks */ 3:
+                    message.bookmarks.push(reader.string());
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -2362,6 +2889,9 @@ class ReadApplicationSpaceRequest$Type extends MessageType<ReadApplicationSpaceR
         /* indykite.config.v1beta1.UniqueNameIdentifier name = 2; */
         if (message.identifier.oneofKind === "name")
             UniqueNameIdentifier.internalBinaryWrite(message.identifier.name, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* repeated string bookmarks = 3; */
+        for (let i = 0; i < message.bookmarks.length; i++)
+            writer.tag(3, WireType.LengthDelimited).string(message.bookmarks[i]);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -2424,11 +2954,12 @@ class ListApplicationSpacesRequest$Type extends MessageType<ListApplicationSpace
     constructor() {
         super("indykite.config.v1beta1.ListApplicationSpacesRequest", [
             { no: 1, name: "customer_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
-            { no: 2, name: "match", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { minItems: "1", unique: true, items: { string: { minLen: "2", maxLen: "254", pattern: "^[a-z](?:[-a-z0-9]{0,252}[a-z0-9])$" } } } } } }
+            { no: 2, name: "match", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { minItems: "1", unique: true, items: { string: { minLen: "2", maxLen: "254", pattern: "^[a-z](?:[-a-z0-9]{0,252}[a-z0-9])$" } } } } } },
+            { no: 3, name: "bookmarks", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { items: { string: { minLen: "40", pattern: "^[a-zA-Z0-9_-]{40,}$" } } } } } }
         ]);
     }
     create(value?: PartialMessage<ListApplicationSpacesRequest>): ListApplicationSpacesRequest {
-        const message = { customerId: "", match: [] };
+        const message = { customerId: "", match: [], bookmarks: [] };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<ListApplicationSpacesRequest>(this, message, value);
@@ -2444,6 +2975,9 @@ class ListApplicationSpacesRequest$Type extends MessageType<ListApplicationSpace
                     break;
                 case /* repeated string match */ 2:
                     message.match.push(reader.string());
+                    break;
+                case /* repeated string bookmarks */ 3:
+                    message.bookmarks.push(reader.string());
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -2463,6 +2997,9 @@ class ListApplicationSpacesRequest$Type extends MessageType<ListApplicationSpace
         /* repeated string match = 2; */
         for (let i = 0; i < message.match.length; i++)
             writer.tag(2, WireType.LengthDelimited).string(message.match[i]);
+        /* repeated string bookmarks = 3; */
+        for (let i = 0; i < message.bookmarks.length; i++)
+            writer.tag(3, WireType.LengthDelimited).string(message.bookmarks[i]);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -2527,11 +3064,12 @@ class UpdateApplicationSpaceRequest$Type extends MessageType<UpdateApplicationSp
             { no: 1, name: "id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
             { no: 2, name: "etag", kind: "message", T: () => StringValue, options: { "validate.rules": { string: { minLen: "8", maxLen: "18", pattern: "^[A-Za-z0-9-_]{8,18}$", ignoreEmpty: true } } } },
             { no: 3, name: "display_name", kind: "message", T: () => StringValue, options: { "validate.rules": { string: { minLen: "2", maxLen: "254", ignoreEmpty: true } } } },
-            { no: 4, name: "description", kind: "message", T: () => StringValue, options: { "validate.rules": { string: { minLen: "2", maxLen: "254", ignoreEmpty: true } } } }
+            { no: 4, name: "description", kind: "message", T: () => StringValue, options: { "validate.rules": { string: { minLen: "2", maxLen: "254", ignoreEmpty: true } } } },
+            { no: 5, name: "bookmarks", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { items: { string: { minLen: "40", pattern: "^[a-zA-Z0-9_-]{40,}$" } } } } } }
         ]);
     }
     create(value?: PartialMessage<UpdateApplicationSpaceRequest>): UpdateApplicationSpaceRequest {
-        const message = { id: "" };
+        const message = { id: "", bookmarks: [] };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<UpdateApplicationSpaceRequest>(this, message, value);
@@ -2553,6 +3091,9 @@ class UpdateApplicationSpaceRequest$Type extends MessageType<UpdateApplicationSp
                     break;
                 case /* google.protobuf.StringValue description */ 4:
                     message.description = StringValue.internalBinaryRead(reader, reader.uint32(), options, message.description);
+                    break;
+                case /* repeated string bookmarks */ 5:
+                    message.bookmarks.push(reader.string());
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -2578,6 +3119,9 @@ class UpdateApplicationSpaceRequest$Type extends MessageType<UpdateApplicationSp
         /* google.protobuf.StringValue description = 4; */
         if (message.description)
             StringValue.internalBinaryWrite(message.description, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+        /* repeated string bookmarks = 5; */
+        for (let i = 0; i < message.bookmarks.length; i++)
+            writer.tag(5, WireType.LengthDelimited).string(message.bookmarks[i]);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -2594,11 +3138,12 @@ class UpdateApplicationSpaceResponse$Type extends MessageType<UpdateApplicationS
         super("indykite.config.v1beta1.UpdateApplicationSpaceResponse", [
             { no: 1, name: "id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
             { no: 2, name: "update_time", kind: "message", T: () => Timestamp },
-            { no: 3, name: "etag", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+            { no: 3, name: "etag", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 4, name: "bookmark", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
         ]);
     }
     create(value?: PartialMessage<UpdateApplicationSpaceResponse>): UpdateApplicationSpaceResponse {
-        const message = { id: "", etag: "" };
+        const message = { id: "", etag: "", bookmark: "" };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<UpdateApplicationSpaceResponse>(this, message, value);
@@ -2617,6 +3162,9 @@ class UpdateApplicationSpaceResponse$Type extends MessageType<UpdateApplicationS
                     break;
                 case /* string etag */ 3:
                     message.etag = reader.string();
+                    break;
+                case /* string bookmark */ 4:
+                    message.bookmark = reader.string();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -2639,6 +3187,9 @@ class UpdateApplicationSpaceResponse$Type extends MessageType<UpdateApplicationS
         /* string etag = 3; */
         if (message.etag !== "")
             writer.tag(3, WireType.LengthDelimited).string(message.etag);
+        /* string bookmark = 4; */
+        if (message.bookmark !== "")
+            writer.tag(4, WireType.LengthDelimited).string(message.bookmark);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -2654,11 +3205,12 @@ class DeleteApplicationSpaceRequest$Type extends MessageType<DeleteApplicationSp
     constructor() {
         super("indykite.config.v1beta1.DeleteApplicationSpaceRequest", [
             { no: 1, name: "id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
-            { no: 2, name: "etag", kind: "message", T: () => StringValue, options: { "validate.rules": { string: { minLen: "8", maxLen: "18", pattern: "^[A-Za-z0-9-_]{8,18}$", ignoreEmpty: true } } } }
+            { no: 2, name: "etag", kind: "message", T: () => StringValue, options: { "validate.rules": { string: { minLen: "8", maxLen: "18", pattern: "^[A-Za-z0-9-_]{8,18}$", ignoreEmpty: true } } } },
+            { no: 3, name: "bookmarks", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { items: { string: { minLen: "40", pattern: "^[a-zA-Z0-9_-]{40,}$" } } } } } }
         ]);
     }
     create(value?: PartialMessage<DeleteApplicationSpaceRequest>): DeleteApplicationSpaceRequest {
-        const message = { id: "" };
+        const message = { id: "", bookmarks: [] };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<DeleteApplicationSpaceRequest>(this, message, value);
@@ -2674,6 +3226,9 @@ class DeleteApplicationSpaceRequest$Type extends MessageType<DeleteApplicationSp
                     break;
                 case /* google.protobuf.StringValue etag */ 2:
                     message.etag = StringValue.internalBinaryRead(reader, reader.uint32(), options, message.etag);
+                    break;
+                case /* repeated string bookmarks */ 3:
+                    message.bookmarks.push(reader.string());
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -2693,6 +3248,9 @@ class DeleteApplicationSpaceRequest$Type extends MessageType<DeleteApplicationSp
         /* google.protobuf.StringValue etag = 2; */
         if (message.etag)
             StringValue.internalBinaryWrite(message.etag, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* repeated string bookmarks = 3; */
+        for (let i = 0; i < message.bookmarks.length; i++)
+            writer.tag(3, WireType.LengthDelimited).string(message.bookmarks[i]);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -2706,19 +3264,40 @@ export const DeleteApplicationSpaceRequest = new DeleteApplicationSpaceRequest$T
 // @generated message type with reflection information, may provide speed optimized methods
 class DeleteApplicationSpaceResponse$Type extends MessageType<DeleteApplicationSpaceResponse> {
     constructor() {
-        super("indykite.config.v1beta1.DeleteApplicationSpaceResponse", []);
+        super("indykite.config.v1beta1.DeleteApplicationSpaceResponse", [
+            { no: 1, name: "bookmark", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+        ]);
     }
     create(value?: PartialMessage<DeleteApplicationSpaceResponse>): DeleteApplicationSpaceResponse {
-        const message = {};
+        const message = { bookmark: "" };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<DeleteApplicationSpaceResponse>(this, message, value);
         return message;
     }
     internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DeleteApplicationSpaceResponse): DeleteApplicationSpaceResponse {
-        return target ?? this.create();
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string bookmark */ 1:
+                    message.bookmark = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
     }
     internalBinaryWrite(message: DeleteApplicationSpaceResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string bookmark = 1; */
+        if (message.bookmark !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.bookmark);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -2736,11 +3315,12 @@ class CreateApplicationRequest$Type extends MessageType<CreateApplicationRequest
             { no: 1, name: "app_space_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
             { no: 2, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "2", maxLen: "63", pattern: "^[a-z](?:[-a-z0-9]{0,61}[a-z0-9])$" } } } },
             { no: 3, name: "display_name", kind: "message", T: () => StringValue, options: { "validate.rules": { string: { minLen: "2", maxLen: "254" } } } },
-            { no: 4, name: "description", kind: "message", T: () => StringValue, options: { "validate.rules": { string: { minLen: "2", maxLen: "254" } } } }
+            { no: 4, name: "description", kind: "message", T: () => StringValue, options: { "validate.rules": { string: { minLen: "2", maxLen: "254" } } } },
+            { no: 5, name: "bookmarks", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { items: { string: { minLen: "40", pattern: "^[a-zA-Z0-9_-]{40,}$" } } } } } }
         ]);
     }
     create(value?: PartialMessage<CreateApplicationRequest>): CreateApplicationRequest {
-        const message = { appSpaceId: "", name: "" };
+        const message = { appSpaceId: "", name: "", bookmarks: [] };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<CreateApplicationRequest>(this, message, value);
@@ -2762,6 +3342,9 @@ class CreateApplicationRequest$Type extends MessageType<CreateApplicationRequest
                     break;
                 case /* google.protobuf.StringValue description */ 4:
                     message.description = StringValue.internalBinaryRead(reader, reader.uint32(), options, message.description);
+                    break;
+                case /* repeated string bookmarks */ 5:
+                    message.bookmarks.push(reader.string());
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -2787,6 +3370,9 @@ class CreateApplicationRequest$Type extends MessageType<CreateApplicationRequest
         /* google.protobuf.StringValue description = 4; */
         if (message.description)
             StringValue.internalBinaryWrite(message.description, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+        /* repeated string bookmarks = 5; */
+        for (let i = 0; i < message.bookmarks.length; i++)
+            writer.tag(5, WireType.LengthDelimited).string(message.bookmarks[i]);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -2804,11 +3390,12 @@ class CreateApplicationResponse$Type extends MessageType<CreateApplicationRespon
             { no: 1, name: "id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
             { no: 2, name: "create_time", kind: "message", T: () => Timestamp },
             { no: 3, name: "update_time", kind: "message", T: () => Timestamp },
-            { no: 4, name: "etag", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+            { no: 4, name: "etag", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 5, name: "bookmark", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
         ]);
     }
     create(value?: PartialMessage<CreateApplicationResponse>): CreateApplicationResponse {
-        const message = { id: "", etag: "" };
+        const message = { id: "", etag: "", bookmark: "" };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<CreateApplicationResponse>(this, message, value);
@@ -2830,6 +3417,9 @@ class CreateApplicationResponse$Type extends MessageType<CreateApplicationRespon
                     break;
                 case /* string etag */ 4:
                     message.etag = reader.string();
+                    break;
+                case /* string bookmark */ 5:
+                    message.bookmark = reader.string();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -2855,6 +3445,9 @@ class CreateApplicationResponse$Type extends MessageType<CreateApplicationRespon
         /* string etag = 4; */
         if (message.etag !== "")
             writer.tag(4, WireType.LengthDelimited).string(message.etag);
+        /* string bookmark = 5; */
+        if (message.bookmark !== "")
+            writer.tag(5, WireType.LengthDelimited).string(message.bookmark);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -2870,11 +3463,12 @@ class ReadApplicationRequest$Type extends MessageType<ReadApplicationRequest> {
     constructor() {
         super("indykite.config.v1beta1.ReadApplicationRequest", [
             { no: 1, name: "id", kind: "scalar", oneof: "identifier", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
-            { no: 2, name: "name", kind: "message", oneof: "identifier", T: () => UniqueNameIdentifier }
+            { no: 2, name: "name", kind: "message", oneof: "identifier", T: () => UniqueNameIdentifier },
+            { no: 3, name: "bookmarks", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { items: { string: { minLen: "40", pattern: "^[a-zA-Z0-9_-]{40,}$" } } } } } }
         ]);
     }
     create(value?: PartialMessage<ReadApplicationRequest>): ReadApplicationRequest {
-        const message = { identifier: { oneofKind: undefined } };
+        const message = { identifier: { oneofKind: undefined }, bookmarks: [] };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<ReadApplicationRequest>(this, message, value);
@@ -2897,6 +3491,9 @@ class ReadApplicationRequest$Type extends MessageType<ReadApplicationRequest> {
                         name: UniqueNameIdentifier.internalBinaryRead(reader, reader.uint32(), options, (message.identifier as any).name)
                     };
                     break;
+                case /* repeated string bookmarks */ 3:
+                    message.bookmarks.push(reader.string());
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -2915,6 +3512,9 @@ class ReadApplicationRequest$Type extends MessageType<ReadApplicationRequest> {
         /* indykite.config.v1beta1.UniqueNameIdentifier name = 2; */
         if (message.identifier.oneofKind === "name")
             UniqueNameIdentifier.internalBinaryWrite(message.identifier.name, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* repeated string bookmarks = 3; */
+        for (let i = 0; i < message.bookmarks.length; i++)
+            writer.tag(3, WireType.LengthDelimited).string(message.bookmarks[i]);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -2977,11 +3577,12 @@ class ListApplicationsRequest$Type extends MessageType<ListApplicationsRequest> 
     constructor() {
         super("indykite.config.v1beta1.ListApplicationsRequest", [
             { no: 1, name: "app_space_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
-            { no: 2, name: "match", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { minItems: "1", unique: true, items: { string: { minLen: "2", maxLen: "254", pattern: "^[a-z](?:[-a-z0-9]{0,252}[a-z0-9])$" } } } } } }
+            { no: 2, name: "match", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { minItems: "1", unique: true, items: { string: { minLen: "2", maxLen: "254", pattern: "^[a-z](?:[-a-z0-9]{0,252}[a-z0-9])$" } } } } } },
+            { no: 3, name: "bookmarks", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { items: { string: { minLen: "40", pattern: "^[a-zA-Z0-9_-]{40,}$" } } } } } }
         ]);
     }
     create(value?: PartialMessage<ListApplicationsRequest>): ListApplicationsRequest {
-        const message = { appSpaceId: "", match: [] };
+        const message = { appSpaceId: "", match: [], bookmarks: [] };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<ListApplicationsRequest>(this, message, value);
@@ -2997,6 +3598,9 @@ class ListApplicationsRequest$Type extends MessageType<ListApplicationsRequest> 
                     break;
                 case /* repeated string match */ 2:
                     message.match.push(reader.string());
+                    break;
+                case /* repeated string bookmarks */ 3:
+                    message.bookmarks.push(reader.string());
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -3016,6 +3620,9 @@ class ListApplicationsRequest$Type extends MessageType<ListApplicationsRequest> 
         /* repeated string match = 2; */
         for (let i = 0; i < message.match.length; i++)
             writer.tag(2, WireType.LengthDelimited).string(message.match[i]);
+        /* repeated string bookmarks = 3; */
+        for (let i = 0; i < message.bookmarks.length; i++)
+            writer.tag(3, WireType.LengthDelimited).string(message.bookmarks[i]);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -3080,11 +3687,12 @@ class UpdateApplicationRequest$Type extends MessageType<UpdateApplicationRequest
             { no: 1, name: "id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
             { no: 2, name: "etag", kind: "message", T: () => StringValue, options: { "validate.rules": { string: { minLen: "8", maxLen: "18", pattern: "^[A-Za-z0-9-_]{8,18}$", ignoreEmpty: true } } } },
             { no: 3, name: "display_name", kind: "message", T: () => StringValue, options: { "validate.rules": { string: { minLen: "2", maxLen: "254", ignoreEmpty: true } } } },
-            { no: 4, name: "description", kind: "message", T: () => StringValue, options: { "validate.rules": { string: { minLen: "2", maxLen: "254", ignoreEmpty: true } } } }
+            { no: 4, name: "description", kind: "message", T: () => StringValue, options: { "validate.rules": { string: { minLen: "2", maxLen: "254", ignoreEmpty: true } } } },
+            { no: 5, name: "bookmarks", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { items: { string: { minLen: "40", pattern: "^[a-zA-Z0-9_-]{40,}$" } } } } } }
         ]);
     }
     create(value?: PartialMessage<UpdateApplicationRequest>): UpdateApplicationRequest {
-        const message = { id: "" };
+        const message = { id: "", bookmarks: [] };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<UpdateApplicationRequest>(this, message, value);
@@ -3106,6 +3714,9 @@ class UpdateApplicationRequest$Type extends MessageType<UpdateApplicationRequest
                     break;
                 case /* google.protobuf.StringValue description */ 4:
                     message.description = StringValue.internalBinaryRead(reader, reader.uint32(), options, message.description);
+                    break;
+                case /* repeated string bookmarks */ 5:
+                    message.bookmarks.push(reader.string());
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -3131,6 +3742,9 @@ class UpdateApplicationRequest$Type extends MessageType<UpdateApplicationRequest
         /* google.protobuf.StringValue description = 4; */
         if (message.description)
             StringValue.internalBinaryWrite(message.description, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+        /* repeated string bookmarks = 5; */
+        for (let i = 0; i < message.bookmarks.length; i++)
+            writer.tag(5, WireType.LengthDelimited).string(message.bookmarks[i]);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -3147,11 +3761,12 @@ class UpdateApplicationResponse$Type extends MessageType<UpdateApplicationRespon
         super("indykite.config.v1beta1.UpdateApplicationResponse", [
             { no: 1, name: "id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
             { no: 2, name: "update_time", kind: "message", T: () => Timestamp },
-            { no: 3, name: "etag", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+            { no: 3, name: "etag", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 4, name: "bookmark", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
         ]);
     }
     create(value?: PartialMessage<UpdateApplicationResponse>): UpdateApplicationResponse {
-        const message = { id: "", etag: "" };
+        const message = { id: "", etag: "", bookmark: "" };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<UpdateApplicationResponse>(this, message, value);
@@ -3170,6 +3785,9 @@ class UpdateApplicationResponse$Type extends MessageType<UpdateApplicationRespon
                     break;
                 case /* string etag */ 3:
                     message.etag = reader.string();
+                    break;
+                case /* string bookmark */ 4:
+                    message.bookmark = reader.string();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -3192,6 +3810,9 @@ class UpdateApplicationResponse$Type extends MessageType<UpdateApplicationRespon
         /* string etag = 3; */
         if (message.etag !== "")
             writer.tag(3, WireType.LengthDelimited).string(message.etag);
+        /* string bookmark = 4; */
+        if (message.bookmark !== "")
+            writer.tag(4, WireType.LengthDelimited).string(message.bookmark);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -3207,11 +3828,12 @@ class DeleteApplicationRequest$Type extends MessageType<DeleteApplicationRequest
     constructor() {
         super("indykite.config.v1beta1.DeleteApplicationRequest", [
             { no: 1, name: "id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
-            { no: 2, name: "etag", kind: "message", T: () => StringValue, options: { "validate.rules": { string: { minLen: "8", maxLen: "18", pattern: "^[A-Za-z0-9-_]{8,18}$", ignoreEmpty: true } } } }
+            { no: 2, name: "etag", kind: "message", T: () => StringValue, options: { "validate.rules": { string: { minLen: "8", maxLen: "18", pattern: "^[A-Za-z0-9-_]{8,18}$", ignoreEmpty: true } } } },
+            { no: 3, name: "bookmarks", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { items: { string: { minLen: "40", pattern: "^[a-zA-Z0-9_-]{40,}$" } } } } } }
         ]);
     }
     create(value?: PartialMessage<DeleteApplicationRequest>): DeleteApplicationRequest {
-        const message = { id: "" };
+        const message = { id: "", bookmarks: [] };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<DeleteApplicationRequest>(this, message, value);
@@ -3227,6 +3849,9 @@ class DeleteApplicationRequest$Type extends MessageType<DeleteApplicationRequest
                     break;
                 case /* google.protobuf.StringValue etag */ 2:
                     message.etag = StringValue.internalBinaryRead(reader, reader.uint32(), options, message.etag);
+                    break;
+                case /* repeated string bookmarks */ 3:
+                    message.bookmarks.push(reader.string());
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -3246,6 +3871,9 @@ class DeleteApplicationRequest$Type extends MessageType<DeleteApplicationRequest
         /* google.protobuf.StringValue etag = 2; */
         if (message.etag)
             StringValue.internalBinaryWrite(message.etag, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* repeated string bookmarks = 3; */
+        for (let i = 0; i < message.bookmarks.length; i++)
+            writer.tag(3, WireType.LengthDelimited).string(message.bookmarks[i]);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -3259,19 +3887,40 @@ export const DeleteApplicationRequest = new DeleteApplicationRequest$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class DeleteApplicationResponse$Type extends MessageType<DeleteApplicationResponse> {
     constructor() {
-        super("indykite.config.v1beta1.DeleteApplicationResponse", []);
+        super("indykite.config.v1beta1.DeleteApplicationResponse", [
+            { no: 1, name: "bookmark", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+        ]);
     }
     create(value?: PartialMessage<DeleteApplicationResponse>): DeleteApplicationResponse {
-        const message = {};
+        const message = { bookmark: "" };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<DeleteApplicationResponse>(this, message, value);
         return message;
     }
     internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DeleteApplicationResponse): DeleteApplicationResponse {
-        return target ?? this.create();
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string bookmark */ 1:
+                    message.bookmark = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
     }
     internalBinaryWrite(message: DeleteApplicationResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string bookmark = 1; */
+        if (message.bookmark !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.bookmark);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -3289,11 +3938,12 @@ class CreateApplicationAgentRequest$Type extends MessageType<CreateApplicationAg
             { no: 1, name: "application_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
             { no: 2, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "2", maxLen: "63", pattern: "^[a-z](?:[-a-z0-9]{0,61}[a-z0-9])$" } } } },
             { no: 3, name: "display_name", kind: "message", T: () => StringValue, options: { "validate.rules": { string: { minLen: "2", maxLen: "254" } } } },
-            { no: 4, name: "description", kind: "message", T: () => StringValue, options: { "validate.rules": { string: { minLen: "2", maxLen: "254" } } } }
+            { no: 4, name: "description", kind: "message", T: () => StringValue, options: { "validate.rules": { string: { minLen: "2", maxLen: "254" } } } },
+            { no: 5, name: "bookmarks", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { items: { string: { minLen: "40", pattern: "^[a-zA-Z0-9_-]{40,}$" } } } } } }
         ]);
     }
     create(value?: PartialMessage<CreateApplicationAgentRequest>): CreateApplicationAgentRequest {
-        const message = { applicationId: "", name: "" };
+        const message = { applicationId: "", name: "", bookmarks: [] };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<CreateApplicationAgentRequest>(this, message, value);
@@ -3315,6 +3965,9 @@ class CreateApplicationAgentRequest$Type extends MessageType<CreateApplicationAg
                     break;
                 case /* google.protobuf.StringValue description */ 4:
                     message.description = StringValue.internalBinaryRead(reader, reader.uint32(), options, message.description);
+                    break;
+                case /* repeated string bookmarks */ 5:
+                    message.bookmarks.push(reader.string());
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -3340,6 +3993,9 @@ class CreateApplicationAgentRequest$Type extends MessageType<CreateApplicationAg
         /* google.protobuf.StringValue description = 4; */
         if (message.description)
             StringValue.internalBinaryWrite(message.description, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+        /* repeated string bookmarks = 5; */
+        for (let i = 0; i < message.bookmarks.length; i++)
+            writer.tag(5, WireType.LengthDelimited).string(message.bookmarks[i]);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -3357,11 +4013,12 @@ class CreateApplicationAgentResponse$Type extends MessageType<CreateApplicationA
             { no: 1, name: "id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
             { no: 3, name: "create_time", kind: "message", T: () => Timestamp },
             { no: 4, name: "update_time", kind: "message", T: () => Timestamp },
-            { no: 5, name: "etag", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+            { no: 5, name: "etag", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 6, name: "bookmark", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
         ]);
     }
     create(value?: PartialMessage<CreateApplicationAgentResponse>): CreateApplicationAgentResponse {
-        const message = { id: "", etag: "" };
+        const message = { id: "", etag: "", bookmark: "" };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<CreateApplicationAgentResponse>(this, message, value);
@@ -3383,6 +4040,9 @@ class CreateApplicationAgentResponse$Type extends MessageType<CreateApplicationA
                     break;
                 case /* string etag */ 5:
                     message.etag = reader.string();
+                    break;
+                case /* string bookmark */ 6:
+                    message.bookmark = reader.string();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -3408,6 +4068,9 @@ class CreateApplicationAgentResponse$Type extends MessageType<CreateApplicationA
         /* string etag = 5; */
         if (message.etag !== "")
             writer.tag(5, WireType.LengthDelimited).string(message.etag);
+        /* string bookmark = 6; */
+        if (message.bookmark !== "")
+            writer.tag(6, WireType.LengthDelimited).string(message.bookmark);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -3423,11 +4086,12 @@ class ReadApplicationAgentRequest$Type extends MessageType<ReadApplicationAgentR
     constructor() {
         super("indykite.config.v1beta1.ReadApplicationAgentRequest", [
             { no: 1, name: "id", kind: "scalar", oneof: "identifier", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
-            { no: 2, name: "name", kind: "message", oneof: "identifier", T: () => UniqueNameIdentifier }
+            { no: 2, name: "name", kind: "message", oneof: "identifier", T: () => UniqueNameIdentifier },
+            { no: 3, name: "bookmarks", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { items: { string: { minLen: "40", pattern: "^[a-zA-Z0-9_-]{40,}$" } } } } } }
         ]);
     }
     create(value?: PartialMessage<ReadApplicationAgentRequest>): ReadApplicationAgentRequest {
-        const message = { identifier: { oneofKind: undefined } };
+        const message = { identifier: { oneofKind: undefined }, bookmarks: [] };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<ReadApplicationAgentRequest>(this, message, value);
@@ -3450,6 +4114,9 @@ class ReadApplicationAgentRequest$Type extends MessageType<ReadApplicationAgentR
                         name: UniqueNameIdentifier.internalBinaryRead(reader, reader.uint32(), options, (message.identifier as any).name)
                     };
                     break;
+                case /* repeated string bookmarks */ 3:
+                    message.bookmarks.push(reader.string());
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -3468,6 +4135,9 @@ class ReadApplicationAgentRequest$Type extends MessageType<ReadApplicationAgentR
         /* indykite.config.v1beta1.UniqueNameIdentifier name = 2; */
         if (message.identifier.oneofKind === "name")
             UniqueNameIdentifier.internalBinaryWrite(message.identifier.name, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* repeated string bookmarks = 3; */
+        for (let i = 0; i < message.bookmarks.length; i++)
+            writer.tag(3, WireType.LengthDelimited).string(message.bookmarks[i]);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -3530,11 +4200,12 @@ class ListApplicationAgentsRequest$Type extends MessageType<ListApplicationAgent
     constructor() {
         super("indykite.config.v1beta1.ListApplicationAgentsRequest", [
             { no: 1, name: "app_space_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
-            { no: 2, name: "match", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { minItems: "1", unique: true, items: { string: { minLen: "2", maxLen: "254", pattern: "^[a-z](?:[-a-z0-9]{0,252}[a-z0-9])$" } } } } } }
+            { no: 2, name: "match", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { minItems: "1", unique: true, items: { string: { minLen: "2", maxLen: "254", pattern: "^[a-z](?:[-a-z0-9]{0,252}[a-z0-9])$" } } } } } },
+            { no: 3, name: "bookmarks", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { items: { string: { minLen: "40", pattern: "^[a-zA-Z0-9_-]{40,}$" } } } } } }
         ]);
     }
     create(value?: PartialMessage<ListApplicationAgentsRequest>): ListApplicationAgentsRequest {
-        const message = { appSpaceId: "", match: [] };
+        const message = { appSpaceId: "", match: [], bookmarks: [] };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<ListApplicationAgentsRequest>(this, message, value);
@@ -3550,6 +4221,9 @@ class ListApplicationAgentsRequest$Type extends MessageType<ListApplicationAgent
                     break;
                 case /* repeated string match */ 2:
                     message.match.push(reader.string());
+                    break;
+                case /* repeated string bookmarks */ 3:
+                    message.bookmarks.push(reader.string());
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -3569,6 +4243,9 @@ class ListApplicationAgentsRequest$Type extends MessageType<ListApplicationAgent
         /* repeated string match = 2; */
         for (let i = 0; i < message.match.length; i++)
             writer.tag(2, WireType.LengthDelimited).string(message.match[i]);
+        /* repeated string bookmarks = 3; */
+        for (let i = 0; i < message.bookmarks.length; i++)
+            writer.tag(3, WireType.LengthDelimited).string(message.bookmarks[i]);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -3633,11 +4310,12 @@ class UpdateApplicationAgentRequest$Type extends MessageType<UpdateApplicationAg
             { no: 1, name: "id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
             { no: 2, name: "etag", kind: "message", T: () => StringValue, options: { "validate.rules": { string: { minLen: "8", maxLen: "18", pattern: "^[A-Za-z0-9-_]{8,18}$", ignoreEmpty: true } } } },
             { no: 3, name: "display_name", kind: "message", T: () => StringValue, options: { "validate.rules": { string: { minLen: "2", maxLen: "254", ignoreEmpty: true } } } },
-            { no: 4, name: "description", kind: "message", T: () => StringValue, options: { "validate.rules": { string: { minLen: "2", maxLen: "254", ignoreEmpty: true } } } }
+            { no: 4, name: "description", kind: "message", T: () => StringValue, options: { "validate.rules": { string: { minLen: "2", maxLen: "254", ignoreEmpty: true } } } },
+            { no: 5, name: "bookmarks", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { items: { string: { minLen: "40", pattern: "^[a-zA-Z0-9_-]{40,}$" } } } } } }
         ]);
     }
     create(value?: PartialMessage<UpdateApplicationAgentRequest>): UpdateApplicationAgentRequest {
-        const message = { id: "" };
+        const message = { id: "", bookmarks: [] };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<UpdateApplicationAgentRequest>(this, message, value);
@@ -3659,6 +4337,9 @@ class UpdateApplicationAgentRequest$Type extends MessageType<UpdateApplicationAg
                     break;
                 case /* google.protobuf.StringValue description */ 4:
                     message.description = StringValue.internalBinaryRead(reader, reader.uint32(), options, message.description);
+                    break;
+                case /* repeated string bookmarks */ 5:
+                    message.bookmarks.push(reader.string());
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -3684,6 +4365,9 @@ class UpdateApplicationAgentRequest$Type extends MessageType<UpdateApplicationAg
         /* google.protobuf.StringValue description = 4; */
         if (message.description)
             StringValue.internalBinaryWrite(message.description, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+        /* repeated string bookmarks = 5; */
+        for (let i = 0; i < message.bookmarks.length; i++)
+            writer.tag(5, WireType.LengthDelimited).string(message.bookmarks[i]);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -3700,11 +4384,12 @@ class UpdateApplicationAgentResponse$Type extends MessageType<UpdateApplicationA
         super("indykite.config.v1beta1.UpdateApplicationAgentResponse", [
             { no: 1, name: "id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
             { no: 2, name: "update_time", kind: "message", T: () => Timestamp },
-            { no: 3, name: "etag", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+            { no: 3, name: "etag", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 4, name: "bookmark", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
         ]);
     }
     create(value?: PartialMessage<UpdateApplicationAgentResponse>): UpdateApplicationAgentResponse {
-        const message = { id: "", etag: "" };
+        const message = { id: "", etag: "", bookmark: "" };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<UpdateApplicationAgentResponse>(this, message, value);
@@ -3723,6 +4408,9 @@ class UpdateApplicationAgentResponse$Type extends MessageType<UpdateApplicationA
                     break;
                 case /* string etag */ 3:
                     message.etag = reader.string();
+                    break;
+                case /* string bookmark */ 4:
+                    message.bookmark = reader.string();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -3745,6 +4433,9 @@ class UpdateApplicationAgentResponse$Type extends MessageType<UpdateApplicationA
         /* string etag = 3; */
         if (message.etag !== "")
             writer.tag(3, WireType.LengthDelimited).string(message.etag);
+        /* string bookmark = 4; */
+        if (message.bookmark !== "")
+            writer.tag(4, WireType.LengthDelimited).string(message.bookmark);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -3760,11 +4451,12 @@ class DeleteApplicationAgentRequest$Type extends MessageType<DeleteApplicationAg
     constructor() {
         super("indykite.config.v1beta1.DeleteApplicationAgentRequest", [
             { no: 1, name: "id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
-            { no: 2, name: "etag", kind: "message", T: () => StringValue, options: { "validate.rules": { string: { minLen: "8", maxLen: "18", pattern: "^[A-Za-z0-9-_]{8,18}$", ignoreEmpty: true } } } }
+            { no: 2, name: "etag", kind: "message", T: () => StringValue, options: { "validate.rules": { string: { minLen: "8", maxLen: "18", pattern: "^[A-Za-z0-9-_]{8,18}$", ignoreEmpty: true } } } },
+            { no: 3, name: "bookmarks", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { items: { string: { minLen: "40", pattern: "^[a-zA-Z0-9_-]{40,}$" } } } } } }
         ]);
     }
     create(value?: PartialMessage<DeleteApplicationAgentRequest>): DeleteApplicationAgentRequest {
-        const message = { id: "" };
+        const message = { id: "", bookmarks: [] };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<DeleteApplicationAgentRequest>(this, message, value);
@@ -3780,6 +4472,9 @@ class DeleteApplicationAgentRequest$Type extends MessageType<DeleteApplicationAg
                     break;
                 case /* google.protobuf.StringValue etag */ 2:
                     message.etag = StringValue.internalBinaryRead(reader, reader.uint32(), options, message.etag);
+                    break;
+                case /* repeated string bookmarks */ 3:
+                    message.bookmarks.push(reader.string());
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -3799,6 +4494,9 @@ class DeleteApplicationAgentRequest$Type extends MessageType<DeleteApplicationAg
         /* google.protobuf.StringValue etag = 2; */
         if (message.etag)
             StringValue.internalBinaryWrite(message.etag, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* repeated string bookmarks = 3; */
+        for (let i = 0; i < message.bookmarks.length; i++)
+            writer.tag(3, WireType.LengthDelimited).string(message.bookmarks[i]);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -3812,19 +4510,40 @@ export const DeleteApplicationAgentRequest = new DeleteApplicationAgentRequest$T
 // @generated message type with reflection information, may provide speed optimized methods
 class DeleteApplicationAgentResponse$Type extends MessageType<DeleteApplicationAgentResponse> {
     constructor() {
-        super("indykite.config.v1beta1.DeleteApplicationAgentResponse", []);
+        super("indykite.config.v1beta1.DeleteApplicationAgentResponse", [
+            { no: 1, name: "bookmark", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+        ]);
     }
     create(value?: PartialMessage<DeleteApplicationAgentResponse>): DeleteApplicationAgentResponse {
-        const message = {};
+        const message = { bookmark: "" };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<DeleteApplicationAgentResponse>(this, message, value);
         return message;
     }
     internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DeleteApplicationAgentResponse): DeleteApplicationAgentResponse {
-        return target ?? this.create();
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string bookmark */ 1:
+                    message.bookmark = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
     }
     internalBinaryWrite(message: DeleteApplicationAgentResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string bookmark = 1; */
+        if (message.bookmark !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.bookmark);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -3844,11 +4563,12 @@ class RegisterApplicationAgentCredentialRequest$Type extends MessageType<Registe
             { no: 3, name: "jwk", kind: "scalar", oneof: "publicKey", T: 12 /*ScalarType.BYTES*/, options: { "validate.rules": { bytes: { minLen: "96", maxLen: "8192", prefix: "ew==", suffix: "fQ==" } } } },
             { no: 4, name: "pem", kind: "scalar", oneof: "publicKey", T: 12 /*ScalarType.BYTES*/, options: { "validate.rules": { bytes: { minLen: "256", maxLen: "8192", prefix: "LS0tLS1CRUdJTiBQVUJMSUMgS0VZLS0tLS0=", suffix: "LS0tLS1FTkQgUFVCTElDIEtFWS0tLS0t" } } } },
             { no: 5, name: "expire_time", kind: "message", T: () => Timestamp, options: { "validate.rules": { timestamp: { required: false, gtNow: true } } } },
-            { no: 6, name: "default_tenant_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^gid:[A-Za-z0-9-_:]{22,254}$", ignoreEmpty: true } } } }
+            { no: 6, name: "default_tenant_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^gid:[A-Za-z0-9-_:]{22,254}$", ignoreEmpty: true } } } },
+            { no: 7, name: "bookmarks", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { items: { string: { minLen: "40", pattern: "^[a-zA-Z0-9_-]{40,}$" } } } } } }
         ]);
     }
     create(value?: PartialMessage<RegisterApplicationAgentCredentialRequest>): RegisterApplicationAgentCredentialRequest {
-        const message = { applicationAgentId: "", displayName: "", publicKey: { oneofKind: undefined }, defaultTenantId: "" };
+        const message = { applicationAgentId: "", displayName: "", publicKey: { oneofKind: undefined }, defaultTenantId: "", bookmarks: [] };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<RegisterApplicationAgentCredentialRequest>(this, message, value);
@@ -3883,6 +4603,9 @@ class RegisterApplicationAgentCredentialRequest$Type extends MessageType<Registe
                 case /* string default_tenant_id */ 6:
                     message.defaultTenantId = reader.string();
                     break;
+                case /* repeated string bookmarks */ 7:
+                    message.bookmarks.push(reader.string());
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -3913,6 +4636,9 @@ class RegisterApplicationAgentCredentialRequest$Type extends MessageType<Registe
         /* string default_tenant_id = 6; */
         if (message.defaultTenantId !== "")
             writer.tag(6, WireType.LengthDelimited).string(message.defaultTenantId);
+        /* repeated string bookmarks = 7; */
+        for (let i = 0; i < message.bookmarks.length; i++)
+            writer.tag(7, WireType.LengthDelimited).string(message.bookmarks[i]);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -3932,11 +4658,12 @@ class RegisterApplicationAgentCredentialResponse$Type extends MessageType<Regist
             { no: 3, name: "kid", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 4, name: "agent_config", kind: "scalar", T: 12 /*ScalarType.BYTES*/ },
             { no: 5, name: "create_time", kind: "message", T: () => Timestamp },
-            { no: 6, name: "expire_time", kind: "message", T: () => Timestamp }
+            { no: 6, name: "expire_time", kind: "message", T: () => Timestamp },
+            { no: 7, name: "bookmark", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
         ]);
     }
     create(value?: PartialMessage<RegisterApplicationAgentCredentialResponse>): RegisterApplicationAgentCredentialResponse {
-        const message = { id: "", applicationAgentId: "", kid: "", agentConfig: new Uint8Array(0) };
+        const message = { id: "", applicationAgentId: "", kid: "", agentConfig: new Uint8Array(0), bookmark: "" };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<RegisterApplicationAgentCredentialResponse>(this, message, value);
@@ -3964,6 +4691,9 @@ class RegisterApplicationAgentCredentialResponse$Type extends MessageType<Regist
                     break;
                 case /* google.protobuf.Timestamp expire_time */ 6:
                     message.expireTime = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.expireTime);
+                    break;
+                case /* string bookmark */ 7:
+                    message.bookmark = reader.string();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -3995,6 +4725,9 @@ class RegisterApplicationAgentCredentialResponse$Type extends MessageType<Regist
         /* google.protobuf.Timestamp expire_time = 6; */
         if (message.expireTime)
             Timestamp.internalBinaryWrite(message.expireTime, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
+        /* string bookmark = 7; */
+        if (message.bookmark !== "")
+            writer.tag(7, WireType.LengthDelimited).string(message.bookmark);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -4009,11 +4742,12 @@ export const RegisterApplicationAgentCredentialResponse = new RegisterApplicatio
 class ReadApplicationAgentCredentialRequest$Type extends MessageType<ReadApplicationAgentCredentialRequest> {
     constructor() {
         super("indykite.config.v1beta1.ReadApplicationAgentCredentialRequest", [
-            { no: 1, name: "id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } }
+            { no: 1, name: "id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
+            { no: 2, name: "bookmarks", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { items: { string: { minLen: "40", pattern: "^[a-zA-Z0-9_-]{40,}$" } } } } } }
         ]);
     }
     create(value?: PartialMessage<ReadApplicationAgentCredentialRequest>): ReadApplicationAgentCredentialRequest {
-        const message = { id: "" };
+        const message = { id: "", bookmarks: [] };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<ReadApplicationAgentCredentialRequest>(this, message, value);
@@ -4026,6 +4760,9 @@ class ReadApplicationAgentCredentialRequest$Type extends MessageType<ReadApplica
             switch (fieldNo) {
                 case /* string id */ 1:
                     message.id = reader.string();
+                    break;
+                case /* repeated string bookmarks */ 2:
+                    message.bookmarks.push(reader.string());
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -4042,6 +4779,9 @@ class ReadApplicationAgentCredentialRequest$Type extends MessageType<ReadApplica
         /* string id = 1; */
         if (message.id !== "")
             writer.tag(1, WireType.LengthDelimited).string(message.id);
+        /* repeated string bookmarks = 2; */
+        for (let i = 0; i < message.bookmarks.length; i++)
+            writer.tag(2, WireType.LengthDelimited).string(message.bookmarks[i]);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -4103,11 +4843,12 @@ export const ReadApplicationAgentCredentialResponse = new ReadApplicationAgentCr
 class DeleteApplicationAgentCredentialRequest$Type extends MessageType<DeleteApplicationAgentCredentialRequest> {
     constructor() {
         super("indykite.config.v1beta1.DeleteApplicationAgentCredentialRequest", [
-            { no: 1, name: "id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } }
+            { no: 1, name: "id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
+            { no: 2, name: "bookmarks", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { items: { string: { minLen: "40", pattern: "^[a-zA-Z0-9_-]{40,}$" } } } } } }
         ]);
     }
     create(value?: PartialMessage<DeleteApplicationAgentCredentialRequest>): DeleteApplicationAgentCredentialRequest {
-        const message = { id: "" };
+        const message = { id: "", bookmarks: [] };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<DeleteApplicationAgentCredentialRequest>(this, message, value);
@@ -4120,6 +4861,9 @@ class DeleteApplicationAgentCredentialRequest$Type extends MessageType<DeleteApp
             switch (fieldNo) {
                 case /* string id */ 1:
                     message.id = reader.string();
+                    break;
+                case /* repeated string bookmarks */ 2:
+                    message.bookmarks.push(reader.string());
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -4136,6 +4880,9 @@ class DeleteApplicationAgentCredentialRequest$Type extends MessageType<DeleteApp
         /* string id = 1; */
         if (message.id !== "")
             writer.tag(1, WireType.LengthDelimited).string(message.id);
+        /* repeated string bookmarks = 2; */
+        for (let i = 0; i < message.bookmarks.length; i++)
+            writer.tag(2, WireType.LengthDelimited).string(message.bookmarks[i]);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -4149,19 +4896,40 @@ export const DeleteApplicationAgentCredentialRequest = new DeleteApplicationAgen
 // @generated message type with reflection information, may provide speed optimized methods
 class DeleteApplicationAgentCredentialResponse$Type extends MessageType<DeleteApplicationAgentCredentialResponse> {
     constructor() {
-        super("indykite.config.v1beta1.DeleteApplicationAgentCredentialResponse", []);
+        super("indykite.config.v1beta1.DeleteApplicationAgentCredentialResponse", [
+            { no: 1, name: "bookmark", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+        ]);
     }
     create(value?: PartialMessage<DeleteApplicationAgentCredentialResponse>): DeleteApplicationAgentCredentialResponse {
-        const message = {};
+        const message = { bookmark: "" };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<DeleteApplicationAgentCredentialResponse>(this, message, value);
         return message;
     }
     internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DeleteApplicationAgentCredentialResponse): DeleteApplicationAgentCredentialResponse {
-        return target ?? this.create();
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string bookmark */ 1:
+                    message.bookmark = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
     }
     internalBinaryWrite(message: DeleteApplicationAgentCredentialResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string bookmark = 1; */
+        if (message.bookmark !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.bookmark);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -4180,11 +4948,12 @@ class CreateServiceAccountRequest$Type extends MessageType<CreateServiceAccountR
             { no: 2, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "2", maxLen: "63", pattern: "^[a-z](?:[-a-z0-9]{0,61}[a-z0-9])$" } } } },
             { no: 3, name: "display_name", kind: "message", T: () => StringValue, options: { "validate.rules": { string: { minLen: "2", maxLen: "254" } } } },
             { no: 4, name: "description", kind: "message", T: () => StringValue, options: { "validate.rules": { string: { minLen: "2", maxLen: "254" } } } },
-            { no: 5, name: "role", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { in: ["all_editor", "all_viewer", "app_editor", "app_viewer", "authn_viewer", "authn_editor"] } } } }
+            { no: 5, name: "role", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { in: ["all_editor", "all_viewer", "app_editor", "app_viewer", "authn_viewer", "authn_editor"] } } } },
+            { no: 6, name: "bookmarks", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { items: { string: { minLen: "40", pattern: "^[a-zA-Z0-9_-]{40,}$" } } } } } }
         ]);
     }
     create(value?: PartialMessage<CreateServiceAccountRequest>): CreateServiceAccountRequest {
-        const message = { location: "", name: "", role: "" };
+        const message = { location: "", name: "", role: "", bookmarks: [] };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<CreateServiceAccountRequest>(this, message, value);
@@ -4209,6 +4978,9 @@ class CreateServiceAccountRequest$Type extends MessageType<CreateServiceAccountR
                     break;
                 case /* string role */ 5:
                     message.role = reader.string();
+                    break;
+                case /* repeated string bookmarks */ 6:
+                    message.bookmarks.push(reader.string());
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -4237,6 +5009,9 @@ class CreateServiceAccountRequest$Type extends MessageType<CreateServiceAccountR
         /* string role = 5; */
         if (message.role !== "")
             writer.tag(5, WireType.LengthDelimited).string(message.role);
+        /* repeated string bookmarks = 6; */
+        for (let i = 0; i < message.bookmarks.length; i++)
+            writer.tag(6, WireType.LengthDelimited).string(message.bookmarks[i]);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -4254,11 +5029,12 @@ class CreateServiceAccountResponse$Type extends MessageType<CreateServiceAccount
             { no: 1, name: "id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
             { no: 2, name: "create_time", kind: "message", T: () => Timestamp },
             { no: 3, name: "update_time", kind: "message", T: () => Timestamp },
-            { no: 4, name: "etag", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+            { no: 4, name: "etag", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 5, name: "bookmark", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
         ]);
     }
     create(value?: PartialMessage<CreateServiceAccountResponse>): CreateServiceAccountResponse {
-        const message = { id: "", etag: "" };
+        const message = { id: "", etag: "", bookmark: "" };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<CreateServiceAccountResponse>(this, message, value);
@@ -4280,6 +5056,9 @@ class CreateServiceAccountResponse$Type extends MessageType<CreateServiceAccount
                     break;
                 case /* string etag */ 4:
                     message.etag = reader.string();
+                    break;
+                case /* string bookmark */ 5:
+                    message.bookmark = reader.string();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -4305,6 +5084,9 @@ class CreateServiceAccountResponse$Type extends MessageType<CreateServiceAccount
         /* string etag = 4; */
         if (message.etag !== "")
             writer.tag(4, WireType.LengthDelimited).string(message.etag);
+        /* string bookmark = 5; */
+        if (message.bookmark !== "")
+            writer.tag(5, WireType.LengthDelimited).string(message.bookmark);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -4320,11 +5102,12 @@ class ReadServiceAccountRequest$Type extends MessageType<ReadServiceAccountReque
     constructor() {
         super("indykite.config.v1beta1.ReadServiceAccountRequest", [
             { no: 1, name: "id", kind: "scalar", oneof: "identifier", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
-            { no: 2, name: "name", kind: "message", oneof: "identifier", T: () => UniqueNameIdentifier }
+            { no: 2, name: "name", kind: "message", oneof: "identifier", T: () => UniqueNameIdentifier },
+            { no: 3, name: "bookmarks", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { items: { string: { minLen: "40", pattern: "^[a-zA-Z0-9_-]{40,}$" } } } } } }
         ]);
     }
     create(value?: PartialMessage<ReadServiceAccountRequest>): ReadServiceAccountRequest {
-        const message = { identifier: { oneofKind: undefined } };
+        const message = { identifier: { oneofKind: undefined }, bookmarks: [] };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<ReadServiceAccountRequest>(this, message, value);
@@ -4347,6 +5130,9 @@ class ReadServiceAccountRequest$Type extends MessageType<ReadServiceAccountReque
                         name: UniqueNameIdentifier.internalBinaryRead(reader, reader.uint32(), options, (message.identifier as any).name)
                     };
                     break;
+                case /* repeated string bookmarks */ 3:
+                    message.bookmarks.push(reader.string());
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -4365,6 +5151,9 @@ class ReadServiceAccountRequest$Type extends MessageType<ReadServiceAccountReque
         /* indykite.config.v1beta1.UniqueNameIdentifier name = 2; */
         if (message.identifier.oneofKind === "name")
             UniqueNameIdentifier.internalBinaryWrite(message.identifier.name, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* repeated string bookmarks = 3; */
+        for (let i = 0; i < message.bookmarks.length; i++)
+            writer.tag(3, WireType.LengthDelimited).string(message.bookmarks[i]);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -4429,11 +5218,12 @@ class UpdateServiceAccountRequest$Type extends MessageType<UpdateServiceAccountR
             { no: 1, name: "id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
             { no: 2, name: "etag", kind: "message", T: () => StringValue, options: { "validate.rules": { string: { minLen: "8", maxLen: "18", pattern: "^[A-Za-z0-9-_]{8,18}$", ignoreEmpty: true } } } },
             { no: 3, name: "display_name", kind: "message", T: () => StringValue, options: { "validate.rules": { string: { minLen: "2", maxLen: "254", ignoreEmpty: true } } } },
-            { no: 4, name: "description", kind: "message", T: () => StringValue, options: { "validate.rules": { string: { minLen: "2", maxLen: "254", ignoreEmpty: true } } } }
+            { no: 4, name: "description", kind: "message", T: () => StringValue, options: { "validate.rules": { string: { minLen: "2", maxLen: "254", ignoreEmpty: true } } } },
+            { no: 5, name: "bookmarks", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { items: { string: { minLen: "40", pattern: "^[a-zA-Z0-9_-]{40,}$" } } } } } }
         ]);
     }
     create(value?: PartialMessage<UpdateServiceAccountRequest>): UpdateServiceAccountRequest {
-        const message = { id: "" };
+        const message = { id: "", bookmarks: [] };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<UpdateServiceAccountRequest>(this, message, value);
@@ -4455,6 +5245,9 @@ class UpdateServiceAccountRequest$Type extends MessageType<UpdateServiceAccountR
                     break;
                 case /* google.protobuf.StringValue description */ 4:
                     message.description = StringValue.internalBinaryRead(reader, reader.uint32(), options, message.description);
+                    break;
+                case /* repeated string bookmarks */ 5:
+                    message.bookmarks.push(reader.string());
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -4480,6 +5273,9 @@ class UpdateServiceAccountRequest$Type extends MessageType<UpdateServiceAccountR
         /* google.protobuf.StringValue description = 4; */
         if (message.description)
             StringValue.internalBinaryWrite(message.description, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+        /* repeated string bookmarks = 5; */
+        for (let i = 0; i < message.bookmarks.length; i++)
+            writer.tag(5, WireType.LengthDelimited).string(message.bookmarks[i]);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -4496,11 +5292,12 @@ class UpdateServiceAccountResponse$Type extends MessageType<UpdateServiceAccount
         super("indykite.config.v1beta1.UpdateServiceAccountResponse", [
             { no: 1, name: "id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
             { no: 2, name: "update_time", kind: "message", T: () => Timestamp },
-            { no: 3, name: "etag", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+            { no: 3, name: "etag", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 4, name: "bookmark", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
         ]);
     }
     create(value?: PartialMessage<UpdateServiceAccountResponse>): UpdateServiceAccountResponse {
-        const message = { id: "", etag: "" };
+        const message = { id: "", etag: "", bookmark: "" };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<UpdateServiceAccountResponse>(this, message, value);
@@ -4519,6 +5316,9 @@ class UpdateServiceAccountResponse$Type extends MessageType<UpdateServiceAccount
                     break;
                 case /* string etag */ 3:
                     message.etag = reader.string();
+                    break;
+                case /* string bookmark */ 4:
+                    message.bookmark = reader.string();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -4541,6 +5341,9 @@ class UpdateServiceAccountResponse$Type extends MessageType<UpdateServiceAccount
         /* string etag = 3; */
         if (message.etag !== "")
             writer.tag(3, WireType.LengthDelimited).string(message.etag);
+        /* string bookmark = 4; */
+        if (message.bookmark !== "")
+            writer.tag(4, WireType.LengthDelimited).string(message.bookmark);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -4556,11 +5359,12 @@ class DeleteServiceAccountRequest$Type extends MessageType<DeleteServiceAccountR
     constructor() {
         super("indykite.config.v1beta1.DeleteServiceAccountRequest", [
             { no: 1, name: "id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
-            { no: 2, name: "etag", kind: "message", T: () => StringValue, options: { "validate.rules": { string: { minLen: "8", maxLen: "18", pattern: "^[A-Za-z0-9-_]{8,18}$", ignoreEmpty: true } } } }
+            { no: 2, name: "etag", kind: "message", T: () => StringValue, options: { "validate.rules": { string: { minLen: "8", maxLen: "18", pattern: "^[A-Za-z0-9-_]{8,18}$", ignoreEmpty: true } } } },
+            { no: 3, name: "bookmarks", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { items: { string: { minLen: "40", pattern: "^[a-zA-Z0-9_-]{40,}$" } } } } } }
         ]);
     }
     create(value?: PartialMessage<DeleteServiceAccountRequest>): DeleteServiceAccountRequest {
-        const message = { id: "" };
+        const message = { id: "", bookmarks: [] };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<DeleteServiceAccountRequest>(this, message, value);
@@ -4576,6 +5380,9 @@ class DeleteServiceAccountRequest$Type extends MessageType<DeleteServiceAccountR
                     break;
                 case /* google.protobuf.StringValue etag */ 2:
                     message.etag = StringValue.internalBinaryRead(reader, reader.uint32(), options, message.etag);
+                    break;
+                case /* repeated string bookmarks */ 3:
+                    message.bookmarks.push(reader.string());
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -4595,6 +5402,9 @@ class DeleteServiceAccountRequest$Type extends MessageType<DeleteServiceAccountR
         /* google.protobuf.StringValue etag = 2; */
         if (message.etag)
             StringValue.internalBinaryWrite(message.etag, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* repeated string bookmarks = 3; */
+        for (let i = 0; i < message.bookmarks.length; i++)
+            writer.tag(3, WireType.LengthDelimited).string(message.bookmarks[i]);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -4608,19 +5418,40 @@ export const DeleteServiceAccountRequest = new DeleteServiceAccountRequest$Type(
 // @generated message type with reflection information, may provide speed optimized methods
 class DeleteServiceAccountResponse$Type extends MessageType<DeleteServiceAccountResponse> {
     constructor() {
-        super("indykite.config.v1beta1.DeleteServiceAccountResponse", []);
+        super("indykite.config.v1beta1.DeleteServiceAccountResponse", [
+            { no: 1, name: "bookmark", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+        ]);
     }
     create(value?: PartialMessage<DeleteServiceAccountResponse>): DeleteServiceAccountResponse {
-        const message = {};
+        const message = { bookmark: "" };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<DeleteServiceAccountResponse>(this, message, value);
         return message;
     }
     internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DeleteServiceAccountResponse): DeleteServiceAccountResponse {
-        return target ?? this.create();
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string bookmark */ 1:
+                    message.bookmark = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
     }
     internalBinaryWrite(message: DeleteServiceAccountResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string bookmark = 1; */
+        if (message.bookmark !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.bookmark);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -4639,11 +5470,12 @@ class RegisterServiceAccountCredentialRequest$Type extends MessageType<RegisterS
             { no: 2, name: "display_name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "2", maxLen: "254", ignoreEmpty: true } } } },
             { no: 3, name: "jwk", kind: "scalar", oneof: "publicKey", T: 12 /*ScalarType.BYTES*/, options: { "validate.rules": { bytes: { minLen: "96", maxLen: "8192", prefix: "ew==", suffix: "fQ==" } } } },
             { no: 4, name: "pem", kind: "scalar", oneof: "publicKey", T: 12 /*ScalarType.BYTES*/, options: { "validate.rules": { bytes: { minLen: "256", maxLen: "8192", prefix: "LS0tLS1CRUdJTiBQVUJMSUMgS0VZLS0tLS0=", suffix: "LS0tLS1FTkQgUFVCTElDIEtFWS0tLS0t" } } } },
-            { no: 5, name: "expire_time", kind: "message", T: () => Timestamp, options: { "validate.rules": { timestamp: { required: false, gtNow: true } } } }
+            { no: 5, name: "expire_time", kind: "message", T: () => Timestamp, options: { "validate.rules": { timestamp: { required: false, gtNow: true } } } },
+            { no: 6, name: "bookmarks", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { items: { string: { minLen: "40", pattern: "^[a-zA-Z0-9_-]{40,}$" } } } } } }
         ]);
     }
     create(value?: PartialMessage<RegisterServiceAccountCredentialRequest>): RegisterServiceAccountCredentialRequest {
-        const message = { serviceAccountId: "", displayName: "", publicKey: { oneofKind: undefined } };
+        const message = { serviceAccountId: "", displayName: "", publicKey: { oneofKind: undefined }, bookmarks: [] };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<RegisterServiceAccountCredentialRequest>(this, message, value);
@@ -4675,6 +5507,9 @@ class RegisterServiceAccountCredentialRequest$Type extends MessageType<RegisterS
                 case /* google.protobuf.Timestamp expire_time */ 5:
                     message.expireTime = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.expireTime);
                     break;
+                case /* repeated string bookmarks */ 6:
+                    message.bookmarks.push(reader.string());
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -4702,6 +5537,9 @@ class RegisterServiceAccountCredentialRequest$Type extends MessageType<RegisterS
         /* google.protobuf.Timestamp expire_time = 5; */
         if (message.expireTime)
             Timestamp.internalBinaryWrite(message.expireTime, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
+        /* repeated string bookmarks = 6; */
+        for (let i = 0; i < message.bookmarks.length; i++)
+            writer.tag(6, WireType.LengthDelimited).string(message.bookmarks[i]);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -4721,11 +5559,12 @@ class RegisterServiceAccountCredentialResponse$Type extends MessageType<Register
             { no: 3, name: "kid", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 4, name: "service_account_config", kind: "scalar", T: 12 /*ScalarType.BYTES*/ },
             { no: 5, name: "create_time", kind: "message", T: () => Timestamp },
-            { no: 6, name: "expire_time", kind: "message", T: () => Timestamp }
+            { no: 6, name: "expire_time", kind: "message", T: () => Timestamp },
+            { no: 7, name: "bookmark", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
         ]);
     }
     create(value?: PartialMessage<RegisterServiceAccountCredentialResponse>): RegisterServiceAccountCredentialResponse {
-        const message = { id: "", serviceAccountId: "", kid: "", serviceAccountConfig: new Uint8Array(0) };
+        const message = { id: "", serviceAccountId: "", kid: "", serviceAccountConfig: new Uint8Array(0), bookmark: "" };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<RegisterServiceAccountCredentialResponse>(this, message, value);
@@ -4753,6 +5592,9 @@ class RegisterServiceAccountCredentialResponse$Type extends MessageType<Register
                     break;
                 case /* google.protobuf.Timestamp expire_time */ 6:
                     message.expireTime = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.expireTime);
+                    break;
+                case /* string bookmark */ 7:
+                    message.bookmark = reader.string();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -4784,6 +5626,9 @@ class RegisterServiceAccountCredentialResponse$Type extends MessageType<Register
         /* google.protobuf.Timestamp expire_time = 6; */
         if (message.expireTime)
             Timestamp.internalBinaryWrite(message.expireTime, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
+        /* string bookmark = 7; */
+        if (message.bookmark !== "")
+            writer.tag(7, WireType.LengthDelimited).string(message.bookmark);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -4798,11 +5643,12 @@ export const RegisterServiceAccountCredentialResponse = new RegisterServiceAccou
 class ReadServiceAccountCredentialRequest$Type extends MessageType<ReadServiceAccountCredentialRequest> {
     constructor() {
         super("indykite.config.v1beta1.ReadServiceAccountCredentialRequest", [
-            { no: 1, name: "id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } }
+            { no: 1, name: "id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
+            { no: 2, name: "bookmarks", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { items: { string: { minLen: "40", pattern: "^[a-zA-Z0-9_-]{40,}$" } } } } } }
         ]);
     }
     create(value?: PartialMessage<ReadServiceAccountCredentialRequest>): ReadServiceAccountCredentialRequest {
-        const message = { id: "" };
+        const message = { id: "", bookmarks: [] };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<ReadServiceAccountCredentialRequest>(this, message, value);
@@ -4815,6 +5661,9 @@ class ReadServiceAccountCredentialRequest$Type extends MessageType<ReadServiceAc
             switch (fieldNo) {
                 case /* string id */ 1:
                     message.id = reader.string();
+                    break;
+                case /* repeated string bookmarks */ 2:
+                    message.bookmarks.push(reader.string());
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -4831,6 +5680,9 @@ class ReadServiceAccountCredentialRequest$Type extends MessageType<ReadServiceAc
         /* string id = 1; */
         if (message.id !== "")
             writer.tag(1, WireType.LengthDelimited).string(message.id);
+        /* repeated string bookmarks = 2; */
+        for (let i = 0; i < message.bookmarks.length; i++)
+            writer.tag(2, WireType.LengthDelimited).string(message.bookmarks[i]);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -4892,11 +5744,12 @@ export const ReadServiceAccountCredentialResponse = new ReadServiceAccountCreden
 class DeleteServiceAccountCredentialRequest$Type extends MessageType<DeleteServiceAccountCredentialRequest> {
     constructor() {
         super("indykite.config.v1beta1.DeleteServiceAccountCredentialRequest", [
-            { no: 1, name: "id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } }
+            { no: 1, name: "id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
+            { no: 2, name: "bookmarks", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { items: { string: { minLen: "40", pattern: "^[a-zA-Z0-9_-]{40,}$" } } } } } }
         ]);
     }
     create(value?: PartialMessage<DeleteServiceAccountCredentialRequest>): DeleteServiceAccountCredentialRequest {
-        const message = { id: "" };
+        const message = { id: "", bookmarks: [] };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<DeleteServiceAccountCredentialRequest>(this, message, value);
@@ -4909,6 +5762,9 @@ class DeleteServiceAccountCredentialRequest$Type extends MessageType<DeleteServi
             switch (fieldNo) {
                 case /* string id */ 1:
                     message.id = reader.string();
+                    break;
+                case /* repeated string bookmarks */ 2:
+                    message.bookmarks.push(reader.string());
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -4925,6 +5781,9 @@ class DeleteServiceAccountCredentialRequest$Type extends MessageType<DeleteServi
         /* string id = 1; */
         if (message.id !== "")
             writer.tag(1, WireType.LengthDelimited).string(message.id);
+        /* repeated string bookmarks = 2; */
+        for (let i = 0; i < message.bookmarks.length; i++)
+            writer.tag(2, WireType.LengthDelimited).string(message.bookmarks[i]);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -4938,19 +5797,40 @@ export const DeleteServiceAccountCredentialRequest = new DeleteServiceAccountCre
 // @generated message type with reflection information, may provide speed optimized methods
 class DeleteServiceAccountCredentialResponse$Type extends MessageType<DeleteServiceAccountCredentialResponse> {
     constructor() {
-        super("indykite.config.v1beta1.DeleteServiceAccountCredentialResponse", []);
+        super("indykite.config.v1beta1.DeleteServiceAccountCredentialResponse", [
+            { no: 1, name: "bookmark", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+        ]);
     }
     create(value?: PartialMessage<DeleteServiceAccountCredentialResponse>): DeleteServiceAccountCredentialResponse {
-        const message = {};
+        const message = { bookmark: "" };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<DeleteServiceAccountCredentialResponse>(this, message, value);
         return message;
     }
     internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DeleteServiceAccountCredentialResponse): DeleteServiceAccountCredentialResponse {
-        return target ?? this.create();
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string bookmark */ 1:
+                    message.bookmark = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
     }
     internalBinaryWrite(message: DeleteServiceAccountCredentialResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string bookmark = 1; */
+        if (message.bookmark !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.bookmark);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -4968,11 +5848,12 @@ class CreateTenantRequest$Type extends MessageType<CreateTenantRequest> {
             { no: 5, name: "issuer_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
             { no: 2, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "2", maxLen: "63", pattern: "^[a-z](?:[-a-z0-9]{0,61}[a-z0-9])$" } } } },
             { no: 3, name: "display_name", kind: "message", T: () => StringValue, options: { "validate.rules": { string: { minLen: "2", maxLen: "254" } } } },
-            { no: 4, name: "description", kind: "message", T: () => StringValue, options: { "validate.rules": { string: { minLen: "2", maxLen: "254" } } } }
+            { no: 4, name: "description", kind: "message", T: () => StringValue, options: { "validate.rules": { string: { minLen: "2", maxLen: "254" } } } },
+            { no: 6, name: "bookmarks", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { items: { string: { minLen: "40", pattern: "^[a-zA-Z0-9_-]{40,}$" } } } } } }
         ]);
     }
     create(value?: PartialMessage<CreateTenantRequest>): CreateTenantRequest {
-        const message = { issuerId: "", name: "" };
+        const message = { issuerId: "", name: "", bookmarks: [] };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<CreateTenantRequest>(this, message, value);
@@ -4994,6 +5875,9 @@ class CreateTenantRequest$Type extends MessageType<CreateTenantRequest> {
                     break;
                 case /* google.protobuf.StringValue description */ 4:
                     message.description = StringValue.internalBinaryRead(reader, reader.uint32(), options, message.description);
+                    break;
+                case /* repeated string bookmarks */ 6:
+                    message.bookmarks.push(reader.string());
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -5019,6 +5903,9 @@ class CreateTenantRequest$Type extends MessageType<CreateTenantRequest> {
         /* google.protobuf.StringValue description = 4; */
         if (message.description)
             StringValue.internalBinaryWrite(message.description, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+        /* repeated string bookmarks = 6; */
+        for (let i = 0; i < message.bookmarks.length; i++)
+            writer.tag(6, WireType.LengthDelimited).string(message.bookmarks[i]);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -5036,11 +5923,12 @@ class CreateTenantResponse$Type extends MessageType<CreateTenantResponse> {
             { no: 1, name: "id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
             { no: 2, name: "create_time", kind: "message", T: () => Timestamp },
             { no: 3, name: "update_time", kind: "message", T: () => Timestamp },
-            { no: 4, name: "etag", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+            { no: 4, name: "etag", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 5, name: "bookmark", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
         ]);
     }
     create(value?: PartialMessage<CreateTenantResponse>): CreateTenantResponse {
-        const message = { id: "", etag: "" };
+        const message = { id: "", etag: "", bookmark: "" };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<CreateTenantResponse>(this, message, value);
@@ -5062,6 +5950,9 @@ class CreateTenantResponse$Type extends MessageType<CreateTenantResponse> {
                     break;
                 case /* string etag */ 4:
                     message.etag = reader.string();
+                    break;
+                case /* string bookmark */ 5:
+                    message.bookmark = reader.string();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -5087,6 +5978,9 @@ class CreateTenantResponse$Type extends MessageType<CreateTenantResponse> {
         /* string etag = 4; */
         if (message.etag !== "")
             writer.tag(4, WireType.LengthDelimited).string(message.etag);
+        /* string bookmark = 5; */
+        if (message.bookmark !== "")
+            writer.tag(5, WireType.LengthDelimited).string(message.bookmark);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -5102,11 +5996,12 @@ class ReadTenantRequest$Type extends MessageType<ReadTenantRequest> {
     constructor() {
         super("indykite.config.v1beta1.ReadTenantRequest", [
             { no: 1, name: "id", kind: "scalar", oneof: "identifier", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
-            { no: 2, name: "name", kind: "message", oneof: "identifier", T: () => UniqueNameIdentifier }
+            { no: 2, name: "name", kind: "message", oneof: "identifier", T: () => UniqueNameIdentifier },
+            { no: 3, name: "bookmarks", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { items: { string: { minLen: "40", pattern: "^[a-zA-Z0-9_-]{40,}$" } } } } } }
         ]);
     }
     create(value?: PartialMessage<ReadTenantRequest>): ReadTenantRequest {
-        const message = { identifier: { oneofKind: undefined } };
+        const message = { identifier: { oneofKind: undefined }, bookmarks: [] };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<ReadTenantRequest>(this, message, value);
@@ -5129,6 +6024,9 @@ class ReadTenantRequest$Type extends MessageType<ReadTenantRequest> {
                         name: UniqueNameIdentifier.internalBinaryRead(reader, reader.uint32(), options, (message.identifier as any).name)
                     };
                     break;
+                case /* repeated string bookmarks */ 3:
+                    message.bookmarks.push(reader.string());
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -5147,6 +6045,9 @@ class ReadTenantRequest$Type extends MessageType<ReadTenantRequest> {
         /* indykite.config.v1beta1.UniqueNameIdentifier name = 2; */
         if (message.identifier.oneofKind === "name")
             UniqueNameIdentifier.internalBinaryWrite(message.identifier.name, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* repeated string bookmarks = 3; */
+        for (let i = 0; i < message.bookmarks.length; i++)
+            writer.tag(3, WireType.LengthDelimited).string(message.bookmarks[i]);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -5209,11 +6110,12 @@ class ListTenantsRequest$Type extends MessageType<ListTenantsRequest> {
     constructor() {
         super("indykite.config.v1beta1.ListTenantsRequest", [
             { no: 1, name: "app_space_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
-            { no: 2, name: "match", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { minItems: "1", unique: true, items: { string: { minLen: "2", maxLen: "254", pattern: "^[a-z](?:[-a-z0-9]{0,252}[a-z0-9])$" } } } } } }
+            { no: 2, name: "match", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { minItems: "1", unique: true, items: { string: { minLen: "2", maxLen: "254", pattern: "^[a-z](?:[-a-z0-9]{0,252}[a-z0-9])$" } } } } } },
+            { no: 3, name: "bookmarks", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { items: { string: { minLen: "40", pattern: "^[a-zA-Z0-9_-]{40,}$" } } } } } }
         ]);
     }
     create(value?: PartialMessage<ListTenantsRequest>): ListTenantsRequest {
-        const message = { appSpaceId: "", match: [] };
+        const message = { appSpaceId: "", match: [], bookmarks: [] };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<ListTenantsRequest>(this, message, value);
@@ -5229,6 +6131,9 @@ class ListTenantsRequest$Type extends MessageType<ListTenantsRequest> {
                     break;
                 case /* repeated string match */ 2:
                     message.match.push(reader.string());
+                    break;
+                case /* repeated string bookmarks */ 3:
+                    message.bookmarks.push(reader.string());
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -5248,6 +6153,9 @@ class ListTenantsRequest$Type extends MessageType<ListTenantsRequest> {
         /* repeated string match = 2; */
         for (let i = 0; i < message.match.length; i++)
             writer.tag(2, WireType.LengthDelimited).string(message.match[i]);
+        /* repeated string bookmarks = 3; */
+        for (let i = 0; i < message.bookmarks.length; i++)
+            writer.tag(3, WireType.LengthDelimited).string(message.bookmarks[i]);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -5312,11 +6220,12 @@ class UpdateTenantRequest$Type extends MessageType<UpdateTenantRequest> {
             { no: 1, name: "id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
             { no: 2, name: "etag", kind: "message", T: () => StringValue, options: { "validate.rules": { string: { minLen: "8", maxLen: "18", pattern: "^[A-Za-z0-9-_]{8,18}$", ignoreEmpty: true } } } },
             { no: 3, name: "display_name", kind: "message", T: () => StringValue, options: { "validate.rules": { string: { minLen: "2", maxLen: "254", ignoreEmpty: true } } } },
-            { no: 4, name: "description", kind: "message", T: () => StringValue, options: { "validate.rules": { string: { minLen: "2", maxLen: "254", ignoreEmpty: true } } } }
+            { no: 4, name: "description", kind: "message", T: () => StringValue, options: { "validate.rules": { string: { minLen: "2", maxLen: "254", ignoreEmpty: true } } } },
+            { no: 5, name: "bookmarks", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { items: { string: { minLen: "40", pattern: "^[a-zA-Z0-9_-]{40,}$" } } } } } }
         ]);
     }
     create(value?: PartialMessage<UpdateTenantRequest>): UpdateTenantRequest {
-        const message = { id: "" };
+        const message = { id: "", bookmarks: [] };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<UpdateTenantRequest>(this, message, value);
@@ -5338,6 +6247,9 @@ class UpdateTenantRequest$Type extends MessageType<UpdateTenantRequest> {
                     break;
                 case /* google.protobuf.StringValue description */ 4:
                     message.description = StringValue.internalBinaryRead(reader, reader.uint32(), options, message.description);
+                    break;
+                case /* repeated string bookmarks */ 5:
+                    message.bookmarks.push(reader.string());
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -5363,6 +6275,9 @@ class UpdateTenantRequest$Type extends MessageType<UpdateTenantRequest> {
         /* google.protobuf.StringValue description = 4; */
         if (message.description)
             StringValue.internalBinaryWrite(message.description, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+        /* repeated string bookmarks = 5; */
+        for (let i = 0; i < message.bookmarks.length; i++)
+            writer.tag(5, WireType.LengthDelimited).string(message.bookmarks[i]);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -5379,11 +6294,12 @@ class UpdateTenantResponse$Type extends MessageType<UpdateTenantResponse> {
         super("indykite.config.v1beta1.UpdateTenantResponse", [
             { no: 1, name: "id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
             { no: 2, name: "update_time", kind: "message", T: () => Timestamp },
-            { no: 3, name: "etag", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+            { no: 3, name: "etag", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 4, name: "bookmark", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
         ]);
     }
     create(value?: PartialMessage<UpdateTenantResponse>): UpdateTenantResponse {
-        const message = { id: "", etag: "" };
+        const message = { id: "", etag: "", bookmark: "" };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<UpdateTenantResponse>(this, message, value);
@@ -5402,6 +6318,9 @@ class UpdateTenantResponse$Type extends MessageType<UpdateTenantResponse> {
                     break;
                 case /* string etag */ 3:
                     message.etag = reader.string();
+                    break;
+                case /* string bookmark */ 4:
+                    message.bookmark = reader.string();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -5424,6 +6343,9 @@ class UpdateTenantResponse$Type extends MessageType<UpdateTenantResponse> {
         /* string etag = 3; */
         if (message.etag !== "")
             writer.tag(3, WireType.LengthDelimited).string(message.etag);
+        /* string bookmark = 4; */
+        if (message.bookmark !== "")
+            writer.tag(4, WireType.LengthDelimited).string(message.bookmark);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -5439,11 +6361,12 @@ class DeleteTenantRequest$Type extends MessageType<DeleteTenantRequest> {
     constructor() {
         super("indykite.config.v1beta1.DeleteTenantRequest", [
             { no: 1, name: "id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
-            { no: 2, name: "etag", kind: "message", T: () => StringValue, options: { "validate.rules": { string: { minLen: "8", maxLen: "18", pattern: "^[A-Za-z0-9-_]{8,18}$", ignoreEmpty: true } } } }
+            { no: 2, name: "etag", kind: "message", T: () => StringValue, options: { "validate.rules": { string: { minLen: "8", maxLen: "18", pattern: "^[A-Za-z0-9-_]{8,18}$", ignoreEmpty: true } } } },
+            { no: 3, name: "bookmarks", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { items: { string: { minLen: "40", pattern: "^[a-zA-Z0-9_-]{40,}$" } } } } } }
         ]);
     }
     create(value?: PartialMessage<DeleteTenantRequest>): DeleteTenantRequest {
-        const message = { id: "" };
+        const message = { id: "", bookmarks: [] };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<DeleteTenantRequest>(this, message, value);
@@ -5459,6 +6382,9 @@ class DeleteTenantRequest$Type extends MessageType<DeleteTenantRequest> {
                     break;
                 case /* google.protobuf.StringValue etag */ 2:
                     message.etag = StringValue.internalBinaryRead(reader, reader.uint32(), options, message.etag);
+                    break;
+                case /* repeated string bookmarks */ 3:
+                    message.bookmarks.push(reader.string());
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -5478,6 +6404,9 @@ class DeleteTenantRequest$Type extends MessageType<DeleteTenantRequest> {
         /* google.protobuf.StringValue etag = 2; */
         if (message.etag)
             StringValue.internalBinaryWrite(message.etag, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* repeated string bookmarks = 3; */
+        for (let i = 0; i < message.bookmarks.length; i++)
+            writer.tag(3, WireType.LengthDelimited).string(message.bookmarks[i]);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -5491,19 +6420,40 @@ export const DeleteTenantRequest = new DeleteTenantRequest$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class DeleteTenantResponse$Type extends MessageType<DeleteTenantResponse> {
     constructor() {
-        super("indykite.config.v1beta1.DeleteTenantResponse", []);
+        super("indykite.config.v1beta1.DeleteTenantResponse", [
+            { no: 1, name: "bookmark", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+        ]);
     }
     create(value?: PartialMessage<DeleteTenantResponse>): DeleteTenantResponse {
-        const message = {};
+        const message = { bookmark: "" };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<DeleteTenantResponse>(this, message, value);
         return message;
     }
     internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DeleteTenantResponse): DeleteTenantResponse {
-        return target ?? this.create();
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string bookmark */ 1:
+                    message.bookmark = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
     }
     internalBinaryWrite(message: DeleteTenantResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string bookmark = 1; */
+        if (message.bookmark !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.bookmark);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -5532,11 +6482,12 @@ class CreateConfigNodeRequest$Type extends MessageType<CreateConfigNodeRequest> 
             { no: 23, name: "safr_provider_config", kind: "message", oneof: "config", T: () => SAFRProviderConfig },
             { no: 24, name: "ingest_mapping_config", kind: "message", oneof: "config", T: () => IngestMappingConfig },
             { no: 25, name: "authorization_policy_config", kind: "message", oneof: "config", T: () => AuthorizationPolicyConfig },
-            { no: 26, name: "knowledge_graph_schema_config", kind: "message", oneof: "config", T: () => KnowledgeGraphSchemaConfig }
+            { no: 26, name: "knowledge_graph_schema_config", kind: "message", oneof: "config", T: () => KnowledgeGraphSchemaConfig },
+            { no: 7, name: "bookmarks", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { items: { string: { minLen: "40", pattern: "^[a-zA-Z0-9_-]{40,}$" } } } } } }
         ]);
     }
     create(value?: PartialMessage<CreateConfigNodeRequest>): CreateConfigNodeRequest {
-        const message = { location: "", name: "", config: { oneofKind: undefined } };
+        const message = { location: "", name: "", config: { oneofKind: undefined }, bookmarks: [] };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<CreateConfigNodeRequest>(this, message, value);
@@ -5625,6 +6576,9 @@ class CreateConfigNodeRequest$Type extends MessageType<CreateConfigNodeRequest> 
                         knowledgeGraphSchemaConfig: KnowledgeGraphSchemaConfig.internalBinaryRead(reader, reader.uint32(), options, (message.config as any).knowledgeGraphSchemaConfig)
                     };
                     break;
+                case /* repeated string bookmarks */ 7:
+                    message.bookmarks.push(reader.string());
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -5682,6 +6636,9 @@ class CreateConfigNodeRequest$Type extends MessageType<CreateConfigNodeRequest> 
         /* indykite.config.v1beta1.KnowledgeGraphSchemaConfig knowledge_graph_schema_config = 26; */
         if (message.config.oneofKind === "knowledgeGraphSchemaConfig")
             KnowledgeGraphSchemaConfig.internalBinaryWrite(message.config.knowledgeGraphSchemaConfig, writer.tag(26, WireType.LengthDelimited).fork(), options).join();
+        /* repeated string bookmarks = 7; */
+        for (let i = 0; i < message.bookmarks.length; i++)
+            writer.tag(7, WireType.LengthDelimited).string(message.bookmarks[i]);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -5699,11 +6656,12 @@ class CreateConfigNodeResponse$Type extends MessageType<CreateConfigNodeResponse
             { no: 1, name: "id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
             { no: 2, name: "create_time", kind: "message", T: () => Timestamp },
             { no: 3, name: "update_time", kind: "message", T: () => Timestamp },
-            { no: 4, name: "etag", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+            { no: 4, name: "etag", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 5, name: "bookmark", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
         ]);
     }
     create(value?: PartialMessage<CreateConfigNodeResponse>): CreateConfigNodeResponse {
-        const message = { id: "", etag: "" };
+        const message = { id: "", etag: "", bookmark: "" };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<CreateConfigNodeResponse>(this, message, value);
@@ -5725,6 +6683,9 @@ class CreateConfigNodeResponse$Type extends MessageType<CreateConfigNodeResponse
                     break;
                 case /* string etag */ 4:
                     message.etag = reader.string();
+                    break;
+                case /* string bookmark */ 5:
+                    message.bookmark = reader.string();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -5750,6 +6711,9 @@ class CreateConfigNodeResponse$Type extends MessageType<CreateConfigNodeResponse
         /* string etag = 4; */
         if (message.etag !== "")
             writer.tag(4, WireType.LengthDelimited).string(message.etag);
+        /* string bookmark = 5; */
+        if (message.bookmark !== "")
+            writer.tag(5, WireType.LengthDelimited).string(message.bookmark);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -5764,11 +6728,12 @@ export const CreateConfigNodeResponse = new CreateConfigNodeResponse$Type();
 class ReadConfigNodeRequest$Type extends MessageType<ReadConfigNodeRequest> {
     constructor() {
         super("indykite.config.v1beta1.ReadConfigNodeRequest", [
-            { no: 1, name: "id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } }
+            { no: 1, name: "id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
+            { no: 2, name: "bookmarks", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { items: { string: { minLen: "40", pattern: "^[a-zA-Z0-9_-]{40,}$" } } } } } }
         ]);
     }
     create(value?: PartialMessage<ReadConfigNodeRequest>): ReadConfigNodeRequest {
-        const message = { id: "" };
+        const message = { id: "", bookmarks: [] };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<ReadConfigNodeRequest>(this, message, value);
@@ -5781,6 +6746,9 @@ class ReadConfigNodeRequest$Type extends MessageType<ReadConfigNodeRequest> {
             switch (fieldNo) {
                 case /* string id */ 1:
                     message.id = reader.string();
+                    break;
+                case /* repeated string bookmarks */ 2:
+                    message.bookmarks.push(reader.string());
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -5797,6 +6765,9 @@ class ReadConfigNodeRequest$Type extends MessageType<ReadConfigNodeRequest> {
         /* string id = 1; */
         if (message.id !== "")
             writer.tag(1, WireType.LengthDelimited).string(message.id);
+        /* repeated string bookmarks = 2; */
+        for (let i = 0; i < message.bookmarks.length; i++)
+            writer.tag(2, WireType.LengthDelimited).string(message.bookmarks[i]);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -5872,11 +6843,12 @@ class UpdateConfigNodeRequest$Type extends MessageType<UpdateConfigNodeRequest> 
             { no: 23, name: "safr_provider_config", kind: "message", oneof: "config", T: () => SAFRProviderConfig },
             { no: 24, name: "ingest_mapping_config", kind: "message", oneof: "config", T: () => IngestMappingConfig },
             { no: 25, name: "authorization_policy_config", kind: "message", oneof: "config", T: () => AuthorizationPolicyConfig },
-            { no: 26, name: "knowledge_graph_schema_config", kind: "message", oneof: "config", T: () => KnowledgeGraphSchemaConfig }
+            { no: 26, name: "knowledge_graph_schema_config", kind: "message", oneof: "config", T: () => KnowledgeGraphSchemaConfig },
+            { no: 5, name: "bookmarks", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { items: { string: { minLen: "40", pattern: "^[a-zA-Z0-9_-]{40,}$" } } } } } }
         ]);
     }
     create(value?: PartialMessage<UpdateConfigNodeRequest>): UpdateConfigNodeRequest {
-        const message = { id: "", config: { oneofKind: undefined } };
+        const message = { id: "", config: { oneofKind: undefined }, bookmarks: [] };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<UpdateConfigNodeRequest>(this, message, value);
@@ -5965,6 +6937,9 @@ class UpdateConfigNodeRequest$Type extends MessageType<UpdateConfigNodeRequest> 
                         knowledgeGraphSchemaConfig: KnowledgeGraphSchemaConfig.internalBinaryRead(reader, reader.uint32(), options, (message.config as any).knowledgeGraphSchemaConfig)
                     };
                     break;
+                case /* repeated string bookmarks */ 5:
+                    message.bookmarks.push(reader.string());
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -6022,6 +6997,9 @@ class UpdateConfigNodeRequest$Type extends MessageType<UpdateConfigNodeRequest> 
         /* indykite.config.v1beta1.KnowledgeGraphSchemaConfig knowledge_graph_schema_config = 26; */
         if (message.config.oneofKind === "knowledgeGraphSchemaConfig")
             KnowledgeGraphSchemaConfig.internalBinaryWrite(message.config.knowledgeGraphSchemaConfig, writer.tag(26, WireType.LengthDelimited).fork(), options).join();
+        /* repeated string bookmarks = 5; */
+        for (let i = 0; i < message.bookmarks.length; i++)
+            writer.tag(5, WireType.LengthDelimited).string(message.bookmarks[i]);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -6038,11 +7016,12 @@ class UpdateConfigNodeResponse$Type extends MessageType<UpdateConfigNodeResponse
         super("indykite.config.v1beta1.UpdateConfigNodeResponse", [
             { no: 1, name: "id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
             { no: 2, name: "update_time", kind: "message", T: () => Timestamp },
-            { no: 3, name: "etag", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+            { no: 3, name: "etag", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 4, name: "bookmark", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
         ]);
     }
     create(value?: PartialMessage<UpdateConfigNodeResponse>): UpdateConfigNodeResponse {
-        const message = { id: "", etag: "" };
+        const message = { id: "", etag: "", bookmark: "" };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<UpdateConfigNodeResponse>(this, message, value);
@@ -6061,6 +7040,9 @@ class UpdateConfigNodeResponse$Type extends MessageType<UpdateConfigNodeResponse
                     break;
                 case /* string etag */ 3:
                     message.etag = reader.string();
+                    break;
+                case /* string bookmark */ 4:
+                    message.bookmark = reader.string();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -6083,6 +7065,9 @@ class UpdateConfigNodeResponse$Type extends MessageType<UpdateConfigNodeResponse
         /* string etag = 3; */
         if (message.etag !== "")
             writer.tag(3, WireType.LengthDelimited).string(message.etag);
+        /* string bookmark = 4; */
+        if (message.bookmark !== "")
+            writer.tag(4, WireType.LengthDelimited).string(message.bookmark);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -6098,11 +7083,12 @@ class DeleteConfigNodeRequest$Type extends MessageType<DeleteConfigNodeRequest> 
     constructor() {
         super("indykite.config.v1beta1.DeleteConfigNodeRequest", [
             { no: 1, name: "id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
-            { no: 3, name: "etag", kind: "message", T: () => StringValue }
+            { no: 3, name: "etag", kind: "message", T: () => StringValue },
+            { no: 4, name: "bookmarks", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { items: { string: { minLen: "40", pattern: "^[a-zA-Z0-9_-]{40,}$" } } } } } }
         ]);
     }
     create(value?: PartialMessage<DeleteConfigNodeRequest>): DeleteConfigNodeRequest {
-        const message = { id: "" };
+        const message = { id: "", bookmarks: [] };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<DeleteConfigNodeRequest>(this, message, value);
@@ -6118,6 +7104,9 @@ class DeleteConfigNodeRequest$Type extends MessageType<DeleteConfigNodeRequest> 
                     break;
                 case /* google.protobuf.StringValue etag */ 3:
                     message.etag = StringValue.internalBinaryRead(reader, reader.uint32(), options, message.etag);
+                    break;
+                case /* repeated string bookmarks */ 4:
+                    message.bookmarks.push(reader.string());
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -6137,6 +7126,9 @@ class DeleteConfigNodeRequest$Type extends MessageType<DeleteConfigNodeRequest> 
         /* google.protobuf.StringValue etag = 3; */
         if (message.etag)
             StringValue.internalBinaryWrite(message.etag, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        /* repeated string bookmarks = 4; */
+        for (let i = 0; i < message.bookmarks.length; i++)
+            writer.tag(4, WireType.LengthDelimited).string(message.bookmarks[i]);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -6150,19 +7142,40 @@ export const DeleteConfigNodeRequest = new DeleteConfigNodeRequest$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class DeleteConfigNodeResponse$Type extends MessageType<DeleteConfigNodeResponse> {
     constructor() {
-        super("indykite.config.v1beta1.DeleteConfigNodeResponse", []);
+        super("indykite.config.v1beta1.DeleteConfigNodeResponse", [
+            { no: 1, name: "bookmark", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+        ]);
     }
     create(value?: PartialMessage<DeleteConfigNodeResponse>): DeleteConfigNodeResponse {
-        const message = {};
+        const message = { bookmark: "" };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<DeleteConfigNodeResponse>(this, message, value);
         return message;
     }
     internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DeleteConfigNodeResponse): DeleteConfigNodeResponse {
-        return target ?? this.create();
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string bookmark */ 1:
+                    message.bookmark = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
     }
     internalBinaryWrite(message: DeleteConfigNodeResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string bookmark = 1; */
+        if (message.bookmark !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.bookmark);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -6181,11 +7194,12 @@ class CreateOAuth2ProviderRequest$Type extends MessageType<CreateOAuth2ProviderR
             { no: 2, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "2", maxLen: "63", pattern: "^[a-z](?:[-a-z0-9]{0,61}[a-z0-9])$" } } } },
             { no: 3, name: "display_name", kind: "message", T: () => StringValue, options: { "validate.rules": { string: { minLen: "2", maxLen: "254", ignoreEmpty: true } } } },
             { no: 4, name: "description", kind: "message", T: () => StringValue, options: { "validate.rules": { string: { minLen: "2", maxLen: "254", ignoreEmpty: true } } } },
-            { no: 5, name: "config", kind: "message", T: () => OAuth2ProviderConfig, options: { "validate.rules": { message: { required: true } } } }
+            { no: 5, name: "config", kind: "message", T: () => OAuth2ProviderConfig, options: { "validate.rules": { message: { required: true } } } },
+            { no: 6, name: "bookmarks", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { items: { string: { minLen: "40", pattern: "^[a-zA-Z0-9_-]{40,}$" } } } } } }
         ]);
     }
     create(value?: PartialMessage<CreateOAuth2ProviderRequest>): CreateOAuth2ProviderRequest {
-        const message = { appSpaceId: "", name: "" };
+        const message = { appSpaceId: "", name: "", bookmarks: [] };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<CreateOAuth2ProviderRequest>(this, message, value);
@@ -6210,6 +7224,9 @@ class CreateOAuth2ProviderRequest$Type extends MessageType<CreateOAuth2ProviderR
                     break;
                 case /* indykite.config.v1beta1.OAuth2ProviderConfig config */ 5:
                     message.config = OAuth2ProviderConfig.internalBinaryRead(reader, reader.uint32(), options, message.config);
+                    break;
+                case /* repeated string bookmarks */ 6:
+                    message.bookmarks.push(reader.string());
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -6238,6 +7255,9 @@ class CreateOAuth2ProviderRequest$Type extends MessageType<CreateOAuth2ProviderR
         /* indykite.config.v1beta1.OAuth2ProviderConfig config = 5; */
         if (message.config)
             OAuth2ProviderConfig.internalBinaryWrite(message.config, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
+        /* repeated string bookmarks = 6; */
+        for (let i = 0; i < message.bookmarks.length; i++)
+            writer.tag(6, WireType.LengthDelimited).string(message.bookmarks[i]);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -6255,11 +7275,12 @@ class CreateOAuth2ProviderResponse$Type extends MessageType<CreateOAuth2Provider
             { no: 1, name: "id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
             { no: 2, name: "create_time", kind: "message", T: () => Timestamp },
             { no: 3, name: "update_time", kind: "message", T: () => Timestamp },
-            { no: 4, name: "etag", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+            { no: 4, name: "etag", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 5, name: "bookmark", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
         ]);
     }
     create(value?: PartialMessage<CreateOAuth2ProviderResponse>): CreateOAuth2ProviderResponse {
-        const message = { id: "", etag: "" };
+        const message = { id: "", etag: "", bookmark: "" };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<CreateOAuth2ProviderResponse>(this, message, value);
@@ -6281,6 +7302,9 @@ class CreateOAuth2ProviderResponse$Type extends MessageType<CreateOAuth2Provider
                     break;
                 case /* string etag */ 4:
                     message.etag = reader.string();
+                    break;
+                case /* string bookmark */ 5:
+                    message.bookmark = reader.string();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -6306,6 +7330,9 @@ class CreateOAuth2ProviderResponse$Type extends MessageType<CreateOAuth2Provider
         /* string etag = 4; */
         if (message.etag !== "")
             writer.tag(4, WireType.LengthDelimited).string(message.etag);
+        /* string bookmark = 5; */
+        if (message.bookmark !== "")
+            writer.tag(5, WireType.LengthDelimited).string(message.bookmark);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -6320,11 +7347,12 @@ export const CreateOAuth2ProviderResponse = new CreateOAuth2ProviderResponse$Typ
 class ReadOAuth2ProviderRequest$Type extends MessageType<ReadOAuth2ProviderRequest> {
     constructor() {
         super("indykite.config.v1beta1.ReadOAuth2ProviderRequest", [
-            { no: 1, name: "id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } }
+            { no: 1, name: "id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
+            { no: 2, name: "bookmarks", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { items: { string: { minLen: "40", pattern: "^[a-zA-Z0-9_-]{40,}$" } } } } } }
         ]);
     }
     create(value?: PartialMessage<ReadOAuth2ProviderRequest>): ReadOAuth2ProviderRequest {
-        const message = { id: "" };
+        const message = { id: "", bookmarks: [] };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<ReadOAuth2ProviderRequest>(this, message, value);
@@ -6337,6 +7365,9 @@ class ReadOAuth2ProviderRequest$Type extends MessageType<ReadOAuth2ProviderReque
             switch (fieldNo) {
                 case /* string id */ 1:
                     message.id = reader.string();
+                    break;
+                case /* repeated string bookmarks */ 2:
+                    message.bookmarks.push(reader.string());
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -6353,6 +7384,9 @@ class ReadOAuth2ProviderRequest$Type extends MessageType<ReadOAuth2ProviderReque
         /* string id = 1; */
         if (message.id !== "")
             writer.tag(1, WireType.LengthDelimited).string(message.id);
+        /* repeated string bookmarks = 2; */
+        for (let i = 0; i < message.bookmarks.length; i++)
+            writer.tag(2, WireType.LengthDelimited).string(message.bookmarks[i]);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -6418,11 +7452,12 @@ class UpdateOAuth2ProviderRequest$Type extends MessageType<UpdateOAuth2ProviderR
             { no: 2, name: "etag", kind: "message", T: () => StringValue },
             { no: 3, name: "display_name", kind: "message", T: () => StringValue, options: { "validate.rules": { string: { minLen: "2", maxLen: "254", ignoreEmpty: true } } } },
             { no: 4, name: "description", kind: "message", T: () => StringValue, options: { "validate.rules": { string: { minLen: "2", maxLen: "254", ignoreEmpty: true } } } },
-            { no: 5, name: "config", kind: "message", T: () => OAuth2ProviderConfig }
+            { no: 5, name: "config", kind: "message", T: () => OAuth2ProviderConfig },
+            { no: 6, name: "bookmarks", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { items: { string: { minLen: "40", pattern: "^[a-zA-Z0-9_-]{40,}$" } } } } } }
         ]);
     }
     create(value?: PartialMessage<UpdateOAuth2ProviderRequest>): UpdateOAuth2ProviderRequest {
-        const message = { id: "" };
+        const message = { id: "", bookmarks: [] };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<UpdateOAuth2ProviderRequest>(this, message, value);
@@ -6447,6 +7482,9 @@ class UpdateOAuth2ProviderRequest$Type extends MessageType<UpdateOAuth2ProviderR
                     break;
                 case /* indykite.config.v1beta1.OAuth2ProviderConfig config */ 5:
                     message.config = OAuth2ProviderConfig.internalBinaryRead(reader, reader.uint32(), options, message.config);
+                    break;
+                case /* repeated string bookmarks */ 6:
+                    message.bookmarks.push(reader.string());
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -6475,6 +7513,9 @@ class UpdateOAuth2ProviderRequest$Type extends MessageType<UpdateOAuth2ProviderR
         /* indykite.config.v1beta1.OAuth2ProviderConfig config = 5; */
         if (message.config)
             OAuth2ProviderConfig.internalBinaryWrite(message.config, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
+        /* repeated string bookmarks = 6; */
+        for (let i = 0; i < message.bookmarks.length; i++)
+            writer.tag(6, WireType.LengthDelimited).string(message.bookmarks[i]);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -6491,11 +7532,12 @@ class UpdateOAuth2ProviderResponse$Type extends MessageType<UpdateOAuth2Provider
         super("indykite.config.v1beta1.UpdateOAuth2ProviderResponse", [
             { no: 1, name: "id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
             { no: 2, name: "update_time", kind: "message", T: () => Timestamp },
-            { no: 3, name: "etag", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+            { no: 3, name: "etag", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 4, name: "bookmark", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
         ]);
     }
     create(value?: PartialMessage<UpdateOAuth2ProviderResponse>): UpdateOAuth2ProviderResponse {
-        const message = { id: "", etag: "" };
+        const message = { id: "", etag: "", bookmark: "" };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<UpdateOAuth2ProviderResponse>(this, message, value);
@@ -6514,6 +7556,9 @@ class UpdateOAuth2ProviderResponse$Type extends MessageType<UpdateOAuth2Provider
                     break;
                 case /* string etag */ 3:
                     message.etag = reader.string();
+                    break;
+                case /* string bookmark */ 4:
+                    message.bookmark = reader.string();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -6536,6 +7581,9 @@ class UpdateOAuth2ProviderResponse$Type extends MessageType<UpdateOAuth2Provider
         /* string etag = 3; */
         if (message.etag !== "")
             writer.tag(3, WireType.LengthDelimited).string(message.etag);
+        /* string bookmark = 4; */
+        if (message.bookmark !== "")
+            writer.tag(4, WireType.LengthDelimited).string(message.bookmark);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -6551,11 +7599,12 @@ class DeleteOAuth2ProviderRequest$Type extends MessageType<DeleteOAuth2ProviderR
     constructor() {
         super("indykite.config.v1beta1.DeleteOAuth2ProviderRequest", [
             { no: 1, name: "id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
-            { no: 2, name: "etag", kind: "message", T: () => StringValue }
+            { no: 2, name: "etag", kind: "message", T: () => StringValue },
+            { no: 3, name: "bookmarks", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { items: { string: { minLen: "40", pattern: "^[a-zA-Z0-9_-]{40,}$" } } } } } }
         ]);
     }
     create(value?: PartialMessage<DeleteOAuth2ProviderRequest>): DeleteOAuth2ProviderRequest {
-        const message = { id: "" };
+        const message = { id: "", bookmarks: [] };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<DeleteOAuth2ProviderRequest>(this, message, value);
@@ -6571,6 +7620,9 @@ class DeleteOAuth2ProviderRequest$Type extends MessageType<DeleteOAuth2ProviderR
                     break;
                 case /* google.protobuf.StringValue etag */ 2:
                     message.etag = StringValue.internalBinaryRead(reader, reader.uint32(), options, message.etag);
+                    break;
+                case /* repeated string bookmarks */ 3:
+                    message.bookmarks.push(reader.string());
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -6590,6 +7642,9 @@ class DeleteOAuth2ProviderRequest$Type extends MessageType<DeleteOAuth2ProviderR
         /* google.protobuf.StringValue etag = 2; */
         if (message.etag)
             StringValue.internalBinaryWrite(message.etag, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* repeated string bookmarks = 3; */
+        for (let i = 0; i < message.bookmarks.length; i++)
+            writer.tag(3, WireType.LengthDelimited).string(message.bookmarks[i]);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -6603,19 +7658,40 @@ export const DeleteOAuth2ProviderRequest = new DeleteOAuth2ProviderRequest$Type(
 // @generated message type with reflection information, may provide speed optimized methods
 class DeleteOAuth2ProviderResponse$Type extends MessageType<DeleteOAuth2ProviderResponse> {
     constructor() {
-        super("indykite.config.v1beta1.DeleteOAuth2ProviderResponse", []);
+        super("indykite.config.v1beta1.DeleteOAuth2ProviderResponse", [
+            { no: 1, name: "bookmark", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+        ]);
     }
     create(value?: PartialMessage<DeleteOAuth2ProviderResponse>): DeleteOAuth2ProviderResponse {
-        const message = {};
+        const message = { bookmark: "" };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<DeleteOAuth2ProviderResponse>(this, message, value);
         return message;
     }
     internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DeleteOAuth2ProviderResponse): DeleteOAuth2ProviderResponse {
-        return target ?? this.create();
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string bookmark */ 1:
+                    message.bookmark = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
     }
     internalBinaryWrite(message: DeleteOAuth2ProviderResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string bookmark = 1; */
+        if (message.bookmark !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.bookmark);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -6634,11 +7710,12 @@ class CreateOAuth2ApplicationRequest$Type extends MessageType<CreateOAuth2Applic
             { no: 2, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "2", maxLen: "63", pattern: "^[a-z](?:[-a-z0-9]{0,61}[a-z0-9])$" } } } },
             { no: 3, name: "display_name", kind: "message", T: () => StringValue, options: { "validate.rules": { string: { minLen: "2", maxLen: "254", ignoreEmpty: true } } } },
             { no: 4, name: "description", kind: "message", T: () => StringValue, options: { "validate.rules": { string: { minLen: "2", maxLen: "254", ignoreEmpty: true } } } },
-            { no: 5, name: "config", kind: "message", T: () => OAuth2ApplicationConfig, options: { "validate.rules": { message: { required: true } } } }
+            { no: 5, name: "config", kind: "message", T: () => OAuth2ApplicationConfig, options: { "validate.rules": { message: { required: true } } } },
+            { no: 6, name: "bookmarks", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { items: { string: { minLen: "40", pattern: "^[a-zA-Z0-9_-]{40,}$" } } } } } }
         ]);
     }
     create(value?: PartialMessage<CreateOAuth2ApplicationRequest>): CreateOAuth2ApplicationRequest {
-        const message = { oauth2ProviderId: "", name: "" };
+        const message = { oauth2ProviderId: "", name: "", bookmarks: [] };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<CreateOAuth2ApplicationRequest>(this, message, value);
@@ -6663,6 +7740,9 @@ class CreateOAuth2ApplicationRequest$Type extends MessageType<CreateOAuth2Applic
                     break;
                 case /* indykite.config.v1beta1.OAuth2ApplicationConfig config */ 5:
                     message.config = OAuth2ApplicationConfig.internalBinaryRead(reader, reader.uint32(), options, message.config);
+                    break;
+                case /* repeated string bookmarks */ 6:
+                    message.bookmarks.push(reader.string());
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -6691,6 +7771,9 @@ class CreateOAuth2ApplicationRequest$Type extends MessageType<CreateOAuth2Applic
         /* indykite.config.v1beta1.OAuth2ApplicationConfig config = 5; */
         if (message.config)
             OAuth2ApplicationConfig.internalBinaryWrite(message.config, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
+        /* repeated string bookmarks = 6; */
+        for (let i = 0; i < message.bookmarks.length; i++)
+            writer.tag(6, WireType.LengthDelimited).string(message.bookmarks[i]);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -6710,11 +7793,12 @@ class CreateOAuth2ApplicationResponse$Type extends MessageType<CreateOAuth2Appli
             { no: 3, name: "update_time", kind: "message", T: () => Timestamp },
             { no: 4, name: "etag", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 5, name: "client_id", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 6, name: "client_secret", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+            { no: 6, name: "client_secret", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 7, name: "bookmark", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
         ]);
     }
     create(value?: PartialMessage<CreateOAuth2ApplicationResponse>): CreateOAuth2ApplicationResponse {
-        const message = { id: "", etag: "", clientId: "", clientSecret: "" };
+        const message = { id: "", etag: "", clientId: "", clientSecret: "", bookmark: "" };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<CreateOAuth2ApplicationResponse>(this, message, value);
@@ -6742,6 +7826,9 @@ class CreateOAuth2ApplicationResponse$Type extends MessageType<CreateOAuth2Appli
                     break;
                 case /* string client_secret */ 6:
                     message.clientSecret = reader.string();
+                    break;
+                case /* string bookmark */ 7:
+                    message.bookmark = reader.string();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -6773,6 +7860,9 @@ class CreateOAuth2ApplicationResponse$Type extends MessageType<CreateOAuth2Appli
         /* string client_secret = 6; */
         if (message.clientSecret !== "")
             writer.tag(6, WireType.LengthDelimited).string(message.clientSecret);
+        /* string bookmark = 7; */
+        if (message.bookmark !== "")
+            writer.tag(7, WireType.LengthDelimited).string(message.bookmark);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -6787,11 +7877,12 @@ export const CreateOAuth2ApplicationResponse = new CreateOAuth2ApplicationRespon
 class ReadOAuth2ApplicationRequest$Type extends MessageType<ReadOAuth2ApplicationRequest> {
     constructor() {
         super("indykite.config.v1beta1.ReadOAuth2ApplicationRequest", [
-            { no: 1, name: "id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } }
+            { no: 1, name: "id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
+            { no: 2, name: "bookmarks", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { items: { string: { minLen: "40", pattern: "^[a-zA-Z0-9_-]{40,}$" } } } } } }
         ]);
     }
     create(value?: PartialMessage<ReadOAuth2ApplicationRequest>): ReadOAuth2ApplicationRequest {
-        const message = { id: "" };
+        const message = { id: "", bookmarks: [] };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<ReadOAuth2ApplicationRequest>(this, message, value);
@@ -6804,6 +7895,9 @@ class ReadOAuth2ApplicationRequest$Type extends MessageType<ReadOAuth2Applicatio
             switch (fieldNo) {
                 case /* string id */ 1:
                     message.id = reader.string();
+                    break;
+                case /* repeated string bookmarks */ 2:
+                    message.bookmarks.push(reader.string());
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -6820,6 +7914,9 @@ class ReadOAuth2ApplicationRequest$Type extends MessageType<ReadOAuth2Applicatio
         /* string id = 1; */
         if (message.id !== "")
             writer.tag(1, WireType.LengthDelimited).string(message.id);
+        /* repeated string bookmarks = 2; */
+        for (let i = 0; i < message.bookmarks.length; i++)
+            writer.tag(2, WireType.LengthDelimited).string(message.bookmarks[i]);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -6885,11 +7982,12 @@ class UpdateOAuth2ApplicationRequest$Type extends MessageType<UpdateOAuth2Applic
             { no: 2, name: "etag", kind: "message", T: () => StringValue },
             { no: 3, name: "display_name", kind: "message", T: () => StringValue, options: { "validate.rules": { string: { minLen: "2", maxLen: "254", ignoreEmpty: true } } } },
             { no: 4, name: "description", kind: "message", T: () => StringValue, options: { "validate.rules": { string: { minLen: "2", maxLen: "254", ignoreEmpty: true } } } },
-            { no: 5, name: "config", kind: "message", T: () => OAuth2ApplicationConfig }
+            { no: 5, name: "config", kind: "message", T: () => OAuth2ApplicationConfig },
+            { no: 6, name: "bookmarks", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { items: { string: { minLen: "40", pattern: "^[a-zA-Z0-9_-]{40,}$" } } } } } }
         ]);
     }
     create(value?: PartialMessage<UpdateOAuth2ApplicationRequest>): UpdateOAuth2ApplicationRequest {
-        const message = { id: "" };
+        const message = { id: "", bookmarks: [] };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<UpdateOAuth2ApplicationRequest>(this, message, value);
@@ -6914,6 +8012,9 @@ class UpdateOAuth2ApplicationRequest$Type extends MessageType<UpdateOAuth2Applic
                     break;
                 case /* indykite.config.v1beta1.OAuth2ApplicationConfig config */ 5:
                     message.config = OAuth2ApplicationConfig.internalBinaryRead(reader, reader.uint32(), options, message.config);
+                    break;
+                case /* repeated string bookmarks */ 6:
+                    message.bookmarks.push(reader.string());
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -6942,6 +8043,9 @@ class UpdateOAuth2ApplicationRequest$Type extends MessageType<UpdateOAuth2Applic
         /* indykite.config.v1beta1.OAuth2ApplicationConfig config = 5; */
         if (message.config)
             OAuth2ApplicationConfig.internalBinaryWrite(message.config, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
+        /* repeated string bookmarks = 6; */
+        for (let i = 0; i < message.bookmarks.length; i++)
+            writer.tag(6, WireType.LengthDelimited).string(message.bookmarks[i]);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -6958,11 +8062,12 @@ class UpdateOAuth2ApplicationResponse$Type extends MessageType<UpdateOAuth2Appli
         super("indykite.config.v1beta1.UpdateOAuth2ApplicationResponse", [
             { no: 1, name: "id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
             { no: 2, name: "update_time", kind: "message", T: () => Timestamp },
-            { no: 3, name: "etag", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+            { no: 3, name: "etag", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 4, name: "bookmark", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
         ]);
     }
     create(value?: PartialMessage<UpdateOAuth2ApplicationResponse>): UpdateOAuth2ApplicationResponse {
-        const message = { id: "", etag: "" };
+        const message = { id: "", etag: "", bookmark: "" };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<UpdateOAuth2ApplicationResponse>(this, message, value);
@@ -6981,6 +8086,9 @@ class UpdateOAuth2ApplicationResponse$Type extends MessageType<UpdateOAuth2Appli
                     break;
                 case /* string etag */ 3:
                     message.etag = reader.string();
+                    break;
+                case /* string bookmark */ 4:
+                    message.bookmark = reader.string();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -7003,6 +8111,9 @@ class UpdateOAuth2ApplicationResponse$Type extends MessageType<UpdateOAuth2Appli
         /* string etag = 3; */
         if (message.etag !== "")
             writer.tag(3, WireType.LengthDelimited).string(message.etag);
+        /* string bookmark = 4; */
+        if (message.bookmark !== "")
+            writer.tag(4, WireType.LengthDelimited).string(message.bookmark);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -7018,11 +8129,12 @@ class DeleteOAuth2ApplicationRequest$Type extends MessageType<DeleteOAuth2Applic
     constructor() {
         super("indykite.config.v1beta1.DeleteOAuth2ApplicationRequest", [
             { no: 1, name: "id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
-            { no: 2, name: "etag", kind: "message", T: () => StringValue }
+            { no: 2, name: "etag", kind: "message", T: () => StringValue },
+            { no: 3, name: "bookmarks", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { items: { string: { minLen: "40", pattern: "^[a-zA-Z0-9_-]{40,}$" } } } } } }
         ]);
     }
     create(value?: PartialMessage<DeleteOAuth2ApplicationRequest>): DeleteOAuth2ApplicationRequest {
-        const message = { id: "" };
+        const message = { id: "", bookmarks: [] };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<DeleteOAuth2ApplicationRequest>(this, message, value);
@@ -7038,6 +8150,9 @@ class DeleteOAuth2ApplicationRequest$Type extends MessageType<DeleteOAuth2Applic
                     break;
                 case /* google.protobuf.StringValue etag */ 2:
                     message.etag = StringValue.internalBinaryRead(reader, reader.uint32(), options, message.etag);
+                    break;
+                case /* repeated string bookmarks */ 3:
+                    message.bookmarks.push(reader.string());
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -7057,6 +8172,9 @@ class DeleteOAuth2ApplicationRequest$Type extends MessageType<DeleteOAuth2Applic
         /* google.protobuf.StringValue etag = 2; */
         if (message.etag)
             StringValue.internalBinaryWrite(message.etag, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* repeated string bookmarks = 3; */
+        for (let i = 0; i < message.bookmarks.length; i++)
+            writer.tag(3, WireType.LengthDelimited).string(message.bookmarks[i]);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -7070,19 +8188,40 @@ export const DeleteOAuth2ApplicationRequest = new DeleteOAuth2ApplicationRequest
 // @generated message type with reflection information, may provide speed optimized methods
 class DeleteOAuth2ApplicationResponse$Type extends MessageType<DeleteOAuth2ApplicationResponse> {
     constructor() {
-        super("indykite.config.v1beta1.DeleteOAuth2ApplicationResponse", []);
+        super("indykite.config.v1beta1.DeleteOAuth2ApplicationResponse", [
+            { no: 1, name: "bookmark", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+        ]);
     }
     create(value?: PartialMessage<DeleteOAuth2ApplicationResponse>): DeleteOAuth2ApplicationResponse {
-        const message = {};
+        const message = { bookmark: "" };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<DeleteOAuth2ApplicationResponse>(this, message, value);
         return message;
     }
     internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DeleteOAuth2ApplicationResponse): DeleteOAuth2ApplicationResponse {
-        return target ?? this.create();
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string bookmark */ 1:
+                    message.bookmark = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
     }
     internalBinaryWrite(message: DeleteOAuth2ApplicationResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string bookmark = 1; */
+        if (message.bookmark !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.bookmark);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -7100,11 +8239,12 @@ class AssignPermissionsRequest$Type extends MessageType<AssignPermissionsRequest
             { no: 1, name: "target_identifier", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
             { no: 2, name: "role", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { in: ["all_editor", "all_viewer", "app_editor", "app_viewer", "authn_viewer", "authn_editor"] } } } },
             { no: 3, name: "customer_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
-            { no: 4, name: "object_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } }
+            { no: 4, name: "object_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
+            { no: 5, name: "bookmarks", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { items: { string: { minLen: "40", pattern: "^[a-zA-Z0-9_-]{40,}$" } } } } } }
         ]);
     }
     create(value?: PartialMessage<AssignPermissionsRequest>): AssignPermissionsRequest {
-        const message = { targetIdentifier: "", role: "", customerId: "", objectId: "" };
+        const message = { targetIdentifier: "", role: "", customerId: "", objectId: "", bookmarks: [] };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<AssignPermissionsRequest>(this, message, value);
@@ -7126,6 +8266,9 @@ class AssignPermissionsRequest$Type extends MessageType<AssignPermissionsRequest
                     break;
                 case /* string object_id */ 4:
                     message.objectId = reader.string();
+                    break;
+                case /* repeated string bookmarks */ 5:
+                    message.bookmarks.push(reader.string());
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -7151,6 +8294,9 @@ class AssignPermissionsRequest$Type extends MessageType<AssignPermissionsRequest
         /* string object_id = 4; */
         if (message.objectId !== "")
             writer.tag(4, WireType.LengthDelimited).string(message.objectId);
+        /* repeated string bookmarks = 5; */
+        for (let i = 0; i < message.bookmarks.length; i++)
+            writer.tag(5, WireType.LengthDelimited).string(message.bookmarks[i]);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -7165,11 +8311,12 @@ export const AssignPermissionsRequest = new AssignPermissionsRequest$Type();
 class AssignPermissionsResponse$Type extends MessageType<AssignPermissionsResponse> {
     constructor() {
         super("indykite.config.v1beta1.AssignPermissionsResponse", [
-            { no: 1, name: "success", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+            { no: 1, name: "success", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 2, name: "bookmark", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
         ]);
     }
     create(value?: PartialMessage<AssignPermissionsResponse>): AssignPermissionsResponse {
-        const message = { success: false };
+        const message = { success: false, bookmark: "" };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<AssignPermissionsResponse>(this, message, value);
@@ -7182,6 +8329,9 @@ class AssignPermissionsResponse$Type extends MessageType<AssignPermissionsRespon
             switch (fieldNo) {
                 case /* bool success */ 1:
                     message.success = reader.bool();
+                    break;
+                case /* string bookmark */ 2:
+                    message.bookmark = reader.string();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -7198,6 +8348,9 @@ class AssignPermissionsResponse$Type extends MessageType<AssignPermissionsRespon
         /* bool success = 1; */
         if (message.success !== false)
             writer.tag(1, WireType.Varint).bool(message.success);
+        /* string bookmark = 2; */
+        if (message.bookmark !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.bookmark);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -7215,11 +8368,12 @@ class RevokePermissionsRequest$Type extends MessageType<RevokePermissionsRequest
             { no: 1, name: "target_identifier", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
             { no: 2, name: "role", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { in: ["all_editor", "all_viewer", "app_editor", "app_viewer", "authn_viewer", "authn_editor"] } } } },
             { no: 3, name: "customer_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
-            { no: 4, name: "object_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } }
+            { no: 4, name: "object_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
+            { no: 5, name: "bookmarks", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { items: { string: { minLen: "40", pattern: "^[a-zA-Z0-9_-]{40,}$" } } } } } }
         ]);
     }
     create(value?: PartialMessage<RevokePermissionsRequest>): RevokePermissionsRequest {
-        const message = { targetIdentifier: "", role: "", customerId: "", objectId: "" };
+        const message = { targetIdentifier: "", role: "", customerId: "", objectId: "", bookmarks: [] };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<RevokePermissionsRequest>(this, message, value);
@@ -7241,6 +8395,9 @@ class RevokePermissionsRequest$Type extends MessageType<RevokePermissionsRequest
                     break;
                 case /* string object_id */ 4:
                     message.objectId = reader.string();
+                    break;
+                case /* repeated string bookmarks */ 5:
+                    message.bookmarks.push(reader.string());
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -7266,6 +8423,9 @@ class RevokePermissionsRequest$Type extends MessageType<RevokePermissionsRequest
         /* string object_id = 4; */
         if (message.objectId !== "")
             writer.tag(4, WireType.LengthDelimited).string(message.objectId);
+        /* repeated string bookmarks = 5; */
+        for (let i = 0; i < message.bookmarks.length; i++)
+            writer.tag(5, WireType.LengthDelimited).string(message.bookmarks[i]);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -7280,11 +8440,12 @@ export const RevokePermissionsRequest = new RevokePermissionsRequest$Type();
 class RevokePermissionsResponse$Type extends MessageType<RevokePermissionsResponse> {
     constructor() {
         super("indykite.config.v1beta1.RevokePermissionsResponse", [
-            { no: 1, name: "success", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+            { no: 1, name: "success", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 2, name: "bookmark", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
         ]);
     }
     create(value?: PartialMessage<RevokePermissionsResponse>): RevokePermissionsResponse {
-        const message = { success: false };
+        const message = { success: false, bookmark: "" };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<RevokePermissionsResponse>(this, message, value);
@@ -7297,6 +8458,9 @@ class RevokePermissionsResponse$Type extends MessageType<RevokePermissionsRespon
             switch (fieldNo) {
                 case /* bool success */ 1:
                     message.success = reader.bool();
+                    break;
+                case /* string bookmark */ 2:
+                    message.bookmark = reader.string();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -7313,6 +8477,9 @@ class RevokePermissionsResponse$Type extends MessageType<RevokePermissionsRespon
         /* bool success = 1; */
         if (message.success !== false)
             writer.tag(1, WireType.Varint).bool(message.success);
+        /* string bookmark = 2; */
+        if (message.bookmark !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.bookmark);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -7327,11 +8494,12 @@ export const RevokePermissionsResponse = new RevokePermissionsResponse$Type();
 class ListPermissionsRequest$Type extends MessageType<ListPermissionsRequest> {
     constructor() {
         super("indykite.config.v1beta1.ListPermissionsRequest", [
-            { no: 1, name: "location", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } }
+            { no: 1, name: "location", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
+            { no: 2, name: "bookmarks", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { items: { string: { minLen: "40", pattern: "^[a-zA-Z0-9_-]{40,}$" } } } } } }
         ]);
     }
     create(value?: PartialMessage<ListPermissionsRequest>): ListPermissionsRequest {
-        const message = { location: "" };
+        const message = { location: "", bookmarks: [] };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<ListPermissionsRequest>(this, message, value);
@@ -7344,6 +8512,9 @@ class ListPermissionsRequest$Type extends MessageType<ListPermissionsRequest> {
             switch (fieldNo) {
                 case /* string location */ 1:
                     message.location = reader.string();
+                    break;
+                case /* repeated string bookmarks */ 2:
+                    message.bookmarks.push(reader.string());
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -7360,6 +8531,9 @@ class ListPermissionsRequest$Type extends MessageType<ListPermissionsRequest> {
         /* string location = 1; */
         if (message.location !== "")
             writer.tag(1, WireType.LengthDelimited).string(message.location);
+        /* repeated string bookmarks = 2; */
+        for (let i = 0; i < message.bookmarks.length; i++)
+            writer.tag(2, WireType.LengthDelimited).string(message.bookmarks[i]);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
