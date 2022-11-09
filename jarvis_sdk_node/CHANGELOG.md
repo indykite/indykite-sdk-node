@@ -1,4 +1,13 @@
 # Changelog
+## [0.1.18](https://github.com/indykite/jarvis-sdk-node/compare/v0.1.17...v0.1.18) (2022-11-09)
+
+
+### Features
+
+* add bookmark support to the config client ([3033881](https://github.com/indykite/jarvis-sdk-node/commit/303388168b508f6642b60d6a8ac8a52f65dda6a2))
+* add ingest mapping configuration ([7785d4c](https://github.com/indykite/jarvis-sdk-node/commit/7785d4c7c6abd3861982be39b2ac899553c8018f))
+* support session introspect ([fc5442f](https://github.com/indykite/jarvis-sdk-node/commit/fc5442f43a278185b8980ee8a4a8cee6f6201d46))
+
 ## [0.1.17](https://github.com/indykite/jarvis-sdk-node/compare/v0.1.16...v0.1.17) (2022-10-24)
 
 
