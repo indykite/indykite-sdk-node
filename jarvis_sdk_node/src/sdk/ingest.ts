@@ -8,6 +8,8 @@ import {
 import * as grpc from '../grpc/indykite/ingest/v1beta1/model';
 import { Readable } from 'stream';
 import { IngestResults } from './model/ingest/ingest_response';
+import { IndexFixer, streamKeeper } from './utils/stream';
+
 export class IngestClient {
   private client: IngestAPIClient;
   constructor(sdk: SdkClient) {
@@ -47,26 +49,36 @@ export class IngestClient {
   ): Promise<IngestResults> {
     return new Promise((resolve, reject) => {
       const results = new IngestResults();
-      const client = this.client.streamRecords();
-      client.on('data', (data: StreamRecordsResponse) => {
+      const [input, output] = streamKeeper(this.client.streamRecords.bind(this.client), [
+        new IndexFixer('recordIndex'),
+      ]);
+
+      output.on('data', (data: StreamRecordsResponse) => {
         results.deserializeAndAdd(data);
       });
-      client.on('end', () => {
+      output.on('end', () => {
         resolve(results);
       });
-      client.on('error', (err) => {
+      output.on('error', (err) => {
         reject(err);
       });
 
-      let obj: Record<string, unknown>;
-      while ((obj = objectsStream.read()) !== null) {
-        if (typeof obj === 'object') {
-          const request = this.createRequest(obj, mappingId, externalId, recordId);
-          client.write(request);
+      objectsStream.on('data', async (chunk) => {
+        let request: StreamRecordsRequest;
+        if (chunk instanceof Buffer) {
+          const parsedChunk = JSON.parse(chunk.toString('utf-8'));
+          request = this.createRequest(parsedChunk, mappingId, externalId, recordId);
+        } else {
+          request = this.createRequest(chunk, mappingId, externalId, recordId);
         }
-      }
-
-      client.end();
+        input.write(request);
+      });
+      objectsStream.on('error', (error: Error) => {
+        output.destroy(error);
+      });
+      objectsStream.on('end', () => {
+        input.end();
+      });
     });
   }
 

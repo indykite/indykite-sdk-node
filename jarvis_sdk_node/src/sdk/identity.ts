@@ -38,11 +38,16 @@ import { SdkClient } from './client/client';
 import { IdentityManagementAPIClient } from '../grpc/indykite/identity/v1beta1/identity_management_api.grpc-client';
 import { Invitation } from './model/invitation';
 import { JsonValue } from '@protobuf-ts/runtime';
-import { ImportDigitalTwinsRequest } from '../grpc/indykite/identity/v1beta1/import';
+import {
+  ImportDigitalTwinsRequest,
+  ImportDigitalTwinsResponse,
+} from '../grpc/indykite/identity/v1beta1/import';
 import { HashAlgorithm } from './model/hash_algorithm';
 import { ImportDigitalTwin, ImportResult } from './model/import_digitaltwin';
 import { AuthorizationDecisions } from './model/authorization_decisions';
 import { BoolValue } from '../grpc/google/protobuf/wrappers';
+import { Readable } from 'stream';
+import { IndexFixer, streamSplitter } from './utils/stream';
 
 export class IdentityClient {
   private client: IdentityManagementAPIClient;
@@ -786,25 +791,56 @@ export class IdentityClient {
   }
 
   importDigitalTwins(
-    digitalTwins: ImportDigitalTwin[],
+    digitalTwins: ImportDigitalTwin[] | Readable,
+    hashAlgorithm: HashAlgorithm,
+  ): Promise<ImportResult[]> {
+    if (!Array.isArray(digitalTwins)) {
+      return this.importStreamedDigitalTwins(digitalTwins, hashAlgorithm);
+    }
+
+    return this.importStreamedDigitalTwins(Readable.from(digitalTwins), hashAlgorithm);
+  }
+
+  private importStreamedDigitalTwins(
+    digitalTwinStream: Readable,
     hashAlgorithm: HashAlgorithm,
   ): Promise<ImportResult[]> {
     return new Promise((resolve, reject) => {
-      const request = ImportDigitalTwinsRequest.create({
-        hashAlgorithm: hashAlgorithm.marshal(),
+      const results: ImportResult[] = [];
+
+      const output = streamSplitter(
+        digitalTwinStream,
+        this.client.importDigitalTwins.bind(this.client),
+        1000,
+        (chunks: unknown[]) => {
+          return ImportDigitalTwinsRequest.create({
+            hashAlgorithm: hashAlgorithm.marshal(),
+            entities: chunks.map((chunk) => {
+              if (!(chunk instanceof ImportDigitalTwin)) {
+                throw new SdkError(SdkErrorCode.SDK_CODE_1, 'Incorrect stream object');
+              }
+
+              return chunk.marshal();
+            }),
+          });
+        },
+        [new IndexFixer('results.index')],
+      );
+
+      output.on('data', (res: ImportDigitalTwinsResponse) => {
+        results.push(
+          ...res.results
+            .map((result) => ImportResult.deserialize(result))
+            .filter((result): result is ImportResult => result !== null),
+        );
       });
 
-      request.entities = digitalTwins.map((dt) => dt.marshal());
+      output.on('end', () => {
+        resolve(results);
+      });
 
-      this.client.importDigitalTwins(request, (err, res) => {
-        if (err) reject(err);
-        else if (!res) resolve([]);
-        else
-          resolve(
-            res.results
-              .map((result) => ImportResult.deserialize(result))
-              .filter((result): result is ImportResult => result !== null),
-          );
+      output.on('error', (err) => {
+        reject(err);
       });
     });
   }
