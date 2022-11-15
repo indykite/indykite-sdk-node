@@ -398,12 +398,17 @@ describe('when a stream is used', () => {
       mors_fodselsnr: 15125149682,
       fars_fodselsnr: 15125049580,
     });
-    stream.push({
-      fodselsnr: 15125049580,
-      slektsnavn: 'FAMILIE',
-      fornavn: 'OLE',
-      familienummer: 15125049580,
-    });
+    stream.push(
+      Buffer.from(
+        JSON.stringify({
+          fodselsnr: 15125049580,
+          slektsnavn: 'FAMILIE',
+          fornavn: 'OLE',
+          familienummer: 15125049580,
+        }),
+      ),
+    );
+    stream.push(null);
 
     returnedValue = await sdk.ingest('mapping-id', 'fodselsnr', stream);
   });
@@ -458,18 +463,25 @@ describe('when a stream is used', () => {
 describe('when an error is returned', () => {
   const error = new Error('Mock error');
   let mockedClient: ClientMock;
-  let mockedWrite: jest.SpyInstance;
   let caughtError: unknown;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     mockedClient = new ClientMock();
-    mockedWrite = jest.spyOn(mockedClient, 'write').mockImplementation(() => 0);
-    jest.spyOn(mockedClient, 'end').mockImplementation(() => {
-      mockedClient.emit('error', error);
-    });
 
     const mockFunc = jest.fn().mockImplementation(() => mockedClient);
     jest.spyOn(sdk['client'], 'streamRecords').mockImplementation(mockFunc);
+
+    const stream = new Stream.Readable({
+      objectMode: true,
+      read: jest.fn(),
+    });
+    stream.destroy(error);
+
+    try {
+      await sdk.ingest('mapping-id', 'fodselsnr', stream);
+    } catch (err) {
+      caughtError = err;
+    }
   });
 
   describe('when an empty list of objects is sent', () => {
@@ -481,50 +493,8 @@ describe('when an error is returned', () => {
       }
     });
 
-    it('sends a correct request', () => {
-      expect(mockedWrite).toBeCalledTimes(0);
-    });
-
     it('throws the error', () => {
       expect(caughtError).toBe(error);
-    });
-  });
-});
-
-describe('when a non-object value is in the list', () => {
-  let mockedClient: ClientMock;
-  let mockedWrite: jest.SpyInstance;
-
-  beforeEach(() => {
-    let indexCounter = 0;
-    mockedClient = new ClientMock();
-    mockedWrite = jest
-      .spyOn(mockedClient, 'write')
-      .mockImplementation((obj: { record: { id: string } }) => {
-        mockedClient.emit('data', {
-          recordId: obj.record.id,
-          recordIndex: indexCounter++,
-          error: {},
-        } as StreamRecordsResponse);
-      });
-    jest.spyOn(mockedClient, 'end').mockImplementation(() => {
-      indexCounter = 0;
-      mockedClient.emit('end');
-    });
-
-    const mockFunc = jest.fn().mockImplementation(() => mockedClient);
-    jest.spyOn(sdk['client'], 'streamRecords').mockImplementation(mockFunc);
-  });
-
-  describe('when an empty list of objects is sent', () => {
-    beforeEach(() => {
-      return sdk.ingest('mapping-id', 'fodselsnr', [
-        'incorrect-value' as unknown as Record<string, unknown>,
-      ]);
-    });
-
-    it('does not send the incorrect value', () => {
-      expect(mockedWrite).toBeCalledTimes(0);
     });
   });
 });
@@ -572,6 +542,7 @@ describe('when a record error result is returned', () => {
       mors_fodselsnr: 15125149682,
       fars_fodselsnr: 15125049580,
     });
+    stream.push(null);
 
     returnedValue = await sdk.ingest('mapping-id', 'fodselsnr', stream);
   });
@@ -643,6 +614,7 @@ describe('when a status error result is returned', () => {
       mors_fodselsnr: 15125149682,
       fars_fodselsnr: 15125049580,
     });
+    stream.push(null);
 
     returnedValue = await sdk.ingest('mapping-id', 'fodselsnr', stream);
   });
