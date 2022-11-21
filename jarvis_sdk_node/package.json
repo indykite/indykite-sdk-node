@@ -62,7 +62,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/indykite/jarvis-sdk-nodejs-proto.git"
+    "url": "git+https://github.com/indykite/jarvis-sdk-node.git"
   },
   "keywords": [
     "authentication"
@@ -70,7 +70,7 @@
   "author": "Jarvis <jarvis-support@indykite.com> (https://indykite.com/)",
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/indykite/jarvis-sdk-nodejs-proto/issues"
+    "url": "https://github.com/indykite/jarvis-sdk-node/issues"
   },
-  "homepage": "https://github.com/indykite/jarvis-sdk-nodejs-proto#readme"
+  "homepage": "https://github.com/indykite/jarvis-sdk-node#readme"
 }
