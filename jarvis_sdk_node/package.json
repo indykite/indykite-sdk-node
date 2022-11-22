@@ -24,8 +24,8 @@
     "buf-generate": "buf generate --template ../buf.gen.yaml buf.build/indykite/indykiteapis -o .."
   },
   "devDependencies": {
-    "@babel/core": "7.19.0",
-    "@babel/preset-env": "7.19.0",
+    "@babel/core": "7.20.2",
+    "@babel/preset-env": "7.20.2",
     "@babel/preset-typescript": "7.18.6",
     "@types/argparse": "2.0.10",
     "@types/google-protobuf": "3.15.3",
