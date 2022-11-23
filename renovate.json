@@ -11,7 +11,6 @@
   "commitMessagePrefix": "chore(deps): ",
   "commitMessageAction": "update",
   "recreateClosed": false,
-  "groupName": "everything",
   "ignoreDeps": [],
   "ignorePaths": [
     "**/node_modules/**",
@@ -25,38 +24,11 @@
   },
   "packageRules": [
     {
-      "updateTypes": [
-        "major"
-      ],
-      "addLabels": [
-        "SemVer Major"
-      ]
-    },
-    {
-      "updateTypes": [
-        "minor"
-      ],
-      "addLabels": [
-        "SemVer Minor"
-      ]
-    },
-    {
-      "updateTypes": [
-        "patch",
-        "digest",
-        "bump"
-      ],
-      "addLabels": [
-        "SemVer Patch"
-      ]
-    },
-    {
       "languages": [
         "js"
       ],
-      "addLabels": [
-        "JS"
-      ]
+      "groupName": "everything",
+      "separateMajorMinor": false
     }
   ]
 }
