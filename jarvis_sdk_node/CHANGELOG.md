@@ -1,4 +1,11 @@
 # Changelog
+## [0.1.19](https://github.com/indykite/jarvis-sdk-node/compare/v0.1.18...v0.1.19) (2022-11-24)
+
+
+### Bug Fixes
+
+* update packages ([67dcdb4](https://github.com/indykite/jarvis-sdk-node/commit/67dcdb44829befdcf7a2c1c787361d1a29f8d6a4))
+
 ## [0.1.18](https://github.com/indykite/jarvis-sdk-node/compare/v0.1.17...v0.1.18) (2022-11-09)
 
 
