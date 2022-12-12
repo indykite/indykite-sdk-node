@@ -1,4 +1,11 @@
 # Changelog
+## [0.1.20](https://github.com/indykite/jarvis-sdk-node/compare/v0.1.19...v0.1.20) (2022-12-12)
+
+
+### Features
+
+* refresh connection after some idle time ([23bd64b](https://github.com/indykite/jarvis-sdk-node/commit/23bd64b472f2dff07dcbc9bf0ac3a49e08d9c536))
+
 ## [0.1.19](https://github.com/indykite/jarvis-sdk-node/compare/v0.1.18...v0.1.19) (2022-11-24)
 
 
