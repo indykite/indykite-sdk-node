@@ -25,7 +25,7 @@ import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MESSAGE_TYPE } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 import { Timestamp } from "../../../google/protobuf/timestamp";
-import { AssuranceLevel } from "../../identity/v1beta1/attributes";
+import { AssuranceLevel } from "../../identity/v1beta2/attributes";
 /**
  * @generated from protobuf message indykite.knowledge_graph.v1beta1.Policy
  */
@@ -98,7 +98,7 @@ export interface Path_Entity_IdentityProperty {
      */
     value: string;
     /**
-     * @generated from protobuf field: indykite.identity.v1beta1.AssuranceLevel minimum_assurance_level = 3;
+     * @generated from protobuf field: indykite.identity.v1beta2.AssuranceLevel minimum_assurance_level = 3;
      */
     minimumAssuranceLevel: AssuranceLevel;
     /**
@@ -355,7 +355,7 @@ class Path_Entity_IdentityProperty$Type extends MessageType<Path_Entity_Identity
         super("indykite.knowledge_graph.v1beta1.Path.Entity.IdentityProperty", [
             { no: 1, name: "property", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "2", maxLen: "256", pattern: "^[a-zA-Z_][a-zA-Z0-9_]+$" } } } },
             { no: 2, name: "value", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 3, name: "minimum_assurance_level", kind: "enum", T: () => ["indykite.identity.v1beta1.AssuranceLevel", AssuranceLevel, "ASSURANCE_LEVEL_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
+            { no: 3, name: "minimum_assurance_level", kind: "enum", T: () => ["indykite.identity.v1beta2.AssuranceLevel", AssuranceLevel, "ASSURANCE_LEVEL_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
             { no: 4, name: "allowed_issuers", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/ },
             { no: 5, name: "verification_time", kind: "message", T: () => Timestamp },
             { no: 6, name: "allowed_verifiers", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/ },
@@ -380,7 +380,7 @@ class Path_Entity_IdentityProperty$Type extends MessageType<Path_Entity_Identity
                 case /* string value */ 2:
                     message.value = reader.string();
                     break;
-                case /* indykite.identity.v1beta1.AssuranceLevel minimum_assurance_level */ 3:
+                case /* indykite.identity.v1beta2.AssuranceLevel minimum_assurance_level */ 3:
                     message.minimumAssuranceLevel = reader.int32();
                     break;
                 case /* repeated string allowed_issuers */ 4:
@@ -413,7 +413,7 @@ class Path_Entity_IdentityProperty$Type extends MessageType<Path_Entity_Identity
         /* string value = 2; */
         if (message.value !== "")
             writer.tag(2, WireType.LengthDelimited).string(message.value);
-        /* indykite.identity.v1beta1.AssuranceLevel minimum_assurance_level = 3; */
+        /* indykite.identity.v1beta2.AssuranceLevel minimum_assurance_level = 3; */
         if (message.minimumAssuranceLevel !== 0)
             writer.tag(3, WireType.Varint).int32(message.minimumAssuranceLevel);
         /* repeated string allowed_issuers = 4; */

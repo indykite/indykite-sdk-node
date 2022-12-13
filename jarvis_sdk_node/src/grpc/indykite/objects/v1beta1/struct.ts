@@ -25,7 +25,6 @@ import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MESSAGE_TYPE } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 import { LatLng } from "../../../google/type/latlng";
-import { Identifier } from "./id";
 import { Duration } from "../../../google/protobuf/duration";
 import { Timestamp } from "../../../google/protobuf/timestamp";
 import { Any } from "../../../google/protobuf/any";
@@ -104,15 +103,11 @@ export interface Value {
          */
         durationValue: Duration;
     } | {
-        oneofKind: "identifierValue";
-        /**
-         * An identifier value.
-         *
-         * @generated from protobuf field: indykite.objects.v1beta1.Identifier identifier_value = 13;
-         */
-        identifierValue: Identifier;
-    } | {
         oneofKind: "stringValue";
+        // An identifier value. Keep here to know number 13 is reserved for Identifier.
+        // However, we don't have proper type for Identifier yet.
+        // Identifier identifier_value = 13;
+
         /**
          * A string value.
          *
@@ -195,7 +190,6 @@ class Value$Type extends MessageType<Value> {
             { no: 5, name: "any_value", kind: "message", oneof: "value", T: () => Any },
             { no: 6, name: "value_time", kind: "message", oneof: "value", T: () => Timestamp },
             { no: 12, name: "duration_value", kind: "message", oneof: "value", T: () => Duration },
-            { no: 13, name: "identifier_value", kind: "message", oneof: "value", T: () => Identifier },
             { no: 7, name: "string_value", kind: "scalar", oneof: "value", T: 9 /*ScalarType.STRING*/ },
             { no: 8, name: "bytes_value", kind: "scalar", oneof: "value", T: 12 /*ScalarType.BYTES*/ },
             { no: 9, name: "geo_point_value", kind: "message", oneof: "value", T: () => LatLng },
@@ -261,12 +255,6 @@ class Value$Type extends MessageType<Value> {
                     message.value = {
                         oneofKind: "durationValue",
                         durationValue: Duration.internalBinaryRead(reader, reader.uint32(), options, (message.value as any).durationValue)
-                    };
-                    break;
-                case /* indykite.objects.v1beta1.Identifier identifier_value */ 13:
-                    message.value = {
-                        oneofKind: "identifierValue",
-                        identifierValue: Identifier.internalBinaryRead(reader, reader.uint32(), options, (message.value as any).identifierValue)
                     };
                     break;
                 case /* string string_value */ 7:
@@ -335,9 +323,6 @@ class Value$Type extends MessageType<Value> {
         /* google.protobuf.Duration duration_value = 12; */
         if (message.value.oneofKind === "durationValue")
             Duration.internalBinaryWrite(message.value.durationValue, writer.tag(12, WireType.LengthDelimited).fork(), options).join();
-        /* indykite.objects.v1beta1.Identifier identifier_value = 13; */
-        if (message.value.oneofKind === "identifierValue")
-            Identifier.internalBinaryWrite(message.value.identifierValue, writer.tag(13, WireType.LengthDelimited).fork(), options).join();
         /* string string_value = 7; */
         if (message.value.oneofKind === "stringValue")
             writer.tag(7, WireType.LengthDelimited).string(message.value.stringValue);

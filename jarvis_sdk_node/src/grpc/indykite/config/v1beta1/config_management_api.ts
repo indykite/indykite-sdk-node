@@ -30,6 +30,7 @@ import { OAuth2ApplicationConfig } from "./model";
 import { OAuth2Provider } from "./model";
 import { OAuth2ProviderConfig } from "./model";
 import { ConfigNode } from "./model";
+import { ReadIDProviderConfig } from "./model";
 import { KnowledgeGraphSchemaConfig } from "./model";
 import { AuthorizationPolicyConfig } from "./model";
 import { IngestMappingConfig } from "./model";
@@ -1672,6 +1673,12 @@ export interface CreateConfigNodeRequest {
          */
         knowledgeGraphSchemaConfig: KnowledgeGraphSchemaConfig;
     } | {
+        oneofKind: "readidProviderConfig";
+        /**
+         * @generated from protobuf field: indykite.config.v1beta1.ReadIDProviderConfig readid_provider_config = 27;
+         */
+        readidProviderConfig: ReadIDProviderConfig;
+    } | {
         oneofKind: undefined;
     };
     /**
@@ -1847,6 +1854,12 @@ export interface UpdateConfigNodeRequest {
          * @generated from protobuf field: indykite.config.v1beta1.KnowledgeGraphSchemaConfig knowledge_graph_schema_config = 26;
          */
         knowledgeGraphSchemaConfig: KnowledgeGraphSchemaConfig;
+    } | {
+        oneofKind: "readidProviderConfig";
+        /**
+         * @generated from protobuf field: indykite.config.v1beta1.ReadIDProviderConfig readid_provider_config = 27;
+         */
+        readidProviderConfig: ReadIDProviderConfig;
     } | {
         oneofKind: undefined;
     };
@@ -6483,6 +6496,7 @@ class CreateConfigNodeRequest$Type extends MessageType<CreateConfigNodeRequest> 
             { no: 24, name: "ingest_mapping_config", kind: "message", oneof: "config", T: () => IngestMappingConfig },
             { no: 25, name: "authorization_policy_config", kind: "message", oneof: "config", T: () => AuthorizationPolicyConfig },
             { no: 26, name: "knowledge_graph_schema_config", kind: "message", oneof: "config", T: () => KnowledgeGraphSchemaConfig },
+            { no: 27, name: "readid_provider_config", kind: "message", oneof: "config", T: () => ReadIDProviderConfig },
             { no: 7, name: "bookmarks", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { items: { string: { minLen: "40", pattern: "^[a-zA-Z0-9_-]{40,}$" } } } } } }
         ]);
     }
@@ -6576,6 +6590,12 @@ class CreateConfigNodeRequest$Type extends MessageType<CreateConfigNodeRequest> 
                         knowledgeGraphSchemaConfig: KnowledgeGraphSchemaConfig.internalBinaryRead(reader, reader.uint32(), options, (message.config as any).knowledgeGraphSchemaConfig)
                     };
                     break;
+                case /* indykite.config.v1beta1.ReadIDProviderConfig readid_provider_config */ 27:
+                    message.config = {
+                        oneofKind: "readidProviderConfig",
+                        readidProviderConfig: ReadIDProviderConfig.internalBinaryRead(reader, reader.uint32(), options, (message.config as any).readidProviderConfig)
+                    };
+                    break;
                 case /* repeated string bookmarks */ 7:
                     message.bookmarks.push(reader.string());
                     break;
@@ -6636,6 +6656,9 @@ class CreateConfigNodeRequest$Type extends MessageType<CreateConfigNodeRequest> 
         /* indykite.config.v1beta1.KnowledgeGraphSchemaConfig knowledge_graph_schema_config = 26; */
         if (message.config.oneofKind === "knowledgeGraphSchemaConfig")
             KnowledgeGraphSchemaConfig.internalBinaryWrite(message.config.knowledgeGraphSchemaConfig, writer.tag(26, WireType.LengthDelimited).fork(), options).join();
+        /* indykite.config.v1beta1.ReadIDProviderConfig readid_provider_config = 27; */
+        if (message.config.oneofKind === "readidProviderConfig")
+            ReadIDProviderConfig.internalBinaryWrite(message.config.readidProviderConfig, writer.tag(27, WireType.LengthDelimited).fork(), options).join();
         /* repeated string bookmarks = 7; */
         for (let i = 0; i < message.bookmarks.length; i++)
             writer.tag(7, WireType.LengthDelimited).string(message.bookmarks[i]);
@@ -6844,6 +6867,7 @@ class UpdateConfigNodeRequest$Type extends MessageType<UpdateConfigNodeRequest> 
             { no: 24, name: "ingest_mapping_config", kind: "message", oneof: "config", T: () => IngestMappingConfig },
             { no: 25, name: "authorization_policy_config", kind: "message", oneof: "config", T: () => AuthorizationPolicyConfig },
             { no: 26, name: "knowledge_graph_schema_config", kind: "message", oneof: "config", T: () => KnowledgeGraphSchemaConfig },
+            { no: 27, name: "readid_provider_config", kind: "message", oneof: "config", T: () => ReadIDProviderConfig },
             { no: 5, name: "bookmarks", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { items: { string: { minLen: "40", pattern: "^[a-zA-Z0-9_-]{40,}$" } } } } } }
         ]);
     }
@@ -6937,6 +6961,12 @@ class UpdateConfigNodeRequest$Type extends MessageType<UpdateConfigNodeRequest> 
                         knowledgeGraphSchemaConfig: KnowledgeGraphSchemaConfig.internalBinaryRead(reader, reader.uint32(), options, (message.config as any).knowledgeGraphSchemaConfig)
                     };
                     break;
+                case /* indykite.config.v1beta1.ReadIDProviderConfig readid_provider_config */ 27:
+                    message.config = {
+                        oneofKind: "readidProviderConfig",
+                        readidProviderConfig: ReadIDProviderConfig.internalBinaryRead(reader, reader.uint32(), options, (message.config as any).readidProviderConfig)
+                    };
+                    break;
                 case /* repeated string bookmarks */ 5:
                     message.bookmarks.push(reader.string());
                     break;
@@ -6997,6 +7027,9 @@ class UpdateConfigNodeRequest$Type extends MessageType<UpdateConfigNodeRequest> 
         /* indykite.config.v1beta1.KnowledgeGraphSchemaConfig knowledge_graph_schema_config = 26; */
         if (message.config.oneofKind === "knowledgeGraphSchemaConfig")
             KnowledgeGraphSchemaConfig.internalBinaryWrite(message.config.knowledgeGraphSchemaConfig, writer.tag(26, WireType.LengthDelimited).fork(), options).join();
+        /* indykite.config.v1beta1.ReadIDProviderConfig readid_provider_config = 27; */
+        if (message.config.oneofKind === "readidProviderConfig")
+            ReadIDProviderConfig.internalBinaryWrite(message.config.readidProviderConfig, writer.tag(27, WireType.LengthDelimited).fork(), options).join();
         /* repeated string bookmarks = 5; */
         for (let i = 0; i < message.bookmarks.length; i++)
             writer.tag(5, WireType.LengthDelimited).string(message.bookmarks[i]);

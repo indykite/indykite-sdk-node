@@ -24,7 +24,6 @@ import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MESSAGE_TYPE } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
-import { Schema } from "../../knowledge_graph/v1beta1/schema";
 import { Policy } from "../../knowledge_graph/v1beta1/policy";
 import { Int64Value } from "../../../google/protobuf/wrappers";
 import { Value } from "../../objects/v1beta1/struct";
@@ -804,6 +803,12 @@ export interface ConfigNode {
          */
         knowledgeGraphSchemaConfig: KnowledgeGraphSchemaConfig;
     } | {
+        oneofKind: "readidProviderConfig";
+        /**
+         * @generated from protobuf field: indykite.config.v1beta1.ReadIDProviderConfig readid_provider_config = 25;
+         */
+        readidProviderConfig: ReadIDProviderConfig;
+    } | {
         oneofKind: undefined;
     };
 }
@@ -1465,6 +1470,29 @@ export interface AuthenteqProviderConfig {
      * @generated from protobuf field: string client_secret = 3;
      */
     clientSecret: string;
+    /**
+     * @generated from protobuf field: string host_address = 4;
+     */
+    hostAddress: string;
+}
+/**
+ * @generated from protobuf message indykite.config.v1beta1.ReadIDProviderConfig
+ */
+export interface ReadIDProviderConfig {
+    /**
+     * Client secret for writer app
+     *
+     * @generated from protobuf field: string submitter_secret = 1;
+     */
+    submitterSecret: string;
+    /**
+     * @generated from protobuf field: string manager_secret = 2;
+     */
+    managerSecret: string;
+    /**
+     * @generated from protobuf field: string submitter_password = 3;
+     */
+    submitterPassword: string;
     /**
      * @generated from protobuf field: string host_address = 4;
      */
@@ -2145,9 +2173,9 @@ export interface AuthorizationPolicyConfig {
  */
 export interface KnowledgeGraphSchemaConfig {
     /**
-     * @generated from protobuf field: indykite.knowledge_graph.v1beta1.Schema schema = 1;
+     * @generated from protobuf field: string schema = 1;
      */
-    schema?: Schema;
+    schema: string;
 }
 // 
 // 
@@ -3553,7 +3581,8 @@ class ConfigNode$Type extends MessageType<ConfigNode> {
             { no: 21, name: "safr_provider_config", kind: "message", oneof: "config", T: () => SAFRProviderConfig },
             { no: 22, name: "ingest_mapping_config", kind: "message", oneof: "config", T: () => IngestMappingConfig },
             { no: 23, name: "authorization_policy_config", kind: "message", oneof: "config", T: () => AuthorizationPolicyConfig },
-            { no: 24, name: "knowledge_graph_schema_config", kind: "message", oneof: "config", T: () => KnowledgeGraphSchemaConfig }
+            { no: 24, name: "knowledge_graph_schema_config", kind: "message", oneof: "config", T: () => KnowledgeGraphSchemaConfig },
+            { no: 25, name: "readid_provider_config", kind: "message", oneof: "config", T: () => ReadIDProviderConfig }
         ]);
     }
     create(value?: PartialMessage<ConfigNode>): ConfigNode {
@@ -3664,6 +3693,12 @@ class ConfigNode$Type extends MessageType<ConfigNode> {
                         knowledgeGraphSchemaConfig: KnowledgeGraphSchemaConfig.internalBinaryRead(reader, reader.uint32(), options, (message.config as any).knowledgeGraphSchemaConfig)
                     };
                     break;
+                case /* indykite.config.v1beta1.ReadIDProviderConfig readid_provider_config */ 25:
+                    message.config = {
+                        oneofKind: "readidProviderConfig",
+                        readidProviderConfig: ReadIDProviderConfig.internalBinaryRead(reader, reader.uint32(), options, (message.config as any).readidProviderConfig)
+                    };
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -3742,6 +3777,9 @@ class ConfigNode$Type extends MessageType<ConfigNode> {
         /* indykite.config.v1beta1.KnowledgeGraphSchemaConfig knowledge_graph_schema_config = 24; */
         if (message.config.oneofKind === "knowledgeGraphSchemaConfig")
             KnowledgeGraphSchemaConfig.internalBinaryWrite(message.config.knowledgeGraphSchemaConfig, writer.tag(24, WireType.LengthDelimited).fork(), options).join();
+        /* indykite.config.v1beta1.ReadIDProviderConfig readid_provider_config = 25; */
+        if (message.config.oneofKind === "readidProviderConfig")
+            ReadIDProviderConfig.internalBinaryWrite(message.config.readidProviderConfig, writer.tag(25, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -4851,6 +4889,74 @@ class AuthenteqProviderConfig$Type extends MessageType<AuthenteqProviderConfig> 
  * @generated MessageType for protobuf message indykite.config.v1beta1.AuthenteqProviderConfig
  */
 export const AuthenteqProviderConfig = new AuthenteqProviderConfig$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ReadIDProviderConfig$Type extends MessageType<ReadIDProviderConfig> {
+    constructor() {
+        super("indykite.config.v1beta1.ReadIDProviderConfig", [
+            { no: 1, name: "submitter_secret", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "36", ignoreEmpty: true } } } },
+            { no: 2, name: "manager_secret", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "36", ignoreEmpty: true } } } },
+            { no: 3, name: "submitter_password", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "4", maxLen: "254", ignoreEmpty: true } } } },
+            { no: 4, name: "host_address", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "4", maxLen: "254", ignoreEmpty: true } } } }
+        ]);
+    }
+    create(value?: PartialMessage<ReadIDProviderConfig>): ReadIDProviderConfig {
+        const message = { submitterSecret: "", managerSecret: "", submitterPassword: "", hostAddress: "" };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<ReadIDProviderConfig>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ReadIDProviderConfig): ReadIDProviderConfig {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string submitter_secret */ 1:
+                    message.submitterSecret = reader.string();
+                    break;
+                case /* string manager_secret */ 2:
+                    message.managerSecret = reader.string();
+                    break;
+                case /* string submitter_password */ 3:
+                    message.submitterPassword = reader.string();
+                    break;
+                case /* string host_address */ 4:
+                    message.hostAddress = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ReadIDProviderConfig, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string submitter_secret = 1; */
+        if (message.submitterSecret !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.submitterSecret);
+        /* string manager_secret = 2; */
+        if (message.managerSecret !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.managerSecret);
+        /* string submitter_password = 3; */
+        if (message.submitterPassword !== "")
+            writer.tag(3, WireType.LengthDelimited).string(message.submitterPassword);
+        /* string host_address = 4; */
+        if (message.hostAddress !== "")
+            writer.tag(4, WireType.LengthDelimited).string(message.hostAddress);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message indykite.config.v1beta1.ReadIDProviderConfig
+ */
+export const ReadIDProviderConfig = new ReadIDProviderConfig$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class SAFRProviderConfig$Type extends MessageType<SAFRProviderConfig> {
     constructor() {
@@ -6508,11 +6614,11 @@ export const AuthorizationPolicyConfig = new AuthorizationPolicyConfig$Type();
 class KnowledgeGraphSchemaConfig$Type extends MessageType<KnowledgeGraphSchemaConfig> {
     constructor() {
         super("indykite.config.v1beta1.KnowledgeGraphSchemaConfig", [
-            { no: 1, name: "schema", kind: "message", T: () => Schema, options: { "validate.rules": { message: { required: true } } } }
+            { no: 1, name: "schema", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "1" } } } }
         ]);
     }
     create(value?: PartialMessage<KnowledgeGraphSchemaConfig>): KnowledgeGraphSchemaConfig {
-        const message = {};
+        const message = { schema: "" };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<KnowledgeGraphSchemaConfig>(this, message, value);
@@ -6523,8 +6629,8 @@ class KnowledgeGraphSchemaConfig$Type extends MessageType<KnowledgeGraphSchemaCo
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* indykite.knowledge_graph.v1beta1.Schema schema */ 1:
-                    message.schema = Schema.internalBinaryRead(reader, reader.uint32(), options, message.schema);
+                case /* string schema */ 1:
+                    message.schema = reader.string();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -6538,9 +6644,9 @@ class KnowledgeGraphSchemaConfig$Type extends MessageType<KnowledgeGraphSchemaCo
         return message;
     }
     internalBinaryWrite(message: KnowledgeGraphSchemaConfig, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* indykite.knowledge_graph.v1beta1.Schema schema = 1; */
-        if (message.schema)
-            Schema.internalBinaryWrite(message.schema, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* string schema = 1; */
+        if (message.schema !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.schema);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
