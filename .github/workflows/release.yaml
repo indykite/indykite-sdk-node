@@ -24,29 +24,29 @@ jobs:
           registry-url: "https://registry.npmjs.org"
       - name: "Install"
         run: |
-          cd jarvis_sdk_node
+          cd indykite_sdk_node
           npm install
       - name: "Build"
         run: |
-          cd jarvis_sdk_node
+          cd indykite_sdk_node
           npm run build
       - name: "Verify es support of dist package"
         run: |
-          cd jarvis_sdk_node
+          cd indykite_sdk_node
           npm run-script check-es
       - name: "Copy README for publish"
         run: |
-          cp ./README.md jarvis_sdk_node/
-          cp ./logo.png jarvis_sdk_node/
+          cp ./README.md indykite_sdk_node/
+          cp ./logo.png indykite_sdk_node/
       - name: "Publish the package"
         run: |
-          cd jarvis_sdk_node
+          cd indykite_sdk_node
           npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       - name: Get Version
         run: |
-          export VERSION=$(cat jarvis_sdk_node/package.json | jq -r '.version')
+          export VERSION=$(cat indykite_sdk_node/package.json | jq -r '.version')
           echo "VERSION=$VERSION" >> $GITHUB_ENV
 
       - name: Authenticate to Google Cloud

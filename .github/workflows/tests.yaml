@@ -18,11 +18,11 @@ jobs:
         uses: actions/checkout@master
       - name: Install Project
         run: |
-          cd jarvis_sdk_node
+          cd indykite_sdk_node
           npm install
       - name: Check the code
         run: |
-          cd jarvis_sdk_node
+          cd indykite_sdk_node
           npm run lint
   tests:
     name: Unit Tests
@@ -32,11 +32,11 @@ jobs:
         uses: actions/checkout@master
       - name: Install Project
         run: |
-          cd jarvis_sdk_node
+          cd indykite_sdk_node
           npm install
       - name: Run test coverage
         run: |
-          cd jarvis_sdk_node
+          cd indykite_sdk_node
           npm run coverage-ci
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
