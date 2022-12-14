@@ -1,5 +1,5 @@
 {
-  "name": "@indykiteone/jarvis-sdk-node",
+  "name": "@indykiteone/indykite-sdk-node",
   "version": "0.1.20",
   "description": "IndyKite Identity Platform JavaScript SDK",
   "main": "dist/index.js",
@@ -62,15 +62,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/indykite/jarvis-sdk-node.git"
+    "url": "git+https://github.com/indykite/indykite-sdk-node.git"
   },
   "keywords": [
     "authentication"
   ],
-  "author": "Jarvis <jarvis-support@indykite.com> (https://indykite.com/)",
+  "author": "IndyKite",
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/indykite/jarvis-sdk-node/issues"
+    "url": "https://github.com/indykite/indykite-sdk-node/issues"
   },
-  "homepage": "https://github.com/indykite/jarvis-sdk-node#readme"
+  "homepage": "https://github.com/indykite/indykite-sdk-node#readme"
 }
