@@ -4,8 +4,8 @@ The IndyKite SDK contains documentation and samples that can be useful when deve
 ## Importing the SDK
 
 ```javascript
-import { IdentityClient } from '@martinkite/jarvis-client-sdk';
-import { PatchPropertiesBuilder, Property } from '@martinkite/jarvis-client-sdk';
+import { IdentityClient } from '@indykiteone/indykite-sdk-node';
+import { PatchPropertiesBuilder, Property } from '@indykiteone/indykite-sdk-node';
 ```
 ---
 ## newClient()

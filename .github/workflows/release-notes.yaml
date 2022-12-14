@@ -14,6 +14,6 @@ jobs:
           token: ${{ secrets.PAT_TOKEN }}
           release-type: node
           path: jarvis_sdk_node
-          package-name: jarvis-sdk-node
+          package-name: indykite-sdk-node
           bump-minor-pre-major: true
           bump-patch-for-minor-pre-major: true

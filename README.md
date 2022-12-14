@@ -5,9 +5,9 @@
 # IndyKite Client Libraries for Node.js
 IndyKite is a cloud identity platform built to secure and manage human & non-person (IoT) identities and their data. This repository containts the JavaScript Library packages for [IndyKite Platform](https://indykite.com/platform) Client SDK.
 
-[![NPM version](https://img.shields.io/npm/v/@indykiteone/jarvis-sdk-node.svg?style=flat-square)](https://www.npmjs.com/package/@indykiteone/jarvis-sdk-node)
-![npm type definitions](https://img.shields.io/npm/types/@indykiteone/jarvis-sdk-node?style=flat-square)
-[![codecov](https://codecov.io/gh/indykite/jarvis-sdk-node/branch/master/graph/badge.svg?token=G6T2UWO9G1)](https://codecov.io/gh/indykite/jarvis-sdk-node)
+[![NPM version](https://img.shields.io/npm/v/@indykiteone/indykite-sdk-node.svg?style=flat-square)](https://www.npmjs.com/package/@indykiteone/indykite-sdk-node)
+![npm type definitions](https://img.shields.io/npm/types/@indykiteone/indykite-sdk-node?style=flat-square)
+[![codecov](https://codecov.io/gh/indykite/indykite-sdk-node/branch/master/graph/badge.svg?token=G6T2UWO9G1)](https://codecov.io/gh/indykite/indykite-sdk-node)
 
 
 Examples of functionality available in SDK:
@@ -37,7 +37,7 @@ Visit the IndyKite One Developer Community site for official [IndyKite documenta
 
 ## Installation 
 ```shell 
-npm i @indykiteone/jarvis-sdk-node
+npm i @indykiteone/indykite-sdk-node
 ```
 
 ## Getting Started
@@ -47,7 +47,7 @@ For a trial please contact [IndyKite](https://www.indykite.com/contact-us) to se
 configure the platform.
 
 ### Config 
-The IndyKite SDK reads config properties from a JSON formatted configuration file. The path to this file is provided to your application via an environment variable  Once you have the config information (After you've registered and setup an application space) then you need to create the json file (you can find an example here: [example_config.json](https://github.com/indykite/jarvis-sdk-node/blob/master/jarvis_sdk_node/config_example.json)) then create the `INDYKITE_APPLICATION_CREDENTIALS_FILE` environment variable which will contain the path to the json configuration file (see the example below).
+The IndyKite SDK reads config properties from a JSON formatted configuration file. The path to this file is provided to your application via an environment variable  Once you have the config information (After you've registered and setup an application space) then you need to create the json file (you can find an example here: [example_config.json](https://github.com/indykite/indykite-sdk-node/blob/master/jarvis_sdk_node/config_example.json)) then create the `INDYKITE_APPLICATION_CREDENTIALS_FILE` environment variable which will contain the path to the json configuration file (see the example below).
 
 ```shell
 export INDYKITE_APPLICATION_CREDENTIALS_FILE=<path_to_config_file>/config.json
@@ -67,8 +67,8 @@ export GRPC_DEFAULT_SSL_ROOTS_FILE_PATH=<path_to_certificate>/ca.pem
 
 ### Import the SDK into your application
 ```typescript
-import { IdentityClient, TokenInfo } from '@indykiteone/jarvis-sdk-node';
-import { Property } from '@indykiteone/jarvis-sdk-node';
+import { IdentityClient, TokenInfo } from '@indykiteone/indykite-sdk-node';
+import { Property } from '@indykiteone/indykite-sdk-node';
 ```
 
 ### Creating a new client connection & reading the user token from env
@@ -363,7 +363,7 @@ any typescript definitions.
 Commit message follows [commit guidelines](./doc/guides/commit-message.md#commit-message-guidelines)
 
 ## Roadmap 
-Checkout our roadmap on our [issues page](https://github.com/indykite/jarvis-sdk-node/issues)
+Checkout our roadmap on our [issues page](https://github.com/indykite/indykite-sdk-node/issues)
 
 ## Contributing 
 [Contribution guidelines for this project](contributing.md)
@@ -371,7 +371,7 @@ Checkout our roadmap on our [issues page](https://github.com/indykite/jarvis-sdk
 ## Support, Feedback, Connect with other developers
 We'd love to have you connect with us or other community developers over at [IndyKite.one](https://indykite.one) 
 
-Feel free to file a bug, submit an issue or give us feedback on our [issues page](https://github.com/indykite/jarvis-sdk-node/issues)
+Feel free to file a bug, submit an issue or give us feedback on our [issues page](https://github.com/indykite/indykite-sdk-node/issues)
 
 ## Vulnerability Reporting
 [Responsible Disclosure](responsible_disclosure.md)
