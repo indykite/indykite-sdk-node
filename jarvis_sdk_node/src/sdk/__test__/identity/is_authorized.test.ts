@@ -30,6 +30,7 @@ describe('isAuthorized', () => {
         v4(),
         DigitalTwinKind.PERSON,
         DigitalTwinState.ACTIVE,
+        [],
       );
       const resources = [
         { id: 'resource1Id', label: 'Label' },
@@ -121,6 +122,7 @@ describe('isAuthorized', () => {
         v4(),
         DigitalTwinKind.PERSON,
         DigitalTwinState.ACTIVE,
+        [],
       );
       const resources = [
         { id: 'resource1Id', label: 'Label' },
@@ -164,6 +166,7 @@ describe('isAuthorized', () => {
         v4(),
         DigitalTwinKind.PERSON,
         DigitalTwinState.ACTIVE,
+        [],
       );
       const resources = [
         { id: 'resource1Id', label: 'Label' },

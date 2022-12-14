@@ -54,6 +54,7 @@ describe('sessionIntrospect', () => {
                     tenantId: Utils.uuidToUint8Array(dtTenantId),
                     kind: DigitalTwinKind.PERSON,
                     state: DigitalTwinState.ACTIVE,
+                    tags: [],
                   },
                   issueTime: Utils.dateToTimestamp(issueTime),
                   providerInfo: [
@@ -102,6 +103,7 @@ describe('sessionIntrospect', () => {
           id: dtId,
           tenantId: dtTenantId,
           state: DigitalTwinState.ACTIVE,
+          tags: [],
           kind: DigitalTwinKind.PERSON,
         },
       });

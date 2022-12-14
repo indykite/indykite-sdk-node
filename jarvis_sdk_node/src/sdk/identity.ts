@@ -360,6 +360,7 @@ export class IdentityClient {
                 Utils.uuidToString(dt.tenantId),
                 dt.kind,
                 dt.state,
+                dt.tags,
               ),
             );
           } else {
@@ -486,6 +487,7 @@ export class IdentityClient {
                 Utils.uuidToString(dt.tenantId),
                 dt.kind,
                 dt.state,
+                dt.tags,
               ),
             );
           } else {
@@ -516,6 +518,7 @@ export class IdentityClient {
                 Utils.uuidToString(dt.tenantId),
                 dt.kind,
                 dt.state,
+                dt.tags,
               ),
             );
           } else {

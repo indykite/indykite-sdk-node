@@ -21,6 +21,7 @@ describe('getPasswordCredential', () => {
     tenantId,
     DigitalTwinKind.PERSON,
     DigitalTwinState.ACTIVE,
+    [],
   );
 
   describe('when no error is returned', () => {
@@ -56,6 +57,7 @@ describe('getPasswordCredential', () => {
             tenantId: Uint8Array.from(Utils.uuidToBuffer(tenantId)),
             kind: DigitalTwinKind.PERSON,
             state: DigitalTwinState.ACTIVE,
+            tags: [],
           },
         },
         expect.any(Function),

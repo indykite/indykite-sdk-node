@@ -46,11 +46,6 @@ describe('properties', () => {
       {
         durationValue: '20s',
       },
-      {
-        identifierValue: {
-          idString: 'string_id',
-        },
-      },
       { stringValue: 'string' },
       { bytesValue: Buffer.from(v4()).toString('base64') },
       {

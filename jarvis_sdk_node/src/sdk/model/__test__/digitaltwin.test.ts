@@ -9,7 +9,7 @@ describe('properties', () => {
   const emailId = v4();
 
   beforeEach(() => {
-    dt = new DigitalTwin(v4(), v4(), 1, 1);
+    dt = new DigitalTwin(v4(), v4(), 1, 1, []);
     const email = new Property('email', emailId)
       .withMetadata(false)
       .withValue('test+email@indykite.com');
@@ -155,6 +155,7 @@ describe('when `fromModel` method is used for the instance creation', () => {
       tenantId: Utils.uuidToBuffer(tenantId),
       kind: DigitalTwinKind.PERSON,
       state: DigitalTwinState.ACTIVE,
+      tags: [],
     });
   });
 
@@ -171,6 +172,7 @@ describe('when `fromModel` method is used for the instance creation', () => {
       tenantId: Uint8Array.from(Utils.uuidToBuffer(tenantId)),
       kind: DigitalTwinKind.PERSON,
       state: DigitalTwinState.ACTIVE,
+      tags: [],
     });
   });
 });

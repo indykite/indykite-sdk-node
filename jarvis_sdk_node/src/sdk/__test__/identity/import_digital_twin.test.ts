@@ -18,7 +18,7 @@ let sdk: IdentityClient;
 const tenantId = v4();
 
 const importDts = [
-  new ImportDigitalTwin(tenantId, DigitalTwinKind.PERSON, DigitalTwinState.ACTIVE),
+  new ImportDigitalTwin(tenantId, DigitalTwinKind.PERSON, DigitalTwinState.ACTIVE, []),
 ];
 
 beforeAll(async () => {
@@ -56,6 +56,7 @@ describe('when the response is successful', () => {
                         tenantId: Utils.uuidToBuffer(tenantId),
                         kind: 0,
                         state: 0,
+                        tags: [],
                       },
                       results: [
                         {
@@ -92,6 +93,7 @@ describe('when the response is successful', () => {
               tenantId: Utils.uuidToBuffer(tenantId),
               kind: DigitalTwinKind.PERSON,
               state: DigitalTwinState.ACTIVE,
+              tags: [],
               properties: {
                 forceDelete: false,
                 operations: [],
@@ -203,6 +205,7 @@ describe('when the response is missing', () => {
             tenantId: Utils.uuidToBuffer(tenantId),
             kind: DigitalTwinKind.PERSON,
             state: DigitalTwinState.ACTIVE,
+            tags: [],
             properties: {
               forceDelete: false,
               operations: [],
