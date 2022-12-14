@@ -12,6 +12,7 @@ export class DigitalTwinCore {
     public tenantId: string,
     public kind: number,
     public state: number,
+    public tags: string[],
   ) {}
 
   static fromModel(model: DigitalTwinModel): DigitalTwinCore {
@@ -20,6 +21,7 @@ export class DigitalTwinCore {
       stringify(model.tenantId),
       model.kind,
       model.state,
+      model.tags,
     );
   }
 
@@ -29,6 +31,7 @@ export class DigitalTwinCore {
       tenantId: Uint8Array.from(parse(this.tenantId)),
       kind: this.kind,
       state: this.state,
+      tags: this.tags,
     };
   }
 }
@@ -41,9 +44,10 @@ export class DigitalTwin extends DigitalTwinCore {
     public tenantId: string,
     public kind: number,
     public state: number,
+    public tags: string[],
     public createTime?: Date,
   ) {
-    super(id, tenantId, kind, state);
+    super(id, tenantId, kind, state, tags);
   }
 
   static deserialize(dtResponse: grpcId.GetDigitalTwinResponse): DigitalTwin {
@@ -53,6 +57,7 @@ export class DigitalTwin extends DigitalTwinCore {
         stringify(dtResponse.digitalTwin.digitalTwin.tenantId),
         dtResponse.digitalTwin.digitalTwin.kind,
         dtResponse.digitalTwin.digitalTwin.state,
+        dtResponse.digitalTwin.digitalTwin.tags,
         Utils.timestampToDate(dtResponse.digitalTwin.createTime),
       );
       dtResponse.digitalTwin.properties

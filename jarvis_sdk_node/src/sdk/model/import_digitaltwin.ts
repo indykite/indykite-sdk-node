@@ -60,6 +60,7 @@ export class ImportDigitalTwin extends DigitalTwin {
       digitalTwin.tenantId,
       digitalTwin.kind,
       digitalTwin.state,
+      digitalTwin.tags,
       digitalTwin.id,
       password,
       userProvider,
@@ -77,6 +78,7 @@ export class ImportDigitalTwin extends DigitalTwin {
     public tenantId: string,
     public kind: number,
     public state: number,
+    public tags: string[],
     public digitalTwinId?: string,
     public password?: PasswordCredential,
     public userProvider?: UserProvider[],
@@ -85,7 +87,7 @@ export class ImportDigitalTwin extends DigitalTwin {
     public lastLoginDate?: Date,
     public lastRefreshDate?: Date,
   ) {
-    super(digitalTwinId ?? '', tenantId, kind, state, createDate);
+    super(digitalTwinId ?? '', tenantId, kind, state, tags, createDate);
 
     if (importProperties) {
       this.patchBuilder = importProperties.operations;
@@ -101,6 +103,7 @@ export class ImportDigitalTwin extends DigitalTwin {
       state: this.state,
       providerUserInfo: this.userProvider ?? [],
       password: this.marshalPassword(),
+      tags: this.tags,
     };
 
     value.properties = {

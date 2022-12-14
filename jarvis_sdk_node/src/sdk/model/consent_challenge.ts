@@ -90,6 +90,7 @@ export class ConsentChallenge {
           Utils.uuidToString(response.digitalTwin.tenantId),
           response.digitalTwin.kind,
           response.digitalTwin.state,
+          response.digitalTwin.tags,
         ),
       Utils.timestampToDate(response.authenticatedAt),
       Utils.timestampToDate(response.requestedAt),

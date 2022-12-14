@@ -80,6 +80,7 @@ describe('deserialize', () => {
             id: Uint8Array.from(Utils.uuidToBuffer(acceptedById)),
             state: DigitalTwinState.ACTIVE,
             tenantId: Uint8Array.from(Utils.uuidToBuffer(tenantId)),
+            tags: [],
           },
           expireTime: Utils.dateToTimestamp(expireTime),
           inviteAtTime: Utils.dateToTimestamp(inviteTime),

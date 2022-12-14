@@ -123,8 +123,8 @@ describe('Digital Twin', () => {
 
   it('Read - Success', async () => {
     const dt = {
-      id: Utils.uuidToBuffer(v4()),
-      tenantId: Utils.uuidToBuffer(v4()),
+      id: Utils.uuidToUint8Array(v4()),
+      tenantId: Utils.uuidToUint8Array(v4()),
       kind: DigitalTwinKind.PERSON,
       state: DigitalTwinState.ACTIVE,
     } as DigitalTwin;
@@ -190,6 +190,7 @@ describe('Digital Twin', () => {
       stringify(dt.tenantId),
       dt.kind,
       dt.state,
+      dt.tags,
       Utils.timestampToDate(mockResponse.digitalTwin?.createTime),
     );
     const email = new sdkTypes.Property(
@@ -235,6 +236,7 @@ describe('Digital Twin', () => {
       tenantId: Utils.uuidToBuffer(v4()),
       kind: DigitalTwinKind.PERSON,
       state: DigitalTwinState.ACTIVE,
+      tags: [],
     } as DigitalTwin;
     const mockResponse: GetDigitalTwinResponse = {};
     const mockErr = { code: Status.NOT_FOUND, details: 'DETAILS', metadata: {} } as ServiceError;
@@ -292,7 +294,7 @@ describe('Digital Twin', () => {
       const dtId = v4();
       const tId = v4();
       const cDate = new Date();
-      const dt = new sdkTypes.DigitalTwin(dtId, tId, 1, 1, cDate);
+      const dt = new sdkTypes.DigitalTwin(dtId, tId, 1, 1, [], cDate);
       const email = new sdkTypes.Property('email', originalEmailId).withValue(
         'test+to@indykite.com',
       );
@@ -376,7 +378,7 @@ describe('Digital Twin', () => {
     );
 
     jest.spyOn(sdk['client'], 'patchDigitalTwin').mockImplementation(mockFunc);
-    const dt = new sdkTypes.DigitalTwin(v4(), v4(), 1, 1, new Date());
+    const dt = new sdkTypes.DigitalTwin(v4(), v4(), 1, 1, [], new Date());
     try {
       sdk.patchPropertiesByToken('short token', dt);
     } catch (err) {
@@ -412,7 +414,7 @@ describe('Digital Twin', () => {
       );
 
       jest.spyOn(sdk['client'], 'patchDigitalTwin').mockImplementation(mockFunc);
-      const dt = new sdkTypes.DigitalTwin(v4(), v4(), 1, 1, new Date());
+      const dt = new sdkTypes.DigitalTwin(v4(), v4(), 1, 1, [], new Date());
       let resp = sdk.patchPropertiesByToken(userToken, dt);
       expect(mockFunc).toBeCalled();
       expect(resp).rejects.toEqual(clb.err || clb.svcerr);
@@ -515,7 +517,7 @@ describe('Digital Twin', () => {
 
     jest.spyOn(sdk['client'], 'verifyDigitalTwinEmail').mockImplementation(mockFunc);
 
-    const expectedDT = new sdkTypes.DigitalTwin(dtId, tId, 1, 1);
+    const expectedDT = new sdkTypes.DigitalTwin(dtId, tId, 1, 1, []);
 
     const resp = sdk.verifyDigitalTwinEmail(userToken);
     expect(mockFunc).toBeCalled();
@@ -816,7 +818,7 @@ describe('Digital Twin', () => {
         svcerr: null,
         err: null,
         res: mockResp,
-        expected: new sdkTypes.DigitalTwin(dtId, tId, 1, 1),
+        expected: new sdkTypes.DigitalTwin(dtId, tId, 1, 1, []),
       },
       {
         svcerr: { code: Status.NOT_FOUND, details: 'no details', metadata: {} } as ServiceError,
@@ -865,6 +867,7 @@ describe('Digital Twin', () => {
     const collectionId = v4();
     const propertyId = v4();
     const emailVerificationTime = new Date();
+    const tags: string[] = [];
     const createTime = new Date();
     const emailProperty = Property.create({
       id: propertyId,
@@ -907,6 +910,7 @@ describe('Digital Twin', () => {
       tId,
       DigitalTwinKind.PERSON,
       DigitalTwinState.ACTIVE,
+      tags,
       createTime,
     );
     const expectedDigitalTwinProperty = Object.assign(

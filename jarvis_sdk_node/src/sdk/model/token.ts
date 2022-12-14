@@ -71,6 +71,7 @@ export class TokenInfo {
           stringify(dt.tenantId),
           dt.kind,
           dt.state,
+          dt.tags,
         );
       }
       tokenInfo.issueTime = Utils.timestampToDate(msgTokenInfo.issueTime);
@@ -81,6 +82,7 @@ export class TokenInfo {
           stringify(dt.tenantId),
           dt.kind,
           dt.state,
+          dt.tags,
         );
       }
       tokenInfo.providerInfo = msgTokenInfo.providerInfo.map((v) => ProviderInfo.deserialize(v));

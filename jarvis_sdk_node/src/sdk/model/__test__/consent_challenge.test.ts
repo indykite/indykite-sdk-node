@@ -129,6 +129,7 @@ describe('deserialization', () => {
           kind: DigitalTwinKind.PERSON,
           state: DigitalTwinState.ACTIVE,
           tenantId: Utils.uuidToBuffer(v4()),
+          tags: [],
         },
       },
       challengeToken,

@@ -63,6 +63,7 @@ export class Invitation {
         Utils.uuidToString(acceptedBy.tenantId),
         acceptedBy.kind,
         acceptedBy.state,
+        acceptedBy.tags,
       );
     }
 

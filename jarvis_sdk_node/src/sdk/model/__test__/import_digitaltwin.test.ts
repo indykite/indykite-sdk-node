@@ -24,6 +24,7 @@ describe('when a new instance is created', () => {
             tenantId,
             DigitalTwinKind.PERSON,
             DigitalTwinState.ACTIVE,
+            [],
             undefined,
             {
               password: 'myAwesomePassword',
@@ -53,6 +54,7 @@ describe('when a new instance is created', () => {
             id: Buffer.from(''),
             kind: DigitalTwinKind.PERSON,
             state: DigitalTwinState.ACTIVE,
+            tags: [],
             tenantId: Utils.uuidToBuffer(tenantId),
             password: {
               password: {
@@ -117,6 +119,7 @@ describe('when a new instance is created', () => {
         tenantId,
         DigitalTwinKind.PERSON,
         DigitalTwinState.ACTIVE,
+        [],
         undefined,
         {
           uid: {
@@ -136,6 +139,7 @@ describe('when a new instance is created', () => {
         id: Buffer.from(''),
         kind: DigitalTwinKind.PERSON,
         state: DigitalTwinState.ACTIVE,
+        tags: [],
         tenantId: Utils.uuidToBuffer(tenantId),
         password: {
           password: {
@@ -168,6 +172,7 @@ describe('when a new instance is created', () => {
         tenantId,
         DigitalTwinKind.PERSON,
         DigitalTwinState.ACTIVE,
+        [],
         undefined,
         {
           uid: {
@@ -186,6 +191,7 @@ describe('when a new instance is created', () => {
         id: Buffer.from(''),
         kind: DigitalTwinKind.PERSON,
         state: DigitalTwinState.ACTIVE,
+        tags: [],
         tenantId: Utils.uuidToBuffer(tenantId),
         password: {
           password: {
@@ -222,6 +228,7 @@ describe('when a new instance is created', () => {
           tenantId,
           DigitalTwinKind.THING,
           DigitalTwinState.DISABLED,
+          [],
         );
 
         instance = ImportDigitalTwin.fromDigitalTwin(dt, {
@@ -235,6 +242,7 @@ describe('when a new instance is created', () => {
           id: Utils.uuidToBuffer(dtId),
           kind: DigitalTwinKind.THING,
           state: DigitalTwinState.DISABLED,
+          tags: [],
           tenantId: Utils.uuidToBuffer(tenantId),
           password: {
             password: {
@@ -264,6 +272,7 @@ describe('when a new instance is created', () => {
           tenantId,
           DigitalTwinKind.THING,
           DigitalTwinState.DISABLED,
+          [],
         );
 
         dt.addProperty(new Property('mobile').withValue('+421949949949'));
@@ -283,6 +292,7 @@ describe('when a new instance is created', () => {
           id: Utils.uuidToBuffer(dtId),
           kind: DigitalTwinKind.THING,
           state: DigitalTwinState.DISABLED,
+          tags: [],
           tenantId: Utils.uuidToBuffer(tenantId),
           properties: {
             forceDelete: false,
@@ -356,6 +366,7 @@ describe('ImportResult', () => {
                 tenantId: Utils.uuidToBuffer(tenantId),
                 kind: DigitalTwinKind.INVALID,
                 state: DigitalTwinState.INVALID,
+                tags: [],
               },
               results: [
                 {
@@ -381,6 +392,7 @@ describe('ImportResult', () => {
           tenantId,
           kind: DigitalTwinKind.INVALID,
           state: DigitalTwinState.INVALID,
+          tags: [],
         });
         expect(result?.isSuccess() && result.propertiesResult).toEqual([
           {

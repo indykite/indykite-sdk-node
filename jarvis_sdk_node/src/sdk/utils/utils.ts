@@ -149,8 +149,6 @@ export class Utils {
           return v.value.valueTime;
         case 'durationValue':
           return v.value.durationValue;
-        case 'identifierValue':
-          return v.value.identifierValue;
         case 'stringValue':
           return v.value.stringValue;
         case 'bytesValue':
