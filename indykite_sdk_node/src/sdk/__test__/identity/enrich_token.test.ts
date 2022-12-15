@@ -2,7 +2,7 @@ import { ServiceError, SurfaceCall } from '@grpc/grpc-js/build/src/call';
 import {
   EnrichTokenRequest,
   EnrichTokenResponse,
-} from '../../../grpc/indykite/identity/v1beta1/identity_management_api';
+} from '../../../grpc/indykite/identity/v1beta2/identity_management_api';
 import { IdentityClient } from '../../identity';
 import { Status } from '@grpc/grpc-js/build/src/constants';
 import { CallOptions, Metadata } from '@grpc/grpc-js';

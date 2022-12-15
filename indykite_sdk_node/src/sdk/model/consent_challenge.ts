@@ -1,4 +1,4 @@
-import * as grpcId from '../../grpc/indykite/identity/v1beta1/identity_management_api';
+import * as grpcId from '../../grpc/indykite/identity/v1beta2/identity_management_api';
 import { MapValue } from '../../grpc/indykite/objects/v1beta1/struct';
 import { DigitalTwin } from './digitaltwin';
 import { SdkError, SdkErrorCode } from '../error';
@@ -71,7 +71,7 @@ export class ConsentChallenge {
   }
 
   static deserialize(
-    response: grpcId.CheckConsentChallengeResponse,
+    response: grpcId.CheckOAuth2ConsentChallengeResponse,
     challenge: string,
   ): ConsentChallenge {
     return new ConsentChallenge(
@@ -80,14 +80,14 @@ export class ConsentChallenge {
       response.scopes,
       response.requestUrl,
       response.audiences,
-      Utils.uuidToString(response.appSpaceId),
+      response.appSpaceId,
       response.acrs,
       response.subjectIdentifier,
       response.skip,
       response.digitalTwin &&
         new DigitalTwin(
-          Utils.uuidToString(response.digitalTwin.id),
-          Utils.uuidToString(response.digitalTwin.tenantId),
+          response.digitalTwin.id,
+          response.digitalTwin.tenantId,
           response.digitalTwin.kind,
           response.digitalTwin.state,
           response.digitalTwin.tags,

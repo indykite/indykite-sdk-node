@@ -1,5 +1,5 @@
 import { DigitalTwin } from '.';
-import * as grpcId from '../../grpc/indykite/identity/v1beta1/identity_management_api';
+import * as grpcId from '../../grpc/indykite/identity/v1beta2/identity_management_api';
 import { MapValue, Value } from '../../grpc/indykite/objects/v1beta1/struct';
 import { SdkError, SdkErrorCode } from '../error';
 import { Utils } from '../utils/utils';
@@ -42,7 +42,7 @@ export class Invitation {
     }
 
     const invitation = new Invitation(
-      Utils.uuidToString(invitationResponse.invitation.tenantId),
+      invitationResponse.invitation.tenantId,
       invitationResponse.invitation.referenceId,
       invitationResponse.invitation.state,
       invitee,
@@ -59,8 +59,8 @@ export class Invitation {
     if (invitationResponse.invitation.acceptedBy) {
       const acceptedBy = invitationResponse.invitation.acceptedBy;
       invitation.acceptedBy = new DigitalTwin(
-        Utils.uuidToString(acceptedBy.id),
-        Utils.uuidToString(acceptedBy.tenantId),
+        acceptedBy.id,
+        acceptedBy.tenantId,
         acceptedBy.kind,
         acceptedBy.state,
         acceptedBy.tags,

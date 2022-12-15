@@ -1,4 +1,4 @@
-import { Bcrypt as BcryptModel } from '../../../grpc/indykite/identity/v1beta1/import';
+import { Bcrypt as BcryptModel } from '../../../grpc/indykite/identity/v1beta2/import';
 import HashAlgorithm from './hash_algorithm';
 
 class Bcrypt extends HashAlgorithm {

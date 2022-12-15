@@ -1,7 +1,6 @@
-import { parse, stringify } from 'uuid';
-import { PropertyBatchOperation } from '../../grpc/indykite/identity/v1beta1/attributes';
-import { DigitalTwin as DigitalTwinModel } from '../../grpc/indykite/identity/v1beta1/model';
-import * as grpcId from '../../grpc/indykite/identity/v1beta1/identity_management_api';
+import { PropertyBatchOperation } from '../../grpc/indykite/identity/v1beta2/attributes';
+import { DigitalTwin as DigitalTwinModel } from '../../grpc/indykite/identity/v1beta2/model';
+import * as grpcId from '../../grpc/indykite/identity/v1beta2/identity_management_api';
 import { SdkErrorCode, SdkError } from '../error';
 import { Utils } from '../utils/utils';
 import { Property, PatchPropertiesBuilder } from './property';
@@ -16,19 +15,13 @@ export class DigitalTwinCore {
   ) {}
 
   static fromModel(model: DigitalTwinModel): DigitalTwinCore {
-    return new DigitalTwinCore(
-      stringify(model.id),
-      stringify(model.tenantId),
-      model.kind,
-      model.state,
-      model.tags,
-    );
+    return new DigitalTwinCore(model.id, model.tenantId, model.kind, model.state, model.tags);
   }
 
   marshal(): DigitalTwinModel {
     return {
-      id: Uint8Array.from(parse(this.id)),
-      tenantId: Uint8Array.from(parse(this.tenantId)),
+      id: this.id,
+      tenantId: this.tenantId,
       kind: this.kind,
       state: this.state,
       tags: this.tags,
@@ -53,8 +46,8 @@ export class DigitalTwin extends DigitalTwinCore {
   static deserialize(dtResponse: grpcId.GetDigitalTwinResponse): DigitalTwin {
     if (dtResponse.digitalTwin && dtResponse.digitalTwin.digitalTwin) {
       const dt = new DigitalTwin(
-        stringify(dtResponse.digitalTwin.digitalTwin.id),
-        stringify(dtResponse.digitalTwin.digitalTwin.tenantId),
+        dtResponse.digitalTwin.digitalTwin.id,
+        dtResponse.digitalTwin.digitalTwin.tenantId,
         dtResponse.digitalTwin.digitalTwin.kind,
         dtResponse.digitalTwin.digitalTwin.state,
         dtResponse.digitalTwin.digitalTwin.tags,

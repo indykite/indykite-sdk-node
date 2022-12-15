@@ -1,4 +1,4 @@
-import { ProviderInfo, ProviderType } from '../../../grpc/indykite/identity/v1beta1/model';
+import { ProviderInfo, ProviderType } from '../../../grpc/indykite/identity/v1beta2/model';
 import * as sdkTypes from '../../model';
 
 describe('token', () => {

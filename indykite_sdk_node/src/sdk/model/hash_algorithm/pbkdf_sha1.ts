@@ -1,4 +1,4 @@
-import { PBKDFSHA1 as PBKDFSHA1Model } from '../../../grpc/indykite/identity/v1beta1/import';
+import { PBKDFSHA1 as PBKDFSHA1Model } from '../../../grpc/indykite/identity/v1beta2/import';
 import HashAlgorithm from './hash_algorithm';
 
 class PBKDFSHA1 extends HashAlgorithm {

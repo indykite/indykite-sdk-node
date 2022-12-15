@@ -1,6 +1,5 @@
-import { stringify } from 'uuid';
-import * as grpcIdentity from '../../grpc/indykite/identity/v1beta1/identity_management_api';
-import * as grpcModel from '../../grpc/indykite/identity/v1beta1/model';
+import * as grpcIdentity from '../../grpc/indykite/identity/v1beta2/identity_management_api';
+import * as grpcModel from '../../grpc/indykite/identity/v1beta2/model';
 import { Utils } from '../utils/utils';
 import { DigitalTwinCore } from './digitaltwin';
 
@@ -59,16 +58,16 @@ export class TokenInfo {
     const tokenInfo = 'active' in message ? new TokenInfo(message.active) : new TokenInfo();
     const msgTokenInfo = 'active' in message ? message.tokenInfo : message;
     if (msgTokenInfo) {
-      tokenInfo.appSpaceId = stringify(msgTokenInfo.appSpaceId);
-      tokenInfo.applicationId = stringify(msgTokenInfo.applicationId);
+      tokenInfo.appSpaceId = msgTokenInfo.appSpaceId;
+      tokenInfo.applicationId = msgTokenInfo.applicationId;
       tokenInfo.authenticationTime = Utils.timestampToDate(msgTokenInfo.authenticationTime);
-      tokenInfo.customerId = stringify(msgTokenInfo.customerId);
+      tokenInfo.customerId = msgTokenInfo.customerId;
       tokenInfo.expireTime = Utils.timestampToDate(msgTokenInfo.expireTime);
       if (msgTokenInfo.impersonated) {
         const dt = msgTokenInfo.impersonated;
         tokenInfo.impersonated = new DigitalTwinCore(
-          stringify(dt.id),
-          stringify(dt.tenantId),
+          dt.id,
+          dt.tenantId,
           dt.kind,
           dt.state,
           dt.tags,
@@ -77,13 +76,7 @@ export class TokenInfo {
       tokenInfo.issueTime = Utils.timestampToDate(msgTokenInfo.issueTime);
       if (msgTokenInfo.subject) {
         const dt = msgTokenInfo.subject;
-        tokenInfo.subject = new DigitalTwinCore(
-          stringify(dt.id),
-          stringify(dt.tenantId),
-          dt.kind,
-          dt.state,
-          dt.tags,
-        );
+        tokenInfo.subject = new DigitalTwinCore(dt.id, dt.tenantId, dt.kind, dt.state, dt.tags);
       }
       tokenInfo.providerInfo = msgTokenInfo.providerInfo.map((v) => ProviderInfo.deserialize(v));
     }

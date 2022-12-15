@@ -4,18 +4,16 @@ import { Status } from '@grpc/grpc-js/build/src/constants';
 import {
   GetPasswordCredentialResponse,
   UpdatePasswordCredentialResponse,
-} from '../../../grpc/indykite/identity/v1beta1/identity_management_api';
+} from '../../../grpc/indykite/identity/v1beta2/identity_management_api';
 import { IdentityClient } from '../../identity';
-import { Utils } from '../../utils/utils';
-import { applicationTokenMock } from '../../utils/test_utils';
+import { applicationTokenMock, generateRandomGID } from '../../utils/test_utils';
 import { DigitalTwinCore } from '../../model';
-import { DigitalTwinKind, DigitalTwinState } from '../../../grpc/indykite/identity/v1beta1/model';
-import { v4 } from 'uuid';
+import { DigitalTwinKind, DigitalTwinState } from '../../../grpc/indykite/identity/v1beta2/model';
 import { BoolValue } from '../../../grpc/google/protobuf/wrappers';
 
 describe('getPasswordCredential', () => {
-  const dtId = v4();
-  const tenantId = v4();
+  const dtId = generateRandomGID();
+  const tenantId = generateRandomGID();
   const digitalTwin = new DigitalTwinCore(
     dtId,
     tenantId,
@@ -53,8 +51,8 @@ describe('getPasswordCredential', () => {
       expect(getPasswordCredentialSpy).toBeCalledWith(
         {
           digitalTwin: {
-            id: Uint8Array.from(Utils.uuidToBuffer(dtId)),
-            tenantId: Uint8Array.from(Utils.uuidToBuffer(tenantId)),
+            id: dtId,
+            tenantId,
             kind: DigitalTwinKind.PERSON,
             state: DigitalTwinState.ACTIVE,
             tags: [],

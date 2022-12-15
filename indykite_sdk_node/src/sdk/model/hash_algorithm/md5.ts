@@ -1,4 +1,4 @@
-import { MD5 as MD5Model } from '../../../grpc/indykite/identity/v1beta1/import';
+import { MD5 as MD5Model } from '../../../grpc/indykite/identity/v1beta2/import';
 import HashAlgorithm from './hash_algorithm';
 
 class MD5 extends HashAlgorithm {

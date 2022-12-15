@@ -1,10 +1,10 @@
 import {
   CancelInvitationRequest,
   ChangePasswordRequest,
-  CheckConsentChallengeRequest,
+  CheckOAuth2ConsentChallengeRequest,
   CheckInvitationStateRequest,
   ConsentRequestSessionData,
-  CreateConsentVerifierRequest,
+  CreateOAuth2ConsentVerifierRequest,
   CreateInvitationRequest,
   DeleteDigitalTwinRequest,
   DigitalTwinIdentifier,
@@ -21,8 +21,8 @@ import {
   TokenIntrospectRequest,
   UpdatePasswordCredentialRequest,
   VerifyDigitalTwinEmailRequest,
-} from '../grpc/indykite/identity/v1beta1/identity_management_api';
-import { DigitalTwin, IdentityTokenInfo } from '../grpc/indykite/identity/v1beta1/model';
+} from '../grpc/indykite/identity/v1beta2/identity_management_api';
+import { DigitalTwin, IdentityTokenInfo } from '../grpc/indykite/identity/v1beta2/model';
 import * as sdkTypes from './model';
 
 import { SdkErrorCode, SdkError } from './error';
@@ -35,13 +35,13 @@ import {
   Property,
 } from './model';
 import { SdkClient } from './client/client';
-import { IdentityManagementAPIClient } from '../grpc/indykite/identity/v1beta1/identity_management_api.grpc-client';
+import { IdentityManagementAPIClient } from '../grpc/indykite/identity/v1beta2/identity_management_api.grpc-client';
 import { Invitation } from './model/invitation';
 import { JsonValue } from '@protobuf-ts/runtime';
 import {
   ImportDigitalTwinsRequest,
   ImportDigitalTwinsResponse,
-} from '../grpc/indykite/identity/v1beta1/import';
+} from '../grpc/indykite/identity/v1beta2/import';
 import { HashAlgorithm } from './model/hash_algorithm';
 import { ImportDigitalTwin, ImportResult } from './model/import_digitaltwin';
 import { AuthorizationDecisions } from './model/authorization_decisions';
@@ -107,13 +107,12 @@ export class IdentityClient {
    * value returned.
    */
   sessionIntrospect(
-    tenantId: string | Buffer,
+    tenantId: string,
     token: string,
   ): Promise<{ tokenInfo: sdkTypes.TokenInfo; providers: string[] }> {
     return new Promise((resolve, reject) => {
-      const tId = Utils.uuidToBuffer(tenantId);
       const request = SessionIntrospectRequest.create({
-        tenantId: tId,
+        tenantId,
         token,
       });
 
@@ -132,12 +131,12 @@ export class IdentityClient {
   }
 
   getDigitalTwin(
-    digitalTwinId: string | Buffer,
-    tenantId: string | Buffer,
+    digitalTwinId: string,
+    tenantId: string,
     properties: string[],
   ): Promise<{ digitalTwin?: sdkTypes.DigitalTwin; tokenInfo?: sdkTypes.TokenInfo }> {
-    const dtId = Utils.uuidToBuffer(digitalTwinId);
-    const tId = Utils.uuidToBuffer(tenantId);
+    const dtId = digitalTwinId;
+    const tId = tenantId;
     const request = GetDigitalTwinRequest.fromJson({
       id: Utils.createDigitalTwinId(dtId, tId),
       properties: Property.fromPropertiesList(properties),
@@ -223,7 +222,7 @@ export class IdentityClient {
    * @param orderBy Expression to sort results by. For example: `priority desc, name`.
    */
   listDigitalTwins(
-    tenantId: string | Buffer,
+    tenantId: string,
     collectionId: string,
     properties: string[],
     pageSize?: number,
@@ -231,9 +230,8 @@ export class IdentityClient {
     orderBy?: string,
   ): Promise<{ digitalTwins: sdkTypes.DigitalTwin[]; nextPageToken?: string }> {
     return new Promise((resolve, reject) => {
-      const tId = Utils.uuidToBuffer(tenantId);
       const request = ListDigitalTwinsRequest.create({
-        tenantId: tId,
+        tenantId,
         properties: Property.fromPropertiesList(properties),
         collectionId,
       });
@@ -272,14 +270,14 @@ export class IdentityClient {
   }
 
   patchProperties(
-    digitalTwinId: string | Buffer,
-    tenantId: string | Buffer,
+    digitalTwinId: string,
+    tenantId: string,
     dt: sdkTypes.DigitalTwin,
     forceDelete = false,
   ): Promise<PatchResult[]> {
     const patchdt = DigitalTwin.fromJson({});
-    patchdt.id = Utils.uuidToBuffer(digitalTwinId);
-    patchdt.tenantId = Utils.uuidToBuffer(tenantId);
+    patchdt.id = digitalTwinId;
+    patchdt.tenantId = tenantId;
 
     const dti = DigitalTwinIdentifier.fromJson({
       digitalTwin: DigitalTwin.toJson(patchdt),
@@ -310,8 +308,8 @@ export class IdentityClient {
   }
 
   startEmailVerification(
-    digitalTwinId: string | Buffer,
-    tenantId: string | Buffer,
+    digitalTwinId: string,
+    tenantId: string,
     email: string,
     attributes?: unknown,
   ): Promise<boolean> {
@@ -354,15 +352,7 @@ export class IdentityClient {
         else {
           if (response && response.digitalTwin) {
             const dt = response.digitalTwin;
-            resolve(
-              new sdkTypes.DigitalTwin(
-                Utils.uuidToString(dt.id),
-                Utils.uuidToString(dt.tenantId),
-                dt.kind,
-                dt.state,
-                dt.tags,
-              ),
-            );
+            resolve(new sdkTypes.DigitalTwin(dt.id, dt.tenantId, dt.kind, dt.state, dt.tags));
           } else {
             reject(new SdkError(SdkErrorCode.SDK_CODE_1, 'Missing verify email response'));
           }
@@ -371,10 +361,7 @@ export class IdentityClient {
     });
   }
 
-  startForgottenPasswordFlow(
-    digitalTwinId: string | Buffer,
-    tenantId: string | Buffer,
-  ): Promise<boolean> {
+  startForgottenPasswordFlow(digitalTwinId: string, tenantId: string): Promise<boolean> {
     const digitalTwin = Utils.createDigitalTwinId(digitalTwinId, tenantId);
     const request = StartForgottenPasswordFlowRequest.fromJson(digitalTwin);
 
@@ -424,11 +411,7 @@ export class IdentityClient {
     });
   }
 
-  changePassword(
-    digitalTwinId: string | Buffer,
-    tenantId: string | Buffer,
-    password: string,
-  ): Promise<boolean> {
+  changePassword(digitalTwinId: string, tenantId: string, password: string): Promise<boolean> {
     const { digitalTwin } = Utils.createDigitalTwinId(digitalTwinId, tenantId);
     const request = ChangePasswordRequest.fromJson({
       digitalTwin,
@@ -448,8 +431,8 @@ export class IdentityClient {
    * @deprecated sience 0.1.6, use changePassword instead
    */
   changePasswordOfDigitalTwin(
-    digitalTwinId: string | Buffer,
-    tenantId: string | Buffer,
+    digitalTwinId: string,
+    tenantId: string,
     password: string,
   ): Promise<boolean> {
     const { digitalTwin } = Utils.createDigitalTwinId(digitalTwinId, tenantId);
@@ -466,10 +449,7 @@ export class IdentityClient {
     });
   }
 
-  deleteDigitalTwin(
-    digitalTwinId: string | Buffer,
-    tenantId: string | Buffer,
-  ): Promise<sdkTypes.DigitalTwin> {
+  deleteDigitalTwin(digitalTwinId: string, tenantId: string): Promise<sdkTypes.DigitalTwin> {
     const digitalTwin = Utils.createDigitalTwinId(digitalTwinId, tenantId);
     const request = DeleteDigitalTwinRequest.fromJson({
       id: digitalTwin,
@@ -481,15 +461,7 @@ export class IdentityClient {
         else {
           if (response && response.digitalTwin) {
             const dt = response.digitalTwin;
-            resolve(
-              new sdkTypes.DigitalTwin(
-                Utils.uuidToString(dt.id),
-                Utils.uuidToString(dt.tenantId),
-                dt.kind,
-                dt.state,
-                dt.tags,
-              ),
-            );
+            resolve(new sdkTypes.DigitalTwin(dt.id, dt.tenantId, dt.kind, dt.state, dt.tags));
           } else {
             reject(new SdkError(SdkErrorCode.SDK_CODE_1, 'Missing delete response'));
           }
@@ -512,15 +484,7 @@ export class IdentityClient {
         else {
           if (response && response.digitalTwin) {
             const dt = response.digitalTwin;
-            resolve(
-              new sdkTypes.DigitalTwin(
-                Utils.uuidToString(dt.id),
-                Utils.uuidToString(dt.tenantId),
-                dt.kind,
-                dt.state,
-                dt.tags,
-              ),
-            );
+            resolve(new sdkTypes.DigitalTwin(dt.id, dt.tenantId, dt.kind, dt.state, dt.tags));
           } else {
             reject(new SdkError(SdkErrorCode.SDK_CODE_1, 'Missing delete response'));
           }
@@ -530,12 +494,12 @@ export class IdentityClient {
   }
 
   checkConsentChallenge(challenge: string): Promise<ConsentChallenge> {
-    const request = CheckConsentChallengeRequest.fromJson({
+    const request = CheckOAuth2ConsentChallengeRequest.fromJson({
       challenge,
     });
 
     return new Promise((resolve, reject) => {
-      this.client.checkConsentChallenge(request, (err, response) => {
+      this.client.checkOAuth2ConsentChallenge(request, (err, response) => {
         if (err) reject(err);
         else if (!response) {
           reject(new SdkError(SdkErrorCode.SDK_CODE_1, 'Missing check consent challenge response'));
@@ -602,7 +566,7 @@ export class IdentityClient {
 
   createEmailInvitation(
     invitee: string,
-    tenantId: Buffer | string,
+    tenantId: string,
     referenceId: string,
     expireTime?: Date,
     inviteAtTime?: Date,
@@ -610,7 +574,7 @@ export class IdentityClient {
   ): Promise<void> {
     return new Promise((resolve, reject) => {
       const request = CreateInvitationRequest.fromJson({
-        tenantId: Utils.uuidToBase64(tenantId),
+        tenantId: tenantId,
         referenceId,
         email: invitee,
       });
@@ -646,7 +610,7 @@ export class IdentityClient {
 
   createMobileInvitation(
     invitee: string,
-    tenantId: Buffer | string,
+    tenantId: string,
     referenceId: string,
     expireTime?: Date,
     inviteAtTime?: Date,
@@ -654,7 +618,7 @@ export class IdentityClient {
   ): Promise<void> {
     return new Promise((resolve, reject) => {
       const request = CreateInvitationRequest.fromJson({
-        tenantId: Utils.uuidToBase64(tenantId),
+        tenantId,
         referenceId,
         mobile: invitee,
       });
@@ -1029,8 +993,8 @@ export class IdentityClient {
     authorizationEndpoint: string;
     verifier: string;
   }> {
-    const request = CreateConsentVerifierRequest.fromJson({
-      challenge: consentChallenge,
+    const request = CreateOAuth2ConsentVerifierRequest.fromJson({
+      consentChallenge,
     });
 
     request.result = {
@@ -1042,7 +1006,7 @@ export class IdentityClient {
     };
 
     return new Promise((resolve, reject) => {
-      this.client.createConsentVerifier(request, (err, response) => {
+      this.client.createOAuth2ConsentVerifier(request, (err, response) => {
         if (err) reject(err);
         else if (!response) {
           reject(new SdkError(SdkErrorCode.SDK_CODE_1, 'Missing denied consent verifier response'));
@@ -1064,8 +1028,8 @@ export class IdentityClient {
     authorizationEndpoint: string;
     verifier: string;
   }> {
-    const request = CreateConsentVerifierRequest.fromJson({
-      challenge: consentChallenge,
+    const request = CreateOAuth2ConsentVerifierRequest.fromJson({
+      consentChallenge,
     });
 
     request.result = {
@@ -1080,7 +1044,7 @@ export class IdentityClient {
     };
 
     return new Promise((resolve, reject) => {
-      this.client.createConsentVerifier(request, (err, response) => {
+      this.client.createOAuth2ConsentVerifier(request, (err, response) => {
         if (err) reject(err);
         else if (!response) {
           reject(

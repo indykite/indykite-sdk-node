@@ -2,7 +2,7 @@ import { JsonObject, JsonValue } from '@protobuf-ts/runtime';
 import { parse, stringify } from 'uuid';
 import { Any } from '../../grpc/google/protobuf/any';
 import { Timestamp } from '../../grpc/google/protobuf/timestamp';
-import { PostalAddress } from '../../grpc/indykite/identity/v1beta1/model';
+import { PostalAddress } from '../../grpc/indykite/identity/v1beta2/model';
 import { Value } from '../../grpc/indykite/objects/v1beta1/struct';
 import { SdkError, SdkErrorCode } from '../error';
 

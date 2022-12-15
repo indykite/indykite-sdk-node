@@ -1,5 +1,4 @@
 import { ServiceError, SurfaceCall } from '@grpc/grpc-js/build/src/call';
-import { v4 } from 'uuid';
 import {
   CancelInvitationRequest,
   CancelInvitationResponse,
@@ -9,14 +8,14 @@ import {
   CreateInvitationResponse,
   ResendInvitationRequest,
   ResendInvitationResponse,
-} from '../../../grpc/indykite/identity/v1beta1/identity_management_api';
+} from '../../../grpc/indykite/identity/v1beta2/identity_management_api';
 import { IdentityClient } from '../../identity';
 import { Status } from '@grpc/grpc-js/build/src/constants';
 import { CallOptions, Metadata } from '@grpc/grpc-js';
 import { Utils } from '../../utils/utils';
 import { Invitation, InvitationState } from '../../model/invitation';
 import { NullValue } from '../../../grpc/google/protobuf/struct';
-import { applicationTokenMock } from '../../utils/test_utils';
+import { applicationTokenMock, generateRandomGID } from '../../utils/test_utils';
 
 let sdk: IdentityClient;
 
@@ -32,7 +31,7 @@ describe('createEmailInvitation', () => {
   describe('when only necessary parameters are used', () => {
     describe('when the response is successful', () => {
       const invitee = 'user@exmaple.com';
-      const tenantId = v4();
+      const tenantId = generateRandomGID();
       const referenceId = '123321';
       let result: unknown;
 
@@ -64,7 +63,7 @@ describe('createEmailInvitation', () => {
               oneofKind: 'email',
             },
             referenceId,
-            tenantId: Uint8Array.from(Utils.uuidToBuffer(tenantId)),
+            tenantId,
           },
           expect.any(Function),
         );
@@ -77,7 +76,7 @@ describe('createEmailInvitation', () => {
 
     describe('when the response contains an error', () => {
       const invitee = 'user@exmaple.com';
-      const tenantId = v4();
+      const tenantId = generateRandomGID();
       const referenceId = '123321';
       const error = {
         code: Status.NOT_FOUND,
@@ -117,7 +116,7 @@ describe('createEmailInvitation', () => {
 
   describe('when all parameters are used', () => {
     const invitee = 'user@exmaple.com';
-    const tenantId = v4();
+    const tenantId = generateRandomGID();
     const referenceId = '123321';
     const expireTime = new Date('2022-05-19T08:38:31Z');
     const invitationTime = new Date('2022-04-19T08:38:31Z');
@@ -164,7 +163,7 @@ describe('createEmailInvitation', () => {
             oneofKind: 'email',
           },
           referenceId,
-          tenantId: Uint8Array.from(Utils.uuidToBuffer(tenantId)),
+          tenantId,
           expireTime: Utils.dateToTimestamp(expireTime),
           inviteAtTime: Utils.dateToTimestamp(invitationTime),
           messageAttributes: {
@@ -231,7 +230,7 @@ describe('createMobileInvitation', () => {
   describe('when only necessary parameters are used', () => {
     describe('when the response is successful', () => {
       const invitee = '+421949949949';
-      const tenantId = v4();
+      const tenantId = generateRandomGID();
       const referenceId = '123321';
       let result: unknown;
 
@@ -263,7 +262,7 @@ describe('createMobileInvitation', () => {
               oneofKind: 'mobile',
             },
             referenceId,
-            tenantId: Uint8Array.from(Utils.uuidToBuffer(tenantId)),
+            tenantId,
           },
           expect.any(Function),
         );
@@ -276,7 +275,7 @@ describe('createMobileInvitation', () => {
 
     describe('when the response contains an error', () => {
       const invitee = '+421949949949';
-      const tenantId = v4();
+      const tenantId = generateRandomGID();
       const referenceId = '123321';
       const error = {
         code: Status.NOT_FOUND,
@@ -316,7 +315,7 @@ describe('createMobileInvitation', () => {
 
   describe('when all parameters are used', () => {
     const invitee = '+421949949949';
-    const tenantId = v4();
+    const tenantId = generateRandomGID();
     const referenceId = '123321';
     const expireTime = new Date('2022-05-19T08:38:31Z');
     const invitationTime = new Date('2022-04-19T08:38:31Z');
@@ -360,7 +359,7 @@ describe('createMobileInvitation', () => {
             oneofKind: 'mobile',
           },
           referenceId,
-          tenantId: Uint8Array.from(Utils.uuidToBuffer(tenantId)),
+          tenantId,
           expireTime: Utils.dateToTimestamp(expireTime),
           inviteAtTime: Utils.dateToTimestamp(invitationTime),
           messageAttributes: {
@@ -388,7 +387,7 @@ describe('checkInvitationState', () => {
   describe('when the response is successful', () => {
     describe('when a reference ID is used', () => {
       const referenceId = '123321';
-      const tenantId = v4();
+      const tenantId = generateRandomGID();
       let result: Invitation;
 
       beforeEach(async () => {
@@ -409,7 +408,7 @@ describe('checkInvitationState', () => {
                   },
                   referenceId: '654321',
                   state: InvitationState.ACCEPTED,
-                  tenantId: Uint8Array.from(Utils.uuidToBuffer(tenantId)),
+                  tenantId,
                 },
               });
             return {} as SurfaceCall;
@@ -445,7 +444,7 @@ describe('checkInvitationState', () => {
 
     describe('when a invitation token is used', () => {
       const invitationToken = '789789';
-      const tenantId = v4();
+      const tenantId = generateRandomGID();
       let result: Invitation;
 
       beforeEach(async () => {
@@ -466,7 +465,7 @@ describe('checkInvitationState', () => {
                   },
                   referenceId: '654321',
                   state: InvitationState.EXPIRED,
-                  tenantId: Uint8Array.from(Utils.uuidToBuffer(tenantId)),
+                  tenantId,
                 },
               });
             return {} as SurfaceCall;
@@ -501,7 +500,7 @@ describe('checkInvitationState', () => {
     });
 
     describe('when no token is used', () => {
-      const tenantId = v4();
+      const tenantId = generateRandomGID();
       let caughtError: unknown;
 
       beforeEach(async () => {
@@ -522,7 +521,7 @@ describe('checkInvitationState', () => {
                   },
                   referenceId: '654321',
                   state: InvitationState.EXPIRED,
-                  tenantId: Uint8Array.from(Utils.uuidToBuffer(tenantId)),
+                  tenantId,
                 },
               });
             return {} as SurfaceCall;
@@ -551,7 +550,7 @@ describe('checkInvitationState', () => {
     });
 
     describe('when both tokens are used', () => {
-      const tenantId = v4();
+      const tenantId = generateRandomGID();
       const invitationToken = '789789';
       const referenceId = '123321';
       let caughtError: unknown;
@@ -574,7 +573,7 @@ describe('checkInvitationState', () => {
                   },
                   referenceId: '654321',
                   state: InvitationState.EXPIRED,
-                  tenantId: Uint8Array.from(Utils.uuidToBuffer(tenantId)),
+                  tenantId,
                 },
               });
             return {} as SurfaceCall;

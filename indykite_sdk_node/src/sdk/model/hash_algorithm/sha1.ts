@@ -1,4 +1,4 @@
-import { SHA1 as SHA1Model } from '../../../grpc/indykite/identity/v1beta1/import';
+import { SHA1 as SHA1Model } from '../../../grpc/indykite/identity/v1beta2/import';
 import HashAlgorithm from './hash_algorithm';
 
 class SHA1 extends HashAlgorithm {

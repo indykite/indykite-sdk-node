@@ -1,5 +1,5 @@
 import { v4 } from 'uuid';
-import { DigitalTwinKind, DigitalTwinState } from '../../../grpc/indykite/identity/v1beta1/model';
+import { DigitalTwinKind, DigitalTwinState } from '../../../grpc/indykite/identity/v1beta2/model';
 import { Utils } from '../../utils/utils';
 import { DigitalTwin, DigitalTwinCore } from '../digitaltwin';
 import { PatchPropertiesBuilder, Property } from '../property';
@@ -151,8 +151,8 @@ describe('when `fromModel` method is used for the instance creation', () => {
 
   beforeEach(() => {
     instance = DigitalTwin.fromModel({
-      id: Utils.uuidToBuffer(id),
-      tenantId: Utils.uuidToBuffer(tenantId),
+      id,
+      tenantId,
       kind: DigitalTwinKind.PERSON,
       state: DigitalTwinState.ACTIVE,
       tags: [],
@@ -168,8 +168,8 @@ describe('when `fromModel` method is used for the instance creation', () => {
 
   it('marshals the instance correctly', () => {
     expect(instance.marshal()).toEqual({
-      id: Uint8Array.from(Utils.uuidToBuffer(id)),
-      tenantId: Uint8Array.from(Utils.uuidToBuffer(tenantId)),
+      id,
+      tenantId,
       kind: DigitalTwinKind.PERSON,
       state: DigitalTwinState.ACTIVE,
       tags: [],

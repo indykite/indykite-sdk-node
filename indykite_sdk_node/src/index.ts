@@ -1,4 +1,4 @@
-export { DigitalTwinKind, DigitalTwinState } from './grpc/indykite/identity/v1beta1/model';
+export { DigitalTwinKind, DigitalTwinState } from './grpc/indykite/identity/v1beta2/model';
 export { IdentityClient } from './sdk/identity';
 export { ConfigClient } from './sdk/config';
 export { IngestClient } from './sdk/ingest';
@@ -16,4 +16,4 @@ export {
   // TokenIntrospectRequest,
   // TokenIntrospectResponse,
   VerifyDigitalTwinEmailRequest,
-} from './grpc/indykite/identity/v1beta1/identity_management_api';
+} from './grpc/indykite/identity/v1beta2/identity_management_api';

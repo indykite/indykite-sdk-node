@@ -2,8 +2,7 @@ import {
   ImportDigitalTwin as ImportDigitalTwinModel,
   PasswordCredential as PasswordCredentialModel,
   ImportDigitalTwinResult as ImportDigitalTwinResultModel,
-} from '../../grpc/indykite/identity/v1beta1/import';
-import { Utils } from '../utils/utils';
+} from '../../grpc/indykite/identity/v1beta2/import';
 import { DigitalTwin, DigitalTwinCore } from './digitaltwin';
 import { PatchPropertiesBuilder, PatchResult, Property } from './property';
 
@@ -97,8 +96,8 @@ export class ImportDigitalTwin extends DigitalTwin {
 
   marshal(): ImportDigitalTwinModel {
     const value: ImportDigitalTwinModel = {
-      id: Utils.uuidToBuffer(this.id),
-      tenantId: Utils.uuidToBuffer(this.tenantId),
+      id: this.id,
+      tenantId: this.tenantId,
       kind: this.kind,
       state: this.state,
       providerUserInfo: this.userProvider ?? [],
