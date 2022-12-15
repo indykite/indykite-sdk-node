@@ -8,7 +8,7 @@
     "npmDedupe",
     "yarnDedupeFewer"
   ],
-  "commitMessagePrefix": "chore(deps): ",
+  "commitMessagePrefix": "chore(dependencies): ",
   "commitMessageAction": "update",
   "recreateClosed": false,
   "ignoreDeps": [],
