@@ -1,4 +1,11 @@
 # Changelog
+## [0.1.21](https://github.com/indykite/indykite-sdk-node/compare/v0.1.20...v0.1.21) (2022-12-15)
+
+
+### Features
+
+* use new package name & remove jarvis refs ([d7c61ae](https://github.com/indykite/indykite-sdk-node/commit/d7c61aee3d2098029174761181b710f963fd0c9f))
+
 ## [0.1.20](https://github.com/indykite/indykite-sdk-node/compare/v0.1.19...v0.1.20) (2022-12-12)
 
 
