@@ -1,4 +1,4 @@
-import * as grpcId from '../../grpc/indykite/identity/v1beta1/identity_management_api';
+import * as grpcId from '../../grpc/indykite/identity/v1beta2/identity_management_api';
 import { Utils } from '../utils/utils';
 
 export interface Decisions {

@@ -1,4 +1,4 @@
-import { Scrypt as ScryptModel } from '../../../grpc/indykite/identity/v1beta1/import';
+import { Scrypt as ScryptModel } from '../../../grpc/indykite/identity/v1beta2/import';
 import HashAlgorithm from './hash_algorithm';
 
 class Scrypt extends HashAlgorithm {

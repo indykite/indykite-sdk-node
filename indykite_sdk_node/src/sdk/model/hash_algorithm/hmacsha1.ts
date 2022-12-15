@@ -1,4 +1,4 @@
-import { HMACSHA1 as HMACSHA1Model } from '../../../grpc/indykite/identity/v1beta1/import';
+import { HMACSHA1 as HMACSHA1Model } from '../../../grpc/indykite/identity/v1beta2/import';
 import HashAlgorithm from './hash_algorithm';
 
 class HMACSHA1 extends HashAlgorithm {

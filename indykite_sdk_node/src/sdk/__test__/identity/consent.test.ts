@@ -1,19 +1,17 @@
 import { ServiceError, SurfaceCall } from '@grpc/grpc-js/build/src/call';
-import { v4 } from 'uuid';
 import {
-  CheckConsentChallengeRequest,
-  CheckConsentChallengeResponse,
-  CreateConsentVerifierRequest,
-  CreateConsentVerifierResponse,
-} from '../../../grpc/indykite/identity/v1beta1/identity_management_api';
+  CheckOAuth2ConsentChallengeRequest,
+  CheckOAuth2ConsentChallengeResponse,
+  CreateOAuth2ConsentVerifierRequest,
+  CreateOAuth2ConsentVerifierResponse,
+} from '../../../grpc/indykite/identity/v1beta2/identity_management_api';
 import { IdentityClient } from '../../identity';
 import * as sdkTypes from '../../model';
 import { Status } from '@grpc/grpc-js/build/src/constants';
 import { ConsentChallengeAudience } from '../../model';
 import { CallOptions, Metadata } from '@grpc/grpc-js';
-import { Utils } from '../../utils/utils';
 import { JsonObject } from '@protobuf-ts/runtime';
-import { applicationTokenMock } from '../../utils/test_utils';
+import { applicationTokenMock, generateRandomGID } from '../../utils/test_utils';
 
 let sdk: IdentityClient;
 
@@ -28,18 +26,18 @@ afterEach(() => {
 describe('Consent', () => {
   it('check consent challenge', () => {
     const challengeToken = 'challenge_token';
-    const clientId = v4();
+    const clientId = generateRandomGID();
     const scopes = [{ name: 'openid', description: '', displayName: '', required: false }];
     const requestUrl = 'http://www.example.com/oauth';
     const audiences = [] as ConsentChallengeAudience[];
-    const appSpace = v4();
+    const appSpaceId = generateRandomGID();
     const acrs = [] as string[];
     const subject = 'Subject';
     const skip = false;
-    const mockResp = CheckConsentChallengeResponse.fromJson({
+    const mockResp = CheckOAuth2ConsentChallengeResponse.fromJson({
       acrs,
-      appSpaceId: Utils.uuidToBase64(appSpace),
-      clientId: clientId,
+      appSpaceId,
+      clientId,
       audiences: audiences as unknown as JsonObject[],
       scopes,
       requestUrl,
@@ -57,7 +55,7 @@ describe('Consent', () => {
           scopes,
           requestUrl,
           audiences,
-          appSpace,
+          appSpaceId,
           acrs,
           subject,
           skip,
@@ -66,7 +64,7 @@ describe('Consent', () => {
       {
         svcerr: { code: Status.NOT_FOUND, details: 'no details', metadata: {} } as ServiceError,
         err: { code: Status.NOT_FOUND, details: 'no details', metadata: {} } as ServiceError,
-        res: {} as CheckConsentChallengeResponse,
+        res: {} as CheckOAuth2ConsentChallengeResponse,
         expected: false,
       },
     ];
@@ -74,17 +72,17 @@ describe('Consent', () => {
     clbs.forEach((clb) => {
       const mockFunc = jest.fn(
         (
-          request: CheckConsentChallengeRequest,
+          request: CheckOAuth2ConsentChallengeRequest,
           callback:
             | Metadata
             | CallOptions
-            | ((error: ServiceError | null, response: CheckConsentChallengeResponse) => void),
+            | ((error: ServiceError | null, response: CheckOAuth2ConsentChallengeResponse) => void),
         ): SurfaceCall => {
           if (typeof callback === 'function') callback(clb.svcerr, clb.res);
           return {} as SurfaceCall;
         },
       );
-      jest.spyOn(sdk['client'], 'checkConsentChallenge').mockImplementation(mockFunc);
+      jest.spyOn(sdk['client'], 'checkOAuth2ConsentChallenge').mockImplementation(mockFunc);
 
       const resp = sdk.checkConsentChallenge(challengeToken);
       expect(mockFunc).toBeCalled();
@@ -98,17 +96,17 @@ describe('Consent', () => {
 
     const mockFunc = jest.fn(
       (
-        request: CheckConsentChallengeRequest,
+        request: CheckOAuth2ConsentChallengeRequest,
         callback:
           | Metadata
           | CallOptions
-          | ((error: ServiceError | null, response?: CheckConsentChallengeResponse) => void),
+          | ((error: ServiceError | null, response?: CheckOAuth2ConsentChallengeResponse) => void),
       ): SurfaceCall => {
         if (typeof callback === 'function') callback(null, undefined);
         return {} as SurfaceCall;
       },
     );
-    jest.spyOn(sdk['client'], 'checkConsentChallenge').mockImplementation(mockFunc);
+    jest.spyOn(sdk['client'], 'checkOAuth2ConsentChallenge').mockImplementation(mockFunc);
 
     const resp = sdk.checkConsentChallenge(challengeToken);
     expect(mockFunc).toBeCalled();
@@ -119,22 +117,22 @@ describe('Consent', () => {
     const challengeToken = 'challenge_token';
     const consentChallenge = new sdkTypes.ConsentChallenge(
       challengeToken,
-      v4(),
+      generateRandomGID(),
       [{ name: 'openid', description: '', displayName: '', required: false }],
       'http://www.example.com/oauth',
       [],
-      v4(),
+      generateRandomGID(),
       [],
       'Subject',
       false,
     );
     const deniedConsentChallenge = new sdkTypes.ConsentChallenge(
       challengeToken,
-      v4(),
+      generateRandomGID(),
       [{ name: 'openid', description: '', displayName: '', required: false }],
       'http://www.example.com/oauth',
       [],
-      v4(),
+      generateRandomGID(),
       [],
       'Subject',
       false,
@@ -145,7 +143,7 @@ describe('Consent', () => {
       errorHint: '',
       statusCode: 403,
     });
-    const mockResp = CreateConsentVerifierResponse.fromJson({
+    const mockResp = CreateOAuth2ConsentVerifierResponse.fromJson({
       verifier: 'verifier_token',
       authorizationEndpoint: 'http://www.auth.com',
     });
@@ -162,7 +160,7 @@ describe('Consent', () => {
       {
         svcerr: { code: Status.NOT_FOUND, details: 'no details', metadata: {} } as ServiceError,
         err: { code: Status.NOT_FOUND, details: 'no details', metadata: {} } as ServiceError,
-        res: {} as CreateConsentVerifierResponse,
+        res: {} as CreateOAuth2ConsentVerifierResponse,
         expected: false,
       },
     ];
@@ -170,17 +168,17 @@ describe('Consent', () => {
     clbs.forEach((clb) => {
       const mockFunc = jest.fn(
         (
-          request: CreateConsentVerifierRequest,
+          request: CreateOAuth2ConsentVerifierRequest,
           callback:
             | Metadata
             | CallOptions
-            | ((error: ServiceError | null, response: CreateConsentVerifierResponse) => void),
+            | ((error: ServiceError | null, response: CreateOAuth2ConsentVerifierResponse) => void),
         ): SurfaceCall => {
           if (typeof callback === 'function') callback(clb.svcerr, clb.res);
           return {} as SurfaceCall;
         },
       );
-      jest.spyOn(sdk['client'], 'createConsentVerifier').mockImplementation(mockFunc);
+      jest.spyOn(sdk['client'], 'createOAuth2ConsentVerifier').mockImplementation(mockFunc);
 
       const resp = sdk.createConsentVerifier(consentChallenge);
       expect(mockFunc).toBeCalled();
@@ -198,22 +196,22 @@ describe('Consent', () => {
     const challengeToken = 'challenge_token';
     const consentChallenge = new sdkTypes.ConsentChallenge(
       challengeToken,
-      v4(),
+      generateRandomGID(),
       [{ name: 'openid', description: '', displayName: '', required: false }],
       'http://www.example.com/oauth',
       [],
-      v4(),
+      generateRandomGID(),
       [],
       'Subject',
       false,
     );
     const deniedConsentChallenge = new sdkTypes.ConsentChallenge(
       challengeToken,
-      v4(),
+      generateRandomGID(),
       [{ name: 'openid', description: '', displayName: '', required: false }],
       'http://www.example.com/oauth',
       [],
-      v4(),
+      generateRandomGID(),
       [],
       'Subject',
       false,
@@ -227,17 +225,17 @@ describe('Consent', () => {
 
     const mockFunc = jest.fn(
       (
-        request: CreateConsentVerifierRequest,
+        request: CreateOAuth2ConsentVerifierRequest,
         callback:
           | Metadata
           | CallOptions
-          | ((error: ServiceError | null, response?: CreateConsentVerifierResponse) => void),
+          | ((error: ServiceError | null, response?: CreateOAuth2ConsentVerifierResponse) => void),
       ): SurfaceCall => {
         if (typeof callback === 'function') callback(null);
         return {} as SurfaceCall;
       },
     );
-    jest.spyOn(sdk['client'], 'createConsentVerifier').mockImplementation(mockFunc);
+    jest.spyOn(sdk['client'], 'createOAuth2ConsentVerifier').mockImplementation(mockFunc);
 
     const resp = sdk.createConsentVerifier(consentChallenge);
     expect(mockFunc).toBeCalled();

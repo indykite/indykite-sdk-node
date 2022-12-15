@@ -1,7 +1,7 @@
 import { parse, stringify, v4 } from 'uuid';
 import { Any } from '../../../grpc/google/protobuf/any';
 import { NullValue } from '../../../grpc/google/protobuf/struct';
-import { PostalAddress } from '../../../grpc/indykite/identity/v1beta1/model';
+import { PostalAddress } from '../../../grpc/indykite/identity/v1beta2/model';
 import { Utils } from '../utils';
 
 describe('Utils', () => {

@@ -27,3 +27,12 @@ export const serviceAccountTokenMock = {
     alg: 'ES256',
   },
 };
+
+export const generateRandomGID = () => {
+  let result = '';
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-';
+  for (let i = 0; i < 27; i++) {
+    result += characters.charAt(Math.floor(Math.random() * characters.length));
+  }
+  return 'gid:' + result;
+};

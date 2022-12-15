@@ -1,10 +1,9 @@
 import { ServiceError, SurfaceCall } from '@grpc/grpc-js/build/src/call';
-import { parse, stringify, v4 } from 'uuid';
 import {
   AssuranceLevel,
   BatchOperationResult,
   Property,
-} from '../../../grpc/indykite/identity/v1beta1/attributes';
+} from '../../../grpc/indykite/identity/v1beta2/attributes';
 import {
   ChangePasswordRequest,
   ChangePasswordResponse,
@@ -24,7 +23,7 @@ import {
   TokenIntrospectResponse,
   VerifyDigitalTwinEmailRequest,
   VerifyDigitalTwinEmailResponse,
-} from '../../../grpc/indykite/identity/v1beta1/identity_management_api';
+} from '../../../grpc/indykite/identity/v1beta2/identity_management_api';
 import {
   DigitalEntity,
   DigitalTwin,
@@ -32,7 +31,7 @@ import {
   DigitalTwinState,
   IdentityTokenInfo,
   ProviderType,
-} from '../../../grpc/indykite/identity/v1beta1/model';
+} from '../../../grpc/indykite/identity/v1beta2/model';
 import { SdkError, SdkErrorCode } from '../../error';
 import { IdentityClient } from '../../identity';
 import * as sdkTypes from '../../model';
@@ -40,7 +39,7 @@ import { Status } from '@grpc/grpc-js/build/src/constants';
 import { PatchResult, PropertyMetaData } from '../../model';
 import { CallOptions, Metadata } from '@grpc/grpc-js';
 import { Utils } from '../../utils/utils';
-import { applicationTokenMock } from '../../utils/test_utils';
+import { applicationTokenMock, generateRandomGID } from '../../utils/test_utils';
 
 let sdk: IdentityClient;
 const userToken = 'user-token-token-token-token-token';
@@ -123,13 +122,13 @@ describe('Digital Twin', () => {
 
   it('Read - Success', async () => {
     const dt = {
-      id: Utils.uuidToUint8Array(v4()),
-      tenantId: Utils.uuidToUint8Array(v4()),
+      id: generateRandomGID(),
+      tenantId: generateRandomGID(),
       kind: DigitalTwinKind.PERSON,
       state: DigitalTwinState.ACTIVE,
     } as DigitalTwin;
     const emailProperty = {
-      id: v4(),
+      id: generateRandomGID(),
       definition: { property: 'email' },
       meta: {
         assuranceLevel: AssuranceLevel.LOW,
@@ -155,9 +154,9 @@ describe('Digital Twin', () => {
         digitalTwin: dt,
       } as DigitalEntity,
       tokenInfo: {
-        customerId: Utils.uuidToBuffer(v4()),
-        appSpaceId: Utils.uuidToBuffer(v4()),
-        applicationId: Utils.uuidToBuffer(v4()),
+        customerId: generateRandomGID(),
+        appSpaceId: generateRandomGID(),
+        applicationId: generateRandomGID(),
         authenticationTime: Utils.dateToTimestamp(new Date()),
         expireTime: Utils.dateToTimestamp(new Date(Date.now() + 20 * 3600 * 1000)),
         issueTime: Utils.dateToTimestamp(new Date()),
@@ -186,8 +185,8 @@ describe('Digital Twin', () => {
     jest.spyOn(sdk['client'], 'getDigitalTwin').mockImplementation(mockFunc);
 
     const expectedDT = new sdkTypes.DigitalTwin(
-      stringify(dt.id),
-      stringify(dt.tenantId),
+      dt.id,
+      dt.tenantId,
       dt.kind,
       dt.state,
       dt.tags,
@@ -215,7 +214,7 @@ describe('Digital Twin', () => {
     expect(resp.digitalTwin?.getProperty('undefined')).toBeUndefined();
     expect(resp.digitalTwin?.getProperties('email')).toHaveLength(1);
 
-    resp = await sdk.getDigitalTwin(Buffer.from(dt.id), Buffer.from(dt.tenantId), ['email']);
+    resp = await sdk.getDigitalTwin(dt.id, dt.tenantId, ['email']);
     expect(mockFunc).toBeCalledTimes(2);
     expect(resp).toHaveProperty('tokenInfo');
     expect(resp).toHaveProperty('digitalTwin');
@@ -232,8 +231,8 @@ describe('Digital Twin', () => {
 
   it('Read - Failure', async () => {
     const dt = {
-      id: Utils.uuidToBuffer(v4()),
-      tenantId: Utils.uuidToBuffer(v4()),
+      id: generateRandomGID(),
+      tenantId: generateRandomGID(),
       kind: DigitalTwinKind.PERSON,
       state: DigitalTwinState.ACTIVE,
       tags: [],
@@ -259,7 +258,7 @@ describe('Digital Twin', () => {
     expect(mockFunc).toHaveBeenCalled();
     expect(resp).rejects.toEqual(mockErr);
 
-    resp = sdk.getDigitalTwin(Buffer.from(dt.id), Buffer.from(dt.tenantId), ['email']);
+    resp = sdk.getDigitalTwin(dt.id, dt.tenantId, ['email']);
     expect(mockFunc).toBeCalledTimes(2);
     expect(resp).rejects.toEqual(mockErr);
   });
@@ -289,10 +288,10 @@ describe('Digital Twin', () => {
 
   it('Patch Properties - Add, Update, Delete', async () => {
     for (let k = 0; k < 2; k++) {
-      const originalEmailId = v4();
-      const newEmailId = v4();
-      const dtId = v4();
-      const tId = v4();
+      const originalEmailId = generateRandomGID();
+      const newEmailId = generateRandomGID();
+      const dtId = generateRandomGID();
+      const tId = generateRandomGID();
       const cDate = new Date();
       const dt = new sdkTypes.DigitalTwin(dtId, tId, 1, 1, [], cDate);
       const email = new sdkTypes.Property('email', originalEmailId).withValue(
@@ -321,7 +320,7 @@ describe('Digital Twin', () => {
       if (lastName) dt.updateProperty(lastName?.withValue('NEW_LAST_NAME'));
 
       const mockResp = { result: [] as BatchOperationResult[] };
-      const ids = [originalEmailId, newEmailId, v4(), null];
+      const ids = [originalEmailId, newEmailId, generateRandomGID(), null];
       for (let i = 0; i < 4; i++) {
         const bop = {
           index: `${i}`,
@@ -378,7 +377,14 @@ describe('Digital Twin', () => {
     );
 
     jest.spyOn(sdk['client'], 'patchDigitalTwin').mockImplementation(mockFunc);
-    const dt = new sdkTypes.DigitalTwin(v4(), v4(), 1, 1, [], new Date());
+    const dt = new sdkTypes.DigitalTwin(
+      generateRandomGID(),
+      generateRandomGID(),
+      1,
+      1,
+      [],
+      new Date(),
+    );
     try {
       sdk.patchPropertiesByToken('short token', dt);
     } catch (err) {
@@ -414,20 +420,27 @@ describe('Digital Twin', () => {
       );
 
       jest.spyOn(sdk['client'], 'patchDigitalTwin').mockImplementation(mockFunc);
-      const dt = new sdkTypes.DigitalTwin(v4(), v4(), 1, 1, [], new Date());
+      const dt = new sdkTypes.DigitalTwin(
+        generateRandomGID(),
+        generateRandomGID(),
+        1,
+        1,
+        [],
+        new Date(),
+      );
       let resp = sdk.patchPropertiesByToken(userToken, dt);
       expect(mockFunc).toBeCalled();
       expect(resp).rejects.toEqual(clb.err || clb.svcerr);
 
-      resp = sdk.patchProperties(v4(), v4(), dt);
+      resp = sdk.patchProperties(generateRandomGID(), generateRandomGID(), dt);
       expect(mockFunc).toBeCalledTimes(2);
       expect(resp).rejects.toEqual(clb.err || clb.svcerr);
     });
   });
 
   it('email verification - true / false', () => {
-    const dtId = v4();
-    const tId = v4();
+    const dtId = generateRandomGID();
+    const tId = generateRandomGID();
     const email = 'test+to@indykite.com';
 
     const clbs = [
@@ -492,12 +505,12 @@ describe('Digital Twin', () => {
   });
 
   it('verify digital twin - success', () => {
-    const dtId = v4();
-    const tId = v4();
+    const dtId = generateRandomGID();
+    const tId = generateRandomGID();
     const mockResp = VerifyDigitalTwinEmailResponse.fromJson({
       digitalTwin: {
-        id: Utils.uuidToBase64(dtId),
-        tenantId: Utils.uuidToBase64(tId),
+        id: dtId,
+        tenantId: tId,
         kind: DigitalTwinKind.PERSON,
         state: DigitalTwinState.ACTIVE,
       },
@@ -565,8 +578,8 @@ describe('Digital Twin', () => {
   });
 
   it('forgotten password - true / false', () => {
-    const dtId = v4();
-    const tId = v4();
+    const dtId = generateRandomGID();
+    const tId = generateRandomGID();
     const clbs = [
       { err: null, res: {}, expected: true },
       {
@@ -591,7 +604,7 @@ describe('Digital Twin', () => {
       );
       jest.spyOn(sdk['client'], 'startForgottenPasswordFlow').mockImplementation(mockFunc);
 
-      const resp = sdk.startForgottenPasswordFlow(dtId, parse(tId) as Buffer);
+      const resp = sdk.startForgottenPasswordFlow(dtId, tId);
       expect(mockFunc).toBeCalled();
       if (clb.expected) expect(resp).resolves.toBeTruthy();
       else expect(resp).rejects.toEqual(clb.err);
@@ -675,7 +688,7 @@ describe('Digital Twin', () => {
     );
     jest.spyOn(sdk['client'], 'changePassword').mockImplementation(mockFunc);
     try {
-      await sdk.changePassword(v4(), v4(), 'newpwd');
+      await sdk.changePassword(generateRandomGID(), generateRandomGID(), 'newpwd');
       expect(true).toBeFalsy();
     } catch (thrownError) {
       expect(thrownError).toEqual(error);
@@ -714,7 +727,7 @@ describe('Digital Twin', () => {
       );
       jest.spyOn(sdk['client'], 'changePassword').mockImplementation(mockFunc);
 
-      const resp = sdk.changePassword(v4(), v4(), 'newpwd');
+      const resp = sdk.changePassword(generateRandomGID(), generateRandomGID(), 'newpwd');
       expect(mockFunc).toBeCalled();
       if (clb.expected) expect(resp).resolves.toBeTruthy();
       else expect(resp).rejects.toEqual(clb.err || clb.res.error);
@@ -773,7 +786,7 @@ describe('Digital Twin', () => {
       if (clb.expected) expect(resp).resolves.toBeTruthy();
       else expect(resp).rejects.toEqual(clb.err);
 
-      resp = sdk.changePasswordOfDigitalTwin(v4(), v4(), 'newpwd');
+      resp = sdk.changePasswordOfDigitalTwin(generateRandomGID(), generateRandomGID(), 'newpwd');
       expect(mockFunc).toBeCalledTimes(2);
       if (clb.expected) expect(resp).resolves.toBeTruthy();
       else expect(resp).rejects.toEqual(clb.err);
@@ -803,12 +816,12 @@ describe('Digital Twin', () => {
   });
 
   it('delete digital twin - true / false', () => {
-    const dtId = v4();
-    const tId = v4();
+    const dtId = generateRandomGID();
+    const tId = generateRandomGID();
     const mockResp = DeleteDigitalTwinResponse.fromJson({
       digitalTwin: {
-        id: Utils.uuidToBase64(dtId),
-        tenantId: Utils.uuidToBase64(tId),
+        id: dtId,
+        tenantId: tId,
         kind: DigitalTwinKind.PERSON,
         state: DigitalTwinState.ACTIVE,
       },
@@ -862,10 +875,10 @@ describe('Digital Twin', () => {
   });
 
   it('list digital twins', () => {
-    const dtId = v4();
-    const tId = v4();
-    const collectionId = v4();
-    const propertyId = v4();
+    const dtId = generateRandomGID();
+    const tId = generateRandomGID();
+    const collectionId = generateRandomGID();
+    const propertyId = generateRandomGID();
     const emailVerificationTime = new Date();
     const tags: string[] = [];
     const createTime = new Date();
@@ -894,8 +907,8 @@ describe('Digital Twin', () => {
       digitalTwin: [
         {
           digitalTwin: {
-            id: Utils.uuidToBase64(dtId),
-            tenantId: Utils.uuidToBase64(tId),
+            id: dtId,
+            tenantId: tId,
             kind: DigitalTwinKind.PERSON,
             state: DigitalTwinState.ACTIVE,
           },

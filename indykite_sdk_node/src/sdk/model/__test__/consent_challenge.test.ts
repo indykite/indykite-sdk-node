@@ -1,6 +1,6 @@
 import { v4 } from 'uuid';
 import { ConsentChallengeAudience } from '..';
-import { DigitalTwinKind, DigitalTwinState } from '../../../grpc/indykite/identity/v1beta1/model';
+import { DigitalTwinKind, DigitalTwinState } from '../../../grpc/indykite/identity/v1beta2/model';
 import { Utils } from '../../utils/utils';
 import { ConsentChallenge } from '../consent_challenge';
 
@@ -117,7 +117,7 @@ describe('deserialization', () => {
     challengeInstance = ConsentChallenge.deserialize(
       {
         acrs,
-        appSpaceId: Utils.uuidToBuffer(appSpace),
+        appSpaceId: appSpace,
         clientId,
         audiences,
         scopes,
@@ -125,10 +125,10 @@ describe('deserialization', () => {
         skip,
         subjectIdentifier: subject,
         digitalTwin: {
-          id: Utils.uuidToBuffer(v4()),
+          id: v4(),
           kind: DigitalTwinKind.PERSON,
           state: DigitalTwinState.ACTIVE,
-          tenantId: Utils.uuidToBuffer(v4()),
+          tenantId: v4(),
           tags: [],
         },
       },

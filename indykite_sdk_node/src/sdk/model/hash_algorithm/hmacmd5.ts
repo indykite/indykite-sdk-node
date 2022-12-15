@@ -1,4 +1,4 @@
-import { HMACMD5 as HMACMD5Model } from '../../../grpc/indykite/identity/v1beta1/import';
+import { HMACMD5 as HMACMD5Model } from '../../../grpc/indykite/identity/v1beta2/import';
 import HashAlgorithm from './hash_algorithm';
 
 class HMACMD5 extends HashAlgorithm {

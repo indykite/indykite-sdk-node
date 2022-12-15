@@ -1,27 +1,26 @@
 import { CallOptions, Metadata, ServiceError } from '@grpc/grpc-js';
 import { SurfaceCall } from '@grpc/grpc-js/build/src/call';
-import { v4 } from 'uuid';
 import { Struct } from '../../../grpc/google/protobuf/struct';
-import { SessionIntrospectResponse } from '../../../grpc/indykite/identity/v1beta1/identity_management_api';
+import { SessionIntrospectResponse } from '../../../grpc/indykite/identity/v1beta2/identity_management_api';
 import { Status } from '@grpc/grpc-js/build/src/constants';
 import {
   DigitalTwinKind,
   DigitalTwinState,
   ProviderType,
-} from '../../../grpc/indykite/identity/v1beta1/model';
+} from '../../../grpc/indykite/identity/v1beta2/model';
 import { IdentityClient } from '../../identity';
 import { ProviderInfo, TokenInfo } from '../../model';
-import { applicationTokenMock } from '../../utils/test_utils';
+import { applicationTokenMock, generateRandomGID } from '../../utils/test_utils';
 import { Utils } from '../../utils/utils';
 
 describe('sessionIntrospect', () => {
-  const tenantId = v4();
+  const tenantId = generateRandomGID();
   const token = 'access-token';
-  const customerId = v4();
-  const appSpaceId = v4();
-  const applicationId = v4();
-  const dtId = v4();
-  const dtTenantId = v4();
+  const customerId = generateRandomGID();
+  const appSpaceId = generateRandomGID();
+  const applicationId = generateRandomGID();
+  const dtId = generateRandomGID();
+  const dtTenantId = generateRandomGID();
   const issueTime = new Date();
 
   describe('when a response is returned', () => {
@@ -46,12 +45,12 @@ describe('sessionIntrospect', () => {
                 active: true,
                 providerData: ['provider-data-1', 'provider-data-2'],
                 tokenInfo: {
-                  customerId: Utils.uuidToUint8Array(customerId),
-                  appSpaceId: Utils.uuidToUint8Array(appSpaceId),
-                  applicationId: Utils.uuidToUint8Array(applicationId),
+                  customerId,
+                  appSpaceId,
+                  applicationId,
                   subject: {
-                    id: Utils.uuidToUint8Array(dtId),
-                    tenantId: Utils.uuidToUint8Array(dtTenantId),
+                    id: dtId,
+                    tenantId: dtTenantId,
                     kind: DigitalTwinKind.PERSON,
                     state: DigitalTwinState.ACTIVE,
                     tags: [],
@@ -84,7 +83,7 @@ describe('sessionIntrospect', () => {
     it('sends correct request', () => {
       expect(sessionIntrospectSpy).toBeCalledWith(
         {
-          tenantId: Utils.uuidToBuffer(tenantId),
+          tenantId,
           token,
         },
         expect.any(Function),

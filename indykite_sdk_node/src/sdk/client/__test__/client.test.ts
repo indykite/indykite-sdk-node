@@ -16,7 +16,7 @@ import {
   StatusObject,
 } from '@grpc/grpc-js';
 import { LIB_VERSION } from '../../../version';
-import { IdentityManagementAPIClient } from '../../../grpc/indykite/identity/v1beta1/identity_management_api.grpc-client';
+import { IdentityManagementAPIClient } from '../../../grpc/indykite/identity/v1beta2/identity_management_api.grpc-client';
 import { InterceptingListener, MessageContext } from '@grpc/grpc-js/build/src/call-stream';
 import * as ClientInterceptors from '@grpc/grpc-js/build/src/client-interceptors';
 import { CallMetadataOptions } from '@grpc/grpc-js/build/src/call-credentials';

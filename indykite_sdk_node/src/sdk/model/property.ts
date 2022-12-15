@@ -1,6 +1,6 @@
 import { JsonValue } from '@protobuf-ts/runtime';
-import * as grpcAttr from '../../grpc/indykite/identity/v1beta1/attributes';
-import { PostalAddress } from '../../grpc/indykite/identity/v1beta1/model';
+import * as grpcAttr from '../../grpc/indykite/identity/v1beta2/attributes';
+import { PostalAddress } from '../../grpc/indykite/identity/v1beta2/model';
 
 import { SdkErrorCode, SdkError } from '../error';
 import { Utils } from '../utils/utils';

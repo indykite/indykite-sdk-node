@@ -4,12 +4,12 @@ import { parse, stringify, v4 } from 'uuid';
 import {
   TokenIntrospectRequest,
   TokenIntrospectResponse,
-} from '../../grpc/indykite/identity/v1beta1/identity_management_api';
+} from '../../grpc/indykite/identity/v1beta2/identity_management_api';
 import {
   DigitalTwinKind,
   DigitalTwinState,
   ProviderType,
-} from '../../grpc/indykite/identity/v1beta1/model';
+} from '../../grpc/indykite/identity/v1beta2/model';
 import { IdentityClient } from '../identity';
 import { TokenInfo } from '../model';
 import { applicationTokenMock } from '../utils/test_utils';
@@ -75,26 +75,28 @@ describe('Introspection', () => {
 
   it('Valid token', () => {
     const dt = {
-      id: parse(v4()) as Buffer,
-      tenantId: parse(v4()) as Buffer,
+      id: v4(),
+      tenantId: v4(),
       kind: DigitalTwinKind.PERSON,
       state: DigitalTwinState.ACTIVE,
     };
     const expectedDt = {
-      id: stringify(dt.id),
-      tenantId: stringify(dt.tenantId),
+      id: dt.id,
+      tenantId: dt.tenantId,
       kind: DigitalTwinKind.PERSON,
       state: DigitalTwinState.ACTIVE,
     };
     const appSpaceId = v4();
+    const applicationId = v4();
+    const customerId = v4();
 
     ['subject', 'impersonated'].forEach(async (dtType) => {
       const mockResponse = TokenIntrospectResponse.fromJson({
         active: true,
         tokenInfo: {
-          appSpaceId: Utils.uuidToBase64(appSpaceId),
-          applicationId: Utils.uuidToBase64(v4()),
-          customerId: Utils.uuidToBase64(v4()),
+          appSpaceId,
+          applicationId,
+          customerId,
           authenticationTime: new Date().toISOString(),
           expireTime: new Date(Date.now() + 1 * 3600 * 1000).toISOString(),
           issueTime: new Date().toISOString(),
@@ -124,8 +126,8 @@ describe('Introspection', () => {
         let expected = {
           active: mockResponse.active,
           appSpaceId,
-          applicationId: stringify(mockResponse.tokenInfo.applicationId),
-          customerId: stringify(mockResponse.tokenInfo.customerId),
+          applicationId: mockResponse.tokenInfo.applicationId,
+          customerId: mockResponse.tokenInfo.customerId,
           authenticationTime: Utils.timestampToDate(mockResponse.tokenInfo.authenticationTime),
           expireTime: Utils.timestampToDate(mockResponse.tokenInfo.expireTime),
           issueTime: Utils.timestampToDate(mockResponse.tokenInfo.issueTime),

@@ -5,17 +5,15 @@ import { CallOptions, Metadata } from '@grpc/grpc-js';
 import {
   ImportDigitalTwinsRequest,
   ImportDigitalTwinsResponse,
-} from '../../../grpc/indykite/identity/v1beta1/import';
+} from '../../../grpc/indykite/identity/v1beta2/import';
 import { HashAlgorithmFactory } from '../../model/hash_algorithm';
 import { ImportDigitalTwin, ImportResult } from '../../model/import_digitaltwin';
-import { DigitalTwinKind, DigitalTwinState } from '../../../grpc/indykite/identity/v1beta1/model';
-import { v4 } from 'uuid';
-import { Utils } from '../../utils/utils';
-import { applicationTokenMock } from '../../utils/test_utils';
+import { DigitalTwinKind, DigitalTwinState } from '../../../grpc/indykite/identity/v1beta2/model';
+import { applicationTokenMock, generateRandomGID } from '../../utils/test_utils';
 
 let sdk: IdentityClient;
 
-const tenantId = v4();
+const tenantId = generateRandomGID();
 
 const importDts = [
   new ImportDigitalTwin(tenantId, DigitalTwinKind.PERSON, DigitalTwinState.ACTIVE, []),
@@ -31,7 +29,7 @@ afterEach(() => {
 
 describe('when the response is successful', () => {
   describe('when the result type is "success"', () => {
-    const newDtId = v4();
+    const newDtId = generateRandomGID();
     let results: ImportResult[];
 
     beforeEach(async () => {
@@ -52,8 +50,8 @@ describe('when the response is successful', () => {
                     oneofKind: 'success',
                     success: {
                       digitalTwin: {
-                        id: Utils.uuidToBuffer(newDtId),
-                        tenantId: Utils.uuidToBuffer(tenantId),
+                        id: newDtId,
+                        tenantId,
                         kind: 0,
                         state: 0,
                         tags: [],
@@ -89,8 +87,8 @@ describe('when the response is successful', () => {
         {
           entities: [
             {
-              id: Buffer.from(''),
-              tenantId: Utils.uuidToBuffer(tenantId),
+              id: '',
+              tenantId,
               kind: DigitalTwinKind.PERSON,
               state: DigitalTwinState.ACTIVE,
               tags: [],
@@ -201,8 +199,8 @@ describe('when the response is missing', () => {
       {
         entities: [
           {
-            id: Buffer.from(''),
-            tenantId: Utils.uuidToBuffer(tenantId),
+            id: '',
+            tenantId,
             kind: DigitalTwinKind.PERSON,
             state: DigitalTwinState.ACTIVE,
             tags: [],

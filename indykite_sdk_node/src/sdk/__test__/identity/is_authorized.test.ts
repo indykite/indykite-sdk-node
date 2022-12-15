@@ -1,15 +1,14 @@
 import { ServiceError, SurfaceCall } from '@grpc/grpc-js/build/src/call';
-import { v4 } from 'uuid';
 import {
   IsAuthorizedRequest,
   IsAuthorizedResponse,
-} from '../../../grpc/indykite/identity/v1beta1/identity_management_api';
+} from '../../../grpc/indykite/identity/v1beta2/identity_management_api';
 import { IdentityClient } from '../../identity';
 import { CallOptions, Metadata } from '@grpc/grpc-js';
 import { Utils } from '../../utils/utils';
-import { applicationTokenMock } from '../../utils/test_utils';
+import { applicationTokenMock, generateRandomGID } from '../../utils/test_utils';
 import { DigitalTwinCore, Property } from '../../model';
-import { DigitalTwinKind, DigitalTwinState } from '../../../grpc/indykite/identity/v1beta1/model';
+import { DigitalTwinKind, DigitalTwinState } from '../../../grpc/indykite/identity/v1beta2/model';
 import { AuthorizationDecisions } from '../../model/authorization_decisions';
 
 let sdk: IdentityClient;
@@ -26,8 +25,8 @@ describe('isAuthorized', () => {
   describe('when the subject is a digital twin', () => {
     describe('when the response does not contain an error', () => {
       const subject: DigitalTwinCore = new DigitalTwinCore(
-        v4(),
-        v4(),
+        generateRandomGID(),
+        generateRandomGID(),
         DigitalTwinKind.PERSON,
         DigitalTwinState.ACTIVE,
         [],
@@ -118,8 +117,8 @@ describe('isAuthorized', () => {
 
     describe('when the response does not contain any value', () => {
       const subject: DigitalTwinCore = new DigitalTwinCore(
-        v4(),
-        v4(),
+        generateRandomGID(),
+        generateRandomGID(),
         DigitalTwinKind.PERSON,
         DigitalTwinState.ACTIVE,
         [],
@@ -162,8 +161,8 @@ describe('isAuthorized', () => {
 
     describe('when the response returns an error', () => {
       const subject: DigitalTwinCore = new DigitalTwinCore(
-        v4(),
-        v4(),
+        generateRandomGID(),
+        generateRandomGID(),
         DigitalTwinKind.PERSON,
         DigitalTwinState.ACTIVE,
         [],

@@ -1,12 +1,12 @@
 import { Invitation, InvitationState } from '../invitation';
-import * as grpcId from '../../../grpc/indykite/identity/v1beta1/identity_management_api';
+import * as grpcId from '../../../grpc/indykite/identity/v1beta2/identity_management_api';
 import { v4 } from 'uuid';
 import { Utils } from '../../utils/utils';
 import {
   DigitalTwinKind,
   DigitalTwinState,
   InvitationState as ModelInvitationState,
-} from '../../../grpc/indykite/identity/v1beta1/model';
+} from '../../../grpc/indykite/identity/v1beta2/model';
 
 describe('deserialize', () => {
   describe('when no property is present', () => {
@@ -38,7 +38,7 @@ describe('deserialize', () => {
           },
           referenceId: '654321',
           state: InvitationState.PENDING,
-          tenantId: Uint8Array.from(Utils.uuidToBuffer(tenantId)),
+          tenantId,
         },
       };
 
@@ -74,12 +74,12 @@ describe('deserialize', () => {
           },
           referenceId: '654321',
           state: InvitationState.PENDING,
-          tenantId: Uint8Array.from(Utils.uuidToBuffer(tenantId)),
+          tenantId,
           acceptedBy: {
             kind: DigitalTwinKind.PERSON,
-            id: Uint8Array.from(Utils.uuidToBuffer(acceptedById)),
+            id: acceptedById,
             state: DigitalTwinState.ACTIVE,
-            tenantId: Uint8Array.from(Utils.uuidToBuffer(tenantId)),
+            tenantId,
             tags: [],
           },
           expireTime: Utils.dateToTimestamp(expireTime),

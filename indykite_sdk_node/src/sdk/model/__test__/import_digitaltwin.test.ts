@@ -1,6 +1,6 @@
 import { v4 } from 'uuid';
-import { ImportDigitalTwinResult } from '../../../grpc/indykite/identity/v1beta1/import';
-import { DigitalTwinKind, DigitalTwinState } from '../../../grpc/indykite/identity/v1beta1/model';
+import { ImportDigitalTwinResult } from '../../../grpc/indykite/identity/v1beta2/import';
+import { DigitalTwinKind, DigitalTwinState } from '../../../grpc/indykite/identity/v1beta2/model';
 import { Utils } from '../../utils/utils';
 import { DigitalTwin } from '../digitaltwin';
 import { ImportDigitalTwin, ImportResult } from '../import_digitaltwin';
@@ -51,11 +51,11 @@ describe('when a new instance is created', () => {
 
         it('correctly marshals the instance', () => {
           expect(instance.marshal()).toEqual({
-            id: Buffer.from(''),
+            id: '',
             kind: DigitalTwinKind.PERSON,
             state: DigitalTwinState.ACTIVE,
             tags: [],
-            tenantId: Utils.uuidToBuffer(tenantId),
+            tenantId,
             password: {
               password: {
                 oneofKind: 'value',
@@ -136,11 +136,11 @@ describe('when a new instance is created', () => {
 
     it('correctly marshals the instance', () => {
       expect(instance.marshal()).toEqual({
-        id: Buffer.from(''),
+        id: '',
         kind: DigitalTwinKind.PERSON,
         state: DigitalTwinState.ACTIVE,
         tags: [],
-        tenantId: Utils.uuidToBuffer(tenantId),
+        tenantId,
         password: {
           password: {
             oneofKind: 'hash',
@@ -188,11 +188,11 @@ describe('when a new instance is created', () => {
 
     it('correctly marshals the instance', () => {
       expect(instance.marshal()).toEqual({
-        id: Buffer.from(''),
+        id: '',
         kind: DigitalTwinKind.PERSON,
         state: DigitalTwinState.ACTIVE,
         tags: [],
-        tenantId: Utils.uuidToBuffer(tenantId),
+        tenantId,
         password: {
           password: {
             oneofKind: 'hash',
@@ -239,11 +239,11 @@ describe('when a new instance is created', () => {
 
       it('correctly marshals the instance', () => {
         expect(instance.marshal()).toEqual({
-          id: Utils.uuidToBuffer(dtId),
+          id: dtId,
           kind: DigitalTwinKind.THING,
           state: DigitalTwinState.DISABLED,
           tags: [],
-          tenantId: Utils.uuidToBuffer(tenantId),
+          tenantId,
           password: {
             password: {
               oneofKind: 'value',
@@ -289,11 +289,11 @@ describe('when a new instance is created', () => {
 
       it('correctly marshals the instance', () => {
         expect(instance.marshal()).toEqual({
-          id: Utils.uuidToBuffer(dtId),
+          id: dtId,
           kind: DigitalTwinKind.THING,
           state: DigitalTwinState.DISABLED,
           tags: [],
-          tenantId: Utils.uuidToBuffer(tenantId),
+          tenantId,
           properties: {
             forceDelete: false,
             operations: [
@@ -362,8 +362,8 @@ describe('ImportResult', () => {
             oneofKind: 'success',
             success: {
               digitalTwin: {
-                id: Utils.uuidToBuffer(dtId),
-                tenantId: Utils.uuidToBuffer(tenantId),
+                id: dtId,
+                tenantId,
                 kind: DigitalTwinKind.INVALID,
                 state: DigitalTwinState.INVALID,
                 tags: [],
