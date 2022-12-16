@@ -1,4 +1,15 @@
 # Changelog
+## [0.2.0](https://github.com/indykite/indykite-sdk-node/compare/v0.1.20...v0.2.0) (2022-12-16)
+
+
+### ⚠ BREAKING CHANGES
+
+* update api to v1beta2
+
+### Bug Fixes
+
+* update api to v1beta2 ([1e3c83b](https://github.com/indykite/indykite-sdk-node/commit/1e3c83b32401fc5ff819aed583047cb283e994da))
+
 ## [0.1.21](https://github.com/indykite/indykite-sdk-node/compare/v0.1.20...v0.1.21) (2022-12-15)
 
 
