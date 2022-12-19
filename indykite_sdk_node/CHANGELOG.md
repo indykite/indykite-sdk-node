@@ -1,4 +1,11 @@
 # Changelog
+## [0.2.1](https://github.com/indykite/indykite-sdk-node/compare/v0.2.0...v0.2.1) (2022-12-19)
+
+
+### Bug Fixes
+
+* repair package ([030785a](https://github.com/indykite/indykite-sdk-node/commit/030785a17e6634bedaf88fcd5822243d419aedfa))
+
 ## [0.2.0](https://github.com/indykite/indykite-sdk-node/compare/v0.1.20...v0.2.0) (2022-12-16)
 
 
