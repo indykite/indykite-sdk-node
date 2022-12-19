@@ -1392,9 +1392,9 @@ export interface RevokeConsentRequest {
      */
     piiPrincipalId: string;
     /**
-     * @generated from protobuf field: repeated string consent_id = 2;
+     * @generated from protobuf field: repeated string consent_ids = 2;
      */
-    consentId: string[];
+    consentIds: string[];
 }
 /**
  * @generated from protobuf message indykite.identity.v1beta2.RevokeConsentResponse
@@ -5191,7 +5191,7 @@ class CreateConsentRequest$Type extends MessageType<CreateConsentRequest> {
         super("indykite.identity.v1beta2.CreateConsentRequest", [
             { no: 1, name: "pii_processor_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "27", maxLen: "100", pattern: "^gid:[A-Za-z0-9-_]{27,100}$" } } } },
             { no: 2, name: "pii_principal_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "27", maxLen: "100", pattern: "^gid:[A-Za-z0-9-_]{27,100}$" } } } },
-            { no: 3, name: "properties", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { minItems: "1", unique: true, items: { string: { minLen: "2" } } } } } }
+            { no: 3, name: "properties", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { minItems: "1", unique: true, items: { string: { minLen: "2", maxLen: "50", pattern: "^[a-zA-Z0-9_-]+$" } } } } } }
         ]);
     }
     create(value?: PartialMessage<CreateConsentRequest>): CreateConsentRequest {
@@ -5392,11 +5392,11 @@ class RevokeConsentRequest$Type extends MessageType<RevokeConsentRequest> {
     constructor() {
         super("indykite.identity.v1beta2.RevokeConsentRequest", [
             { no: 1, name: "pii_principal_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "27", maxLen: "100", pattern: "^gid:[A-Za-z0-9-_]{27,100}$" } } } },
-            { no: 2, name: "consent_id", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { minItems: "1", unique: true, items: { string: { len: "36" } } } } } }
+            { no: 2, name: "consent_ids", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { minItems: "1", unique: true, items: { string: { len: "36" } } } } } }
         ]);
     }
     create(value?: PartialMessage<RevokeConsentRequest>): RevokeConsentRequest {
-        const message = { piiPrincipalId: "", consentId: [] };
+        const message = { piiPrincipalId: "", consentIds: [] };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<RevokeConsentRequest>(this, message, value);
@@ -5410,8 +5410,8 @@ class RevokeConsentRequest$Type extends MessageType<RevokeConsentRequest> {
                 case /* string pii_principal_id */ 1:
                     message.piiPrincipalId = reader.string();
                     break;
-                case /* repeated string consent_id */ 2:
-                    message.consentId.push(reader.string());
+                case /* repeated string consent_ids */ 2:
+                    message.consentIds.push(reader.string());
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -5428,9 +5428,9 @@ class RevokeConsentRequest$Type extends MessageType<RevokeConsentRequest> {
         /* string pii_principal_id = 1; */
         if (message.piiPrincipalId !== "")
             writer.tag(1, WireType.LengthDelimited).string(message.piiPrincipalId);
-        /* repeated string consent_id = 2; */
-        for (let i = 0; i < message.consentId.length; i++)
-            writer.tag(2, WireType.LengthDelimited).string(message.consentId[i]);
+        /* repeated string consent_ids = 2; */
+        for (let i = 0; i < message.consentIds.length; i++)
+            writer.tag(2, WireType.LengthDelimited).string(message.consentIds[i]);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

@@ -38,14 +38,14 @@ export interface ConsentReceipt {
      */
     piiProcessor?: PiiProcessor;
     /**
-     * @generated from protobuf field: repeated indykite.identity.v1beta2.ConsentReceiptItem consent_items = 3;
+     * @generated from protobuf field: repeated indykite.identity.v1beta2.ConsentReceipt.Item items = 3;
      */
-    consentItems: ConsentReceiptItem[];
+    items: ConsentReceipt_Item[];
 }
 /**
- * @generated from protobuf message indykite.identity.v1beta2.ConsentReceiptItem
+ * @generated from protobuf message indykite.identity.v1beta2.ConsentReceipt.Item
  */
-export interface ConsentReceiptItem {
+export interface ConsentReceipt_Item {
     /**
      * @generated from protobuf field: string consent_id = 1;
      */
@@ -127,11 +127,11 @@ class ConsentReceipt$Type extends MessageType<ConsentReceipt> {
         super("indykite.identity.v1beta2.ConsentReceipt", [
             { no: 1, name: "pii_principal_id", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 2, name: "pii_processor", kind: "message", T: () => PiiProcessor },
-            { no: 3, name: "consent_items", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => ConsentReceiptItem }
+            { no: 3, name: "items", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => ConsentReceipt_Item }
         ]);
     }
     create(value?: PartialMessage<ConsentReceipt>): ConsentReceipt {
-        const message = { piiPrincipalId: "", consentItems: [] };
+        const message = { piiPrincipalId: "", items: [] };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<ConsentReceipt>(this, message, value);
@@ -148,8 +148,8 @@ class ConsentReceipt$Type extends MessageType<ConsentReceipt> {
                 case /* indykite.identity.v1beta2.PiiProcessor pii_processor */ 2:
                     message.piiProcessor = PiiProcessor.internalBinaryRead(reader, reader.uint32(), options, message.piiProcessor);
                     break;
-                case /* repeated indykite.identity.v1beta2.ConsentReceiptItem consent_items */ 3:
-                    message.consentItems.push(ConsentReceiptItem.internalBinaryRead(reader, reader.uint32(), options));
+                case /* repeated indykite.identity.v1beta2.ConsentReceipt.Item items */ 3:
+                    message.items.push(ConsentReceipt_Item.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -169,9 +169,9 @@ class ConsentReceipt$Type extends MessageType<ConsentReceipt> {
         /* indykite.identity.v1beta2.PiiProcessor pii_processor = 2; */
         if (message.piiProcessor)
             PiiProcessor.internalBinaryWrite(message.piiProcessor, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* repeated indykite.identity.v1beta2.ConsentReceiptItem consent_items = 3; */
-        for (let i = 0; i < message.consentItems.length; i++)
-            ConsentReceiptItem.internalBinaryWrite(message.consentItems[i], writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        /* repeated indykite.identity.v1beta2.ConsentReceipt.Item items = 3; */
+        for (let i = 0; i < message.items.length; i++)
+            ConsentReceipt_Item.internalBinaryWrite(message.items[i], writer.tag(3, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -183,23 +183,23 @@ class ConsentReceipt$Type extends MessageType<ConsentReceipt> {
  */
 export const ConsentReceipt = new ConsentReceipt$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class ConsentReceiptItem$Type extends MessageType<ConsentReceiptItem> {
+class ConsentReceipt_Item$Type extends MessageType<ConsentReceipt_Item> {
     constructor() {
-        super("indykite.identity.v1beta2.ConsentReceiptItem", [
+        super("indykite.identity.v1beta2.ConsentReceipt.Item", [
             { no: 1, name: "consent_id", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 2, name: "pii_controller", kind: "message", T: () => PiiController },
             { no: 3, name: "consented_at_time", kind: "message", T: () => Timestamp },
             { no: 4, name: "properties", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/ }
         ]);
     }
-    create(value?: PartialMessage<ConsentReceiptItem>): ConsentReceiptItem {
+    create(value?: PartialMessage<ConsentReceipt_Item>): ConsentReceipt_Item {
         const message = { consentId: "", properties: [] };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
-            reflectionMergePartial<ConsentReceiptItem>(this, message, value);
+            reflectionMergePartial<ConsentReceipt_Item>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ConsentReceiptItem): ConsentReceiptItem {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ConsentReceipt_Item): ConsentReceipt_Item {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
@@ -227,7 +227,7 @@ class ConsentReceiptItem$Type extends MessageType<ConsentReceiptItem> {
         }
         return message;
     }
-    internalBinaryWrite(message: ConsentReceiptItem, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+    internalBinaryWrite(message: ConsentReceipt_Item, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* string consent_id = 1; */
         if (message.consentId !== "")
             writer.tag(1, WireType.LengthDelimited).string(message.consentId);
@@ -247,9 +247,9 @@ class ConsentReceiptItem$Type extends MessageType<ConsentReceiptItem> {
     }
 }
 /**
- * @generated MessageType for protobuf message indykite.identity.v1beta2.ConsentReceiptItem
+ * @generated MessageType for protobuf message indykite.identity.v1beta2.ConsentReceipt.Item
  */
-export const ConsentReceiptItem = new ConsentReceiptItem$Type();
+export const ConsentReceipt_Item = new ConsentReceipt_Item$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class PiiController$Type extends MessageType<PiiController> {
     constructor() {
