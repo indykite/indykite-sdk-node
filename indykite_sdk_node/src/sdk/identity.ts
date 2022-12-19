@@ -21,6 +21,8 @@ import {
   TokenIntrospectRequest,
   UpdatePasswordCredentialRequest,
   VerifyDigitalTwinEmailRequest,
+  CreateConsentRequest,
+  CreateConsentResponse,
 } from '../grpc/indykite/identity/v1beta2/identity_management_api';
 import { DigitalTwin, IdentityTokenInfo } from '../grpc/indykite/identity/v1beta2/model';
 import * as sdkTypes from './model';
@@ -860,6 +862,29 @@ export class IdentityClient {
         if (err) reject(err);
         else if (!res) resolve(new AuthorizationDecisions({}));
         else resolve(AuthorizationDecisions.deserialize(res));
+      });
+    });
+  }
+
+  createConsent(
+    piiProcessorId: string,
+    piiPrincipalId: string,
+    properties: string[],
+  ): Promise<CreateConsentResponse> {
+    const request = CreateConsentRequest.create({
+      piiProcessorId,
+      piiPrincipalId,
+      properties,
+    });
+
+    return new Promise((resolve, reject) => {
+      this.client.createConsent(request, (err, response) => {
+        if (err) reject(err);
+        else if (!response) {
+          reject(new SdkError(SdkErrorCode.SDK_CODE_1, 'Missing create consent response'));
+        } else {
+          resolve(response);
+        }
       });
     });
   }
