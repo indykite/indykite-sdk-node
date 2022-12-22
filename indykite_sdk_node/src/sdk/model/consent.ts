@@ -58,25 +58,24 @@ export class Consent {
       );
     }
 
-    const items =
-      response.consentReceipt.items?.map((item) => {
-        let piiController: PiiController | undefined;
-        let consentedAt: Date | undefined;
+    const items = response.consentReceipt.items.map((item) => {
+      let piiController: PiiController | undefined;
+      let consentedAt: Date | undefined;
 
-        if (item.piiController) {
-          piiController = new PiiController(
-            item.piiController.piiControllerId,
-            item.piiController.displayName,
-          );
-        }
+      if (item.piiController) {
+        piiController = new PiiController(
+          item.piiController.piiControllerId,
+          item.piiController.displayName,
+        );
+      }
 
-        if (item.consentedAtTime) {
-          consentedAt = Utils.timestampToDate(item.consentedAtTime);
-        }
+      if (item.consentedAtTime) {
+        consentedAt = Utils.timestampToDate(item.consentedAtTime);
+      }
 
-        return new ConsentReceipt(item.consentId, item.properties, piiController, consentedAt);
-      }) ?? [];
+      return new ConsentReceipt(item.consentId, item.properties, piiController, consentedAt);
+    });
 
-    return new Consent(response.consentReceipt.piiPrincipalId ?? '', items, piiProcessor);
+    return new Consent(response.consentReceipt.piiPrincipalId, items, piiProcessor);
   }
 }
