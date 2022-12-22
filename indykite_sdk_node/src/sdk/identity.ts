@@ -24,6 +24,7 @@ import {
   CreateConsentRequest,
   CreateConsentResponse,
   RevokeConsentRequest,
+  ListConsentsRequest,
 } from '../grpc/indykite/identity/v1beta2/identity_management_api';
 import { DigitalTwin, IdentityTokenInfo } from '../grpc/indykite/identity/v1beta2/model';
 import * as sdkTypes from './model';
@@ -905,6 +906,30 @@ export class IdentityClient {
           resolve();
         }
       });
+    });
+  }
+
+  listConsents(piiPrincipalId: string): Promise<{ consents: sdkTypes.Consent[] }> {
+    const request = ListConsentsRequest.create({
+      piiPrincipalId,
+    });
+
+    return new Promise((resolve, reject) => {
+      const consentList: sdkTypes.Consent[] = [];
+      const stream = this.client
+        .listConsents(request)
+        .on('readable', () => {
+          const value = stream.read();
+          if (value && value.consentReceipt) {
+            consentList.push(sdkTypes.Consent.deserialize(value));
+          }
+        })
+        .on('close', () => {
+          resolve({ consents: consentList });
+        })
+        .on('error', (err) => {
+          reject(err);
+        });
     });
   }
 

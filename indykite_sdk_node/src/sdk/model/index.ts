@@ -8,3 +8,4 @@ export * from './ingest/ingest_response';
 export * from './invitation';
 export * from './property';
 export * from './token';
+export * from './consent';
