@@ -1,6 +1,8 @@
 import {
   CreateConsentRequest,
   CreateConsentResponse,
+  RevokeConsentRequest,
+  RevokeConsentResponse,
 } from '../../../grpc/indykite/identity/v1beta2/identity_management_api';
 import { IdentityClient } from '../../identity';
 import { applicationTokenMock, generateRandomGID } from '../../utils/test_utils';
@@ -10,6 +12,11 @@ import { Status } from '@grpc/grpc-js/build/src/constants';
 import { SdkError, SdkErrorCode } from '../../error';
 
 let sdk: IdentityClient;
+const error = {
+  code: Status.NOT_FOUND,
+  details: 'no details',
+  metadata: {},
+} as ServiceError;
 
 beforeAll(async () => {
   sdk = await IdentityClient.createInstance(applicationTokenMock);
@@ -51,12 +58,6 @@ describe('createConsent', () => {
   });
 
   describe('when the response contains an error', () => {
-    const error = {
-      code: Status.NOT_FOUND,
-      details: 'no details',
-      metadata: {},
-    } as ServiceError;
-
     beforeEach(async () => {
       const mockFunc = jest.fn(
         (
@@ -113,6 +114,93 @@ describe('createConsent', () => {
       }
       expect(caughtError.code).toEqual(SdkErrorCode.SDK_CODE_1);
       expect(caughtError.message).toEqual('Missing create consent response');
+    });
+  });
+});
+
+describe('revokeConsent', () => {
+  const piiPrincipalId = generateRandomGID();
+  const consentIds = ['consent-123'];
+
+  beforeEach(async () => {
+    const mockFunc = jest.fn(
+      (
+        request: RevokeConsentRequest,
+        callback:
+          | Metadata
+          | CallOptions
+          | ((error: ServiceError | null, response?: RevokeConsentResponse) => void),
+      ): SurfaceCall => {
+        if (typeof callback === 'function') callback(null, {});
+        return {} as SurfaceCall;
+      },
+    );
+
+    jest.spyOn(sdk['client'], 'revokeConsent').mockImplementation(mockFunc);
+  });
+
+  it('should revoke a consent', async () => {
+    const result = await sdk.revokeConsent(piiPrincipalId, consentIds);
+    expect(result).toBeUndefined();
+  });
+
+  describe('when the response contains an error', () => {
+    beforeEach(async () => {
+      const mockFunc = jest.fn(
+        (
+          request: RevokeConsentRequest,
+          callback:
+            | Metadata
+            | CallOptions
+            | ((error: ServiceError | null, response?: RevokeConsentResponse) => void),
+        ): SurfaceCall => {
+          if (typeof callback === 'function') callback(error);
+          return {} as SurfaceCall;
+        },
+      );
+
+      jest.spyOn(sdk['client'], 'revokeConsent').mockImplementation(mockFunc);
+    });
+
+    it('throws an error', async () => {
+      let caughtError;
+      try {
+        await sdk.revokeConsent(piiPrincipalId, consentIds);
+      } catch (err) {
+        caughtError = err;
+      }
+      expect(caughtError).toBe(error);
+    });
+  });
+
+  describe('when the response does not containt any value', () => {
+    let caughtError: SdkError;
+
+    beforeEach(() => {
+      const mockFunc = jest.fn(
+        (
+          request: RevokeConsentRequest,
+          callback:
+            | Metadata
+            | CallOptions
+            | ((error: ServiceError | null, response?: RevokeConsentResponse) => void),
+        ): SurfaceCall => {
+          if (typeof callback === 'function') callback(null);
+          return {} as SurfaceCall;
+        },
+      );
+
+      jest.spyOn(sdk['client'], 'revokeConsent').mockImplementation(mockFunc);
+    });
+
+    it('throws an error', async () => {
+      try {
+        await sdk.revokeConsent(piiPrincipalId, consentIds);
+      } catch (err) {
+        caughtError = err as SdkError;
+      }
+      expect(caughtError.code).toEqual(SdkErrorCode.SDK_CODE_1);
+      expect(caughtError.message).toEqual('Missing revoke consent response');
     });
   });
 });

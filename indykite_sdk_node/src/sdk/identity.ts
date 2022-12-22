@@ -24,7 +24,6 @@ import {
   CreateConsentRequest,
   CreateConsentResponse,
   RevokeConsentRequest,
-  RevokeConsentResponse,
 } from '../grpc/indykite/identity/v1beta2/identity_management_api';
 import { DigitalTwin, IdentityTokenInfo } from '../grpc/indykite/identity/v1beta2/model';
 import * as sdkTypes from './model';
@@ -891,7 +890,7 @@ export class IdentityClient {
     });
   }
 
-  revokeConsent(piiPrincipalId: string, consentIds: string[]): Promise<RevokeConsentResponse> {
+  revokeConsent(piiPrincipalId: string, consentIds: string[]): Promise<void> {
     const request = RevokeConsentRequest.create({
       piiPrincipalId,
       consentIds,
@@ -903,7 +902,7 @@ export class IdentityClient {
         else if (!response) {
           reject(new SdkError(SdkErrorCode.SDK_CODE_1, 'Missing revoke consent response'));
         } else {
-          resolve(response);
+          resolve();
         }
       });
     });
