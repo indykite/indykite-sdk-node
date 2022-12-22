@@ -11,7 +11,7 @@ module.exports = {
   },
   collectCoverageFrom: ['src/sdk/**/*.ts'],
   coveragePathIgnorePatterns: ['<rootDir>/node_modules'],
-  coverageReporters: ['text-summary', 'json-summary', 'html'],
+  coverageReporters: ['text-summary', 'json-summary'],
   moduleDirectories: ['src', 'node_modules'],
   coverageThreshold: {
     global: {
