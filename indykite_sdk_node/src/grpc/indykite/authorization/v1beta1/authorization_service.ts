@@ -32,11 +32,17 @@ import { DigitalTwinIdentifier } from "../../identity/v1beta2/identity_managemen
  */
 export interface IsAuthorizedRequest {
     /**
-     * Subject is DigitalTwin identifier to check if is authorized to perform given actions.
-     *
-     * @generated from protobuf field: indykite.identity.v1beta2.DigitalTwinIdentifier subject = 1;
+     * @generated from protobuf oneof: subject
      */
-    subject?: DigitalTwinIdentifier;
+    subject: {
+        oneofKind: "digitalTwinIdentifier";
+        /**
+         * @generated from protobuf field: indykite.identity.v1beta2.DigitalTwinIdentifier digital_twin_identifier = 1;
+         */
+        digitalTwinIdentifier: DigitalTwinIdentifier;
+    } | {
+        oneofKind: undefined;
+    };
     /**
      * A list of resources to authorize against.
      *
@@ -104,13 +110,13 @@ export interface AuthorizationDecision {
 class IsAuthorizedRequest$Type extends MessageType<IsAuthorizedRequest> {
     constructor() {
         super("indykite.authorization.v1beta1.IsAuthorizedRequest", [
-            { no: 1, name: "subject", kind: "message", T: () => DigitalTwinIdentifier, options: { "validate.rules": { message: { required: true } } } },
+            { no: 1, name: "digital_twin_identifier", kind: "message", oneof: "subject", T: () => DigitalTwinIdentifier, options: { "validate.rules": { message: { required: true } } } },
             { no: 2, name: "resources", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => IsAuthorizedRequest_Resource, options: { "validate.rules": { repeated: { minItems: "1", maxItems: "32" } } } },
             { no: 3, name: "actions", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { minItems: "1", maxItems: "1", items: { string: { minLen: "2", maxLen: "50", pattern: "^[a-zA-Z0-9.:_\\-\\/]{2,}$" } } } } } }
         ]);
     }
     create(value?: PartialMessage<IsAuthorizedRequest>): IsAuthorizedRequest {
-        const message = { resources: [], actions: [] };
+        const message = { subject: { oneofKind: undefined }, resources: [], actions: [] };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<IsAuthorizedRequest>(this, message, value);
@@ -121,8 +127,11 @@ class IsAuthorizedRequest$Type extends MessageType<IsAuthorizedRequest> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* indykite.identity.v1beta2.DigitalTwinIdentifier subject */ 1:
-                    message.subject = DigitalTwinIdentifier.internalBinaryRead(reader, reader.uint32(), options, message.subject);
+                case /* indykite.identity.v1beta2.DigitalTwinIdentifier digital_twin_identifier */ 1:
+                    message.subject = {
+                        oneofKind: "digitalTwinIdentifier",
+                        digitalTwinIdentifier: DigitalTwinIdentifier.internalBinaryRead(reader, reader.uint32(), options, (message.subject as any).digitalTwinIdentifier)
+                    };
                     break;
                 case /* repeated indykite.authorization.v1beta1.IsAuthorizedRequest.Resource resources */ 2:
                     message.resources.push(IsAuthorizedRequest_Resource.internalBinaryRead(reader, reader.uint32(), options));
@@ -142,9 +151,9 @@ class IsAuthorizedRequest$Type extends MessageType<IsAuthorizedRequest> {
         return message;
     }
     internalBinaryWrite(message: IsAuthorizedRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* indykite.identity.v1beta2.DigitalTwinIdentifier subject = 1; */
-        if (message.subject)
-            DigitalTwinIdentifier.internalBinaryWrite(message.subject, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* indykite.identity.v1beta2.DigitalTwinIdentifier digital_twin_identifier = 1; */
+        if (message.subject.oneofKind === "digitalTwinIdentifier")
+            DigitalTwinIdentifier.internalBinaryWrite(message.subject.digitalTwinIdentifier, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         /* repeated indykite.authorization.v1beta1.IsAuthorizedRequest.Resource resources = 2; */
         for (let i = 0; i < message.resources.length; i++)
             IsAuthorizedRequest_Resource.internalBinaryWrite(message.resources[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();

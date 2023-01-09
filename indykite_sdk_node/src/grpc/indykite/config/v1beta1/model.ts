@@ -1497,6 +1497,25 @@ export interface ReadIDProviderConfig {
      * @generated from protobuf field: string host_address = 4;
      */
     hostAddress: string;
+    /**
+     * @generated from protobuf field: map<string, indykite.config.v1beta1.ReadIDProviderConfig.Property> property_map = 5;
+     */
+    propertyMap: {
+        [key: string]: ReadIDProviderConfig_Property;
+    };
+}
+/**
+ * @generated from protobuf message indykite.config.v1beta1.ReadIDProviderConfig.Property
+ */
+export interface ReadIDProviderConfig_Property {
+    /**
+     * @generated from protobuf field: string expression = 1;
+     */
+    expression: string;
+    /**
+     * @generated from protobuf field: bool enabled = 2;
+     */
+    enabled: boolean;
 }
 /**
  * @generated from protobuf message indykite.config.v1beta1.SAFRProviderConfig
@@ -4896,11 +4915,12 @@ class ReadIDProviderConfig$Type extends MessageType<ReadIDProviderConfig> {
             { no: 1, name: "submitter_secret", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "36", ignoreEmpty: true } } } },
             { no: 2, name: "manager_secret", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "36", ignoreEmpty: true } } } },
             { no: 3, name: "submitter_password", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "4", maxLen: "254", ignoreEmpty: true } } } },
-            { no: 4, name: "host_address", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "4", maxLen: "254", ignoreEmpty: true } } } }
+            { no: 4, name: "host_address", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "4", maxLen: "254", ignoreEmpty: true } } } },
+            { no: 5, name: "property_map", kind: "map", K: 9 /*ScalarType.STRING*/, V: { kind: "message", T: () => ReadIDProviderConfig_Property } }
         ]);
     }
     create(value?: PartialMessage<ReadIDProviderConfig>): ReadIDProviderConfig {
-        const message = { submitterSecret: "", managerSecret: "", submitterPassword: "", hostAddress: "" };
+        const message = { submitterSecret: "", managerSecret: "", submitterPassword: "", hostAddress: "", propertyMap: {} };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<ReadIDProviderConfig>(this, message, value);
@@ -4923,6 +4943,9 @@ class ReadIDProviderConfig$Type extends MessageType<ReadIDProviderConfig> {
                 case /* string host_address */ 4:
                     message.hostAddress = reader.string();
                     break;
+                case /* map<string, indykite.config.v1beta1.ReadIDProviderConfig.Property> property_map */ 5:
+                    this.binaryReadMap5(message.propertyMap, reader, options);
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -4933,6 +4956,22 @@ class ReadIDProviderConfig$Type extends MessageType<ReadIDProviderConfig> {
             }
         }
         return message;
+    }
+    private binaryReadMap5(map: ReadIDProviderConfig["propertyMap"], reader: IBinaryReader, options: BinaryReadOptions): void {
+        let len = reader.uint32(), end = reader.pos + len, key: keyof ReadIDProviderConfig["propertyMap"] | undefined, val: ReadIDProviderConfig["propertyMap"][any] | undefined;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case 1:
+                    key = reader.string();
+                    break;
+                case 2:
+                    val = ReadIDProviderConfig_Property.internalBinaryRead(reader, reader.uint32(), options);
+                    break;
+                default: throw new globalThis.Error("unknown map entry field for field indykite.config.v1beta1.ReadIDProviderConfig.property_map");
+            }
+        }
+        map[key ?? ""] = val ?? ReadIDProviderConfig_Property.create();
     }
     internalBinaryWrite(message: ReadIDProviderConfig, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* string submitter_secret = 1; */
@@ -4947,6 +4986,13 @@ class ReadIDProviderConfig$Type extends MessageType<ReadIDProviderConfig> {
         /* string host_address = 4; */
         if (message.hostAddress !== "")
             writer.tag(4, WireType.LengthDelimited).string(message.hostAddress);
+        /* map<string, indykite.config.v1beta1.ReadIDProviderConfig.Property> property_map = 5; */
+        for (let k of Object.keys(message.propertyMap)) {
+            writer.tag(5, WireType.LengthDelimited).fork().tag(1, WireType.LengthDelimited).string(k);
+            writer.tag(2, WireType.LengthDelimited).fork();
+            ReadIDProviderConfig_Property.internalBinaryWrite(message.propertyMap[k], writer, options);
+            writer.join().join();
+        }
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -4957,6 +5003,60 @@ class ReadIDProviderConfig$Type extends MessageType<ReadIDProviderConfig> {
  * @generated MessageType for protobuf message indykite.config.v1beta1.ReadIDProviderConfig
  */
 export const ReadIDProviderConfig = new ReadIDProviderConfig$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ReadIDProviderConfig_Property$Type extends MessageType<ReadIDProviderConfig_Property> {
+    constructor() {
+        super("indykite.config.v1beta1.ReadIDProviderConfig.Property", [
+            { no: 1, name: "expression", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "4", maxLen: "512" } } } },
+            { no: 2, name: "enabled", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+        ]);
+    }
+    create(value?: PartialMessage<ReadIDProviderConfig_Property>): ReadIDProviderConfig_Property {
+        const message = { expression: "", enabled: false };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<ReadIDProviderConfig_Property>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ReadIDProviderConfig_Property): ReadIDProviderConfig_Property {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string expression */ 1:
+                    message.expression = reader.string();
+                    break;
+                case /* bool enabled */ 2:
+                    message.enabled = reader.bool();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ReadIDProviderConfig_Property, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string expression = 1; */
+        if (message.expression !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.expression);
+        /* bool enabled = 2; */
+        if (message.enabled !== false)
+            writer.tag(2, WireType.Varint).bool(message.enabled);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message indykite.config.v1beta1.ReadIDProviderConfig.Property
+ */
+export const ReadIDProviderConfig_Property = new ReadIDProviderConfig_Property$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class SAFRProviderConfig$Type extends MessageType<SAFRProviderConfig> {
     constructor() {
