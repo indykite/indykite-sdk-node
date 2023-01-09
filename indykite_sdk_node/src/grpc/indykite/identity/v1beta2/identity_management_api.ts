@@ -33,7 +33,6 @@ import { OAuth2TokenResponse } from "./model";
 import { Invitation } from "./model";
 import { Timestamp } from "../../../google/protobuf/timestamp";
 import { BoolValue } from "../../../google/protobuf/wrappers";
-import { Value } from "../../objects/v1beta1/struct";
 import { WriteResult } from "./document";
 import { Write } from "./document";
 import { Document } from "./document";
@@ -41,9 +40,10 @@ import { DocumentMask } from "./document";
 import { PropertyBatchOperation } from "./attributes";
 import { BatchOperationResult } from "./attributes";
 import { DigitalTwinKind } from "./model";
+import { Property } from "./attributes";
 import { DigitalEntity } from "./model";
 import { PropertyMask } from "./attributes";
-import { Property } from "./attributes";
+import { Value } from "../../objects/v1beta1/struct";
 import { MapValue } from "../../objects/v1beta1/struct";
 import { DigitalTwin } from "./model";
 import { IdentityTokenInfo } from "./model";
@@ -200,13 +200,11 @@ export interface DigitalTwinIdentifier {
          */
         digitalTwin: DigitalTwin;
     } | {
-        oneofKind: "property";
+        oneofKind: "propertyFilter";
         /**
-         * Property + tenantId not yet supported
-         *
-         * @generated from protobuf field: indykite.identity.v1beta2.Property property = 2;
+         * @generated from protobuf field: indykite.identity.v1beta2.PropertyFilter property_filter = 2;
          */
-        property: Property;
+        propertyFilter: PropertyFilter;
     } | {
         oneofKind: "accessToken";
         /**
@@ -216,6 +214,23 @@ export interface DigitalTwinIdentifier {
     } | {
         oneofKind: undefined;
     };
+}
+/**
+ * @generated from protobuf message indykite.identity.v1beta2.PropertyFilter
+ */
+export interface PropertyFilter {
+    /**
+     * @generated from protobuf field: string type = 1;
+     */
+    type: string;
+    /**
+     * @generated from protobuf field: indykite.objects.v1beta1.Value value = 2;
+     */
+    value?: Value;
+    /**
+     * @generated from protobuf field: string tenant_id = 3;
+     */
+    tenantId: string;
 }
 /**
  * @generated from protobuf message indykite.identity.v1beta2.GetDigitalTwinRequest
@@ -2009,7 +2024,7 @@ class DigitalTwinIdentifier$Type extends MessageType<DigitalTwinIdentifier> {
     constructor() {
         super("indykite.identity.v1beta2.DigitalTwinIdentifier", [
             { no: 1, name: "digital_twin", kind: "message", oneof: "filter", T: () => DigitalTwin, options: { "validate.rules": { message: { required: true } } } },
-            { no: 2, name: "property", kind: "message", oneof: "filter", T: () => Property, options: { "validate.rules": { message: { required: true } } } },
+            { no: 2, name: "property_filter", kind: "message", oneof: "filter", T: () => PropertyFilter, options: { "validate.rules": { message: { required: true } } } },
             { no: 3, name: "access_token", kind: "scalar", oneof: "filter", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "20" } } } }
         ]);
     }
@@ -2031,10 +2046,10 @@ class DigitalTwinIdentifier$Type extends MessageType<DigitalTwinIdentifier> {
                         digitalTwin: DigitalTwin.internalBinaryRead(reader, reader.uint32(), options, (message.filter as any).digitalTwin)
                     };
                     break;
-                case /* indykite.identity.v1beta2.Property property */ 2:
+                case /* indykite.identity.v1beta2.PropertyFilter property_filter */ 2:
                     message.filter = {
-                        oneofKind: "property",
-                        property: Property.internalBinaryRead(reader, reader.uint32(), options, (message.filter as any).property)
+                        oneofKind: "propertyFilter",
+                        propertyFilter: PropertyFilter.internalBinaryRead(reader, reader.uint32(), options, (message.filter as any).propertyFilter)
                     };
                     break;
                 case /* string access_token */ 3:
@@ -2058,9 +2073,9 @@ class DigitalTwinIdentifier$Type extends MessageType<DigitalTwinIdentifier> {
         /* indykite.identity.v1beta2.DigitalTwin digital_twin = 1; */
         if (message.filter.oneofKind === "digitalTwin")
             DigitalTwin.internalBinaryWrite(message.filter.digitalTwin, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* indykite.identity.v1beta2.Property property = 2; */
-        if (message.filter.oneofKind === "property")
-            Property.internalBinaryWrite(message.filter.property, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* indykite.identity.v1beta2.PropertyFilter property_filter = 2; */
+        if (message.filter.oneofKind === "propertyFilter")
+            PropertyFilter.internalBinaryWrite(message.filter.propertyFilter, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         /* string access_token = 3; */
         if (message.filter.oneofKind === "accessToken")
             writer.tag(3, WireType.LengthDelimited).string(message.filter.accessToken);
@@ -2074,6 +2089,67 @@ class DigitalTwinIdentifier$Type extends MessageType<DigitalTwinIdentifier> {
  * @generated MessageType for protobuf message indykite.identity.v1beta2.DigitalTwinIdentifier
  */
 export const DigitalTwinIdentifier = new DigitalTwinIdentifier$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class PropertyFilter$Type extends MessageType<PropertyFilter> {
+    constructor() {
+        super("indykite.identity.v1beta2.PropertyFilter", [
+            { no: 1, name: "type", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 2, name: "value", kind: "message", T: () => Value, options: { "validate.rules": { message: { required: true } } } },
+            { no: 3, name: "tenant_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "27", maxLen: "100", pattern: "^gid:[A-Za-z0-9-_]{27,100}$", ignoreEmpty: true } } } }
+        ]);
+    }
+    create(value?: PartialMessage<PropertyFilter>): PropertyFilter {
+        const message = { type: "", tenantId: "" };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<PropertyFilter>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: PropertyFilter): PropertyFilter {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string type */ 1:
+                    message.type = reader.string();
+                    break;
+                case /* indykite.objects.v1beta1.Value value */ 2:
+                    message.value = Value.internalBinaryRead(reader, reader.uint32(), options, message.value);
+                    break;
+                case /* string tenant_id */ 3:
+                    message.tenantId = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: PropertyFilter, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string type = 1; */
+        if (message.type !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.type);
+        /* indykite.objects.v1beta1.Value value = 2; */
+        if (message.value)
+            Value.internalBinaryWrite(message.value, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* string tenant_id = 3; */
+        if (message.tenantId !== "")
+            writer.tag(3, WireType.LengthDelimited).string(message.tenantId);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message indykite.identity.v1beta2.PropertyFilter
+ */
+export const PropertyFilter = new PropertyFilter$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class GetDigitalTwinRequest$Type extends MessageType<GetDigitalTwinRequest> {
     constructor() {
