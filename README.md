@@ -3,20 +3,17 @@
 </a>
 
 # IndyKite Client Libraries for Node.js
-IndyKite is a cloud identity platform built to secure and manage human & non-person (IoT) identities and their data. This repository containts the JavaScript Library packages for [IndyKite Platform](https://indykite.com/platform) Client SDK.
+IndyKite is a cloud identity platform built to secure and manage human & non-person (IoT) identities and their data. This repository contains the JavaScript Library packages for [IndyKite Platform](https://indykite.com/platform) Client SDK.
 
 [![NPM version](https://img.shields.io/npm/v/@indykiteone/indykite-sdk-node.svg?style=flat-square)](https://www.npmjs.com/package/@indykiteone/indykite-sdk-node)
 ![npm type definitions](https://img.shields.io/npm/types/@indykiteone/indykite-sdk-node?style=flat-square)
 [![codecov](https://codecov.io/gh/indykite/indykite-sdk-node/branch/master/graph/badge.svg?token=G6T2UWO9G1)](https://codecov.io/gh/indykite/indykite-sdk-node)
-
 
 Examples of functionality available in SDK:
 * Token Introspection
 * CRUD Operations on Digital Twins 
 * Change Password 
 * Limited Configuration Management
-
-In order to access to the platform you must obtain an API key first. This key can be obtained either from the [Admin Console](https://indykite.id) or request one from your point of contact at IndyKite.
 
 ## Terminology
 
@@ -35,19 +32,21 @@ In order to access to the platform you must obtain an API key first. This key ca
 ## Documentation
 Visit the IndyKite One Developer Community site for official [IndyKite documentation](https://indykite.one/blog?category=5e3e9297-3451-4b52-91ee-8027dcd1789c) and to find out how to use the entire platform for your project.
 
-## Installation 
+## Getting started
+Use these instructions to install the SDK and configure your environment.
+
+### Prerequisites
+* An installation of Node.js. See https://nodejs.org for instructions for how to install Node.js on your specific operating system.
+* AppAgent credentials and Service account credentials. These can be obtained from the [Admin Console](https://indykite.id).
+
+
+### Installation 
 ```shell 
 npm i @indykiteone/indykite-sdk-node
 ```
 
-## Getting Started
-
-### Trial
-For a trial please contact [IndyKite](https://www.indykite.com/contact-us) to setup and
-configure the platform.
-
 ### Config 
-The IndyKite SDK reads config properties from a JSON formatted configuration file. The path to this file is provided to your application via an environment variable  Once you have the config information (After you've registered and setup an application space) then you need to create the json file (you can find an example here: [example_config.json](https://github.com/indykite/indykite-sdk-node/blob/master/indykite_sdk_node/config_example.json)) then create the `INDYKITE_APPLICATION_CREDENTIALS_FILE` environment variable which will contain the path to the json configuration file (see the example below).
+The IndyKite SDK reads config properties from a JSON formatted configuration file. The path to this file is provided to your application via an environment variable  Once you have the config information (After you've registered and set up an application space) then you need to create the json file (you can find an example here: [example_config.json](https://github.com/indykite/indykite-sdk-node/blob/master/indykite_sdk_node/config_example.json)) then create the `INDYKITE_APPLICATION_CREDENTIALS_FILE` environment variable which will contain the path to the json configuration file (see the example below).
 
 ```shell
 export INDYKITE_APPLICATION_CREDENTIALS_FILE=<path_to_config_file>/config.json
@@ -363,27 +362,31 @@ any typescript definitions.
 Commit message follows [commit guidelines](./doc/guides/commit-message.md#commit-message-guidelines)
 
 ## Roadmap 
-Checkout our roadmap on our [issues page](https://github.com/indykite/indykite-sdk-node/issues)
+Check out our roadmap on our [issues page](https://github.com/indykite/indykite-sdk-node/issues)
 
-## Contributing 
+## Contributing and connecting with developers
 [Contribution guidelines for this project](contributing.md)
 
-## Support, Feedback, Connect with other developers
 We'd love to have you connect with us or other community developers over at [IndyKite.one](https://indykite.one) 
 
-Feel free to file a bug, submit an issue or give us feedback on our [issues page](https://github.com/indykite/indykite-sdk-node/issues)
+## Support and feedback
+Feel free to file a bug, submit an issue, or give us feedback on our [issues page](https://github.com/indykite/indykite-sdk-node/issues)
 
 ## Vulnerability Reporting
 [Responsible Disclosure](responsible_disclosure.md)
 
 ## Changelog 
-Coming Soon!
+Coming soon!
 
-## Contributers / Acknowledgements
-Coming Soon!
+## Contributors / Acknowledgements
+Coming soon!
 
-## What is IndyKite 
-IndyKite is a cloud identity platform built to secure and manage human & non-person (IoT) identities and their data. Based on open source standards, the cloud platform gives developers the ability to secure data and embed identity controls into their Web 3.0 applications. Empowering the world’s 23 million developers without the need to involve security and identity specialists.
+## About IndyKite 
+IndyKite is building the identity platform for Web 3.0.
+
+IndyKite’s decentralized Identity Platform unlocks contextual insights from identity data to enable businesses to realize greater ROI. With products that securely manage human, IoT,and machine identity, the IndyKite Identity Platform leverages machine learning to deliver context-aware authorization, knowledge driven decisions and risk analytics.
+
+Built on a knowledge graph data model, IndyKite enables developers with flexible APIs through a growing open-source ecosystem.
 
 ## License
 [This project is licensed under the terms of the Apache 2.0 license.](LICENSE)
