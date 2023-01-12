@@ -823,7 +823,7 @@ export class IdentityClient {
   }
 
   /**
-   * @deprecated Use **AuthorizationClient.isAuthorized** instead.
+   * @deprecated Use {@link AuthorizationClient.isAuthorized} instead.
    */
   isAuthorized(
     subject: DigitalTwinCore | Property | string,
