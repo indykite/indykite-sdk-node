@@ -253,8 +253,17 @@ describe('isAuthorized', () => {
         {
           subject: {
             filter: {
-              oneofKind: 'property',
-              property: subject.marshal(),
+              oneofKind: 'propertyFilter',
+              propertyFilter: {
+                tenantId: '',
+                type: 'email',
+                value: {
+                  value: {
+                    oneofKind: 'stringValue',
+                    stringValue: 'user@example.com',
+                  },
+                },
+              },
             },
           },
           resources: [
