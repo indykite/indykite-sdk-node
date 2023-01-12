@@ -17,8 +17,13 @@ import { ConfigManagementAPIClient } from '../../grpc/indykite/config/v1beta1/co
 import { IngestAPIClient } from '../../grpc/indykite/ingest/v1beta1/ingest_api.grpc-client';
 import { ApplicationCredential } from '../utils/application_credential';
 import { ServiceAccountCredential } from '../utils/service_account_credential';
+import { AuthorizationAPIClient } from '../../grpc/indykite/authorization/v1beta1/authorization_service.grpc-client';
 
-type ClientType = IdentityManagementAPIClient | ConfigManagementAPIClient | IngestAPIClient;
+type ClientType =
+  | IdentityManagementAPIClient
+  | ConfigManagementAPIClient
+  | IngestAPIClient
+  | AuthorizationAPIClient;
 type ClientConstructor = new (
   endpoint: string,
   channelCredential: ChannelCredentials,

@@ -11,7 +11,6 @@ import {
   EnrichTokenRequest,
   GetDigitalTwinRequest,
   GetPasswordCredentialRequest,
-  IsAuthorizedRequest,
   ListDigitalTwinsRequest,
   PatchDigitalTwinRequest,
   ResendInvitationRequest,
@@ -25,6 +24,7 @@ import {
   CreateConsentResponse,
   RevokeConsentRequest,
   ListConsentsRequest,
+  IsAuthorizedRequest,
 } from '../grpc/indykite/identity/v1beta2/identity_management_api';
 import { DigitalTwin, IdentityTokenInfo } from '../grpc/indykite/identity/v1beta2/model';
 import * as sdkTypes from './model';
@@ -32,6 +32,7 @@ import * as sdkTypes from './model';
 import { SdkErrorCode, SdkError } from './error';
 import { Utils } from './utils/utils';
 import {
+  AuthorizationDecisions,
   ConsentChallenge,
   ConsentChallengeDenial,
   DigitalTwinCore,
@@ -48,7 +49,6 @@ import {
 } from '../grpc/indykite/identity/v1beta2/import';
 import { HashAlgorithm } from './model/hash_algorithm';
 import { ImportDigitalTwin, ImportResult } from './model/import_digitaltwin';
-import { AuthorizationDecisions } from './model/authorization_decisions';
 import { BoolValue } from '../grpc/google/protobuf/wrappers';
 import { Readable } from 'stream';
 import { IndexFixer, streamSplitter } from './utils/stream';
@@ -822,6 +822,9 @@ export class IdentityClient {
     });
   }
 
+  /**
+   * @deprecated Use **AuthorizationClient.isAuthorized** instead.
+   */
   isAuthorized(
     subject: DigitalTwinCore | Property | string,
     resources: Record<'id' | 'label', string>[] = [],
@@ -848,8 +851,12 @@ export class IdentityClient {
         request = IsAuthorizedRequest.create({
           subject: {
             filter: {
-              oneofKind: 'property',
-              property: subject.marshal(),
+              oneofKind: 'propertyFilter',
+              propertyFilter: {
+                type: subject.property,
+                value: Utils.objectToValue(subject.value),
+                tenantId: '', // Only for backward compatibility, but will probably not work
+              },
             },
           },
         });
