@@ -1,4 +1,14 @@
 # Changelog
+## [0.2.2](https://github.com/indykite/indykite-sdk-node/compare/v0.2.1...v0.2.2) (2023-01-13)
+
+
+### Features
+
+* add authorization client ([e7c2e82](https://github.com/indykite/indykite-sdk-node/commit/e7c2e82502090a0f55d6fed93744c6555d8ca42a))
+* add crateConsent support ([5979c39](https://github.com/indykite/indykite-sdk-node/commit/5979c399382aa5714d7493266a756d6ce677c02b))
+* add listConsents support ([dbc6560](https://github.com/indykite/indykite-sdk-node/commit/dbc6560fe15f01b9f995f3da12bd866daf1526a6))
+* add revokeConsent support ([de21fbf](https://github.com/indykite/indykite-sdk-node/commit/de21fbf336d15a39c785dceb64c7fe23d2c0863f))
+
 ## [0.2.1](https://github.com/indykite/indykite-sdk-node/compare/v0.2.0...v0.2.1) (2022-12-19)
 
 
