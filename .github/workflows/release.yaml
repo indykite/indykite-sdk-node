@@ -44,24 +44,3 @@ jobs:
           npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-      - name: Get Version
-        run: |
-          export VERSION=$(cat indykite_sdk_node/package.json | jq -r '.version')
-          echo "VERSION=$VERSION" >> $GITHUB_ENV
-
-      - name: Authenticate to Google Cloud
-        id: auth
-        uses: google-github-actions/auth@v1
-        if: ${{ always() }}
-        with:
-          workload_identity_provider: "projects/699926043561/locations/global/workloadIdentityPools/github-dev/providers/github-dev-provider"
-          service_account: "jarvis-sdk-node@jarvis-dev-268314.iam.gserviceaccount.com"
-
-      - name: Publish Deployment Metadata
-        if: ${{ always() }}
-        uses: indykite/metadata-publisher@v0
-        with:
-          version: ${{ env.VERSION }}
-          status: ${{ job.status }}
-          bigquery_table: ${{ env.BIGQUERY_TABLE }}
-
