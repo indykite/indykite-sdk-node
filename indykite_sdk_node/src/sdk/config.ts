@@ -1164,12 +1164,18 @@ export class ConfigClient {
     });
   }
 
-  deleteApplicationAgent(appAgentId: string, bookmarks: string[] = []): Promise<void> {
+  deleteApplicationAgent(
+    appAgentId: string,
+    bookmarks: string[] = [],
+    etag?: string,
+  ): Promise<void> {
     return new Promise((resolve, reject) => {
       const req: DeleteApplicationAgentRequest = {
         id: appAgentId,
         bookmarks,
       };
+
+      if (etag !== undefined) req.etag = StringValue.create({ value: etag });
 
       this.client.deleteApplicationAgent(req, (err, response) => {
         if (err) reject(err);
@@ -1251,12 +1257,15 @@ export class ConfigClient {
   deleteApplicationAgentCredential(
     appCredentialId: string,
     bookmarks: string[] = [],
+    etag?: string,
   ): Promise<void> {
     return new Promise((resolve, reject) => {
       const req: DeleteApplicationAgentCredentialRequest = {
         id: appCredentialId,
         bookmarks,
       };
+
+      if (etag !== undefined) req.etag = StringValue.create({ value: etag });
 
       this.client.deleteApplicationAgentCredential(req, (err, response) => {
         if (err) reject(err);
