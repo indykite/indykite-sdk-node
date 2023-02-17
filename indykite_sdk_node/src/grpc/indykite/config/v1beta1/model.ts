@@ -1503,6 +1503,10 @@ export interface ReadIDProviderConfig {
     propertyMap: {
         [key: string]: ReadIDProviderConfig_Property;
     };
+    /**
+     * @generated from protobuf field: string unique_property_name = 6;
+     */
+    uniquePropertyName: string;
 }
 /**
  * @generated from protobuf message indykite.config.v1beta1.ReadIDProviderConfig.Property
@@ -4916,11 +4920,12 @@ class ReadIDProviderConfig$Type extends MessageType<ReadIDProviderConfig> {
             { no: 2, name: "manager_secret", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "36", ignoreEmpty: true } } } },
             { no: 3, name: "submitter_password", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "4", maxLen: "254", ignoreEmpty: true } } } },
             { no: 4, name: "host_address", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "4", maxLen: "254", ignoreEmpty: true } } } },
-            { no: 5, name: "property_map", kind: "map", K: 9 /*ScalarType.STRING*/, V: { kind: "message", T: () => ReadIDProviderConfig_Property } }
+            { no: 5, name: "property_map", kind: "map", K: 9 /*ScalarType.STRING*/, V: { kind: "message", T: () => ReadIDProviderConfig_Property } },
+            { no: 6, name: "unique_property_name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "4", maxLen: "512", ignoreEmpty: true } } } }
         ]);
     }
     create(value?: PartialMessage<ReadIDProviderConfig>): ReadIDProviderConfig {
-        const message = { submitterSecret: "", managerSecret: "", submitterPassword: "", hostAddress: "", propertyMap: {} };
+        const message = { submitterSecret: "", managerSecret: "", submitterPassword: "", hostAddress: "", propertyMap: {}, uniquePropertyName: "" };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<ReadIDProviderConfig>(this, message, value);
@@ -4945,6 +4950,9 @@ class ReadIDProviderConfig$Type extends MessageType<ReadIDProviderConfig> {
                     break;
                 case /* map<string, indykite.config.v1beta1.ReadIDProviderConfig.Property> property_map */ 5:
                     this.binaryReadMap5(message.propertyMap, reader, options);
+                    break;
+                case /* string unique_property_name */ 6:
+                    message.uniquePropertyName = reader.string();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -4993,6 +5001,9 @@ class ReadIDProviderConfig$Type extends MessageType<ReadIDProviderConfig> {
             ReadIDProviderConfig_Property.internalBinaryWrite(message.propertyMap[k], writer, options);
             writer.join().join();
         }
+        /* string unique_property_name = 6; */
+        if (message.uniquePropertyName !== "")
+            writer.tag(6, WireType.LengthDelimited).string(message.uniquePropertyName);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

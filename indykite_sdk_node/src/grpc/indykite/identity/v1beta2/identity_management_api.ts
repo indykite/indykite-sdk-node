@@ -2093,7 +2093,7 @@ export const DigitalTwinIdentifier = new DigitalTwinIdentifier$Type();
 class PropertyFilter$Type extends MessageType<PropertyFilter> {
     constructor() {
         super("indykite.identity.v1beta2.PropertyFilter", [
-            { no: 1, name: "type", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 1, name: "type", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "2", maxLen: "20" } } } },
             { no: 2, name: "value", kind: "message", T: () => Value, options: { "validate.rules": { message: { required: true } } } },
             { no: 3, name: "tenant_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "27", maxLen: "100", pattern: "^gid:[A-Za-z0-9-_]{27,100}$", ignoreEmpty: true } } } }
         ]);
