@@ -961,6 +961,10 @@ export interface DeleteApplicationAgentCredentialRequest {
      * @generated from protobuf field: repeated string bookmarks = 2;
      */
     bookmarks: string[];
+    /**
+     * @generated from protobuf field: google.protobuf.StringValue etag = 3;
+     */
+    etag?: StringValue;
 }
 /**
  * @generated from protobuf message indykite.config.v1beta1.DeleteApplicationAgentCredentialResponse
@@ -4857,7 +4861,8 @@ class DeleteApplicationAgentCredentialRequest$Type extends MessageType<DeleteApp
     constructor() {
         super("indykite.config.v1beta1.DeleteApplicationAgentCredentialRequest", [
             { no: 1, name: "id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
-            { no: 2, name: "bookmarks", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { items: { string: { minLen: "40", pattern: "^[a-zA-Z0-9_-]{40,}$" } } } } } }
+            { no: 2, name: "bookmarks", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { items: { string: { minLen: "40", pattern: "^[a-zA-Z0-9_-]{40,}$" } } } } } },
+            { no: 3, name: "etag", kind: "message", T: () => StringValue, options: { "validate.rules": { string: { minLen: "8", maxLen: "18", pattern: "^[A-Za-z0-9-_]{8,18}$", ignoreEmpty: true } } } }
         ]);
     }
     create(value?: PartialMessage<DeleteApplicationAgentCredentialRequest>): DeleteApplicationAgentCredentialRequest {
@@ -4878,6 +4883,9 @@ class DeleteApplicationAgentCredentialRequest$Type extends MessageType<DeleteApp
                 case /* repeated string bookmarks */ 2:
                     message.bookmarks.push(reader.string());
                     break;
+                case /* google.protobuf.StringValue etag */ 3:
+                    message.etag = StringValue.internalBinaryRead(reader, reader.uint32(), options, message.etag);
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -4896,6 +4904,9 @@ class DeleteApplicationAgentCredentialRequest$Type extends MessageType<DeleteApp
         /* repeated string bookmarks = 2; */
         for (let i = 0; i < message.bookmarks.length; i++)
             writer.tag(2, WireType.LengthDelimited).string(message.bookmarks[i]);
+        /* google.protobuf.StringValue etag = 3; */
+        if (message.etag)
+            StringValue.internalBinaryWrite(message.etag, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -7116,7 +7127,7 @@ class DeleteConfigNodeRequest$Type extends MessageType<DeleteConfigNodeRequest> 
     constructor() {
         super("indykite.config.v1beta1.DeleteConfigNodeRequest", [
             { no: 1, name: "id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
-            { no: 3, name: "etag", kind: "message", T: () => StringValue },
+            { no: 3, name: "etag", kind: "message", T: () => StringValue, options: { "validate.rules": { string: { minLen: "8", maxLen: "18", pattern: "^[A-Za-z0-9-_]{8,18}$", ignoreEmpty: true } } } },
             { no: 4, name: "bookmarks", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { items: { string: { minLen: "40", pattern: "^[a-zA-Z0-9_-]{40,}$" } } } } } }
         ]);
     }
@@ -8162,7 +8173,7 @@ class DeleteOAuth2ApplicationRequest$Type extends MessageType<DeleteOAuth2Applic
     constructor() {
         super("indykite.config.v1beta1.DeleteOAuth2ApplicationRequest", [
             { no: 1, name: "id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
-            { no: 2, name: "etag", kind: "message", T: () => StringValue },
+            { no: 2, name: "etag", kind: "message", T: () => StringValue, options: { "validate.rules": { string: { minLen: "8", maxLen: "18", pattern: "^[A-Za-z0-9-_]{8,18}$", ignoreEmpty: true } } } },
             { no: 3, name: "bookmarks", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { items: { string: { minLen: "40", pattern: "^[a-zA-Z0-9_-]{40,}$" } } } } } }
         ]);
     }
