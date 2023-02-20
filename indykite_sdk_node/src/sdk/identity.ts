@@ -822,65 +822,6 @@ export class IdentityClient {
     });
   }
 
-  /**
-   * @deprecated Use {@link AuthorizationClient.isAuthorized} instead.
-   */
-  isAuthorized(
-    subject: DigitalTwinCore | Property | string,
-    resources: Record<'id' | 'label', string>[] = [],
-    actions: string[] = [],
-  ): Promise<AuthorizationDecisions> {
-    return new Promise((resolve, reject) => {
-      let request = IsAuthorizedRequest.create({
-        subject: {
-          filter: {
-            oneofKind: undefined,
-          },
-        },
-      });
-      if (subject instanceof DigitalTwinCore) {
-        request = IsAuthorizedRequest.create({
-          subject: {
-            filter: {
-              oneofKind: 'digitalTwin',
-              digitalTwin: subject.marshal(),
-            },
-          },
-        });
-      } else if (subject instanceof Property) {
-        request = IsAuthorizedRequest.create({
-          subject: {
-            filter: {
-              oneofKind: 'propertyFilter',
-              propertyFilter: {
-                type: subject.property,
-                value: Utils.objectToValue(subject.value),
-                tenantId: '', // Only for backward compatibility, but will probably not work
-              },
-            },
-          },
-        });
-      } else {
-        request = IsAuthorizedRequest.create({
-          subject: {
-            filter: {
-              oneofKind: 'accessToken',
-              accessToken: subject,
-            },
-          },
-        });
-      }
-      request.resources = resources;
-      request.actions = actions;
-
-      this.client.isAuthorized(request, (err, res) => {
-        if (err) reject(err);
-        else if (!res) resolve(new AuthorizationDecisions({}));
-        else resolve(AuthorizationDecisions.deserialize(res));
-      });
-    });
-  }
-
   createConsent(
     piiProcessorId: string,
     piiPrincipalId: string,
