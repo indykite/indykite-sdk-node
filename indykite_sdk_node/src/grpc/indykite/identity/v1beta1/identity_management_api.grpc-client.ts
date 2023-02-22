@@ -27,8 +27,6 @@ import type { UpdatePasswordCredentialResponse } from "./identity_management_api
 import type { UpdatePasswordCredentialRequest } from "./identity_management_api";
 import type { GetPasswordCredentialResponse } from "./identity_management_api";
 import type { GetPasswordCredentialRequest } from "./identity_management_api";
-import type { IsAuthorizedResponse } from "./identity_management_api";
-import type { IsAuthorizedRequest } from "./identity_management_api";
 import type { CancelInvitationResponse } from "./identity_management_api";
 import type { CancelInvitationRequest } from "./identity_management_api";
 import type { ResendInvitationResponse } from "./identity_management_api";
@@ -324,21 +322,14 @@ export interface IIdentityManagementAPIClient {
     /**
      * CancelInvitation expects reference ID of invitation to cancel
      *
+     * Experimental functions
+     *
      * @generated from protobuf rpc: CancelInvitation(indykite.identity.v1beta1.CancelInvitationRequest) returns (indykite.identity.v1beta1.CancelInvitationResponse);
      */
     cancelInvitation(input: CancelInvitationRequest, metadata: grpc.Metadata, options: grpc.CallOptions, callback: (err: grpc.ServiceError | null, value?: CancelInvitationResponse) => void): grpc.ClientUnaryCall;
     cancelInvitation(input: CancelInvitationRequest, metadata: grpc.Metadata, callback: (err: grpc.ServiceError | null, value?: CancelInvitationResponse) => void): grpc.ClientUnaryCall;
     cancelInvitation(input: CancelInvitationRequest, options: grpc.CallOptions, callback: (err: grpc.ServiceError | null, value?: CancelInvitationResponse) => void): grpc.ClientUnaryCall;
     cancelInvitation(input: CancelInvitationRequest, callback: (err: grpc.ServiceError | null, value?: CancelInvitationResponse) => void): grpc.ClientUnaryCall;
-    /**
-     * @generated from protobuf rpc: IsAuthorized(indykite.identity.v1beta1.IsAuthorizedRequest) returns (indykite.identity.v1beta1.IsAuthorizedResponse);
-     */
-    isAuthorized(input: IsAuthorizedRequest, metadata: grpc.Metadata, options: grpc.CallOptions, callback: (err: grpc.ServiceError | null, value?: IsAuthorizedResponse) => void): grpc.ClientUnaryCall;
-    isAuthorized(input: IsAuthorizedRequest, metadata: grpc.Metadata, callback: (err: grpc.ServiceError | null, value?: IsAuthorizedResponse) => void): grpc.ClientUnaryCall;
-    isAuthorized(input: IsAuthorizedRequest, options: grpc.CallOptions, callback: (err: grpc.ServiceError | null, value?: IsAuthorizedResponse) => void): grpc.ClientUnaryCall;
-    isAuthorized(input: IsAuthorizedRequest, callback: (err: grpc.ServiceError | null, value?: IsAuthorizedResponse) => void): grpc.ClientUnaryCall;
-    // Experimental functions
-
     /**
      * GetPasswordCredential is Experimental and not implemented yet
      *
@@ -642,6 +633,8 @@ export class IdentityManagementAPIClient extends grpc.Client implements IIdentit
     /**
      * CancelInvitation expects reference ID of invitation to cancel
      *
+     * Experimental functions
+     *
      * @generated from protobuf rpc: CancelInvitation(indykite.identity.v1beta1.CancelInvitationRequest) returns (indykite.identity.v1beta1.CancelInvitationResponse);
      */
     cancelInvitation(input: CancelInvitationRequest, metadata: grpc.Metadata | grpc.CallOptions | ((err: grpc.ServiceError | null, value?: CancelInvitationResponse) => void), options?: grpc.CallOptions | ((err: grpc.ServiceError | null, value?: CancelInvitationResponse) => void), callback?: ((err: grpc.ServiceError | null, value?: CancelInvitationResponse) => void)): grpc.ClientUnaryCall {
@@ -649,21 +642,12 @@ export class IdentityManagementAPIClient extends grpc.Client implements IIdentit
         return this.makeUnaryRequest<CancelInvitationRequest, CancelInvitationResponse>(`/${IdentityManagementAPI.typeName}/${method.name}`, (value: CancelInvitationRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): CancelInvitationResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), (options as any), (callback as any));
     }
     /**
-     * @generated from protobuf rpc: IsAuthorized(indykite.identity.v1beta1.IsAuthorizedRequest) returns (indykite.identity.v1beta1.IsAuthorizedResponse);
-     */
-    isAuthorized(input: IsAuthorizedRequest, metadata: grpc.Metadata | grpc.CallOptions | ((err: grpc.ServiceError | null, value?: IsAuthorizedResponse) => void), options?: grpc.CallOptions | ((err: grpc.ServiceError | null, value?: IsAuthorizedResponse) => void), callback?: ((err: grpc.ServiceError | null, value?: IsAuthorizedResponse) => void)): grpc.ClientUnaryCall {
-        const method = IdentityManagementAPI.methods[23];
-        return this.makeUnaryRequest<IsAuthorizedRequest, IsAuthorizedResponse>(`/${IdentityManagementAPI.typeName}/${method.name}`, (value: IsAuthorizedRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): IsAuthorizedResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), (options as any), (callback as any));
-    }
-    // Experimental functions
-
-    /**
      * GetPasswordCredential is Experimental and not implemented yet
      *
      * @generated from protobuf rpc: GetPasswordCredential(indykite.identity.v1beta1.GetPasswordCredentialRequest) returns (indykite.identity.v1beta1.GetPasswordCredentialResponse);
      */
     getPasswordCredential(input: GetPasswordCredentialRequest, metadata: grpc.Metadata | grpc.CallOptions | ((err: grpc.ServiceError | null, value?: GetPasswordCredentialResponse) => void), options?: grpc.CallOptions | ((err: grpc.ServiceError | null, value?: GetPasswordCredentialResponse) => void), callback?: ((err: grpc.ServiceError | null, value?: GetPasswordCredentialResponse) => void)): grpc.ClientUnaryCall {
-        const method = IdentityManagementAPI.methods[24];
+        const method = IdentityManagementAPI.methods[23];
         return this.makeUnaryRequest<GetPasswordCredentialRequest, GetPasswordCredentialResponse>(`/${IdentityManagementAPI.typeName}/${method.name}`, (value: GetPasswordCredentialRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): GetPasswordCredentialResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), (options as any), (callback as any));
     }
     /**
@@ -672,7 +656,7 @@ export class IdentityManagementAPIClient extends grpc.Client implements IIdentit
      * @generated from protobuf rpc: UpdatePasswordCredential(indykite.identity.v1beta1.UpdatePasswordCredentialRequest) returns (indykite.identity.v1beta1.UpdatePasswordCredentialResponse);
      */
     updatePasswordCredential(input: UpdatePasswordCredentialRequest, metadata: grpc.Metadata | grpc.CallOptions | ((err: grpc.ServiceError | null, value?: UpdatePasswordCredentialResponse) => void), options?: grpc.CallOptions | ((err: grpc.ServiceError | null, value?: UpdatePasswordCredentialResponse) => void), callback?: ((err: grpc.ServiceError | null, value?: UpdatePasswordCredentialResponse) => void)): grpc.ClientUnaryCall {
-        const method = IdentityManagementAPI.methods[25];
+        const method = IdentityManagementAPI.methods[24];
         return this.makeUnaryRequest<UpdatePasswordCredentialRequest, UpdatePasswordCredentialResponse>(`/${IdentityManagementAPI.typeName}/${method.name}`, (value: UpdatePasswordCredentialRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): UpdatePasswordCredentialResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), (options as any), (callback as any));
     }
     /**
@@ -681,7 +665,7 @@ export class IdentityManagementAPIClient extends grpc.Client implements IIdentit
      * @generated from protobuf rpc: GetAccessToken(indykite.identity.v1beta1.GetAccessTokenRequest) returns (indykite.identity.v1beta1.GetAccessTokenResponse);
      */
     getAccessToken(input: GetAccessTokenRequest, metadata: grpc.Metadata | grpc.CallOptions | ((err: grpc.ServiceError | null, value?: GetAccessTokenResponse) => void), options?: grpc.CallOptions | ((err: grpc.ServiceError | null, value?: GetAccessTokenResponse) => void), callback?: ((err: grpc.ServiceError | null, value?: GetAccessTokenResponse) => void)): grpc.ClientUnaryCall {
-        const method = IdentityManagementAPI.methods[26];
+        const method = IdentityManagementAPI.methods[25];
         return this.makeUnaryRequest<GetAccessTokenRequest, GetAccessTokenResponse>(`/${IdentityManagementAPI.typeName}/${method.name}`, (value: GetAccessTokenRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): GetAccessTokenResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), (options as any), (callback as any));
     }
     /**
@@ -690,7 +674,7 @@ export class IdentityManagementAPIClient extends grpc.Client implements IIdentit
      * @generated from protobuf rpc: SessionIntrospect(indykite.identity.v1beta1.SessionIntrospectRequest) returns (indykite.identity.v1beta1.SessionIntrospectResponse);
      */
     sessionIntrospect(input: SessionIntrospectRequest, metadata: grpc.Metadata | grpc.CallOptions | ((err: grpc.ServiceError | null, value?: SessionIntrospectResponse) => void), options?: grpc.CallOptions | ((err: grpc.ServiceError | null, value?: SessionIntrospectResponse) => void), callback?: ((err: grpc.ServiceError | null, value?: SessionIntrospectResponse) => void)): grpc.ClientUnaryCall {
-        const method = IdentityManagementAPI.methods[27];
+        const method = IdentityManagementAPI.methods[26];
         return this.makeUnaryRequest<SessionIntrospectRequest, SessionIntrospectResponse>(`/${IdentityManagementAPI.typeName}/${method.name}`, (value: SessionIntrospectRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): SessionIntrospectResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), (options as any), (callback as any));
     }
     /**
@@ -699,7 +683,7 @@ export class IdentityManagementAPIClient extends grpc.Client implements IIdentit
      * @generated from protobuf rpc: EnrichToken(indykite.identity.v1beta1.EnrichTokenRequest) returns (indykite.identity.v1beta1.EnrichTokenResponse);
      */
     enrichToken(input: EnrichTokenRequest, metadata: grpc.Metadata | grpc.CallOptions | ((err: grpc.ServiceError | null, value?: EnrichTokenResponse) => void), options?: grpc.CallOptions | ((err: grpc.ServiceError | null, value?: EnrichTokenResponse) => void), callback?: ((err: grpc.ServiceError | null, value?: EnrichTokenResponse) => void)): grpc.ClientUnaryCall {
-        const method = IdentityManagementAPI.methods[28];
+        const method = IdentityManagementAPI.methods[27];
         return this.makeUnaryRequest<EnrichTokenRequest, EnrichTokenResponse>(`/${IdentityManagementAPI.typeName}/${method.name}`, (value: EnrichTokenRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): EnrichTokenResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), (options as any), (callback as any));
     }
 }
