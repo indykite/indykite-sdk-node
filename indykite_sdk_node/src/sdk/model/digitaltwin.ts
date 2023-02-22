@@ -1,5 +1,8 @@
 import { PropertyBatchOperation } from '../../grpc/indykite/identity/v1beta2/attributes';
-import { DigitalTwin as DigitalTwinModel } from '../../grpc/indykite/identity/v1beta2/model';
+import {
+  DigitalEntity as DigitalEntityModel,
+  DigitalTwin as DigitalTwinModel,
+} from '../../grpc/indykite/identity/v1beta2/model';
 import * as grpcId from '../../grpc/indykite/identity/v1beta2/identity_management_api';
 import { SdkErrorCode, SdkError } from '../error';
 import { Utils } from '../utils/utils';
@@ -16,6 +19,22 @@ export class DigitalTwinCore {
 
   static fromModel(model: DigitalTwinModel): DigitalTwinCore {
     return new DigitalTwinCore(model.id, model.tenantId, model.kind, model.state, model.tags);
+  }
+
+  static deserializeCore(dtResponse: DigitalEntityModel['digitalTwin']): DigitalTwinCore {
+    if (dtResponse) {
+      const dt = new DigitalTwinCore(
+        dtResponse.id,
+        dtResponse.tenantId,
+        dtResponse.kind,
+        dtResponse.state,
+        dtResponse.tags,
+      );
+
+      return dt;
+    } else {
+      throw new SdkError(SdkErrorCode.SDK_CODE_1, "Can't deserialize digital twin");
+    }
   }
 
   marshal(): DigitalTwinModel {
