@@ -24,15 +24,18 @@ import {
   CreateConsentResponse,
   RevokeConsentRequest,
   ListConsentsRequest,
-  IsAuthorizedRequest,
+  RegisterDigitalTwinWithoutCredentialRequest,
 } from '../grpc/indykite/identity/v1beta2/identity_management_api';
-import { DigitalTwin, IdentityTokenInfo } from '../grpc/indykite/identity/v1beta2/model';
+import {
+  DigitalTwin,
+  DigitalTwinKind,
+  IdentityTokenInfo,
+} from '../grpc/indykite/identity/v1beta2/model';
 import * as sdkTypes from './model';
 
 import { SdkErrorCode, SdkError } from './error';
 import { Utils } from './utils/utils';
 import {
-  AuthorizationDecisions,
   ConsentChallenge,
   ConsentChallengeDenial,
   DigitalTwinCore,
@@ -884,6 +887,46 @@ export class IdentityClient {
         .on('error', (err) => {
           reject(err);
         });
+    });
+  }
+
+  /**
+   * RegisterDigitalTwinWithoutCredential creates a DigitalTwin without credentials, but with properties
+   * This is a protected operation and it can be accessed only with valid agent credentials!
+   * @since 0.2.3
+   */
+  registerDigitalTwinWithoutCredential(
+    tenantId: string,
+    digitalTwinKind: DigitalTwinKind,
+    properties: Property[],
+    tags?: string[],
+    bookmarks?: string[],
+  ): Promise<{ digitalTwin?: DigitalTwinCore; patchResults: PatchResult[] }> {
+    const request = RegisterDigitalTwinWithoutCredentialRequest.create({
+      tenantId,
+      digitalTwinKind,
+      properties: properties.map((property) => property.marshal()),
+      bookmarks: [],
+    });
+
+    if (tags) request.digitalTwinTags = tags;
+    if (bookmarks) request.bookmarks = bookmarks;
+
+    return new Promise((resolve, reject) => {
+      this.client.registerDigitalTwinWithoutCredential(request, (err, response) => {
+        if (err) reject(err);
+        else if (!response) {
+          reject(new SdkError(SdkErrorCode.SDK_CODE_1, 'Missing register digital twin response'));
+        } else {
+          const patchResults = response.results.map(PatchResult.deserialize);
+          if (!response.digitalTwin) {
+            resolve({ patchResults });
+            return;
+          }
+          const digitalTwin = sdkTypes.DigitalTwinCore.deserializeCore(response.digitalTwin);
+          resolve({ patchResults, digitalTwin });
+        }
+      });
     });
   }
 

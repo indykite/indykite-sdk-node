@@ -56,7 +56,7 @@ export class Property {
   reference?: string;
 
   constructor(property: string, id?: string) {
-    if (id) this.id = id;
+    if (id !== undefined) this.id = id;
     this.property = property;
   }
 
@@ -101,10 +101,6 @@ export class Property {
   }
 
   marshal(): grpcAttr.Property {
-    if (!this.id) {
-      throw new SdkError(SdkErrorCode.SDK_CODE_1, "Can't marshal the property without an ID");
-    }
-
     let value: grpcAttr.Property['value'] = {
       oneofKind: undefined,
     };
@@ -121,17 +117,14 @@ export class Property {
       };
     }
 
-    let definition: grpcAttr.Property['definition'];
-    if (this.context !== undefined && this.property !== undefined && this.type !== undefined) {
-      definition = {
-        context: this.context,
-        property: this.property,
-        type: this.type,
-      };
-    }
+    const definition: grpcAttr.Property['definition'] = {
+      context: this.context ?? '',
+      property: this.property,
+      type: this.type ?? '',
+    };
 
     return {
-      id: this.id,
+      id: this.id ?? '',
       value,
       definition,
       meta: this.meta?.marshal(),
