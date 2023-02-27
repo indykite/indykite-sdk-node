@@ -248,23 +248,19 @@ describe('builder', () => {
     expect(b1.operations).toHaveLength(0);
   });
 
-  it('marshal property without id', () => {
+  it('marshal property without id and type', () => {
     const p = new Property('email');
-    let caughtError: Error | null = null;
-    try {
-      p.marshal();
-    } catch (err) {
-      caughtError = err as Error;
-    }
-    expect(caughtError?.message).toBe("Can't marshal the property without an ID");
-
-    p.withMetadata(false);
-    p.id = 'some-id';
-    try {
-      p.marshal();
-    } catch (err) {
-      caughtError = err as Error;
-    }
-    expect(caughtError?.message).toBe("Can't marshal property metadata");
+    p.context = 'https://schema.org/';
+    expect(p.marshal()).toEqual({
+      definition: {
+        context: 'https://schema.org/',
+        property: 'email',
+        type: '',
+      },
+      id: '',
+      value: {
+        oneofKind: undefined,
+      },
+    });
   });
 });

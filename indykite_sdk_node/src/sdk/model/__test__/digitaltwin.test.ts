@@ -1,5 +1,6 @@
 import { v4 } from 'uuid';
 import { DigitalTwinKind, DigitalTwinState } from '../../../grpc/indykite/identity/v1beta2/model';
+import { generateRandomGID } from '../../utils/test_utils';
 import { Utils } from '../../utils/utils';
 import { DigitalTwin, DigitalTwinCore } from '../digitaltwin';
 import { PatchPropertiesBuilder, Property } from '../property';
@@ -7,13 +8,31 @@ import { PatchPropertiesBuilder, Property } from '../property';
 describe('properties', () => {
   let dt: DigitalTwin;
   const emailId = v4();
+  const dtId = generateRandomGID();
+  const tenantId = generateRandomGID();
 
   beforeEach(() => {
-    dt = new DigitalTwin(v4(), v4(), 1, 1, []);
+    dt = new DigitalTwin(dtId, tenantId, 1, 1, []);
     const email = new Property('email', emailId)
       .withMetadata(false)
       .withValue('test+email@indykite.com');
     dt.addProperty(email);
+  });
+
+  it('deserialize core', () => {
+    expect(
+      DigitalTwinCore.deserializeCore({
+        id: dtId,
+        tenantId,
+        kind: DigitalTwinKind.PERSON,
+        state: DigitalTwinState.ACTIVE,
+        tags: ['tag-id'],
+      }),
+    ).toEqual(
+      new DigitalTwinCore(dtId, tenantId, DigitalTwinKind.PERSON, DigitalTwinState.ACTIVE, [
+        'tag-id',
+      ]),
+    );
   });
 
   it('delete property', () => {
