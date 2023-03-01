@@ -216,3 +216,21 @@ describe('objectToJsonValue', () => {
     });
   });
 });
+
+describe('duration and number conversions', () => {
+  it('converts duration to number', () => {
+    expect(Utils.durationToNumber()).toBeUndefined();
+    expect(Utils.durationToNumber({ seconds: '0', nanos: 0 })).toBe(0);
+    expect(Utils.durationToNumber({ seconds: '0', nanos: 500000 })).toBe(0.5);
+    expect(Utils.durationToNumber({ seconds: '16', nanos: 0 })).toBe(16);
+    expect(Utils.durationToNumber({ seconds: '71', nanos: 250000 })).toBe(71.25);
+  });
+
+  it('converts number to duration', () => {
+    expect(Utils.numberToDuration()).toBeUndefined();
+    expect(Utils.numberToDuration(0)).toEqual({ seconds: '0', nanos: 0 });
+    expect(Utils.numberToDuration(0.5)).toEqual({ seconds: '0', nanos: 500000 });
+    expect(Utils.numberToDuration(16)).toEqual({ seconds: '16', nanos: 0 });
+    expect(Utils.numberToDuration(71.25)).toEqual({ seconds: '71', nanos: 250000 });
+  });
+});
