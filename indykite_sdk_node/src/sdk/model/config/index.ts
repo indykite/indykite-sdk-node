@@ -21,4 +21,5 @@ export * from './tenant';
 export * from './oauth2_client/factory';
 export * from './oauth2_client/oauth2_client';
 export * from './ingest_mapping';
+export * from './webauthn_provider';
 export { EmailProviderType } from './email/factory';

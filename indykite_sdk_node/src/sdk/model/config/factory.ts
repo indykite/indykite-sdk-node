@@ -9,8 +9,14 @@ import { IngestMappingFactory } from './ingest_mapping/factory';
 import { IngestMapping } from './ingest_mapping/ingest_mapping';
 import { OAuth2ClientFactory } from './oauth2_client/factory';
 import { OAuth2Client } from './oauth2_client/oauth2_client';
+import { WebAuthnProvider, WebAuthnProviderFactory } from './webauthn_provider';
 
-export type ConfigurationType = EmailProviderType | AuthFlow | OAuth2Client | IngestMapping;
+export type ConfigurationType =
+  | EmailProviderType
+  | AuthFlow
+  | OAuth2Client
+  | IngestMapping
+  | WebAuthnProvider;
 
 export class ConfigurationFactory {
   static createInstance(config: ConfigNode): ConfigurationType {
@@ -50,6 +56,13 @@ export class ConfigurationFactory {
         const flow = IngestMappingFactory.createInstance(
           config.name,
           config.config.ingestMappingConfig,
+        );
+        return Object.assign(flow, meta);
+      }
+      case 'webauthnProviderConfig': {
+        const flow = WebAuthnProviderFactory.createInstance(
+          config.name,
+          config.config.webauthnProviderConfig,
         );
         return Object.assign(flow, meta);
       }
