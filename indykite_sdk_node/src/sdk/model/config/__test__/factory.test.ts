@@ -1,9 +1,12 @@
 import { StringValue } from '../../../../grpc/google/protobuf/wrappers';
 import {
+  AuthenticatorAttachment,
   AuthFlowConfig_Format,
   AuthStyle,
+  ConveyancePreference,
   IngestMappingConfig_Direction,
   ProviderType,
+  UserVerificationRequirement,
 } from '../../../../grpc/indykite/config/v1beta1/model';
 import { SdkError, SdkErrorCode } from '../../../error';
 import { Utils } from '../../../utils/utils';
@@ -11,9 +14,72 @@ import { ConfigurationFactory, ConfigurationType } from '../factory';
 import { OAuth2Client } from '../oauth2_client/oauth2_client';
 import { IngestMapping } from '../ingest_mapping/ingest_mapping';
 import { IngestMappingEntityType } from '../ingest_mapping/ingest_mapping_entity';
+import { WebAuthnProvider } from '../webauthn_provider';
 
 describe('createInstance', () => {
   let instance: ConfigurationType;
+
+  describe('when the kind is "webauthnProviderConfig"', () => {
+    beforeEach(() => {
+      instance = ConfigurationFactory.createInstance({
+        displayName: 'Instance Name',
+        description: StringValue.fromJson('Instance description'),
+        etag: 'etag-token',
+        id: 'instance-id',
+        createTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 6, 21, 11, 13))),
+        updateTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 6, 21, 11, 14))),
+        customerId: 'customer-id',
+        appSpaceId: 'app-space-id',
+        tenantId: 'tenant-id',
+        name: 'instance-name',
+        config: {
+          oneofKind: 'webauthnProviderConfig',
+          webauthnProviderConfig: {
+            attestationPreference: ConveyancePreference.DIRECT,
+            authenticatorAttachment: AuthenticatorAttachment.CROSS_PLATFORM,
+            relyingParties: {
+              'http://localhost:3000': 'default',
+            },
+            requireResidentKey: true,
+            userVerification: UserVerificationRequirement.REQUIRED,
+            authenticationTimeout: { seconds: '60', nanos: 0 },
+            registrationTimeout: { seconds: '2', nanos: 500000 },
+          },
+        },
+      });
+    });
+
+    it('creates a correct instance', () => {
+      const typedInstance = instance as WebAuthnProvider;
+      const expectedInstance = Object.assign(
+        new WebAuthnProvider({
+          name: 'instance-name',
+          attestationPreference: ConveyancePreference.DIRECT,
+          authenticatorAttachment: AuthenticatorAttachment.CROSS_PLATFORM,
+          relyingParties: {
+            'http://localhost:3000': 'default',
+          },
+          requireResidentKey: true,
+          userVerification: UserVerificationRequirement.REQUIRED,
+          authenticationTimeout: 60,
+          registrationTimeout: 2.5,
+        }),
+        {
+          displayName: 'Instance Name',
+          description: 'Instance description',
+          etag: 'etag-token',
+          id: 'instance-id',
+          createTime: new Date(Date.UTC(2022, 6, 21, 11, 13)),
+          updateTime: new Date(Date.UTC(2022, 6, 21, 11, 14)),
+          customerId: 'customer-id',
+          appSpaceId: 'app-space-id',
+          tenantId: 'tenant-id',
+        },
+      );
+
+      expect(typedInstance).toEqual(expectedInstance);
+    });
+  });
 
   describe('when the kind is "ingestMappingConfig"', () => {
     beforeEach(() => {
