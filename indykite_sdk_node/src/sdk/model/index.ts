@@ -1,6 +1,7 @@
 export * from './authorization_decisions';
 export * from './authorization_resource';
 export * from './config';
+export * from './consent';
 export * from './consent_challenge';
 export * from './digitaltwin';
 export * from './digitaltwin_identifier';
@@ -11,4 +12,3 @@ export * from './invitation';
 export * from './property';
 export * from './property_filter';
 export * from './token';
-export * from './consent';

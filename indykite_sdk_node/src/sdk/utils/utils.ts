@@ -1,6 +1,7 @@
 import { JsonObject, JsonValue } from '@protobuf-ts/runtime';
 import { parse, stringify } from 'uuid';
 import { Any } from '../../grpc/google/protobuf/any';
+import { Duration } from '../../grpc/google/protobuf/duration';
 import { Timestamp } from '../../grpc/google/protobuf/timestamp';
 import { PostalAddress } from '../../grpc/indykite/identity/v1beta2/model';
 import { Value } from '../../grpc/indykite/objects/v1beta1/struct';
@@ -123,6 +124,25 @@ export class Utils {
     return {
       seconds: seconds.toString(),
       nanos,
+    };
+  }
+
+  static durationToNumber(duration: Duration): number;
+  static durationToNumber(duration?: Duration): number | undefined;
+  static durationToNumber(duration?: Duration): number | undefined {
+    if (!duration) return;
+
+    return parseInt(duration.seconds) + duration.nanos / 1000000;
+  }
+
+  static numberToDuration(duration: number): Duration;
+  static numberToDuration(duration?: number): Duration | undefined;
+  static numberToDuration(duration?: number): Duration | undefined {
+    if (duration === undefined) return;
+
+    return {
+      seconds: Math.floor(duration).toString(),
+      nanos: (duration * 1000000) % 1000000,
     };
   }
 

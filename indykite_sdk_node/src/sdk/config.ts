@@ -57,6 +57,7 @@ import {
   ServiceAccount,
   ServiceAccountCredential,
   Tenant,
+  WebAuthnProvider,
 } from './model';
 
 /**
@@ -451,6 +452,188 @@ export class ConfigClient {
 
   deleteIngestMappingConfiguration(
     config: IngestMapping,
+    bookmarks: string[] = [],
+  ): Promise<boolean> {
+    const req = {
+      id: config.id,
+      bookmarks,
+    } as DeleteConfigNodeRequest;
+    if (config.etag !== undefined) req.etag = StringValue.create({ value: config.etag });
+
+    return new Promise<boolean>((resolve, reject) => {
+      this.client.deleteConfigNode(req, (err) => {
+        if (err) reject(err);
+        else resolve(true);
+      });
+    });
+  }
+
+  /**
+   * @since 0.2.3
+   * @example
+   * async function example(sdk: ConfigClient) {
+   *   await sdk.createWebAuthnProviderConfiguration(
+   *     'gid:AAAAAnsT41Yr8ENenpK4ogi9gyo',
+   *     new WebAuthnProvider({
+   *       attestationPreference: ConveyancePreference.NONE,
+   *       authenticatorAttachment: AuthenticatorAttachment.DEFAULT,
+   *       name: 'my-webauthn-provider',
+   *       displayName: 'My WebAuthn Provider',
+   *       relyingParties: {
+   *         'http://localhost:3000': 'default',
+   *       },
+   *       requireResidentKey: false,
+   *       userVerification: UserVerificationRequirement.PREFERRED,
+   *     }),
+   *   );
+   * }
+   */
+  createWebAuthnProviderConfiguration(
+    location: string,
+    config: WebAuthnProvider,
+    bookmarks: string[] = [],
+  ): Promise<WebAuthnProvider> {
+    const req = CreateConfigNodeRequest.fromJson({
+      location,
+      name: config.name,
+      bookmarks,
+    });
+    req.config = {
+      oneofKind: 'webauthnProviderConfig',
+      webauthnProviderConfig: config.marshal(),
+    };
+
+    if (config.displayName !== undefined) {
+      req.displayName = StringValue.fromJson(config.displayName);
+    }
+    if (config.description !== undefined) {
+      req.description = StringValue.fromJson(config.description);
+    }
+
+    return new Promise((resolve, reject) => {
+      this.client.createConfigNode(req, (err, response) => {
+        if (err) reject(err);
+        else {
+          if (!response) {
+            reject(new SdkError(SdkErrorCode.SDK_CODE_1, 'No webauthn provider response'));
+            return;
+          }
+
+          config.id = response.id;
+          config.etag = response.etag;
+          config.createTime = Utils.timestampToDate(response.createTime);
+          config.updateTime = Utils.timestampToDate(response.updateTime);
+          resolve(config);
+        }
+      });
+    });
+  }
+
+  /**
+   * @since 0.2.3
+   * @example
+   * async function example(sdk: ConfigClient) {
+   *   const createdWp = await sdk.createWebAuthnProviderConfiguration(
+   *     'gid:AAAAAnsT41Yr8ENenpK4ogi9gyo',
+   *     new WebAuthnProvider({
+   *       attestationPreference: ConveyancePreference.NONE,
+   *       authenticatorAttachment: AuthenticatorAttachment.DEFAULT,
+   *       name: 'my-webauthn-provider',
+   *       displayName: 'My WebAuthn Provider',
+   *       relyingParties: {
+   *         'http://localhost:3000': 'default',
+   *       },
+   *       requireResidentKey: false,
+   *       userVerification: UserVerificationRequirement.PREFERRED,
+   *     }),
+   *   );
+   *
+   *   // Store the WebAuthn provider ID somewhere (createdWp.id) so that you can use the ID later.
+   *
+   *   const wp = await sdk.readWebAuthnProviderConfiguration(createdWp.id);
+   *   console.log(JSON.stringify(wp, null, 2));
+   * }
+   */
+  readWebAuthnProviderConfiguration(
+    id: string,
+    bookmarks: string[] = [],
+  ): Promise<WebAuthnProvider> {
+    return new Promise((resolve, reject) => {
+      this.client.readConfigNode({ id, bookmarks }, (err, response) => {
+        if (err) reject(err);
+        else if (response && response.configNode) {
+          const ret = ConfigurationFactory.createInstance(response.configNode) as WebAuthnProvider;
+          resolve(ret);
+        } else {
+          reject(
+            new SdkError(
+              SdkErrorCode.SDK_CODE_1,
+              'config_error_read_webauthnproviderconfiguration',
+            ),
+          );
+        }
+      });
+    });
+  }
+
+  /**
+   * @since 0.2.3
+   * @example
+   * async function example(sdk: ConfigClient, webAuthnProviderId: string) {
+   *   const wp = await sdk.readWebAuthnProviderConfiguration(webAuthnProviderId);
+   *   wp.displayName = 'New Display name';
+   *   await sdk.updateWebAuthnProviderConfiguration(wp);
+   * }
+   */
+  updateWebAuthnProviderConfiguration(
+    config: WebAuthnProvider,
+    bookmarks: string[] = [],
+  ): Promise<WebAuthnProvider> {
+    const req = {
+      id: config.id,
+      bookmarks,
+    } as UpdateConfigNodeRequest;
+    if (config.etag !== undefined) req.etag = StringValue.create({ value: config.etag });
+    if (config.displayName !== undefined)
+      req.displayName = StringValue.create({ value: config.displayName });
+    if (config.description !== undefined)
+      req.description = StringValue.create({ value: config.description });
+    req.config = {
+      oneofKind: 'webauthnProviderConfig',
+      webauthnProviderConfig: config.marshal(),
+    };
+
+    return new Promise<WebAuthnProvider>((resolve, reject) => {
+      this.client.updateConfigNode(req, (err, response) => {
+        if (err) reject(err);
+        else if (response && response.id === config.id) {
+          config.etag = response.etag;
+          config.updateTime = Utils.timestampToDate(response.updateTime);
+          resolve(config);
+        } else {
+          reject(
+            new SdkError(
+              SdkErrorCode.SDK_CODE_1,
+              `Update returned with different id: req.iq=${config.id}, res.id=${
+                response ? response.id : 'undefined'
+              }`,
+            ),
+          );
+        }
+      });
+    });
+  }
+
+  /**
+   * @since 0.2.3
+   * @example
+   * async function example(sdk: ConfigClient, webAuthnProviderId: string) {
+   *   const wp = await sdk.readWebAuthnProviderConfiguration(webAuthnProviderId);
+   *   await sdk.deleteWebAuthnProviderConfiguration(wp);
+   * }
+   */
+  deleteWebAuthnProviderConfiguration(
+    config: WebAuthnProvider,
     bookmarks: string[] = [],
   ): Promise<boolean> {
     const req = {
