@@ -24,7 +24,6 @@ import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MESSAGE_TYPE } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
-import { Policy } from "../../knowledge_graph/v1beta1/policy";
 import { Int64Value } from "../../../google/protobuf/wrappers";
 import { Value } from "../../objects/v1beta1/struct";
 import { BoolValue } from "../../../google/protobuf/wrappers";
@@ -1595,10 +1594,6 @@ export interface EmailServiceConfig {
         oneofKind: undefined;
     };
     /**
-     * @generated from protobuf field: indykite.config.v1beta1.EmailDefinition authentication_message = 12;
-     */
-    authenticationMessage?: EmailDefinition;
-    /**
      * @generated from protobuf field: indykite.config.v1beta1.EmailDefinition invitation_message = 9;
      */
     invitationMessage?: EmailDefinition;
@@ -2187,9 +2182,11 @@ export enum IngestMappingConfig_Direction {
  */
 export interface AuthorizationPolicyConfig {
     /**
-     * @generated from protobuf field: indykite.knowledge_graph.v1beta1.Policy policy = 1;
+     * Policy in JSON string format.
+     *
+     * @generated from protobuf field: string policy = 1;
      */
-    policy?: Policy;
+    policy: string; // 0.5Mb
 }
 /**
  * @generated from protobuf message indykite.config.v1beta1.KnowledgeGraphSchemaConfig
@@ -5165,7 +5162,6 @@ class EmailServiceConfig$Type extends MessageType<EmailServiceConfig> {
             { no: 5, name: "mailjet", kind: "message", oneof: "provider", T: () => MailJetProviderConfig, options: { "validate.rules": { message: { required: true } } } },
             { no: 6, name: "mailgun", kind: "message", oneof: "provider", T: () => MailgunProviderConfig, options: { "validate.rules": { message: { required: true } } } },
             { no: 7, name: "amazon", kind: "message", oneof: "provider", T: () => AmazonSESProviderConfig, options: { "validate.rules": { message: { required: true } } } },
-            { no: 12, name: "authentication_message", kind: "message", T: () => EmailDefinition },
             { no: 9, name: "invitation_message", kind: "message", T: () => EmailDefinition },
             { no: 10, name: "reset_password_message", kind: "message", T: () => EmailDefinition },
             { no: 11, name: "verification_message", kind: "message", T: () => EmailDefinition },
@@ -5214,9 +5210,6 @@ class EmailServiceConfig$Type extends MessageType<EmailServiceConfig> {
                         amazon: AmazonSESProviderConfig.internalBinaryRead(reader, reader.uint32(), options, (message.provider as any).amazon)
                     };
                     break;
-                case /* indykite.config.v1beta1.EmailDefinition authentication_message */ 12:
-                    message.authenticationMessage = EmailDefinition.internalBinaryRead(reader, reader.uint32(), options, message.authenticationMessage);
-                    break;
                 case /* indykite.config.v1beta1.EmailDefinition invitation_message */ 9:
                     message.invitationMessage = EmailDefinition.internalBinaryRead(reader, reader.uint32(), options, message.invitationMessage);
                     break;
@@ -5259,9 +5252,6 @@ class EmailServiceConfig$Type extends MessageType<EmailServiceConfig> {
         /* indykite.config.v1beta1.AmazonSESProviderConfig amazon = 7; */
         if (message.provider.oneofKind === "amazon")
             AmazonSESProviderConfig.internalBinaryWrite(message.provider.amazon, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
-        /* indykite.config.v1beta1.EmailDefinition authentication_message = 12; */
-        if (message.authenticationMessage)
-            EmailDefinition.internalBinaryWrite(message.authenticationMessage, writer.tag(12, WireType.LengthDelimited).fork(), options).join();
         /* indykite.config.v1beta1.EmailDefinition invitation_message = 9; */
         if (message.invitationMessage)
             EmailDefinition.internalBinaryWrite(message.invitationMessage, writer.tag(9, WireType.LengthDelimited).fork(), options).join();
@@ -6678,11 +6668,11 @@ export const IngestMappingConfig_Relationship = new IngestMappingConfig_Relation
 class AuthorizationPolicyConfig$Type extends MessageType<AuthorizationPolicyConfig> {
     constructor() {
         super("indykite.config.v1beta1.AuthorizationPolicyConfig", [
-            { no: 1, name: "policy", kind: "message", T: () => Policy, options: { "validate.rules": { message: { required: true } } } }
+            { no: 1, name: "policy", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "512000" } } } }
         ]);
     }
     create(value?: PartialMessage<AuthorizationPolicyConfig>): AuthorizationPolicyConfig {
-        const message = {};
+        const message = { policy: "" };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<AuthorizationPolicyConfig>(this, message, value);
@@ -6693,8 +6683,8 @@ class AuthorizationPolicyConfig$Type extends MessageType<AuthorizationPolicyConf
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* indykite.knowledge_graph.v1beta1.Policy policy */ 1:
-                    message.policy = Policy.internalBinaryRead(reader, reader.uint32(), options, message.policy);
+                case /* string policy */ 1:
+                    message.policy = reader.string();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -6708,9 +6698,9 @@ class AuthorizationPolicyConfig$Type extends MessageType<AuthorizationPolicyConf
         return message;
     }
     internalBinaryWrite(message: AuthorizationPolicyConfig, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* indykite.knowledge_graph.v1beta1.Policy policy = 1; */
-        if (message.policy)
-            Policy.internalBinaryWrite(message.policy, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* string policy = 1; */
+        if (message.policy !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.policy);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

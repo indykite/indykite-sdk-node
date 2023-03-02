@@ -26,7 +26,7 @@ import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MESSAGE_TYPE } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 import { Timestamp } from "../../../google/protobuf/timestamp";
-import { DigitalTwinIdentifier } from "../../identity/v1beta2/identity_management_api";
+import { DigitalTwinIdentifier } from "../../identity/v1beta2/model";
 /**
  * @generated from protobuf message indykite.authorization.v1beta1.IsAuthorizedRequest
  */
