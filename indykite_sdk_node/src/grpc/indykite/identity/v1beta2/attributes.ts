@@ -24,8 +24,8 @@ import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MESSAGE_TYPE } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
-import { Value } from "../../objects/v1beta1/struct";
 import { Timestamp } from "../../../google/protobuf/timestamp";
+import { Value } from "../../objects/v1beta1/struct";
 /**
  * @generated from protobuf message indykite.identity.v1beta2.Schema
  */
@@ -146,6 +146,23 @@ export interface PropertyMask {
      * @generated from protobuf field: indykite.identity.v1beta2.PropertyConstraint constraint = 2;
      */
     constraint?: PropertyConstraint;
+}
+/**
+ * @generated from protobuf message indykite.identity.v1beta2.PropertyFilter
+ */
+export interface PropertyFilter {
+    /**
+     * @generated from protobuf field: string type = 1;
+     */
+    type: string;
+    /**
+     * @generated from protobuf field: indykite.objects.v1beta1.Value value = 2;
+     */
+    value?: Value;
+    /**
+     * @generated from protobuf field: string tenant_id = 3;
+     */
+    tenantId: string;
 }
 /**
  * @generated from protobuf message indykite.identity.v1beta2.PropertyMetadata
@@ -620,6 +637,67 @@ class PropertyMask$Type extends MessageType<PropertyMask> {
  * @generated MessageType for protobuf message indykite.identity.v1beta2.PropertyMask
  */
 export const PropertyMask = new PropertyMask$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class PropertyFilter$Type extends MessageType<PropertyFilter> {
+    constructor() {
+        super("indykite.identity.v1beta2.PropertyFilter", [
+            { no: 1, name: "type", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "2", maxLen: "20" } } } },
+            { no: 2, name: "value", kind: "message", T: () => Value, options: { "validate.rules": { message: { required: true } } } },
+            { no: 3, name: "tenant_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "27", maxLen: "100", pattern: "^gid:[A-Za-z0-9-_]{27,100}$", ignoreEmpty: true } } } }
+        ]);
+    }
+    create(value?: PartialMessage<PropertyFilter>): PropertyFilter {
+        const message = { type: "", tenantId: "" };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<PropertyFilter>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: PropertyFilter): PropertyFilter {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string type */ 1:
+                    message.type = reader.string();
+                    break;
+                case /* indykite.objects.v1beta1.Value value */ 2:
+                    message.value = Value.internalBinaryRead(reader, reader.uint32(), options, message.value);
+                    break;
+                case /* string tenant_id */ 3:
+                    message.tenantId = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: PropertyFilter, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string type = 1; */
+        if (message.type !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.type);
+        /* indykite.objects.v1beta1.Value value = 2; */
+        if (message.value)
+            Value.internalBinaryWrite(message.value, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* string tenant_id = 3; */
+        if (message.tenantId !== "")
+            writer.tag(3, WireType.LengthDelimited).string(message.tenantId);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message indykite.identity.v1beta2.PropertyFilter
+ */
+export const PropertyFilter = new PropertyFilter$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class PropertyMetadata$Type extends MessageType<PropertyMetadata> {
     constructor() {
