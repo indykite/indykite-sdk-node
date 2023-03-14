@@ -1,4 +1,4 @@
-import { DigitalTwinIdentifier as DigitalTwinIdentifierModel } from '../../grpc/indykite/identity/v1beta2/identity_management_api';
+import { DigitalTwinIdentifier as DigitalTwinIdentifierModel } from '../../grpc/indykite/identity/v1beta2/model';
 import { Utils } from '../utils/utils';
 import { DigitalTwinCore } from './digitaltwin';
 import { PropertyFilter } from './property_filter';
