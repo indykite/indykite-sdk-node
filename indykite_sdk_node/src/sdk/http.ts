@@ -7,6 +7,11 @@ export interface HTTPResponse {
   statusCode: number;
 }
 
+/**
+ * This HTTP client returns an authenticated HTTP client that always injects a valid token.
+ * @category Clients
+ * @since 0.2.3
+ */
 export class HTTPClient {
   private tokenSource: TokenSource;
 
@@ -14,14 +19,41 @@ export class HTTPClient {
     this.tokenSource = TokenSource.reuseApplicationTokenSource(undefined, appCredential);
   }
 
+  /**
+   * Create new HTTPClient instance.
+   * @since 0.2.3
+   * @example
+   * HTTPClient.createInstance().then(async (client) => {
+   *   const x = await client.post(
+   *     'https://jarvis.indykite.com/knowledge/gid:appSpaceGid',
+   *     'application/json',
+   *     '{"query":"query ExampleQuery { identityProperties { id }}","variables":{},"operationName":"ExampleQuery"}',
+   *   );
+   *
+   *   console.log(JSON.stringify(x, null, 2));
+   * });
+   */
   static createInstance(appCredential?: string | unknown): Promise<HTTPClient> {
     return Promise.resolve(new HTTPClient(appCredential));
   }
 
+  /**
+   * Get a token source for generating authorization header.
+   * @since 0.2.3
+   * @example
+   * const tokenSource = HTTPClient.getTokenSource();
+   * const token = await tokenSource.getApplicationToken();
+   * console.log(JSON.stringify(token, null, 2));
+   * const accessToken = token.accessToken;
+   */
   static getTokenSource(): TokenSource {
     return TokenSource.reuseApplicationTokenSource();
   }
 
+  /**
+   * Send a GET request with the authorization header.
+   * @since 0.2.3
+   */
   async get(url: string): Promise<HTTPResponse> {
     const token = await this.getToken();
     return new Promise((resolve, reject) => {
@@ -53,6 +85,20 @@ export class HTTPClient {
     });
   }
 
+  /**
+   * Send a POST request with the authorization header.
+   * @since 0.2.3
+   * @example
+   * HTTPClient.createInstance().then(async (client) => {
+   *   const x = await client.post(
+   *     'https://jarvis.indykite.com/knowledge/gid:appSpaceGid',
+   *     'application/json',
+   *     '{"query":"query ExampleQuery { identityProperties { id }}","variables":{},"operationName":"ExampleQuery"}',
+   *   );
+   *
+   *   console.log(JSON.stringify(x, null, 2));
+   * });
+   */
   async post(url: string, contentType: string, body: string): Promise<HTTPResponse> {
     const token = await this.getToken();
     return new Promise((resolve, reject) => {
