@@ -7,7 +7,6 @@ import {
   CreateOAuth2ConsentVerifierRequest,
   CreateInvitationRequest,
   DeleteDigitalTwinRequest,
-  DigitalTwinIdentifier,
   EnrichTokenRequest,
   GetDigitalTwinRequest,
   GetPasswordCredentialRequest,
@@ -28,6 +27,7 @@ import {
 } from '../grpc/indykite/identity/v1beta2/identity_management_api';
 import {
   DigitalTwin,
+  DigitalTwinIdentifier,
   DigitalTwinKind,
   IdentityTokenInfo,
 } from '../grpc/indykite/identity/v1beta2/model';

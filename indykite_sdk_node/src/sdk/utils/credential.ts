@@ -7,6 +7,7 @@ export abstract class Credential {
   protected endpoint: string = JARVIS_DEFAULT_ENDPOINT;
   privateKey: JWK;
   protected jwt?: string;
+  protected expirationTime?: Date;
 
   protected constructor(privateKey: JWK) {
     this.privateKey = privateKey;
@@ -18,7 +19,14 @@ export abstract class Credential {
     if (this.jwt) {
       return this.jwt;
     }
-    throw new SdkError(SdkErrorCode.SDK_CODE_1, 'Must run build() function first');
+    throw new SdkError(SdkErrorCode.SDK_CODE_1, 'Must run buildToken() function first');
+  }
+
+  getExpirationTime(): Date {
+    if (this.expirationTime) {
+      return this.expirationTime;
+    }
+    throw new SdkError(SdkErrorCode.SDK_CODE_1, 'Must run buildToken() function first');
   }
 
   getEndpoint(): string {
