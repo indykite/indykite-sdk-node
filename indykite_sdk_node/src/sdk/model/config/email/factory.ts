@@ -42,9 +42,9 @@ export class EmailProviderFactory {
 
   static createInstance(name: string, provider: grpc.EmailServiceConfig): EmailProviderType {
     const messages = {} as EmailProvider;
-    if (provider.authenticationMessage?.email)
-      messages.authenticationMessage = EmailProviderFactory.createMessageOrTemplate(
-        provider.authenticationMessage.email as EmailDefinitionType,
+    if (provider.oneTimePasswordMessage?.email)
+      messages.oneTimePasswordMessage = EmailProviderFactory.createMessageOrTemplate(
+        provider.oneTimePasswordMessage.email as EmailDefinitionType,
       );
     if (provider.invitationMessage?.email)
       messages.invitationMessage = EmailProviderFactory.createMessageOrTemplate(

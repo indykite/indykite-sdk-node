@@ -53,7 +53,7 @@ function createSendgridObject(msg = true): SendgridEmailProvider {
 
   if (msg) {
     emailMsg.withHtmlContent('<html></html>');
-    sendgrid.setMessage('authentication', emailMsg);
+    sendgrid.setMessage('oneTimePassword', emailMsg);
     sendgrid.setMessage('invitation', tmpl);
   } else {
     emailMsg.withTextContent('Text Content');
@@ -242,7 +242,7 @@ describe('Read, Update, Delete - Email Configuration', () => {
             },
           },
           invitationMessage: emailTmpl,
-          authenticationMessage: emailMsg,
+          oneTimePasswordMessage: emailMsg,
           resetPasswordMessage: emailMsg,
           verificationMessage: emailMsg,
         },
@@ -303,7 +303,7 @@ describe('Read, Update, Delete - Email Configuration', () => {
       sandboxMode: true,
       host: { value: 'HOST' },
       ipPoolName: { value: 'IP_POOL_NAME' },
-      authenticationMessage: expectedEmailMsg,
+      oneTimePasswordMessage: expectedEmailMsg,
       invitationMessage: expectedEmailTmpl,
       resetPasswordMessage: expectedEmailMsg,
       verificationMessage: expectedEmailMsg,
@@ -395,7 +395,7 @@ describe('Read, Update, Delete - Email Configuration', () => {
             },
           },
           invitationMessage: emailTmpl,
-          authenticationMessage: emailMsg,
+          oneTimePasswordMessage: emailMsg,
           resetPasswordMessage: emailMsg,
           verificationMessage: emailMsg,
         },
@@ -454,7 +454,7 @@ describe('Read, Update, Delete - Email Configuration', () => {
       sandboxMode: true,
       host: { value: 'HOST' },
       ipPoolName: { value: 'IP_POOL_NAME' },
-      authenticationMessage: expectedEmailMsg,
+      oneTimePasswordMessage: expectedEmailMsg,
       invitationMessage: expectedEmailTmpl,
       resetPasswordMessage: expectedEmailMsg,
       verificationMessage: expectedEmailMsg,

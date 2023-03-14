@@ -31,7 +31,7 @@ describe('Crednetial', () => {
     const token = credObj.buildToken();
     expect(token).resolves.toHaveProperty('jwt');
 
-    const err = new SdkError(SdkErrorCode.SDK_CODE_1, 'Must run build() function first');
+    const err = new SdkError(SdkErrorCode.SDK_CODE_1, 'Must run buildToken() function first');
     try {
       const newCred = ApplicationCredential.fromObject(applicationTokenMock);
       newCred.token;
