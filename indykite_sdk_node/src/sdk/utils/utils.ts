@@ -126,6 +126,10 @@ export class Utils {
     };
   }
 
+  static dateToSeconds(date: Date): number {
+    return Math.floor(date.getTime() / 1000);
+  }
+
   static deserializeValue(v: Value): unknown {
     if (v && v.value) {
       switch (v.value.oneofKind) {
