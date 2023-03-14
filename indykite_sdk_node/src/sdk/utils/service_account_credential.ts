@@ -3,6 +3,7 @@ import { v4 } from 'uuid';
 
 import { SdkErrorCode, SdkError } from '../error';
 import { Credential } from './credential';
+import { Utils } from './utils';
 
 export class ServiceAccountCredential extends Credential {
   serviceAccountId: string;
@@ -40,11 +41,13 @@ export class ServiceAccountCredential extends Credential {
     if (!this.privateKey.alg) {
       throw new SdkError(SdkErrorCode.SDK_CODE_1, 'Missing private key algorithm');
     }
+    this.expirationTime = new Date();
+    this.expirationTime.setDate(this.expirationTime.getDate() + 1);
     this.jwt = await new SignJWT({})
       .setProtectedHeader({ alg: this.privateKey.alg, kid: this.privateKey.kid })
       .setIssuedAt()
       .setIssuer(this.serviceAccountId)
-      .setExpirationTime('1d')
+      .setExpirationTime(Utils.dateToSeconds(this.expirationTime))
       .setJti(String(v4()))
       .setSubject(this.serviceAccountId)
       .sign(parsedKey);
