@@ -11,7 +11,7 @@ ConfigClient.createInstance()
       true,
     );
     sendgrid.setMessage(
-      'authentication',
+      'oneTimePassword',
       new EmailMessage([{ address: 'test+to@indykite.com', name: 'Test To' }], 'subject'),
     );
     sendgrid.defaultFromAddress = {
