@@ -1,4 +1,19 @@
 # Changelog
+## [0.2.3](https://github.com/indykite/indykite-sdk-node/compare/v0.2.2...v0.2.3) (2023-03-16)
+
+
+### Features
+
+* add refreshable token source ([270f344](https://github.com/indykite/indykite-sdk-node/commit/270f3446039108278b7ae0ebad873541d1297b9d))
+* add register dt without credential ([9378cf8](https://github.com/indykite/indykite-sdk-node/commit/9378cf8b4230b5f057c17d64f49e137fc847bfda))
+* add webauthn provider configuration ([32195eb](https://github.com/indykite/indykite-sdk-node/commit/32195ebd5c702cb65c0e46a6f38ab635bc5f6ab9))
+* remove isauthorized method from identity client ([86b722b](https://github.com/indykite/indykite-sdk-node/commit/86b722b9f6260f384c978491bec13a54d74033c7))
+
+
+### Bug Fixes
+
+* allow to pass etags to delete app agent creds ([e9f7624](https://github.com/indykite/indykite-sdk-node/commit/e9f7624b896d227db2e792000ceb50e76b3d3b20))
+
 ## [0.2.2](https://github.com/indykite/indykite-sdk-node/compare/v0.2.1...v0.2.2) (2023-01-13)
 
 
