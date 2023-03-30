@@ -31,27 +31,6 @@ afterEach(() => {
 
 describe('registerDigitalTwinWithoutCredential', () => {
   describe('when the response is successful', () => {
-    const mockFunc = jest.fn(
-      (
-        request: RegisterDigitalTwinWithoutCredentialRequest,
-        callback:
-          | Metadata
-          | CallOptions
-          | ((
-              error: ServiceError | null,
-              response?: RegisterDigitalTwinWithoutCredentialResponse,
-            ) => void),
-      ): SurfaceCall => {
-        if (typeof callback === 'function')
-          callback(null, {
-            digitalTwin: returnedDt.marshal(),
-            results: returnedPatchResults,
-            bookmark: '',
-          });
-        return {} as SurfaceCall;
-      },
-    );
-
     const returnedDt = new DigitalTwinCore(
       generateRandomGID(),
       tenantId,
@@ -70,8 +49,30 @@ describe('registerDigitalTwinWithoutCredential', () => {
         },
       },
     ];
+    let mockFunc: jest.Mock;
 
     beforeEach(async () => {
+      mockFunc = jest.fn(
+        (
+          request: RegisterDigitalTwinWithoutCredentialRequest,
+          callback:
+            | Metadata
+            | CallOptions
+            | ((
+                error: ServiceError | null,
+                response?: RegisterDigitalTwinWithoutCredentialResponse,
+              ) => void),
+        ): SurfaceCall => {
+          if (typeof callback === 'function')
+            callback(null, {
+              digitalTwin: returnedDt.marshal(),
+              results: returnedPatchResults,
+              bookmark: '',
+            });
+          return {} as SurfaceCall;
+        },
+      );
+
       mockFunc.mockClear();
       jest
         .spyOn(sdk['client'], 'registerDigitalTwinWithoutCredential')
@@ -164,36 +165,6 @@ describe('registerDigitalTwinWithoutCredential', () => {
   });
 
   describe('when the response is successful with an error', () => {
-    const mockFunc = jest.fn(
-      (
-        request: RegisterDigitalTwinWithoutCredentialRequest,
-        callback:
-          | Metadata
-          | CallOptions
-          | ((
-              error: ServiceError | null,
-              response?: RegisterDigitalTwinWithoutCredentialResponse,
-            ) => void),
-      ): SurfaceCall => {
-        if (typeof callback === 'function')
-          callback(null, {
-            results: [
-              {
-                index: '0',
-                result: {
-                  oneofKind: 'error',
-                  error: {
-                    message: ['Mocked error'],
-                  },
-                },
-              },
-            ],
-            bookmark: '',
-          });
-        return {} as SurfaceCall;
-      },
-    );
-
     const returnedPatchResults: RegisterDigitalTwinWithoutCredentialResponse['results'] = [
       {
         index: '0',
@@ -206,10 +177,39 @@ describe('registerDigitalTwinWithoutCredential', () => {
       },
     ];
 
+    let mockFunc: jest.Mock;
     let result: Awaited<ReturnType<typeof sdk.registerDigitalTwinWithoutCredential>>;
 
     beforeEach(async () => {
-      mockFunc.mockClear();
+      mockFunc = jest.fn(
+        (
+          request: RegisterDigitalTwinWithoutCredentialRequest,
+          callback:
+            | Metadata
+            | CallOptions
+            | ((
+                error: ServiceError | null,
+                response?: RegisterDigitalTwinWithoutCredentialResponse,
+              ) => void),
+        ): SurfaceCall => {
+          if (typeof callback === 'function')
+            callback(null, {
+              results: [
+                {
+                  index: '0',
+                  result: {
+                    oneofKind: 'error',
+                    error: {
+                      message: ['Mocked error'],
+                    },
+                  },
+                },
+              ],
+              bookmark: '',
+            });
+          return {} as SurfaceCall;
+        },
+      );
       jest
         .spyOn(sdk['client'], 'registerDigitalTwinWithoutCredential')
         .mockImplementation(mockFunc);
