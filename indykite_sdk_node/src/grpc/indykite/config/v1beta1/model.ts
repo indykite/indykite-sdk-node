@@ -2187,6 +2187,18 @@ export interface AuthorizationPolicyConfig {
      * @generated from protobuf field: string policy = 1;
      */
     policy: string; // 0.5Mb
+    /**
+     * Policy status. Valid values: ACTIVE|INACTIVE
+     *
+     * @generated from protobuf field: string status = 2;
+     */
+    status: string;
+    /**
+     * Optional policy tags
+     *
+     * @generated from protobuf field: repeated string tags = 3;
+     */
+    tags: string[];
 }
 /**
  * @generated from protobuf message indykite.config.v1beta1.KnowledgeGraphSchemaConfig
@@ -6668,11 +6680,13 @@ export const IngestMappingConfig_Relationship = new IngestMappingConfig_Relation
 class AuthorizationPolicyConfig$Type extends MessageType<AuthorizationPolicyConfig> {
     constructor() {
         super("indykite.config.v1beta1.AuthorizationPolicyConfig", [
-            { no: 1, name: "policy", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "512000" } } } }
+            { no: 1, name: "policy", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "512000" } } } },
+            { no: 2, name: "status", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 3, name: "tags", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { unique: true, items: { string: { minLen: "1", maxLen: "20", pattern: "^[a-zA-Z0-9]+$" } }, ignoreEmpty: true } } } }
         ]);
     }
     create(value?: PartialMessage<AuthorizationPolicyConfig>): AuthorizationPolicyConfig {
-        const message = { policy: "" };
+        const message = { policy: "", status: "", tags: [] };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<AuthorizationPolicyConfig>(this, message, value);
@@ -6685,6 +6699,12 @@ class AuthorizationPolicyConfig$Type extends MessageType<AuthorizationPolicyConf
             switch (fieldNo) {
                 case /* string policy */ 1:
                     message.policy = reader.string();
+                    break;
+                case /* string status */ 2:
+                    message.status = reader.string();
+                    break;
+                case /* repeated string tags */ 3:
+                    message.tags.push(reader.string());
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -6701,6 +6721,12 @@ class AuthorizationPolicyConfig$Type extends MessageType<AuthorizationPolicyConf
         /* string policy = 1; */
         if (message.policy !== "")
             writer.tag(1, WireType.LengthDelimited).string(message.policy);
+        /* string status = 2; */
+        if (message.status !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.status);
+        /* repeated string tags = 3; */
+        for (let i = 0; i < message.tags.length; i++)
+            writer.tag(3, WireType.LengthDelimited).string(message.tags[i]);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

@@ -27,6 +27,8 @@ import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MESSAGE_TYPE } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
+import { CredentialReference } from "./import";
+import { PropertyFilter } from "./attributes";
 import { ConsentReceipt } from "./consent";
 import { Struct } from "../../../google/protobuf/struct";
 import { OAuth2TokenResponse } from "./model";
@@ -116,10 +118,14 @@ export interface ChangePasswordRequest {
         oneofKind: undefined;
     };
     /**
+     * Password is the new password value to set. It must comply with the password policy set for the target.
+     *
      * @generated from protobuf field: string password = 3;
      */
     password: string;
     /**
+     * IgnorePolicy allows to bypass the target policy. The length constrains will be applied regardless.
+     *
      * @generated from protobuf field: bool ignore_policy = 4;
      */
     ignorePolicy: boolean;
@@ -1299,6 +1305,74 @@ export interface RevokeConsentRequest {
 export interface RevokeConsentResponse {
 }
 /**
+ * @generated from protobuf message indykite.identity.v1beta2.CreateCustomLoginTokenRequest
+ */
+export interface CreateCustomLoginTokenRequest {
+    /**
+     * @generated from protobuf oneof: uid
+     */
+    uid: {
+        oneofKind: "digitalTwin";
+        /**
+         * DigitalTwin identifies the subject unambiguously.
+         *
+         * @generated from protobuf field: indykite.identity.v1beta2.DigitalTwin digital_twin = 1;
+         */
+        digitalTwin: DigitalTwin;
+    } | {
+        oneofKind: "propertyFilter";
+        /**
+         * PropertyFilter to find subject by unique property value in the system.
+         *
+         * @generated from protobuf field: indykite.identity.v1beta2.PropertyFilter property_filter = 2;
+         */
+        propertyFilter: PropertyFilter;
+    } | {
+        oneofKind: "credentialReference";
+        /**
+         * CredentialReference to find subject by credential previously registered in the system.
+         *
+         * @generated from protobuf field: indykite.identity.v1beta2.CredentialReference credential_reference = 3;
+         */
+        credentialReference: CredentialReference;
+    } | {
+        oneofKind: undefined;
+    };
+    /**
+     * Claims to be enriched in the session, will also be populated in the access token after a refresh.
+     *
+     * @generated from protobuf field: google.protobuf.Struct token_claims = 4;
+     */
+    tokenClaims?: Struct;
+    /**
+     * Claims to be enriched in the session, but will not be populated in the access token.
+     *
+     * @generated from protobuf field: google.protobuf.Struct session_claims = 5;
+     */
+    sessionClaims?: Struct;
+}
+/**
+ * @generated from protobuf message indykite.identity.v1beta2.CreateCustomLoginTokenResponse
+ */
+export interface CreateCustomLoginTokenResponse {
+    /**
+     * Token encapsulated the DigitalTwin ID and custom claims with the fact that custom authentication credential was
+     * used to verify the identity of the DigitalTwin and the application ID.
+     * This token can be exchanged to valid IndyKite access token and refresh token via the Authentication API when it
+     * used with the right AuthFlow with the right application.
+     *
+     * @generated from protobuf field: string token = 1;
+     */
+    token: string;
+    /**
+     * DigitalTwin the subject which gets associated with the token. If this and token is empty that
+     * signals the specified uid in request didn't find any existing subject in the system.
+     *
+     * @generated from protobuf field: indykite.identity.v1beta2.DigitalTwin digital_twin = 2;
+     */
+    digitalTwin?: DigitalTwin;
+}
+/**
  * @generated from protobuf enum indykite.identity.v1beta2.CredentialControl
  */
 export enum CredentialControl {
@@ -1457,7 +1531,7 @@ export const TokenIntrospectResponse = new TokenIntrospectResponse$Type();
 class StartForgottenPasswordFlowRequest$Type extends MessageType<StartForgottenPasswordFlowRequest> {
     constructor() {
         super("indykite.identity.v1beta2.StartForgottenPasswordFlowRequest", [
-            { no: 1, name: "digital_twin", kind: "message", T: () => DigitalTwin }
+            { no: 1, name: "digital_twin", kind: "message", T: () => DigitalTwin, options: { "validate.rules": { message: { required: true } } } }
         ]);
     }
     create(value?: PartialMessage<StartForgottenPasswordFlowRequest>): StartForgottenPasswordFlowRequest {
@@ -1530,9 +1604,9 @@ export const StartForgottenPasswordFlowResponse = new StartForgottenPasswordFlow
 class ChangePasswordRequest$Type extends MessageType<ChangePasswordRequest> {
     constructor() {
         super("indykite.identity.v1beta2.ChangePasswordRequest", [
-            { no: 1, name: "token", kind: "scalar", oneof: "uid", T: 9 /*ScalarType.STRING*/ },
+            { no: 1, name: "token", kind: "scalar", oneof: "uid", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "128", maxLen: "4096" } } } },
             { no: 2, name: "digital_twin", kind: "message", oneof: "uid", T: () => DigitalTwin },
-            { no: 3, name: "password", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 3, name: "password", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "4", maxLen: "254" } } } },
             { no: 4, name: "ignore_policy", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
@@ -5042,6 +5116,144 @@ class RevokeConsentResponse$Type extends MessageType<RevokeConsentResponse> {
  * @generated MessageType for protobuf message indykite.identity.v1beta2.RevokeConsentResponse
  */
 export const RevokeConsentResponse = new RevokeConsentResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class CreateCustomLoginTokenRequest$Type extends MessageType<CreateCustomLoginTokenRequest> {
+    constructor() {
+        super("indykite.identity.v1beta2.CreateCustomLoginTokenRequest", [
+            { no: 1, name: "digital_twin", kind: "message", oneof: "uid", T: () => DigitalTwin, options: { "validate.rules": { message: { required: true } } } },
+            { no: 2, name: "property_filter", kind: "message", oneof: "uid", T: () => PropertyFilter, options: { "validate.rules": { message: { required: true } } } },
+            { no: 3, name: "credential_reference", kind: "message", oneof: "uid", T: () => CredentialReference },
+            { no: 4, name: "token_claims", kind: "message", T: () => Struct },
+            { no: 5, name: "session_claims", kind: "message", T: () => Struct }
+        ]);
+    }
+    create(value?: PartialMessage<CreateCustomLoginTokenRequest>): CreateCustomLoginTokenRequest {
+        const message = { uid: { oneofKind: undefined } };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<CreateCustomLoginTokenRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: CreateCustomLoginTokenRequest): CreateCustomLoginTokenRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* indykite.identity.v1beta2.DigitalTwin digital_twin */ 1:
+                    message.uid = {
+                        oneofKind: "digitalTwin",
+                        digitalTwin: DigitalTwin.internalBinaryRead(reader, reader.uint32(), options, (message.uid as any).digitalTwin)
+                    };
+                    break;
+                case /* indykite.identity.v1beta2.PropertyFilter property_filter */ 2:
+                    message.uid = {
+                        oneofKind: "propertyFilter",
+                        propertyFilter: PropertyFilter.internalBinaryRead(reader, reader.uint32(), options, (message.uid as any).propertyFilter)
+                    };
+                    break;
+                case /* indykite.identity.v1beta2.CredentialReference credential_reference */ 3:
+                    message.uid = {
+                        oneofKind: "credentialReference",
+                        credentialReference: CredentialReference.internalBinaryRead(reader, reader.uint32(), options, (message.uid as any).credentialReference)
+                    };
+                    break;
+                case /* google.protobuf.Struct token_claims */ 4:
+                    message.tokenClaims = Struct.internalBinaryRead(reader, reader.uint32(), options, message.tokenClaims);
+                    break;
+                case /* google.protobuf.Struct session_claims */ 5:
+                    message.sessionClaims = Struct.internalBinaryRead(reader, reader.uint32(), options, message.sessionClaims);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: CreateCustomLoginTokenRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* indykite.identity.v1beta2.DigitalTwin digital_twin = 1; */
+        if (message.uid.oneofKind === "digitalTwin")
+            DigitalTwin.internalBinaryWrite(message.uid.digitalTwin, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* indykite.identity.v1beta2.PropertyFilter property_filter = 2; */
+        if (message.uid.oneofKind === "propertyFilter")
+            PropertyFilter.internalBinaryWrite(message.uid.propertyFilter, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* indykite.identity.v1beta2.CredentialReference credential_reference = 3; */
+        if (message.uid.oneofKind === "credentialReference")
+            CredentialReference.internalBinaryWrite(message.uid.credentialReference, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        /* google.protobuf.Struct token_claims = 4; */
+        if (message.tokenClaims)
+            Struct.internalBinaryWrite(message.tokenClaims, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+        /* google.protobuf.Struct session_claims = 5; */
+        if (message.sessionClaims)
+            Struct.internalBinaryWrite(message.sessionClaims, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message indykite.identity.v1beta2.CreateCustomLoginTokenRequest
+ */
+export const CreateCustomLoginTokenRequest = new CreateCustomLoginTokenRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class CreateCustomLoginTokenResponse$Type extends MessageType<CreateCustomLoginTokenResponse> {
+    constructor() {
+        super("indykite.identity.v1beta2.CreateCustomLoginTokenResponse", [
+            { no: 1, name: "token", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 2, name: "digital_twin", kind: "message", T: () => DigitalTwin }
+        ]);
+    }
+    create(value?: PartialMessage<CreateCustomLoginTokenResponse>): CreateCustomLoginTokenResponse {
+        const message = { token: "" };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<CreateCustomLoginTokenResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: CreateCustomLoginTokenResponse): CreateCustomLoginTokenResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string token */ 1:
+                    message.token = reader.string();
+                    break;
+                case /* indykite.identity.v1beta2.DigitalTwin digital_twin */ 2:
+                    message.digitalTwin = DigitalTwin.internalBinaryRead(reader, reader.uint32(), options, message.digitalTwin);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: CreateCustomLoginTokenResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string token = 1; */
+        if (message.token !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.token);
+        /* indykite.identity.v1beta2.DigitalTwin digital_twin = 2; */
+        if (message.digitalTwin)
+            DigitalTwin.internalBinaryWrite(message.digitalTwin, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message indykite.identity.v1beta2.CreateCustomLoginTokenResponse
+ */
+export const CreateCustomLoginTokenResponse = new CreateCustomLoginTokenResponse$Type();
 /**
  * @generated ServiceType for protobuf service indykite.identity.v1beta2.IdentityManagementAPI
  */
@@ -5076,5 +5288,6 @@ export const IdentityManagementAPI = new ServiceType("indykite.identity.v1beta2.
     { name: "GetPasswordCredential", options: {}, I: GetPasswordCredentialRequest, O: GetPasswordCredentialResponse },
     { name: "UpdatePasswordCredential", options: {}, I: UpdatePasswordCredentialRequest, O: UpdatePasswordCredentialResponse },
     { name: "GetAccessToken", options: {}, I: GetAccessTokenRequest, O: GetAccessTokenResponse },
-    { name: "SessionIntrospect", options: { "google.api.http": { post: "/identity/session/introspect", body: "*" } }, I: SessionIntrospectRequest, O: SessionIntrospectResponse }
+    { name: "SessionIntrospect", options: { "google.api.http": { post: "/identity/session/introspect", body: "*" } }, I: SessionIntrospectRequest, O: SessionIntrospectResponse },
+    { name: "CreateCustomLoginToken", options: {}, I: CreateCustomLoginTokenRequest, O: CreateCustomLoginTokenResponse }
 ]);

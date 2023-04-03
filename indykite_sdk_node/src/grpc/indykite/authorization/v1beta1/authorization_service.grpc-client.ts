@@ -17,6 +17,8 @@
 import { AuthorizationAPI } from "./authorization_service";
 import type { BinaryWriteOptions } from "@protobuf-ts/runtime";
 import type { BinaryReadOptions } from "@protobuf-ts/runtime";
+import type { WhatAuthorizedResponse } from "./authorization_service";
+import type { WhatAuthorizedRequest } from "./authorization_service";
 import type { IsAuthorizedResponse } from "./authorization_service";
 import type { IsAuthorizedRequest } from "./authorization_service";
 import * as grpc from "@grpc/grpc-js";
@@ -33,6 +35,13 @@ export interface IAuthorizationAPIClient {
     isAuthorized(input: IsAuthorizedRequest, metadata: grpc.Metadata, callback: (err: grpc.ServiceError | null, value?: IsAuthorizedResponse) => void): grpc.ClientUnaryCall;
     isAuthorized(input: IsAuthorizedRequest, options: grpc.CallOptions, callback: (err: grpc.ServiceError | null, value?: IsAuthorizedResponse) => void): grpc.ClientUnaryCall;
     isAuthorized(input: IsAuthorizedRequest, callback: (err: grpc.ServiceError | null, value?: IsAuthorizedResponse) => void): grpc.ClientUnaryCall;
+    /**
+     * @generated from protobuf rpc: WhatAuthorized(indykite.authorization.v1beta1.WhatAuthorizedRequest) returns (indykite.authorization.v1beta1.WhatAuthorizedResponse);
+     */
+    whatAuthorized(input: WhatAuthorizedRequest, metadata: grpc.Metadata, options: grpc.CallOptions, callback: (err: grpc.ServiceError | null, value?: WhatAuthorizedResponse) => void): grpc.ClientUnaryCall;
+    whatAuthorized(input: WhatAuthorizedRequest, metadata: grpc.Metadata, callback: (err: grpc.ServiceError | null, value?: WhatAuthorizedResponse) => void): grpc.ClientUnaryCall;
+    whatAuthorized(input: WhatAuthorizedRequest, options: grpc.CallOptions, callback: (err: grpc.ServiceError | null, value?: WhatAuthorizedResponse) => void): grpc.ClientUnaryCall;
+    whatAuthorized(input: WhatAuthorizedRequest, callback: (err: grpc.ServiceError | null, value?: WhatAuthorizedResponse) => void): grpc.ClientUnaryCall;
 }
 /**
  * AuthorizationAPI represents the service interface for authorization.
@@ -51,5 +60,12 @@ export class AuthorizationAPIClient extends grpc.Client implements IAuthorizatio
     isAuthorized(input: IsAuthorizedRequest, metadata: grpc.Metadata | grpc.CallOptions | ((err: grpc.ServiceError | null, value?: IsAuthorizedResponse) => void), options?: grpc.CallOptions | ((err: grpc.ServiceError | null, value?: IsAuthorizedResponse) => void), callback?: ((err: grpc.ServiceError | null, value?: IsAuthorizedResponse) => void)): grpc.ClientUnaryCall {
         const method = AuthorizationAPI.methods[0];
         return this.makeUnaryRequest<IsAuthorizedRequest, IsAuthorizedResponse>(`/${AuthorizationAPI.typeName}/${method.name}`, (value: IsAuthorizedRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): IsAuthorizedResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), (options as any), (callback as any));
+    }
+    /**
+     * @generated from protobuf rpc: WhatAuthorized(indykite.authorization.v1beta1.WhatAuthorizedRequest) returns (indykite.authorization.v1beta1.WhatAuthorizedResponse);
+     */
+    whatAuthorized(input: WhatAuthorizedRequest, metadata: grpc.Metadata | grpc.CallOptions | ((err: grpc.ServiceError | null, value?: WhatAuthorizedResponse) => void), options?: grpc.CallOptions | ((err: grpc.ServiceError | null, value?: WhatAuthorizedResponse) => void), callback?: ((err: grpc.ServiceError | null, value?: WhatAuthorizedResponse) => void)): grpc.ClientUnaryCall {
+        const method = AuthorizationAPI.methods[1];
+        return this.makeUnaryRequest<WhatAuthorizedRequest, WhatAuthorizedResponse>(`/${AuthorizationAPI.typeName}/${method.name}`, (value: WhatAuthorizedRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): WhatAuthorizedResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), (options as any), (callback as any));
     }
 }

@@ -17,6 +17,8 @@
 import { IdentityManagementAPI } from "./identity_management_api";
 import type { BinaryWriteOptions } from "@protobuf-ts/runtime";
 import type { BinaryReadOptions } from "@protobuf-ts/runtime";
+import type { CreateCustomLoginTokenResponse } from "./identity_management_api";
+import type { CreateCustomLoginTokenRequest } from "./identity_management_api";
 import type { SessionIntrospectResponse } from "./identity_management_api";
 import type { SessionIntrospectRequest } from "./identity_management_api";
 import type { GetAccessTokenResponse } from "./identity_management_api";
@@ -400,6 +402,19 @@ export interface IIdentityManagementAPIClient {
     sessionIntrospect(input: SessionIntrospectRequest, metadata: grpc.Metadata, callback: (err: grpc.ServiceError | null, value?: SessionIntrospectResponse) => void): grpc.ClientUnaryCall;
     sessionIntrospect(input: SessionIntrospectRequest, options: grpc.CallOptions, callback: (err: grpc.ServiceError | null, value?: SessionIntrospectResponse) => void): grpc.ClientUnaryCall;
     sessionIntrospect(input: SessionIntrospectRequest, callback: (err: grpc.ServiceError | null, value?: SessionIntrospectResponse) => void): grpc.ClientUnaryCall;
+    /**
+     * CreateCustomLoginToken creates a signed custom authentication token with the specified user ID.
+     *
+     * The resulting JWT can be used in a IndyKite AuthN SDK to trigger an authentication flow. See
+     * https://docs.indykite.com/sdk/authnn/create-custom-tokens#sign_in_using_custom_tokens_on_clients
+     * for more details on how to use custom tokens for client authentication.
+     *
+     * @generated from protobuf rpc: CreateCustomLoginToken(indykite.identity.v1beta2.CreateCustomLoginTokenRequest) returns (indykite.identity.v1beta2.CreateCustomLoginTokenResponse);
+     */
+    createCustomLoginToken(input: CreateCustomLoginTokenRequest, metadata: grpc.Metadata, options: grpc.CallOptions, callback: (err: grpc.ServiceError | null, value?: CreateCustomLoginTokenResponse) => void): grpc.ClientUnaryCall;
+    createCustomLoginToken(input: CreateCustomLoginTokenRequest, metadata: grpc.Metadata, callback: (err: grpc.ServiceError | null, value?: CreateCustomLoginTokenResponse) => void): grpc.ClientUnaryCall;
+    createCustomLoginToken(input: CreateCustomLoginTokenRequest, options: grpc.CallOptions, callback: (err: grpc.ServiceError | null, value?: CreateCustomLoginTokenResponse) => void): grpc.ClientUnaryCall;
+    createCustomLoginToken(input: CreateCustomLoginTokenRequest, callback: (err: grpc.ServiceError | null, value?: CreateCustomLoginTokenResponse) => void): grpc.ClientUnaryCall;
 }
 /**
  * IdentityManagementAPI represents the service interface to manage the Identities and their data.
@@ -731,5 +746,18 @@ export class IdentityManagementAPIClient extends grpc.Client implements IIdentit
     sessionIntrospect(input: SessionIntrospectRequest, metadata: grpc.Metadata | grpc.CallOptions | ((err: grpc.ServiceError | null, value?: SessionIntrospectResponse) => void), options?: grpc.CallOptions | ((err: grpc.ServiceError | null, value?: SessionIntrospectResponse) => void), callback?: ((err: grpc.ServiceError | null, value?: SessionIntrospectResponse) => void)): grpc.ClientUnaryCall {
         const method = IdentityManagementAPI.methods[30];
         return this.makeUnaryRequest<SessionIntrospectRequest, SessionIntrospectResponse>(`/${IdentityManagementAPI.typeName}/${method.name}`, (value: SessionIntrospectRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): SessionIntrospectResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), (options as any), (callback as any));
+    }
+    /**
+     * CreateCustomLoginToken creates a signed custom authentication token with the specified user ID.
+     *
+     * The resulting JWT can be used in a IndyKite AuthN SDK to trigger an authentication flow. See
+     * https://docs.indykite.com/sdk/authnn/create-custom-tokens#sign_in_using_custom_tokens_on_clients
+     * for more details on how to use custom tokens for client authentication.
+     *
+     * @generated from protobuf rpc: CreateCustomLoginToken(indykite.identity.v1beta2.CreateCustomLoginTokenRequest) returns (indykite.identity.v1beta2.CreateCustomLoginTokenResponse);
+     */
+    createCustomLoginToken(input: CreateCustomLoginTokenRequest, metadata: grpc.Metadata | grpc.CallOptions | ((err: grpc.ServiceError | null, value?: CreateCustomLoginTokenResponse) => void), options?: grpc.CallOptions | ((err: grpc.ServiceError | null, value?: CreateCustomLoginTokenResponse) => void), callback?: ((err: grpc.ServiceError | null, value?: CreateCustomLoginTokenResponse) => void)): grpc.ClientUnaryCall {
+        const method = IdentityManagementAPI.methods[31];
+        return this.makeUnaryRequest<CreateCustomLoginTokenRequest, CreateCustomLoginTokenResponse>(`/${IdentityManagementAPI.typeName}/${method.name}`, (value: CreateCustomLoginTokenRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): CreateCustomLoginTokenResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), (options as any), (callback as any));
     }
 }

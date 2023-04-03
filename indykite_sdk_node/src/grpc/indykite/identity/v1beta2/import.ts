@@ -282,6 +282,31 @@ export interface UserMetadata {
     lastRefreshTimestamp: string;
 }
 /**
+ * CredentialReference is a composite unique identifier of a subject in a remote identity provider stored in credentials
+ * or internal credential provider stored as well.
+ *
+ *
+ * @generated from protobuf message indykite.identity.v1beta2.CredentialReference
+ */
+export interface CredentialReference {
+    /**
+     * ProviderId identifies the credential provider which the uid belongs to.
+     *  Example values could be:
+     *  - password
+     *  - webauthn
+     *  - google.com and other supported OIDC/OAuth2 provider
+     *
+     * @generated from protobuf field: string provider_id = 1;
+     */
+    providerId: string;
+    /**
+     * Uid is the unique identifier of subject in the external identity provider referenced by ProviderId.
+     *
+     * @generated from protobuf field: string uid = 2;
+     */
+    uid: string;
+}
+/**
  * UserProvider represents a user identity provider.
  *
  * One or more user providers can be specified for each user when importing in bulk.
@@ -1155,6 +1180,60 @@ class UserMetadata$Type extends MessageType<UserMetadata> {
  * @generated MessageType for protobuf message indykite.identity.v1beta2.UserMetadata
  */
 export const UserMetadata = new UserMetadata$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class CredentialReference$Type extends MessageType<CredentialReference> {
+    constructor() {
+        super("indykite.identity.v1beta2.CredentialReference", [
+            { no: 1, name: "provider_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "1024" } } } },
+            { no: 2, name: "uid", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "1024" } } } }
+        ]);
+    }
+    create(value?: PartialMessage<CredentialReference>): CredentialReference {
+        const message = { providerId: "", uid: "" };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<CredentialReference>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: CredentialReference): CredentialReference {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string provider_id */ 1:
+                    message.providerId = reader.string();
+                    break;
+                case /* string uid */ 2:
+                    message.uid = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: CredentialReference, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string provider_id = 1; */
+        if (message.providerId !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.providerId);
+        /* string uid = 2; */
+        if (message.uid !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.uid);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message indykite.identity.v1beta2.CredentialReference
+ */
+export const CredentialReference = new CredentialReference$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class UserProvider$Type extends MessageType<UserProvider> {
     constructor() {

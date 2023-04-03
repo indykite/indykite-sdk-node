@@ -534,6 +534,9 @@ export interface IdentityTokenInfo {
     tokenClaims?: Struct;
 }
 /**
+ * ProviderInfo contains information about credential which can be used to
+ * verify identity of DigitalTwin during authentication flow.
+ *
  * @generated from protobuf message indykite.identity.v1beta2.ProviderInfo
  */
 export interface ProviderInfo {
@@ -546,7 +549,7 @@ export interface ProviderInfo {
     /**
      * Issuer is the identifier if available of Provider who verified the possession of credentials and issued a grant.
      *
-     * Example: ["indykite.id", "google.com"]
+     * Example: ["indykite.id", "google.com", "app:gid:AAAABNqmZWzfR0gRrCrNLeqcQqM"]
      *
      * [did registries](https://w3c.github.io/did-spec-registries/)
      *
@@ -822,54 +825,90 @@ export enum InvitationState {
      */
     INVALID = 0,
     /**
+     * InFuture indicates the invitation process is started and waiting to send the invitation notification.
+     *
      * @generated from protobuf enum value: INVITATION_STATE_IN_FUTURE = 1;
      */
     IN_FUTURE = 1,
     /**
+     * Pending indiactes the the invitation notification was sent and
+     * the process is waiting the invitee to accept the invitation
+     *
      * @generated from protobuf enum value: INVITATION_STATE_PENDING = 2;
      */
     PENDING = 2,
     /**
+     * Accepted indicates the invitation process has been accepted and completed.
+     *
      * @generated from protobuf enum value: INVITATION_STATE_ACCEPTED = 3;
      */
     ACCEPTED = 3,
     /**
+     * Expired indicates the invitation process deadline has been excidded and the process has been terminated.
+     *
      * @generated from protobuf enum value: INVITATION_STATE_EXPIRED = 4;
      */
     EXPIRED = 4,
     /**
+     * Cancelled indicates the process has been cancelled and terminated.
+     *
      * @generated from protobuf enum value: INVITATION_STATE_CANCELLED = 5;
      */
-    CANCELLED = 5
+    CANCELLED = 5,
+    /**
+     * Processing indicates the invitation process is starting at the moment.
+     *
+     * @generated from protobuf enum value: INVITATION_STATE_PROCESSING = 6;
+     */
+    PROCESSING = 6
 }
 /**
  * @generated from protobuf enum indykite.identity.v1beta2.ProviderType
  */
 export enum ProviderType {
     /**
+     * Invalid must never set.
+     *
      * @generated from protobuf enum value: PROVIDER_TYPE_INVALID = 0;
      */
     INVALID = 0,
     /**
+     * Password means the subject provided username/password from client during the authentication flow.
+     *
      * @generated from protobuf enum value: PROVIDER_TYPE_PASSWORD = 1;
      */
     PASSWORD = 1,
     /**
+     * OIDC means the subject proofed its identity via external OIDC/OAuth2
+     * federated authentication during the authentication flow.
+     *
      * @generated from protobuf enum value: PROVIDER_TYPE_OIDC = 2;
      */
     OIDC = 2,
     /**
+     * Webauthn means the subject proofed it posses the webauthn credentials from client during the authentication flow.
+     *
      * @generated from protobuf enum value: PROVIDER_TYPE_WEBAUTHN = 3;
      */
     WEBAUTHN = 3,
     /**
+     * Email means the subject proofed it posses the email account linked to digital twin during the authentication flow.
+     *
      * @generated from protobuf enum value: PROVIDER_TYPE_EMAIL = 4;
      */
     EMAIL = 4,
     /**
+     * Email means the subject proofed it posses the mobile number linked to digital twin during the authentication flow.
+     *
      * @generated from protobuf enum value: PROVIDER_TYPE_SMS = 5;
      */
-    SMS = 5
+    SMS = 5,
+    /**
+     * Custom means the subject proofed its identity to custom application before client completing the authentication flow.
+     *
+     * @generated from protobuf enum value: PROVIDER_TYPE_CUSTOM = 6;
+     */
+    CUSTOM = 6
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class DigitalTwin$Type extends MessageType<DigitalTwin> {
