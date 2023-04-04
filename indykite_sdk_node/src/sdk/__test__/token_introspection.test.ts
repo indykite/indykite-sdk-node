@@ -1,6 +1,6 @@
 import { CallOptions, Metadata } from '@grpc/grpc-js';
 import { ServiceError, SurfaceCall } from '@grpc/grpc-js/build/src/call';
-import { parse, stringify, v4 } from 'uuid';
+import { v4 } from 'uuid';
 import {
   TokenIntrospectRequest,
   TokenIntrospectResponse,
@@ -85,6 +85,7 @@ describe('Introspection', () => {
       tenantId: dt.tenantId,
       kind: DigitalTwinKind.PERSON,
       state: DigitalTwinState.ACTIVE,
+      tags: [],
     };
     const appSpaceId = v4();
     const applicationId = v4();
