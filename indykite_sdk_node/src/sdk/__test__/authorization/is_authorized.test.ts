@@ -1,14 +1,20 @@
+import {
+  AuthorizationClient,
+  IsAuthorizedRequestResources,
+  IsAuthorizedResponse,
+} from '../../authorization';
 import { ServiceError, SurfaceCall } from '@grpc/grpc-js/build/src/call';
 import {
-  IsAuthorizedRequest,
-  IsAuthorizedResponse,
+  IsAuthorizedRequest as grpcIsAuthorizedRequest,
+  IsAuthorizedResponse as grpcIsAuthorizedResponse,
 } from '../../../grpc/indykite/authorization/v1beta1/authorization_service';
-import { AuthorizationClient } from '../../authorization';
 import { CallOptions, Metadata } from '@grpc/grpc-js';
 import { Utils } from '../../utils/utils';
 import { applicationTokenMock } from '../../utils/test_utils';
-import { AuthorizationResource, DigitalTwinIdentifier } from '../../model';
-import { AuthorizationDecisions } from '../../model/authorization_decisions';
+import { DigitalTwinCore } from '../../model';
+// import { AuthorizationDecisions } from '../../model/authorization_decisions';
+import { DigitalTwinKind, DigitalTwinState } from '../../../grpc/indykite/identity/v1beta2/model';
+import { PropertyFilter } from '../../authorization';
 
 let sdk: AuthorizationClient;
 
@@ -21,39 +27,59 @@ afterEach(() => {
 });
 
 describe('isAuthorized', () => {
-  const subject = DigitalTwinIdentifier.fromToken('mocked-access-token');
+  const subject = new DigitalTwinCore(
+    'digitaltwin-id',
+    'tenant-id',
+    DigitalTwinKind.PERSON,
+    DigitalTwinState.ACTIVE,
+  );
 
   describe('when the response does not contain an error', () => {
-    const resources = [
-      new AuthorizationResource('resource1Id', 'Label'),
-      new AuthorizationResource('resource2Id', 'Label'),
+    const resources: IsAuthorizedRequestResources[] = [
+      {
+        type: 'ParkingLot',
+        id: 'parking-lot-id1',
+        actions: ['HAS_FREE_PARKING'],
+      },
+      {
+        type: 'ParkingLot',
+        id: 'parking-lot-id2',
+        actions: ['HAS_FREE_PARKING'],
+      },
     ];
-    const actions = ['READ'];
-    const decisionsResult = {
+    const decisionsResult: grpcIsAuthorizedResponse = {
       decisions: {
-        resource1Id: {
-          allowAction: {
-            READ: false,
-          },
-        },
-        resource2Id: {
-          allowAction: {
-            READ: true,
+        ParkingLot: {
+          resources: {
+            'parking-lot-id1': {
+              actions: {
+                HAS_FREE_PARKING: {
+                  allow: true,
+                },
+              },
+            },
+            'parking-lot-id2': {
+              actions: {
+                HAS_FREE_PARKING: {
+                  allow: false,
+                },
+              },
+            },
           },
         },
       },
       decisionTime: Utils.dateToTimestamp(new Date()),
     };
-    let result: unknown;
+    let result: IsAuthorizedResponse;
 
     beforeEach(async () => {
       const mockFunc = jest.fn(
         (
-          request: IsAuthorizedRequest,
+          request: grpcIsAuthorizedRequest,
           callback:
             | Metadata
             | CallOptions
-            | ((error: ServiceError | null, response?: IsAuthorizedResponse) => void),
+            | ((error: ServiceError | null, response?: grpcIsAuthorizedResponse) => void),
         ): SurfaceCall => {
           if (typeof callback === 'function') callback(null, decisionsResult);
           return {} as SurfaceCall;
@@ -62,71 +88,96 @@ describe('isAuthorized', () => {
 
       jest.spyOn(sdk['client'], 'isAuthorized').mockImplementation(mockFunc);
 
-      result = await sdk.isAuthorized(subject, resources, actions);
+      result = await sdk.isAuthorized(subject, resources);
     });
 
     it('sends a correct request', () => {
       expect(sdk['client'].isAuthorized).toBeCalledTimes(1);
       expect(sdk['client'].isAuthorized).toBeCalledWith(
         {
+          options: {},
           subject: {
-            oneofKind: 'digitalTwinIdentifier',
-            digitalTwinIdentifier: {
-              filter: {
-                oneofKind: 'accessToken',
-                accessToken: 'mocked-access-token',
+            subject: {
+              oneofKind: 'digitalTwinIdentifier',
+              digitalTwinIdentifier: {
+                filter: {
+                  oneofKind: 'digitalTwin',
+                  digitalTwin: {
+                    id: 'digitaltwin-id',
+                    tenantId: 'tenant-id',
+                    kind: DigitalTwinKind.PERSON,
+                    state: DigitalTwinState.ACTIVE,
+                    tags: [],
+                  },
+                },
               },
             },
           },
           resources: [
             {
-              id: 'resource1Id',
-              label: 'Label',
+              id: 'parking-lot-id1',
+              type: 'ParkingLot',
+              actions: ['HAS_FREE_PARKING'],
             },
             {
-              id: 'resource2Id',
-              label: 'Label',
+              id: 'parking-lot-id2',
+              type: 'ParkingLot',
+              actions: ['HAS_FREE_PARKING'],
             },
           ],
-          actions: ['READ'],
         },
         expect.any(Function),
       );
     });
 
     it('returns a correct response', () => {
-      expect(result).toBeInstanceOf(AuthorizationDecisions);
-      const adResult = result as AuthorizationDecisions;
-      expect(adResult.decisionTime).toEqual(Utils.timestampToDate(decisionsResult.decisionTime));
-      expect(adResult.resources).toEqual({
-        resource1Id: {
-          READ: false,
-        },
-        resource2Id: {
-          READ: true,
+      expect(result.decisionTime).toEqual(Utils.timestampToDate(decisionsResult.decisionTime));
+      expect(result.decisions).toEqual({
+        ParkingLot: {
+          resources: {
+            'parking-lot-id1': {
+              actions: {
+                HAS_FREE_PARKING: {
+                  allow: true,
+                },
+              },
+            },
+            'parking-lot-id2': {
+              actions: {
+                HAS_FREE_PARKING: {
+                  allow: false,
+                },
+              },
+            },
+          },
         },
       });
-      expect(adResult.isAuthorized('resource1Id', 'READ')).toBe(false);
-      expect(adResult.isAuthorized('resource2Id', 'READ')).toBe(true);
     });
   });
 
   describe('when the response does not contain any value', () => {
-    const resources = [
-      new AuthorizationResource('resource1Id', 'Label'),
-      new AuthorizationResource('resource2Id', 'Label'),
+    const resources: IsAuthorizedRequestResources[] = [
+      {
+        type: 'ParkingLot',
+        id: 'parking-lot-id1',
+        actions: ['HAS_FREE_PARKING'],
+      },
+      {
+        type: 'ParkingLot',
+        id: 'parking-lot-id2',
+        actions: ['HAS_FREE_PARKING'],
+      },
     ];
-    const actions = ['READ'];
-    let result: unknown;
+    let caughtError: unknown;
 
     beforeEach(async () => {
       const mockFunc = jest.fn(
         (
-          request: IsAuthorizedRequest,
+          request: grpcIsAuthorizedRequest,
           callback:
             | Metadata
             | CallOptions
-            | ((error: ServiceError | null, response?: IsAuthorizedResponse) => void),
+            | ((error: ServiceError | null, response?: grpcIsAuthorizedResponse) => void),
         ): SurfaceCall => {
           if (typeof callback === 'function') callback(null);
           return {} as SurfaceCall;
@@ -135,36 +186,43 @@ describe('isAuthorized', () => {
 
       jest.spyOn(sdk['client'], 'isAuthorized').mockImplementation(mockFunc);
 
-      result = await sdk.isAuthorized(subject, resources, actions);
+      try {
+        caughtError = undefined;
+        await sdk.isAuthorized(subject, resources);
+      } catch (err) {
+        caughtError = err;
+      }
     });
 
-    it('returns an empty response', () => {
-      expect(result).toBeInstanceOf(AuthorizationDecisions);
-      const adResult = result as AuthorizationDecisions;
-      expect(adResult.decisionTime).toBeUndefined();
-      expect(adResult.resources).toEqual({});
-      expect(adResult.isAuthorized('resource1Id', 'READ')).toBe(false);
-      expect(adResult.isAuthorized('resource2Id', 'READ')).toBe(false);
+    it('throws an error', () => {
+      expect((caughtError as Error).message).toEqual('No data in isAuthorized response');
     });
   });
 
   describe('when the response returns an error', () => {
-    const resources = [
-      new AuthorizationResource('resource1Id', 'Label'),
-      new AuthorizationResource('resource2Id', 'Label'),
+    const resources: IsAuthorizedRequestResources[] = [
+      {
+        type: 'ParkingLot',
+        id: 'parking-lot-id1',
+        actions: ['HAS_FREE_PARKING'],
+      },
+      {
+        type: 'ParkingLot',
+        id: 'parking-lot-id2',
+        actions: ['HAS_FREE_PARKING'],
+      },
     ];
-    const actions = ['READ'];
     const error = new Error('Error mock') as ServiceError;
     let caughtError: unknown;
 
     beforeEach(async () => {
       const mockFunc = jest.fn(
         (
-          request: IsAuthorizedRequest,
+          request: grpcIsAuthorizedRequest,
           callback:
             | Metadata
             | CallOptions
-            | ((error: ServiceError | null, response?: IsAuthorizedResponse) => void),
+            | ((error: ServiceError | null, response?: grpcIsAuthorizedResponse) => void),
         ): SurfaceCall => {
           if (typeof callback === 'function') callback(error);
           return {} as SurfaceCall;
@@ -174,7 +232,434 @@ describe('isAuthorized', () => {
       jest.spyOn(sdk['client'], 'isAuthorized').mockImplementation(mockFunc);
 
       try {
-        await sdk.isAuthorized(subject, resources, actions);
+        await sdk.isAuthorized(subject, resources);
+      } catch (err) {
+        caughtError = err;
+      }
+    });
+
+    it('returns an empty response', () => {
+      expect(caughtError).toBe(error);
+    });
+  });
+});
+
+describe('isAuthorizedByToken', () => {
+  const subject = 'access-token';
+
+  describe('when the response does not contain an error', () => {
+    const resources: IsAuthorizedRequestResources[] = [
+      {
+        type: 'ParkingLot',
+        id: 'parking-lot-id1',
+        actions: ['HAS_FREE_PARKING'],
+      },
+      {
+        type: 'ParkingLot',
+        id: 'parking-lot-id2',
+        actions: ['HAS_FREE_PARKING'],
+      },
+    ];
+    const decisionsResult: grpcIsAuthorizedResponse = {
+      decisions: {
+        ParkingLot: {
+          resources: {
+            'parking-lot-id1': {
+              actions: {
+                HAS_FREE_PARKING: {
+                  allow: true,
+                },
+              },
+            },
+            'parking-lot-id2': {
+              actions: {
+                HAS_FREE_PARKING: {
+                  allow: false,
+                },
+              },
+            },
+          },
+        },
+      },
+      decisionTime: Utils.dateToTimestamp(new Date()),
+    };
+    let result: IsAuthorizedResponse;
+
+    beforeEach(async () => {
+      const mockFunc = jest.fn(
+        (
+          request: grpcIsAuthorizedRequest,
+          callback:
+            | Metadata
+            | CallOptions
+            | ((error: ServiceError | null, response?: grpcIsAuthorizedResponse) => void),
+        ): SurfaceCall => {
+          if (typeof callback === 'function') callback(null, decisionsResult);
+          return {} as SurfaceCall;
+        },
+      );
+
+      jest.spyOn(sdk['client'], 'isAuthorized').mockImplementation(mockFunc);
+
+      result = await sdk.isAuthorizedByToken(subject, resources);
+    });
+
+    it('sends a correct request', () => {
+      expect(sdk['client'].isAuthorized).toBeCalledTimes(1);
+      expect(sdk['client'].isAuthorized).toBeCalledWith(
+        {
+          options: {},
+          subject: {
+            subject: {
+              oneofKind: 'digitalTwinIdentifier',
+              digitalTwinIdentifier: {
+                filter: {
+                  oneofKind: 'accessToken',
+                  accessToken: 'access-token',
+                },
+              },
+            },
+          },
+          resources: [
+            {
+              id: 'parking-lot-id1',
+              type: 'ParkingLot',
+              actions: ['HAS_FREE_PARKING'],
+            },
+            {
+              id: 'parking-lot-id2',
+              type: 'ParkingLot',
+              actions: ['HAS_FREE_PARKING'],
+            },
+          ],
+        },
+        expect.any(Function),
+      );
+    });
+
+    it('returns a correct response', () => {
+      expect(result.decisionTime).toEqual(Utils.timestampToDate(decisionsResult.decisionTime));
+      expect(result.decisions).toEqual({
+        ParkingLot: {
+          resources: {
+            'parking-lot-id1': {
+              actions: {
+                HAS_FREE_PARKING: {
+                  allow: true,
+                },
+              },
+            },
+            'parking-lot-id2': {
+              actions: {
+                HAS_FREE_PARKING: {
+                  allow: false,
+                },
+              },
+            },
+          },
+        },
+      });
+    });
+  });
+
+  describe('when the response does not contain any value', () => {
+    const resources: IsAuthorizedRequestResources[] = [
+      {
+        type: 'ParkingLot',
+        id: 'parking-lot-id1',
+        actions: ['HAS_FREE_PARKING'],
+      },
+      {
+        type: 'ParkingLot',
+        id: 'parking-lot-id2',
+        actions: ['HAS_FREE_PARKING'],
+      },
+    ];
+    let caughtError: unknown;
+
+    beforeEach(async () => {
+      const mockFunc = jest.fn(
+        (
+          request: grpcIsAuthorizedRequest,
+          callback:
+            | Metadata
+            | CallOptions
+            | ((error: ServiceError | null, response?: grpcIsAuthorizedResponse) => void),
+        ): SurfaceCall => {
+          if (typeof callback === 'function') callback(null);
+          return {} as SurfaceCall;
+        },
+      );
+
+      jest.spyOn(sdk['client'], 'isAuthorized').mockImplementation(mockFunc);
+
+      try {
+        caughtError = undefined;
+        await sdk.isAuthorizedByToken(subject, resources);
+      } catch (err) {
+        caughtError = err;
+      }
+    });
+
+    it('throws an error', () => {
+      expect((caughtError as Error).message).toEqual('No data in isAuthorized response');
+    });
+  });
+
+  describe('when the response returns an error', () => {
+    const resources: IsAuthorizedRequestResources[] = [
+      {
+        type: 'ParkingLot',
+        id: 'parking-lot-id1',
+        actions: ['HAS_FREE_PARKING'],
+      },
+      {
+        type: 'ParkingLot',
+        id: 'parking-lot-id2',
+        actions: ['HAS_FREE_PARKING'],
+      },
+    ];
+    const error = new Error('Error mock') as ServiceError;
+    let caughtError: unknown;
+
+    beforeEach(async () => {
+      const mockFunc = jest.fn(
+        (
+          request: grpcIsAuthorizedRequest,
+          callback:
+            | Metadata
+            | CallOptions
+            | ((error: ServiceError | null, response?: grpcIsAuthorizedResponse) => void),
+        ): SurfaceCall => {
+          if (typeof callback === 'function') callback(error);
+          return {} as SurfaceCall;
+        },
+      );
+
+      jest.spyOn(sdk['client'], 'isAuthorized').mockImplementation(mockFunc);
+
+      try {
+        await sdk.isAuthorizedByToken(subject, resources);
+      } catch (err) {
+        caughtError = err;
+      }
+    });
+
+    it('returns an empty response', () => {
+      expect(caughtError).toBe(error);
+    });
+  });
+});
+
+describe('isAuthorizedByProperty', () => {
+  const subject: PropertyFilter = {
+    tenantId: 'tenant-id',
+    type: 'email',
+    value: 'user@example.com',
+  };
+
+  describe('when the response does not contain an error', () => {
+    const resources: IsAuthorizedRequestResources[] = [
+      {
+        type: 'ParkingLot',
+        id: 'parking-lot-id1',
+        actions: ['HAS_FREE_PARKING'],
+      },
+      {
+        type: 'ParkingLot',
+        id: 'parking-lot-id2',
+        actions: ['HAS_FREE_PARKING'],
+      },
+    ];
+    const decisionsResult: grpcIsAuthorizedResponse = {
+      decisions: {
+        ParkingLot: {
+          resources: {
+            'parking-lot-id1': {
+              actions: {
+                HAS_FREE_PARKING: {
+                  allow: true,
+                },
+              },
+            },
+            'parking-lot-id2': {
+              actions: {
+                HAS_FREE_PARKING: {
+                  allow: false,
+                },
+              },
+            },
+          },
+        },
+      },
+      decisionTime: Utils.dateToTimestamp(new Date()),
+    };
+    let result: IsAuthorizedResponse;
+
+    beforeEach(async () => {
+      const mockFunc = jest.fn(
+        (
+          request: grpcIsAuthorizedRequest,
+          callback:
+            | Metadata
+            | CallOptions
+            | ((error: ServiceError | null, response?: grpcIsAuthorizedResponse) => void),
+        ): SurfaceCall => {
+          if (typeof callback === 'function') callback(null, decisionsResult);
+          return {} as SurfaceCall;
+        },
+      );
+
+      jest.spyOn(sdk['client'], 'isAuthorized').mockImplementation(mockFunc);
+
+      result = await sdk.isAuthorizedByProperty(subject, resources);
+    });
+
+    it('sends a correct request', () => {
+      expect(sdk['client'].isAuthorized).toBeCalledTimes(1);
+      expect(sdk['client'].isAuthorized).toBeCalledWith(
+        {
+          options: {},
+          subject: {
+            subject: {
+              oneofKind: 'digitalTwinIdentifier',
+              digitalTwinIdentifier: {
+                filter: {
+                  oneofKind: 'propertyFilter',
+                  propertyFilter: {
+                    tenantId: 'tenant-id',
+                    type: 'email',
+                    value: {
+                      value: {
+                        oneofKind: 'stringValue',
+                        stringValue: 'user@example.com',
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+          resources: [
+            {
+              id: 'parking-lot-id1',
+              type: 'ParkingLot',
+              actions: ['HAS_FREE_PARKING'],
+            },
+            {
+              id: 'parking-lot-id2',
+              type: 'ParkingLot',
+              actions: ['HAS_FREE_PARKING'],
+            },
+          ],
+        },
+        expect.any(Function),
+      );
+    });
+
+    it('returns a correct response', () => {
+      expect(result.decisionTime).toEqual(Utils.timestampToDate(decisionsResult.decisionTime));
+      expect(result.decisions).toEqual({
+        ParkingLot: {
+          resources: {
+            'parking-lot-id1': {
+              actions: {
+                HAS_FREE_PARKING: {
+                  allow: true,
+                },
+              },
+            },
+            'parking-lot-id2': {
+              actions: {
+                HAS_FREE_PARKING: {
+                  allow: false,
+                },
+              },
+            },
+          },
+        },
+      });
+    });
+  });
+
+  describe('when the response does not contain any value', () => {
+    const resources: IsAuthorizedRequestResources[] = [
+      {
+        type: 'ParkingLot',
+        id: 'parking-lot-id1',
+        actions: ['HAS_FREE_PARKING'],
+      },
+      {
+        type: 'ParkingLot',
+        id: 'parking-lot-id2',
+        actions: ['HAS_FREE_PARKING'],
+      },
+    ];
+    let caughtError: unknown;
+
+    beforeEach(async () => {
+      const mockFunc = jest.fn(
+        (
+          request: grpcIsAuthorizedRequest,
+          callback:
+            | Metadata
+            | CallOptions
+            | ((error: ServiceError | null, response?: grpcIsAuthorizedResponse) => void),
+        ): SurfaceCall => {
+          if (typeof callback === 'function') callback(null);
+          return {} as SurfaceCall;
+        },
+      );
+
+      jest.spyOn(sdk['client'], 'isAuthorized').mockImplementation(mockFunc);
+
+      try {
+        caughtError = undefined;
+        await sdk.isAuthorizedByProperty(subject, resources);
+      } catch (err) {
+        caughtError = err;
+      }
+    });
+
+    it('throws an error', () => {
+      expect((caughtError as Error).message).toEqual('No data in isAuthorized response');
+    });
+  });
+
+  describe('when the response returns an error', () => {
+    const resources: IsAuthorizedRequestResources[] = [
+      {
+        type: 'ParkingLot',
+        id: 'parking-lot-id1',
+        actions: ['HAS_FREE_PARKING'],
+      },
+      {
+        type: 'ParkingLot',
+        id: 'parking-lot-id2',
+        actions: ['HAS_FREE_PARKING'],
+      },
+    ];
+    const error = new Error('Error mock') as ServiceError;
+    let caughtError: unknown;
+
+    beforeEach(async () => {
+      const mockFunc = jest.fn(
+        (
+          request: grpcIsAuthorizedRequest,
+          callback:
+            | Metadata
+            | CallOptions
+            | ((error: ServiceError | null, response?: grpcIsAuthorizedResponse) => void),
+        ): SurfaceCall => {
+          if (typeof callback === 'function') callback(error);
+          return {} as SurfaceCall;
+        },
+      );
+
+      jest.spyOn(sdk['client'], 'isAuthorized').mockImplementation(mockFunc);
+
+      try {
+        await sdk.isAuthorizedByProperty(subject, resources);
       } catch (err) {
         caughtError = err;
       }
