@@ -301,14 +301,23 @@ describe('isAuthorizedByToken', () => {
 
       jest.spyOn(sdk['client'], 'isAuthorized').mockImplementation(mockFunc);
 
-      result = await sdk.isAuthorizedByToken(subject, resources);
+      result = await sdk.isAuthorizedByToken(subject, resources, {
+        someOption: 'Some value',
+      });
     });
 
     it('sends a correct request', () => {
       expect(sdk['client'].isAuthorized).toBeCalledTimes(1);
       expect(sdk['client'].isAuthorized).toBeCalledWith(
         {
-          options: {},
+          options: {
+            someOption: {
+              value: {
+                oneofKind: 'stringValue',
+                stringValue: 'Some value'
+              }
+            }
+          },
           subject: {
             subject: {
               oneofKind: 'digitalTwinIdentifier',
