@@ -1,9 +1,61 @@
 import { SdkClient } from './client/client';
-import { AuthorizationDecisions } from './model/authorization_decisions';
 import { IsAuthorizedRequest } from '../grpc/indykite/authorization/v1beta1/authorization_service';
 import { AuthorizationAPIClient } from '../grpc/indykite/authorization/v1beta1/authorization_service.grpc-client';
-import { DigitalTwinIdentifier } from './model';
-import { AuthorizationResource } from './model/authorization_resource';
+import { Option } from '../grpc/indykite/authorization/v1beta1/model';
+import { DigitalTwinCore } from './model';
+import { SdkError, SdkErrorCode } from './error';
+import { Utils } from './utils/utils';
+
+export interface IsAuthorizedResponseAction {
+  allow: boolean;
+}
+
+export interface IsAuthorizedResponseResource {
+  actions: Record<string, IsAuthorizedResponseAction>;
+}
+
+export interface IsAuthorizedResponseResourceType {
+  resources: Record<string, IsAuthorizedResponseResource>;
+}
+
+export interface IsAuthorizedResponse {
+  /**
+   * Time the decision was made.
+   * @since 0.3.0
+   */
+  decisionTime?: Date;
+  /**
+   * Map with resource type as key.
+   * @since 0.3.0
+   */
+  decisions: Record<string, IsAuthorizedResponseResourceType>;
+}
+
+export interface IsAuthorizedRequestResources {
+  /**
+   * Resource id.
+   * @since 0.3.0
+   */
+  id: string;
+  /**
+   * Resource type.
+   * @since 0.3.0
+   */
+  type: string;
+  /**
+   * A list of actions the subject want to perform.
+   * @since 0.3.0
+   */
+  actions: string[];
+}
+
+export type AuthorizationOptions = string | boolean | number;
+
+export interface PropertyFilter {
+  type: string;
+  tenantId: string;
+  value: unknown;
+}
 
 /**
  * @category Clients
@@ -39,24 +91,33 @@ export class AuthorizationClient {
 
   /**
    * Check whether the actions are allowed in the specified resources for the selected subject
-   * @since 0.2.2
-   * @param subject The subject which will be checked whether has an access to the actions
-   * @param resources The resources which will be checked
-   * @param actions The actions which will be checked
+   * @since 0.3.0
+   * @param subject Subject to check if is authorized to perform given actions.
+   * @param resources A list of resources types that should be checked against.
+   * @param options Authorization options
    * @example
    * function printAuthorization(token: string) {
    *   AuthorizationClient.createInstance()
    *     .then(async (sdk) => {
    *       const resp = await sdk.isAuthorized(
-   *         DigitalTwinIdentifier.fromToken(token),
+   *         new DigitalTwinCore(
+   *           'digitaltwin-id',
+   *           'tenant-id',
+   *           DigitalTwinKind.PERSON,
+   *           DigitalTwinState.ACTIVE,
+   *         ),
    *         [
-   *           new AuthorizationResource('lotA', 'ParkingLot'),
-   *           new AuthorizationResource('lotB', 'ParkingLot'),
+   *           {
+   *             id: 'lotA',
+   *             type: 'ParkingLot',
+   *             actions: ['HAS_FREE_PARKING'],
+   *           },
    *         ],
-   *         ['HAS_FREE_PARKING'],
    *       );
-   *       console.log('LotA:', resp.isAuthorized('lotA', 'HAS_FREE_PARKING'));
-   *       console.log('LotB:', resp.isAuthorized('lotB', 'HAS_FREE_PARKING'));
+   *       console.log(
+   *         'Action:',
+   *         resp.decisions['ParkingLot'].resources['lotA'].actions['HAS_FREE_PARKING'].allow,
+   *       );
    *     })
    *     .catch((err) => {
    *       console.error(err);
@@ -64,25 +125,182 @@ export class AuthorizationClient {
    * }
    */
   isAuthorized(
-    subject: DigitalTwinIdentifier,
-    resources: AuthorizationResource[],
-    actions: string[],
-  ): Promise<AuthorizationDecisions> {
+    digitalTwin: DigitalTwinCore,
+    resources: IsAuthorizedRequestResources[],
+    options: Record<string, AuthorizationOptions> = {},
+  ): Promise<IsAuthorizedResponse> {
     return new Promise((resolve, reject) => {
       const request = IsAuthorizedRequest.create({
-        actions,
         resources,
         subject: {
-          oneofKind: 'digitalTwinIdentifier',
-          digitalTwinIdentifier: subject.marshal(),
+          subject: {
+            oneofKind: 'digitalTwinIdentifier',
+            digitalTwinIdentifier: {
+              filter: {
+                oneofKind: 'digitalTwin',
+                digitalTwin: digitalTwin.marshal(),
+              },
+            },
+          },
         },
+        options: this.marshalAuthorizationOptions(options),
       });
 
       this.client.isAuthorized(request, (err, res) => {
         if (err) reject(err);
-        else if (!res) resolve(new AuthorizationDecisions({}));
-        else resolve(AuthorizationDecisions.deserialize(res));
+        else if (!res) {
+          throw new SdkError(SdkErrorCode.SDK_CODE_1, 'No data in isAuthorized response');
+        } else {
+          resolve({
+            decisionTime: Utils.timestampToDate(res.decisionTime),
+            decisions: res.decisions,
+          });
+        }
       });
     });
+  }
+
+  /**
+   * Check whether the actions are allowed in the specified resources for the selected subject
+   * @since 0.3.0
+   * @param subject Subject to check if is authorized to perform given actions.
+   * @param resources A list of resources types that should be checked against.
+   * @param options Authorization options
+   * @example
+   * function printAuthorization(token: string) {
+   *   AuthorizationClient.createInstance()
+   *     .then(async (sdk) => {
+   *       const resp = await sdk.isAuthorizedByToken('access-token', [
+   *         {
+   *           id: 'lotA',
+   *           type: 'ParkingLot',
+   *           actions: ['HAS_FREE_PARKING'],
+   *         },
+   *       ]);
+   *       console.log(
+   *         'Action:',
+   *         resp.decisions['ParkingLot'].resources['lotA'].actions['HAS_FREE_PARKING'].allow,
+   *       );
+   *     })
+   *     .catch((err) => {
+   *       console.error(err);
+   *     });
+   * }
+   */
+  isAuthorizedByToken(
+    token: string,
+    resources: IsAuthorizedRequestResources[],
+    options: Record<string, AuthorizationOptions> = {},
+  ): Promise<IsAuthorizedResponse> {
+    return new Promise((resolve, reject) => {
+      const request = IsAuthorizedRequest.create({
+        resources,
+        subject: {
+          subject: {
+            oneofKind: 'digitalTwinIdentifier',
+            digitalTwinIdentifier: {
+              filter: {
+                oneofKind: 'accessToken',
+                accessToken: token,
+              },
+            },
+          },
+        },
+        options: this.marshalAuthorizationOptions(options),
+      });
+
+      this.client.isAuthorized(request, (err, res) => {
+        if (err) reject(err);
+        else if (!res) {
+          throw new SdkError(SdkErrorCode.SDK_CODE_1, 'No data in isAuthorized response');
+        } else {
+          resolve({
+            decisionTime: Utils.timestampToDate(res.decisionTime),
+            decisions: res.decisions,
+          });
+        }
+      });
+    });
+  }
+
+  /**
+   * Check whether the actions are allowed in the specified resources for the selected subject
+   * @since 0.3.0
+   * @param subject Subject to check if is authorized to perform given actions.
+   * @param resources A list of resources types that should be checked against.
+   * @param options Authorization options
+   * @example
+   * function printAuthorization(token: string) {
+   *   AuthorizationClient.createInstance()
+   *     .then(async (sdk) => {
+   *       const resp = await this.isAuthorizedByProperty(
+   *         {
+   *           tenantId: 'tenant-id',
+   *           type: 'email',
+   *           value: 'user@example.com',
+   *         },
+   *         [
+   *           {
+   *             id: 'lotA',
+   *             type: 'ParkingLot',
+   *             actions: ['HAS_FREE_PARKING'],
+   *           },
+   *         ],
+   *       );
+   *       console.log('Action:', resp.decisions['ParkingLot'].resources['lotA'].actions['HAS_FREE_PARKING'].allow);
+   *     })
+   *     .catch((err) => {
+   *       console.error(err);
+   *     });
+   * }
+   */
+  isAuthorizedByProperty(
+    property: PropertyFilter,
+    resources: IsAuthorizedRequestResources[],
+    options: Record<string, AuthorizationOptions> = {},
+  ): Promise<IsAuthorizedResponse> {
+    return new Promise((resolve, reject) => {
+      const request = IsAuthorizedRequest.create({
+        resources,
+        subject: {
+          subject: {
+            oneofKind: 'digitalTwinIdentifier',
+            digitalTwinIdentifier: {
+              filter: {
+                oneofKind: 'propertyFilter',
+                propertyFilter: {
+                  ...property,
+                  value: ([undefined, null] as unknown[]).includes(property.value)
+                    ? undefined
+                    : Utils.objectToValue(property.value),
+                },
+              },
+            },
+          },
+        },
+        options: this.marshalAuthorizationOptions(options),
+      });
+
+      this.client.isAuthorized(request, (err, res) => {
+        if (err) reject(err);
+        else if (!res) {
+          throw new SdkError(SdkErrorCode.SDK_CODE_1, 'No data in isAuthorized response');
+        } else {
+          resolve({
+            decisionTime: Utils.timestampToDate(res.decisionTime),
+            decisions: res.decisions,
+          });
+        }
+      });
+    });
+  }
+
+  private marshalAuthorizationOptions(
+    options: Record<string, AuthorizationOptions>,
+  ): Record<string, Option> {
+    return Object.keys(options).reduce((newOptions, optionKey) => {
+      newOptions[optionKey] = Option.fromJson(Utils.objectToJsonValue(options[optionKey]));
+      return newOptions;
+    }, {} as Record<string, Option>);
   }
 }

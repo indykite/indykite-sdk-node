@@ -10,6 +10,7 @@ export type ProviderType =
   | 'email'
   | 'sms'
   | 'invalid'
+  | 'custom'
   | 'unrecognized';
 export class ProviderInfo {
   constructor(public type: ProviderType, public issuer: string) {}
@@ -28,6 +29,8 @@ export class ProviderInfo {
         return 'sms';
       case grpcModel.ProviderType.WEBAUTHN:
         return 'webauthn';
+      case grpcModel.ProviderType.CUSTOM:
+        return 'custom';
     }
   }
 

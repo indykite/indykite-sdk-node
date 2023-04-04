@@ -1,18 +1,21 @@
 import { AuthorizationClient } from '../sdk/authorization';
-import { AuthorizationResource, DigitalTwinIdentifier } from '../sdk/model';
 
 const userToken = process.env.USER_TOKEN || 'MISSING_TOKEN';
 
 AuthorizationClient.createInstance()
   .then(async (sdk) => {
-    const resp = await sdk.isAuthorized(
-      DigitalTwinIdentifier.fromToken(userToken),
-      [
-        new AuthorizationResource('lotA', 'ParkingLot'),
-        new AuthorizationResource('lotB', 'ParkingLot'),
-      ],
-      ['HAS_FREE_PARKING'],
-    );
+    const resp = await sdk.isAuthorizedByToken(userToken, [
+      {
+        type: 'ParkingLot',
+        id: 'lotA',
+        actions: ['HAS_FREE_PARKING'],
+      },
+      {
+        type: 'ParkingLot',
+        id: 'lotB',
+        actions: ['HAS_FREE_PARKING'],
+      },
+    ]);
     console.log(JSON.stringify(resp, null, 2));
   })
   .catch((err) => {

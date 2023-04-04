@@ -11,6 +11,7 @@ export enum InvitationState {
   ACCEPTED = 3,
   EXPIRED = 4,
   CANCELLED = 5,
+  PROCESSING = 6,
 }
 
 export class Invitation {

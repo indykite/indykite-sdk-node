@@ -14,7 +14,7 @@ export class DigitalTwinCore {
     public tenantId: string,
     public kind: number,
     public state: number,
-    public tags: string[],
+    public tags: string[] = [],
   ) {}
 
   static fromModel(model: DigitalTwinModel): DigitalTwinCore {
