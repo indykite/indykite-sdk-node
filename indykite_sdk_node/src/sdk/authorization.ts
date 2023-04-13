@@ -1,5 +1,8 @@
 import { SdkClient } from './client/client';
-import { IsAuthorizedRequest } from '../grpc/indykite/authorization/v1beta1/authorization_service';
+import {
+  IsAuthorizedRequest,
+  WhatAuthorizedRequest,
+} from '../grpc/indykite/authorization/v1beta1/authorization_service';
 import { AuthorizationAPIClient } from '../grpc/indykite/authorization/v1beta1/authorization_service.grpc-client';
 import { Option } from '../grpc/indykite/authorization/v1beta1/model';
 import { DigitalTwinCore } from './model';
@@ -14,8 +17,20 @@ export interface IsAuthorizedResponseResource {
   actions: Record<string, IsAuthorizedResponseAction>;
 }
 
+export interface WhatAuthorizedResponseResource {
+  externalId: string;
+}
+
+export interface WhatAuthorizedResponseAction {
+  resources: WhatAuthorizedResponseResource[];
+}
+
 export interface IsAuthorizedResponseResourceType {
   resources: Record<string, IsAuthorizedResponseResource>;
+}
+
+export interface WhatAuthorizedResponseResourceType {
+  actions: Record<string, WhatAuthorizedResponseAction>;
 }
 
 export interface IsAuthorizedResponse {
@@ -31,12 +46,38 @@ export interface IsAuthorizedResponse {
   decisions: Record<string, IsAuthorizedResponseResourceType>;
 }
 
-export interface IsAuthorizedRequestResources {
+export interface WhatAuthorizedResponse {
+  /**
+   * Time the decision was made.
+   * @since 0.3.0
+   */
+  decisionTime?: Date;
+  /**
+   * Map with resource type as key.
+   * @since 0.3.0
+   */
+  decisions: Record<string, WhatAuthorizedResponseResourceType>;
+}
+
+export interface AuthorizationResource {
   /**
    * Resource id.
    * @since 0.3.0
    */
   id: string;
+  /**
+   * Resource type.
+   * @since 0.3.0
+   */
+  type: string;
+  /**
+   * A list of actions the subject want to perform.
+   * @since 0.3.0
+   */
+  actions: string[];
+}
+
+export interface AuthorizationResourceType {
   /**
    * Resource type.
    * @since 0.3.0
@@ -126,7 +167,7 @@ export class AuthorizationClient {
    */
   isAuthorized(
     digitalTwin: DigitalTwinCore,
-    resources: IsAuthorizedRequestResources[],
+    resources: AuthorizationResource[],
     options: Record<string, AuthorizationOptions> = {},
   ): Promise<IsAuthorizedResponse> {
     return new Promise((resolve, reject) => {
@@ -189,7 +230,7 @@ export class AuthorizationClient {
    */
   isAuthorizedByToken(
     token: string,
-    resources: IsAuthorizedRequestResources[],
+    resources: AuthorizationResource[],
     options: Record<string, AuthorizationOptions> = {},
   ): Promise<IsAuthorizedResponse> {
     return new Promise((resolve, reject) => {
@@ -256,7 +297,7 @@ export class AuthorizationClient {
    */
   isAuthorizedByProperty(
     property: PropertyFilter,
-    resources: IsAuthorizedRequestResources[],
+    resources: AuthorizationResource[],
     options: Record<string, AuthorizationOptions> = {},
   ): Promise<IsAuthorizedResponse> {
     return new Promise((resolve, reject) => {
@@ -285,6 +326,122 @@ export class AuthorizationClient {
         if (err) reject(err);
         else if (!res) {
           throw new SdkError(SdkErrorCode.SDK_CODE_1, 'No data in isAuthorized response');
+        } else {
+          resolve({
+            decisionTime: Utils.timestampToDate(res.decisionTime),
+            decisions: res.decisions,
+          });
+        }
+      });
+    });
+  }
+
+  whatAuthorized(
+    digitalTwin: DigitalTwinCore,
+    resourceTypes: AuthorizationResourceType[],
+    options: Record<string, AuthorizationOptions> = {},
+  ): Promise<WhatAuthorizedResponse> {
+    return new Promise((resolve, reject) => {
+      const request = WhatAuthorizedRequest.create({
+        resourceTypes,
+        subject: {
+          subject: {
+            oneofKind: 'digitalTwinIdentifier',
+            digitalTwinIdentifier: {
+              filter: {
+                oneofKind: 'digitalTwin',
+                digitalTwin: digitalTwin.marshal(),
+              },
+            },
+          },
+        },
+        options: this.marshalAuthorizationOptions(options),
+      });
+
+      this.client.whatAuthorized(request, (err, res) => {
+        if (err) reject(err);
+        else if (!res) {
+          throw new SdkError(SdkErrorCode.SDK_CODE_1, 'No data in whatAuthorized response');
+        } else {
+          resolve({
+            decisionTime: Utils.timestampToDate(res.decisionTime),
+            decisions: res.decisions,
+          });
+        }
+      });
+    });
+  }
+
+  whatAuthorizedByToken(
+    token: string,
+    resourceTypes: AuthorizationResourceType[],
+    options: Record<string, AuthorizationOptions> = {},
+  ): Promise<WhatAuthorizedResponse> {
+    return new Promise((resolve, reject) => {
+      const request = WhatAuthorizedRequest.create({
+        resourceTypes,
+        subject: {
+          subject: {
+            oneofKind: 'digitalTwinIdentifier',
+            digitalTwinIdentifier: {
+              filter: {
+                oneofKind: 'accessToken',
+                accessToken: token,
+              },
+            },
+          },
+        },
+        options: this.marshalAuthorizationOptions(options),
+      });
+
+      this.client.whatAuthorized(request, (err, res) => {
+        if (err) reject(err);
+        else if (!res) {
+          throw new SdkError(SdkErrorCode.SDK_CODE_1, 'No data in whatAuthorizedByToken response');
+        } else {
+          resolve({
+            decisionTime: Utils.timestampToDate(res.decisionTime),
+            decisions: res.decisions,
+          });
+        }
+      });
+    });
+  }
+
+  whatAuthorizedByProperty(
+    property: PropertyFilter,
+    resourceTypes: AuthorizationResourceType[],
+    options: Record<string, AuthorizationOptions> = {},
+  ): Promise<WhatAuthorizedResponse> {
+    return new Promise((resolve, reject) => {
+      const request = WhatAuthorizedRequest.create({
+        resourceTypes,
+        subject: {
+          subject: {
+            oneofKind: 'digitalTwinIdentifier',
+            digitalTwinIdentifier: {
+              filter: {
+                oneofKind: 'propertyFilter',
+                propertyFilter: {
+                  ...property,
+                  value: ([undefined, null] as unknown[]).includes(property.value)
+                    ? undefined
+                    : Utils.objectToValue(property.value),
+                },
+              },
+            },
+          },
+        },
+        options: this.marshalAuthorizationOptions(options),
+      });
+
+      this.client.whatAuthorized(request, (err, res) => {
+        if (err) reject(err);
+        else if (!res) {
+          throw new SdkError(
+            SdkErrorCode.SDK_CODE_1,
+            'No data in whatAuthorizedByProperty response',
+          );
         } else {
           resolve({
             decisionTime: Utils.timestampToDate(res.decisionTime),
