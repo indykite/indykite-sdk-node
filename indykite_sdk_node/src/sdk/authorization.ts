@@ -134,7 +134,7 @@ export class AuthorizationClient {
    * Check whether the actions are allowed in the specified resources for the selected subject
    * @since 0.3.0
    * @param subject Subject to check if is authorized to perform given actions.
-   * @param resources A list of resources types that should be checked against.
+   * @param resources A list of resources to authorize against.
    * @param options Authorization options
    * @example
    * function printAuthorization(token: string) {
@@ -204,8 +204,8 @@ export class AuthorizationClient {
   /**
    * Check whether the actions are allowed in the specified resources for the selected subject
    * @since 0.3.0
-   * @param subject Subject to check if is authorized to perform given actions.
-   * @param resources A list of resources types that should be checked against.
+   * @param subjectToken Subject to check if is authorized to perform given actions.
+   * @param resources A list of resources to authorize against.
    * @param options Authorization options
    * @example
    * function printAuthorization(token: string) {
@@ -229,7 +229,7 @@ export class AuthorizationClient {
    * }
    */
   isAuthorizedByToken(
-    token: string,
+    subjectToken: string,
     resources: AuthorizationResource[],
     options: Record<string, AuthorizationOptions> = {},
   ): Promise<IsAuthorizedResponse> {
@@ -242,7 +242,7 @@ export class AuthorizationClient {
             digitalTwinIdentifier: {
               filter: {
                 oneofKind: 'accessToken',
-                accessToken: token,
+                accessToken: subjectToken,
               },
             },
           },
@@ -267,8 +267,8 @@ export class AuthorizationClient {
   /**
    * Check whether the actions are allowed in the specified resources for the selected subject
    * @since 0.3.0
-   * @param subject Subject to check if is authorized to perform given actions.
-   * @param resources A list of resources types that should be checked against.
+   * @param subjectProperty Subject to check if is authorized to perform given actions.
+   * @param resources A list of resources to authorize against.
    * @param options Authorization options
    * @example
    * function printAuthorization(token: string) {
@@ -296,7 +296,7 @@ export class AuthorizationClient {
    * }
    */
   isAuthorizedByProperty(
-    property: PropertyFilter,
+    subjectProperty: PropertyFilter,
     resources: AuthorizationResource[],
     options: Record<string, AuthorizationOptions> = {},
   ): Promise<IsAuthorizedResponse> {
@@ -310,10 +310,10 @@ export class AuthorizationClient {
               filter: {
                 oneofKind: 'propertyFilter',
                 propertyFilter: {
-                  ...property,
-                  value: ([undefined, null] as unknown[]).includes(property.value)
+                  ...subjectProperty,
+                  value: ([undefined, null] as unknown[]).includes(subjectProperty.value)
                     ? undefined
-                    : Utils.objectToValue(property.value),
+                    : Utils.objectToValue(subjectProperty.value),
                 },
               },
             },
@@ -336,6 +336,38 @@ export class AuthorizationClient {
     });
   }
 
+  /**
+   * Get list of resources where the selected actions are allowed by the selected subject
+   * @since 0.3.0
+   * @param subject Subject to check if is authorized to perform given actions.
+   * @param resourceTypes A list of resources types that should be checked against.
+   * @param options Authorization options
+   * @example
+   * function getAuthorizedResources(token: string) {
+   *   AuthorizationClient.createInstance()
+   *     .then(async (sdk) => {
+   *       const resp = await sdk.whatAuthorized(
+   *         new DigitalTwinCore(
+   *           'digitaltwin-id',
+   *           'tenant-id',
+   *           DigitalTwinKind.PERSON,
+   *           DigitalTwinState.ACTIVE,
+   *         ),
+   *         [
+   *           {
+   *             type: 'ParkingLot',
+   *             actions: ['HAS_FREE_PARKING'],
+   *           },
+   *         ],
+   *       );
+   *
+   *       console.log('Resources:', resp.decisions['ParkingLot'].actions['HAS_FREE_PARKING'].resources);
+   *     })
+   *     .catch((err) => {
+   *       console.error(err);
+   *     });
+   * }
+   */
   whatAuthorized(
     digitalTwin: DigitalTwinCore,
     resourceTypes: AuthorizationResourceType[],
@@ -372,8 +404,32 @@ export class AuthorizationClient {
     });
   }
 
+  /**
+   * Get list of resources where the selected actions are allowed by the selected subject
+   * @since 0.3.0
+   * @param subjectToken Subject to check if is authorized to perform given actions.
+   * @param resourceTypes A list of resources types that should be checked against.
+   * @param options Authorization options
+   * @example
+   * function getAuthorizedResources(token: string) {
+   *   AuthorizationClient.createInstance()
+   *     .then(async (sdk) => {
+   *       const resp = await sdk.whatAuthorizedByToken('access-token', [
+   *         {
+   *           type: 'ParkingLot',
+   *           actions: ['HAS_FREE_PARKING'],
+   *         },
+   *       ]);
+   *
+   *       console.log('Resources:', resp.decisions['ParkingLot'].actions['HAS_FREE_PARKING'].resources);
+   *     })
+   *     .catch((err) => {
+   *       console.error(err);
+   *     });
+   * }
+   */
   whatAuthorizedByToken(
-    token: string,
+    subjectToken: string,
     resourceTypes: AuthorizationResourceType[],
     options: Record<string, AuthorizationOptions> = {},
   ): Promise<WhatAuthorizedResponse> {
@@ -386,7 +442,7 @@ export class AuthorizationClient {
             digitalTwinIdentifier: {
               filter: {
                 oneofKind: 'accessToken',
-                accessToken: token,
+                accessToken: subjectToken,
               },
             },
           },
@@ -408,8 +464,39 @@ export class AuthorizationClient {
     });
   }
 
+  /**
+   * Get list of resources where the selected actions are allowed by the selected subject
+   * @since 0.3.0
+   * @param subjectProperty Subject to check if is authorized to perform given actions.
+   * @param resourceTypes A list of resources types that should be checked against.
+   * @param options Authorization options
+   * @example
+   * function getAuthorizedResources(token: string) {
+   *   AuthorizationClient.createInstance()
+   *     .then(async (sdk) => {
+   *       const resp = await sdk.whatAuthorizedByProperty(
+   *         {
+   *           tenantId: 'tenant-id',
+   *           type: 'email',
+   *           value: 'user@example.com',
+   *         },
+   *         [
+   *           {
+   *             type: 'ParkingLot',
+   *             actions: ['HAS_FREE_PARKING'],
+   *           },
+   *         ],
+   *       );
+   *
+   *       console.log('Resources:', resp.decisions['ParkingLot'].actions['HAS_FREE_PARKING'].resources);
+   *     })
+   *     .catch((err) => {
+   *       console.error(err);
+   *     });
+   * }
+   */
   whatAuthorizedByProperty(
-    property: PropertyFilter,
+    subjectProperty: PropertyFilter,
     resourceTypes: AuthorizationResourceType[],
     options: Record<string, AuthorizationOptions> = {},
   ): Promise<WhatAuthorizedResponse> {
@@ -423,10 +510,10 @@ export class AuthorizationClient {
               filter: {
                 oneofKind: 'propertyFilter',
                 propertyFilter: {
-                  ...property,
-                  value: ([undefined, null] as unknown[]).includes(property.value)
+                  ...subjectProperty,
+                  value: ([undefined, null] as unknown[]).includes(subjectProperty.value)
                     ? undefined
-                    : Utils.objectToValue(property.value),
+                    : Utils.objectToValue(subjectProperty.value),
                 },
               },
             },
