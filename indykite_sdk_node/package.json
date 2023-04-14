@@ -54,12 +54,12 @@
     "typescript": "5.0.4"
   },
   "dependencies": {
-    "@grpc/grpc-js": "^1.6.7",
+    "@grpc/grpc-js": "1.7.3",
     "@protobuf-ts/runtime-rpc": "2.8.3",
     "@protobuf-ts/runtime": "2.8.3",
     "google-protobuf": "3.21.2",
     "jose": "^4.6.0",
-    "protobufjs": "^7.0.0",
+    "protobufjs": "7.2.3",
     "uuid": "^9.0.0"
   },
   "repository": {
