@@ -48,7 +48,7 @@ export class DigitalTwinCore {
   }
 }
 export class DigitalTwin extends DigitalTwinCore {
-  properties: Record<string, Property[]> = {};
+  properties: Map<string, Property[]> = new Map();
   protected patchBuilder = PatchPropertiesBuilder.newBuilder();
 
   constructor(
@@ -86,15 +86,16 @@ export class DigitalTwin extends DigitalTwinCore {
   }
 
   getProperty(name: string): Property | undefined {
-    if (this.properties[name] && this.properties[name].length > 0) {
-      const primaryProperty = this.properties[name].find((p) => p.meta && p.meta.primary);
-      return primaryProperty || this.properties[name][0];
+    const properties = this.properties.get(name);
+    if (properties && properties.length > 0) {
+      const primaryProperty = properties.find((p) => p.meta && p.meta.primary);
+      return primaryProperty || properties[0];
     } else return undefined;
   }
 
   getPropertyById(id: string): Property | undefined {
-    for (const name in this.properties) {
-      const propertyWithId = this.properties[name].find((property) => property.id === id);
+    for (const name of this.properties.keys()) {
+      const propertyWithId = this.properties.get(name)?.find((property) => property.id === id);
       if (propertyWithId) {
         return propertyWithId;
       }
@@ -106,14 +107,15 @@ export class DigitalTwin extends DigitalTwinCore {
   }
 
   getProperties(name: string): Property[] {
-    return this.properties[name] || [];
+    return this.properties.get(name) ?? [];
   }
 
   private addPropertyNoPatch(property: Property): void {
-    if (this.properties[property.property]) {
-      this.properties[property.property].push(property);
+    const properties = this.properties.get(property.property);
+    if (properties) {
+      properties.push(property);
     } else {
-      this.properties[property.property] = [property];
+      this.properties.set(property.property, [property]);
     }
   }
 
@@ -123,11 +125,13 @@ export class DigitalTwin extends DigitalTwinCore {
   }
 
   deleteProperty(property: Property): void {
-    if (this.properties[property.property]) {
-      const prop = this.properties[property.property].find((p) => p.id === property.id);
+    const properties = this.properties.get(property.property);
+    if (properties) {
+      const prop = properties.find((p) => p.id === property.id);
       if (prop) {
-        this.properties[property.property] = this.properties[property.property].filter(
-          (p) => p.id !== property.id,
+        this.properties.set(
+          property.property,
+          properties.filter((p) => p.id !== property.id),
         );
         this.patchBuilder.deleteProperty(prop);
       }
@@ -135,8 +139,9 @@ export class DigitalTwin extends DigitalTwinCore {
   }
 
   updatePropertyValue(property: Property, value: unknown): void {
-    if (this.properties[property.property]) {
-      const prop = this.properties[property.property].find((p) => p.id === property.id);
+    const properties = this.properties.get(property.property);
+    if (properties) {
+      const prop = properties.find((p) => p.id === property.id);
       if (prop) {
         prop.withValue(value);
         this.patchBuilder.updateProperty(prop);
@@ -145,8 +150,9 @@ export class DigitalTwin extends DigitalTwinCore {
   }
 
   updatePropertyMetadata(property: Property, primary: boolean): void {
-    if (this.properties[property.property]) {
-      const prop = this.properties[property.property].find((p) => p.id === property.id);
+    const properties = this.properties.get(property.property);
+    if (properties) {
+      const prop = properties.find((p) => p.id === property.id);
       if (prop) {
         prop.withMetadata(primary);
         this.patchBuilder.updateProperty(prop);
@@ -155,10 +161,11 @@ export class DigitalTwin extends DigitalTwinCore {
   }
 
   updateProperty(property: Property): void {
-    if (this.properties[property.property]) {
-      const idx = this.properties[property.property].findIndex((p) => p.id === property.id);
+    const properties = this.properties.get(property.property);
+    if (properties) {
+      const idx = properties.findIndex((p) => p.id === property.id);
       if (idx != -1) {
-        this.properties[property.property][idx] = property;
+        properties[idx] = property;
         this.patchBuilder.updateProperty(property);
       }
     }
