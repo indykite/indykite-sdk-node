@@ -1,4 +1,11 @@
 # Changelog
+## [0.3.1](https://github.com/indykite/indykite-sdk-node/compare/v0.3.0...v0.3.1) (2023-04-14)
+
+
+### Bug Fixes
+
+* fix deployment ([184e446](https://github.com/indykite/indykite-sdk-node/commit/184e4464fdb8c298d383442edd7184846087038a))
+
 ## [0.3.0](https://github.com/indykite/indykite-sdk-node/compare/v0.2.3...v0.3.0) (2023-04-14)
 
 
