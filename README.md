@@ -9,28 +9,12 @@ IndyKite is a cloud identity platform built to secure and manage human & non-per
 ![npm type definitions](https://img.shields.io/npm/types/@indykiteone/indykite-sdk-node?style=flat-square)
 [![codecov](https://codecov.io/gh/indykite/indykite-sdk-node/branch/master/graph/badge.svg?token=G6T2UWO9G1)](https://codecov.io/gh/indykite/indykite-sdk-node)
 
-Examples of functionality available in SDK:
-* Token Introspection
-* CRUD Operations on Digital Twins 
-* Change Password 
-* Limited Configuration Management
+## Documentation
+[IndyKite documentation](https://docs.indykite.com)
 
 ## Terminology
 
-| Definition | Description |
-| ---------- | ----------- |
-| Digital Twin | A digital twin is the digital identity of a physical entity on/in a software/identity system |
-| Application Space ID | ID of the application where the digital twin belongs to |
-| Application Agent ID | ID of the agent which makes the application available for the different calls |
-| Tenant ID | ID of the tenant where the digital twin belongs to. The tenant is belong to an application space |
-| Private Key and Settings | The secret which required to reach the system. Indykite provides the necessary secrets |
-| Property | The digital twin's property (eg.: email, name) |
-| JWT | JSON Web Tokens |
-| Introspect | A process used to validate the token and to retrieve properties assigned to the token |
-| Patch property | Add, change or delete a property of a digital twin |
-
-## Documentation
-Visit the IndyKite One Developer Community site for official [IndyKite documentation](https://indykite.one/blog?category=5e3e9297-3451-4b52-91ee-8027dcd1789c) and to find out how to use the entire platform for your project.
+[IndyKite glossary](https://docs.indykite.com/docs/resources/glossary)
 
 ## Getting started
 Use these instructions to install the SDK and configure your environment.
@@ -372,8 +356,6 @@ Check out our roadmap on our [issues page](https://github.com/indykite/indykite-
 
 ## Contributing and connecting with developers
 [Contribution guidelines for this project](contributing.md)
-
-We'd love to have you connect with us or other community developers over at [IndyKite.one](https://indykite.one) 
 
 ## Support and feedback
 Feel free to file a bug, submit an issue, or give us feedback on our [issues page](https://github.com/indykite/indykite-sdk-node/issues)
