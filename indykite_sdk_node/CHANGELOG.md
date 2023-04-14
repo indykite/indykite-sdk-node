@@ -1,4 +1,16 @@
 # Changelog
+## [0.3.0](https://github.com/indykite/indykite-sdk-node/compare/v0.2.3...v0.3.0) (2023-04-14)
+
+
+### ⚠ BREAKING CHANGES
+
+* replaced old isAuthorized function
+
+### Features
+
+* add whatauthorized method to auth client ([3402f73](https://github.com/indykite/indykite-sdk-node/commit/3402f73d2372be64d15fa253cb546bda958a70e0))
+* replaced old isAuthorized function ([fd2cec7](https://github.com/indykite/indykite-sdk-node/commit/fd2cec74e413ac8b963a4a46f2eebd77b5b1eb6a))
+
 ## [0.2.3](https://github.com/indykite/indykite-sdk-node/compare/v0.2.2...v0.2.3) (2023-03-16)
 
 
