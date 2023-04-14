@@ -937,7 +937,8 @@ describe('Digital Twin', () => {
       verificationTime: emailVerificationTime,
       verifier: 'indykite.id',
     });
-    expectedDigitalTwin.properties = { email: [expectedDigitalTwinProperty] };
+    expectedDigitalTwin.properties = new Map();
+    expectedDigitalTwin.properties.set('email', [expectedDigitalTwinProperty]);
 
     const clbs = [
       {
