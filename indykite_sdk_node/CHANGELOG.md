@@ -1,4 +1,11 @@
 # Changelog
+## [0.3.2](https://github.com/indykite/indykite-sdk-node/compare/v0.3.1...v0.3.2) (2023-04-18)
+
+
+### Features
+
+* add authorization policy config ([a731321](https://github.com/indykite/indykite-sdk-node/commit/a731321527703612a41655eeee8841b4c3764d7c))
+
 ## [0.3.1](https://github.com/indykite/indykite-sdk-node/compare/v0.3.0...v0.3.1) (2023-04-14)
 
 
