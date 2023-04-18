@@ -1,7 +1,6 @@
 import { v4 } from 'uuid';
 import { ImportDigitalTwinResult } from '../../../grpc/indykite/identity/v1beta2/import';
 import { DigitalTwinKind, DigitalTwinState } from '../../../grpc/indykite/identity/v1beta2/model';
-import { Utils } from '../../utils/utils';
 import { DigitalTwin } from '../digitaltwin';
 import { ImportDigitalTwin, ImportResult } from '../import_digitaltwin';
 import { PatchPropertiesBuilder, Property } from '../property';
