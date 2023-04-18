@@ -467,7 +467,7 @@ class PropertyDefinition$Type extends MessageType<PropertyDefinition> {
         super("indykite.identity.v1beta2.PropertyDefinition", [
             { no: 1, name: "context", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { uri: true, ignoreEmpty: true } } } },
             { no: 2, name: "type", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "256", pattern: "^[a-zA-Z_][a-zA-Z0-9_]+$", ignoreEmpty: true } } } },
-            { no: 3, name: "property", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "256", pattern: "^[a-zA-Z_][a-zA-Z0-9_]+$", ignoreEmpty: true } } } }
+            { no: 3, name: "property", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "256", ignoreEmpty: true } } } }
         ]);
     }
     create(value?: PartialMessage<PropertyDefinition>): PropertyDefinition {
