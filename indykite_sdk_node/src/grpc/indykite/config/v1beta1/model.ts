@@ -2188,17 +2188,34 @@ export interface AuthorizationPolicyConfig {
      */
     policy: string; // 0.5Mb
     /**
-     * Policy status. Valid values: ACTIVE|INACTIVE
+     * Policy status.
      *
-     * @generated from protobuf field: string status = 2;
+     * @generated from protobuf field: indykite.config.v1beta1.AuthorizationPolicyConfig.Status status = 2;
      */
-    status: string;
+    status: AuthorizationPolicyConfig_Status;
     /**
      * Optional policy tags
      *
      * @generated from protobuf field: repeated string tags = 3;
      */
     tags: string[];
+}
+/**
+ * @generated from protobuf enum indykite.config.v1beta1.AuthorizationPolicyConfig.Status
+ */
+export enum AuthorizationPolicyConfig_Status {
+    /**
+     * @generated from protobuf enum value: STATUS_INVALID = 0;
+     */
+    INVALID = 0,
+    /**
+     * @generated from protobuf enum value: STATUS_ACTIVE = 1;
+     */
+    ACTIVE = 1,
+    /**
+     * @generated from protobuf enum value: STATUS_INACTIVE = 2;
+     */
+    INACTIVE = 2
 }
 /**
  * @generated from protobuf message indykite.config.v1beta1.KnowledgeGraphSchemaConfig
@@ -6681,12 +6698,12 @@ class AuthorizationPolicyConfig$Type extends MessageType<AuthorizationPolicyConf
     constructor() {
         super("indykite.config.v1beta1.AuthorizationPolicyConfig", [
             { no: 1, name: "policy", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "512000" } } } },
-            { no: 2, name: "status", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 2, name: "status", kind: "enum", T: () => ["indykite.config.v1beta1.AuthorizationPolicyConfig.Status", AuthorizationPolicyConfig_Status, "STATUS_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
             { no: 3, name: "tags", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { unique: true, items: { string: { minLen: "1", maxLen: "20", pattern: "^[a-zA-Z0-9]+$" } }, ignoreEmpty: true } } } }
         ]);
     }
     create(value?: PartialMessage<AuthorizationPolicyConfig>): AuthorizationPolicyConfig {
-        const message = { policy: "", status: "", tags: [] };
+        const message = { policy: "", status: 0, tags: [] };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<AuthorizationPolicyConfig>(this, message, value);
@@ -6700,8 +6717,8 @@ class AuthorizationPolicyConfig$Type extends MessageType<AuthorizationPolicyConf
                 case /* string policy */ 1:
                     message.policy = reader.string();
                     break;
-                case /* string status */ 2:
-                    message.status = reader.string();
+                case /* indykite.config.v1beta1.AuthorizationPolicyConfig.Status status */ 2:
+                    message.status = reader.int32();
                     break;
                 case /* repeated string tags */ 3:
                     message.tags.push(reader.string());
@@ -6721,9 +6738,9 @@ class AuthorizationPolicyConfig$Type extends MessageType<AuthorizationPolicyConf
         /* string policy = 1; */
         if (message.policy !== "")
             writer.tag(1, WireType.LengthDelimited).string(message.policy);
-        /* string status = 2; */
-        if (message.status !== "")
-            writer.tag(2, WireType.LengthDelimited).string(message.status);
+        /* indykite.config.v1beta1.AuthorizationPolicyConfig.Status status = 2; */
+        if (message.status !== 0)
+            writer.tag(2, WireType.Varint).int32(message.status);
         /* repeated string tags = 3; */
         for (let i = 0; i < message.tags.length; i++)
             writer.tag(3, WireType.LengthDelimited).string(message.tags[i]);

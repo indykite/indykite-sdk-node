@@ -1318,6 +1318,10 @@ export interface DeleteServiceAccountCredentialRequest {
      * @generated from protobuf field: repeated string bookmarks = 2;
      */
     bookmarks: string[];
+    /**
+     * @generated from protobuf field: google.protobuf.StringValue etag = 3;
+     */
+    etag?: StringValue;
 }
 /**
  * @generated from protobuf message indykite.config.v1beta1.DeleteServiceAccountCredentialResponse
@@ -4972,7 +4976,7 @@ class CreateServiceAccountRequest$Type extends MessageType<CreateServiceAccountR
             { no: 2, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "2", maxLen: "63", pattern: "^[a-z](?:[-a-z0-9]{0,61}[a-z0-9])$" } } } },
             { no: 3, name: "display_name", kind: "message", T: () => StringValue, options: { "validate.rules": { string: { minLen: "2", maxLen: "254" } } } },
             { no: 4, name: "description", kind: "message", T: () => StringValue, options: { "validate.rules": { string: { minLen: "2", maxLen: "254" } } } },
-            { no: 5, name: "role", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { in: ["all_editor", "all_viewer", "app_editor", "app_viewer", "authn_viewer", "authn_editor"] } } } },
+            { no: 5, name: "role", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { in: ["all_editor", "all_viewer"] } } } },
             { no: 6, name: "bookmarks", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { items: { string: { minLen: "40", pattern: "^[a-zA-Z0-9_-]{40,}$" } } } } } }
         ]);
     }
@@ -5769,7 +5773,8 @@ class DeleteServiceAccountCredentialRequest$Type extends MessageType<DeleteServi
     constructor() {
         super("indykite.config.v1beta1.DeleteServiceAccountCredentialRequest", [
             { no: 1, name: "id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
-            { no: 2, name: "bookmarks", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { items: { string: { minLen: "40", pattern: "^[a-zA-Z0-9_-]{40,}$" } } } } } }
+            { no: 2, name: "bookmarks", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { items: { string: { minLen: "40", pattern: "^[a-zA-Z0-9_-]{40,}$" } } } } } },
+            { no: 3, name: "etag", kind: "message", T: () => StringValue }
         ]);
     }
     create(value?: PartialMessage<DeleteServiceAccountCredentialRequest>): DeleteServiceAccountCredentialRequest {
@@ -5790,6 +5795,9 @@ class DeleteServiceAccountCredentialRequest$Type extends MessageType<DeleteServi
                 case /* repeated string bookmarks */ 2:
                     message.bookmarks.push(reader.string());
                     break;
+                case /* google.protobuf.StringValue etag */ 3:
+                    message.etag = StringValue.internalBinaryRead(reader, reader.uint32(), options, message.etag);
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -5808,6 +5816,9 @@ class DeleteServiceAccountCredentialRequest$Type extends MessageType<DeleteServi
         /* repeated string bookmarks = 2; */
         for (let i = 0; i < message.bookmarks.length; i++)
             writer.tag(2, WireType.LengthDelimited).string(message.bookmarks[i]);
+        /* google.protobuf.StringValue etag = 3; */
+        if (message.etag)
+            StringValue.internalBinaryWrite(message.etag, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -8281,7 +8292,7 @@ class AssignPermissionsRequest$Type extends MessageType<AssignPermissionsRequest
     constructor() {
         super("indykite.config.v1beta1.AssignPermissionsRequest", [
             { no: 1, name: "target_identifier", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
-            { no: 2, name: "role", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { in: ["all_editor", "all_viewer", "app_editor", "app_viewer", "authn_viewer", "authn_editor"] } } } },
+            { no: 2, name: "role", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { in: ["all_editor", "all_viewer"] } } } },
             { no: 3, name: "customer_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
             { no: 4, name: "object_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
             { no: 5, name: "bookmarks", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { items: { string: { minLen: "40", pattern: "^[a-zA-Z0-9_-]{40,}$" } } } } } }
@@ -8410,7 +8421,7 @@ class RevokePermissionsRequest$Type extends MessageType<RevokePermissionsRequest
     constructor() {
         super("indykite.config.v1beta1.RevokePermissionsRequest", [
             { no: 1, name: "target_identifier", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
-            { no: 2, name: "role", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { in: ["all_editor", "all_viewer", "app_editor", "app_viewer", "authn_viewer", "authn_editor"] } } } },
+            { no: 2, name: "role", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { in: ["all_editor", "all_viewer"] } } } },
             { no: 3, name: "customer_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
             { no: 4, name: "object_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
             { no: 5, name: "bookmarks", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { items: { string: { minLen: "40", pattern: "^[a-zA-Z0-9_-]{40,}$" } } } } } }
