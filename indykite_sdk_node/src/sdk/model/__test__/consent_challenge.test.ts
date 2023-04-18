@@ -1,7 +1,6 @@
 import { v4 } from 'uuid';
 import { ConsentChallengeAudience } from '..';
 import { DigitalTwinKind, DigitalTwinState } from '../../../grpc/indykite/identity/v1beta2/model';
-import { Utils } from '../../utils/utils';
 import { ConsentChallenge } from '../consent_challenge';
 
 describe('properties', () => {
