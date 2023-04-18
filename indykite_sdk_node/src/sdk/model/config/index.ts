@@ -7,6 +7,7 @@ export * from './application_agent_credential';
 export * from './application_agent';
 export * from './application_space';
 export * from './application';
+export * from './authorization_policy';
 export * from './configuration';
 export * from './customer';
 export * from './factory';

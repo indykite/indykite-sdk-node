@@ -3,6 +3,7 @@ import { SdkErrorCode, SdkError } from '../../error';
 import { Utils } from '../../utils/utils';
 import { AuthflowFactory } from './authflow/factory';
 import { AuthFlow } from './authflow/flow';
+import { AuthorizationPolicy, AuthorizationPolicyFactory } from './authorization_policy';
 import { NodeConfiguration } from './configuration';
 import { EmailProviderType, EmailProviderFactory } from './email/factory';
 import { IngestMappingFactory } from './ingest_mapping/factory';
@@ -16,7 +17,8 @@ export type ConfigurationType =
   | AuthFlow
   | OAuth2Client
   | IngestMapping
-  | WebAuthnProvider;
+  | WebAuthnProvider
+  | AuthorizationPolicy;
 
 export class ConfigurationFactory {
   static createInstance(config: ConfigNode): ConfigurationType {
@@ -63,6 +65,13 @@ export class ConfigurationFactory {
         const flow = WebAuthnProviderFactory.createInstance(
           config.name,
           config.config.webauthnProviderConfig,
+        );
+        return Object.assign(flow, meta);
+      }
+      case 'authorizationPolicyConfig': {
+        const flow = AuthorizationPolicyFactory.createInstance(
+          config.name,
+          config.config.authorizationPolicyConfig,
         );
         return Object.assign(flow, meta);
       }
