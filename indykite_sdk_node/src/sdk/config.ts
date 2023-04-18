@@ -45,6 +45,7 @@ import {
   ApplicationAgentCredential,
   ApplicationSpace,
   AuthFlow,
+  AuthorizationPolicy,
   ConfigurationFactory,
   Customer,
   EmailProviderType,
@@ -634,6 +635,252 @@ export class ConfigClient {
    */
   deleteWebAuthnProviderConfiguration(
     config: WebAuthnProvider,
+    bookmarks: string[] = [],
+  ): Promise<boolean> {
+    const req = {
+      id: config.id,
+      bookmarks,
+    } as DeleteConfigNodeRequest;
+    if (config.etag !== undefined) req.etag = StringValue.create({ value: config.etag });
+
+    return new Promise<boolean>((resolve, reject) => {
+      this.client.deleteConfigNode(req, (err) => {
+        if (err) reject(err);
+        else resolve(true);
+      });
+    });
+  }
+
+  /**
+   * @since 0.3.2
+   * @example
+   * async function example(sdk: ConfigClient) {
+   *   await sdk.createWebAuthnProviderConfiguration(
+   *     'gid:AAAAAnsT41Yr8ENenpK4ogi9gyo',
+   *     new AuthorizationPolicy({
+   *       name: 'my-authorization-policy',
+   *       policy: `
+   *         {
+   *           "path": {
+   *             "subjectId": "66444564",
+   *             "resourceId": "53102471",
+   *             "entities": [
+   *               {
+   *                 "id": "66444564",
+   *                 "labels": [
+   *                   "Subject"
+   *                 ],
+   *                 "identityProperties": []
+   *               },
+   *               {
+   *                 "id": "53102471",
+   *                 "labels": [
+   *                   "Resource"
+   *                 ],
+   *                 "knowledgeProperties": []
+   *               }
+   *             ],
+   *             "relationships": [
+   *               {
+   *                 "source": "66444564",
+   *                 "target": "53102471",
+   *                 "types": [
+   *                   "AUTHORIZED_TO"
+   *                 ],
+   *                 "nonDirectional": false
+   *               }
+   *             ]
+   *           },
+   *           "actions": [
+   *             "IS_AUTHORIZED"
+   *           ],
+   *           "active": true
+   *         }
+   *       `,
+   *       status: 'ACTIVE',
+   *     }),
+   *   );
+   * }
+   */
+  createAuthorizationPolicyConfiguration(
+    location: string,
+    config: AuthorizationPolicy,
+    bookmarks: string[] = [],
+  ): Promise<AuthorizationPolicy> {
+    const req = CreateConfigNodeRequest.fromJson({
+      location,
+      name: config.name,
+      bookmarks,
+    });
+    req.config = {
+      oneofKind: 'authorizationPolicyConfig',
+      authorizationPolicyConfig: config.marshal(),
+    };
+
+    if (config.displayName !== undefined) {
+      req.displayName = StringValue.fromJson(config.displayName);
+    }
+    if (config.description !== undefined) {
+      req.description = StringValue.fromJson(config.description);
+    }
+
+    return new Promise((resolve, reject) => {
+      this.client.createConfigNode(req, (err, response) => {
+        if (err) reject(err);
+        else {
+          if (!response) {
+            reject(new SdkError(SdkErrorCode.SDK_CODE_1, 'No authorization policy response'));
+            return;
+          }
+
+          config.id = response.id;
+          config.etag = response.etag;
+          config.createTime = Utils.timestampToDate(response.createTime);
+          config.updateTime = Utils.timestampToDate(response.updateTime);
+          resolve(config);
+        }
+      });
+    });
+  }
+
+  /**
+   * @since 0.3.2
+   * @example
+   * async function example(sdk: ConfigClient) {
+   *   const createdAp = await sdk.createAuthorizationPolicyConfiguration(
+   *     'gid:AAAAAgjp68hPDkSxjZ0U7f-NazM',
+   *     new AuthorizationPolicy({
+   *       name: 'node-test',
+   *       policy: `
+   *         {
+   *           "path": {
+   *             "subjectId": "66444564",
+   *             "resourceId": "53102471",
+   *             "entities": [
+   *               {
+   *                 "id": "66444564",
+   *                 "labels": [
+   *                   "Subject"
+   *                 ],
+   *                 "identityProperties": []
+   *               },
+   *               {
+   *                 "id": "53102471",
+   *                 "labels": [
+   *                   "Resource"
+   *                 ],
+   *                 "knowledgeProperties": []
+   *               }
+   *             ],
+   *             "relationships": [
+   *               {
+   *                 "source": "66444564",
+   *                 "target": "53102471",
+   *                 "types": [
+   *                   "AUTHORIZED_TO"
+   *                 ],
+   *                 "nonDirectional": false
+   *               }
+   *             ]
+   *           },
+   *           "actions": [
+   *             "IS_AUTHORIZED"
+   *           ],
+   *           "active": true
+   *         }
+   *       `,
+   *       status: AuthorizationPolicyConfig_Status.ACTIVE,
+   *     }),
+   *   );
+   *
+   *   // Store the Authorization Policy config ID somewhere (createdAp.id) so that you can use the ID later.
+   *
+   *   const ap = await sdk.readAuthorizationPolicyConfiguration(createdAp.id);
+   *   console.log(JSON.stringify(ap, null, 2));
+   * }
+   */
+  readAuthorizationPolicyConfiguration(
+    id: string,
+    bookmarks: string[] = [],
+  ): Promise<AuthorizationPolicy> {
+    return new Promise((resolve, reject) => {
+      this.client.readConfigNode({ id, bookmarks }, (err, response) => {
+        if (err) reject(err);
+        else if (response && response.configNode) {
+          const ret = ConfigurationFactory.createInstance(
+            response.configNode,
+          ) as AuthorizationPolicy;
+          resolve(ret);
+        } else {
+          reject(
+            new SdkError(
+              SdkErrorCode.SDK_CODE_1,
+              'config_error_read_authorizationpolicyconfiguration',
+            ),
+          );
+        }
+      });
+    });
+  }
+
+  /**
+   * @since 0.3.2
+   * @example
+   * async function example(sdk: ConfigClient, authorizationPolicyId: string) {
+   *   const ap = await sdk.readAuthorizationPolicyConfiguration(authorizationPolicyId);
+   *   ap.displayName = 'New Display name';
+   *   await sdk.updateAuthorizationPolicyConfiguration(ap);
+   * }
+   */
+  updateAuthorizationPolicyConfiguration(
+    config: AuthorizationPolicy,
+    bookmarks: string[] = [],
+  ): Promise<AuthorizationPolicy> {
+    const req = {
+      id: config.id,
+      bookmarks,
+    } as UpdateConfigNodeRequest;
+    if (config.etag !== undefined) req.etag = StringValue.create({ value: config.etag });
+    if (config.displayName !== undefined)
+      req.displayName = StringValue.create({ value: config.displayName });
+    if (config.description !== undefined)
+      req.description = StringValue.create({ value: config.description });
+    req.config = {
+      oneofKind: 'authorizationPolicyConfig',
+      authorizationPolicyConfig: config.marshal(),
+    };
+
+    return new Promise<AuthorizationPolicy>((resolve, reject) => {
+      this.client.updateConfigNode(req, (err, response) => {
+        if (err) reject(err);
+        else if (response && response.id === config.id) {
+          config.etag = response.etag;
+          config.updateTime = Utils.timestampToDate(response.updateTime);
+          resolve(config);
+        } else {
+          reject(
+            new SdkError(
+              SdkErrorCode.SDK_CODE_1,
+              `Update returned with different id: req.iq=${config.id}, res.id=${
+                response ? response.id : 'undefined'
+              }`,
+            ),
+          );
+        }
+      });
+    });
+  }
+
+  /**
+   * @since 0.3.2
+   * @example
+   * async function example(sdk: ConfigClient, authorizationPolicyId: string) {
+   *   const ap = await sdk.readAuthorizationPolicyConfiguration(authorizationPolicyId);
+   *   await sdk.deleteAuthorizationPolicyConfiguration(ap);
+   * }
+   */
+  deleteAuthorizationPolicyConfiguration(
+    config: AuthorizationPolicy,
     bookmarks: string[] = [],
   ): Promise<boolean> {
     const req = {
