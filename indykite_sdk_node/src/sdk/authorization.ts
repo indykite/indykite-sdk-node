@@ -2,36 +2,13 @@ import { SdkClient } from './client/client';
 import {
   IsAuthorizedRequest,
   WhatAuthorizedRequest,
+  WhoAuthorizedRequest,
 } from '../grpc/indykite/authorization/v1beta1/authorization_service';
 import { AuthorizationAPIClient } from '../grpc/indykite/authorization/v1beta1/authorization_service.grpc-client';
 import { Option } from '../grpc/indykite/authorization/v1beta1/model';
 import { DigitalTwinCore } from './model';
 import { SdkError, SdkErrorCode } from './error';
 import { Utils } from './utils/utils';
-
-export interface IsAuthorizedResponseAction {
-  allow: boolean;
-}
-
-export interface IsAuthorizedResponseResource {
-  actions: Record<string, IsAuthorizedResponseAction>;
-}
-
-export interface WhatAuthorizedResponseResource {
-  externalId: string;
-}
-
-export interface WhatAuthorizedResponseAction {
-  resources: WhatAuthorizedResponseResource[];
-}
-
-export interface IsAuthorizedResponseResourceType {
-  resources: Record<string, IsAuthorizedResponseResource>;
-}
-
-export interface WhatAuthorizedResponseResourceType {
-  actions: Record<string, WhatAuthorizedResponseAction>;
-}
 
 export interface IsAuthorizedResponse {
   /**
@@ -43,7 +20,19 @@ export interface IsAuthorizedResponse {
    * Map with resource type as key.
    * @since 0.3.0
    */
-  decisions: Record<string, IsAuthorizedResponseResourceType>;
+  decisions: {
+    [key: string]: {
+      resources: {
+        [key: string]: {
+          actions: {
+            [key: string]: {
+              allow: boolean;
+            };
+          };
+        };
+      };
+    };
+  };
 }
 
 export interface WhatAuthorizedResponse {
@@ -56,7 +45,44 @@ export interface WhatAuthorizedResponse {
    * Map with resource type as key.
    * @since 0.3.0
    */
-  decisions: Record<string, WhatAuthorizedResponseResourceType>;
+  decisions: {
+    [key: string]: {
+      actions: {
+        [key: string]: {
+          resources: {
+            externalId: string;
+          }[];
+        };
+      };
+    };
+  };
+}
+
+export interface WhoAuthorizedResponse {
+  /**
+   * Time the decision was made.
+   * @since 0.3.3
+   */
+  decisionTime?: Date;
+  /**
+   * Map with resource type as key.
+   * @since 0.3.3
+   */
+  decisions: {
+    [key: string]: {
+      resources: {
+        [key: string]: {
+          actions: {
+            [key: string]: {
+              subjects: {
+                externalId: string;
+              }[];
+            };
+          };
+        };
+      };
+    };
+  };
 }
 
 export interface AuthorizationResource {
@@ -529,6 +555,56 @@ export class AuthorizationClient {
             SdkErrorCode.SDK_CODE_1,
             'No data in whatAuthorizedByProperty response',
           );
+        } else {
+          resolve({
+            decisionTime: Utils.timestampToDate(res.decisionTime),
+            decisions: res.decisions,
+          });
+        }
+      });
+    });
+  }
+
+  /**
+   * Return a list of subjects and allowed actions for provided resources.
+   * @since 0.3.3
+   * @param resources A list of resources to authorize against.
+   * @param options Authorization options.
+   * @example
+   * function getAuthorizedSubjects() {
+   *   AuthorizationClient.createInstance()
+   *     .then(async (sdk) => {
+   *       const resp = await sdk.whoAuthorized([
+   *         {
+   *           id: 'lotA',
+   *           type: 'ParkingLot',
+   *           actions: ['HAS_FREE_PARKING'],
+   *         },
+   *       ]);
+   *       console.log(
+   *         'Subjects:',
+   *         resp.decisions['ParkingLot'].resources['lotA'].actions['HAS_FREE_PARKING'].subjects,
+   *       );
+   *     })
+   *     .catch((err) => {
+   *       console.error(err);
+   *     });
+   * }
+   */
+  whoAuthorized(
+    resources: AuthorizationResource[],
+    options: Record<string, AuthorizationOptions> = {},
+  ): Promise<WhoAuthorizedResponse> {
+    return new Promise((resolve, reject) => {
+      const request = WhoAuthorizedRequest.create({
+        resources,
+        options: this.marshalAuthorizationOptions(options),
+      });
+
+      this.client.whoAuthorized(request, (err, res) => {
+        if (err) reject(err);
+        else if (!res) {
+          throw new SdkError(SdkErrorCode.SDK_CODE_1, 'No data in whoAuthorized response');
         } else {
           resolve({
             decisionTime: Utils.timestampToDate(res.decisionTime),
