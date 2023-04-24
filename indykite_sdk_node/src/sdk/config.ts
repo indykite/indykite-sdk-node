@@ -1709,6 +1709,57 @@ export class ConfigClient {
     });
   }
 
+  async createApplicationWithAgentCredentials(
+    appSpaceId: string,
+    applicationName: string,
+    applicationAgentName: string,
+    applicationAgentCredentialsName: string,
+    publicKeyType: 'jwk' | 'pem' | undefined,
+    publicKey: Buffer | undefined,
+    defaultTenantId: string,
+    expireTime?: Date,
+  ) {
+    let error: unknown;
+    let application: Application | undefined = undefined;
+    try {
+      application = await this.createApplication(appSpaceId, applicationName);
+    } catch (err) {
+      error = err;
+    }
+
+    let applicationAgent: ApplicationAgent | undefined = undefined;
+    if (application) {
+      try {
+        applicationAgent = await this.createApplicationAgent(application.id, applicationAgentName);
+      } catch (err) {
+        error = err;
+      }
+    }
+
+    let applicationAgentCredentials: ApplicationAgentCredential | undefined = undefined;
+    if (applicationAgent) {
+      try {
+        applicationAgentCredentials = await this.registerApplicationCredential(
+          applicationAgent.id,
+          applicationAgentCredentialsName,
+          defaultTenantId,
+          publicKeyType,
+          publicKey,
+          expireTime,
+        );
+      } catch (err) {
+        error = err;
+      }
+    }
+
+    return {
+      application,
+      applicationAgent,
+      applicationAgentCredentials,
+      error,
+    };
+  }
+
   createOAuth2Provider(
     appSpaceId: string,
     name: string,
