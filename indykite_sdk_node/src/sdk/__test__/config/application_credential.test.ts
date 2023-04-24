@@ -10,6 +10,7 @@ import { ConfigClient } from '../../config';
 import { Utils } from '../../utils/utils';
 import { ApplicationAgentCredential } from '../../model/config/application_agent_credential';
 import { serviceAccountTokenMock } from '../../utils/test_utils';
+import { Application, ApplicationAgent } from '../../model';
 
 afterEach(() => {
   jest.clearAllMocks();
@@ -532,6 +533,228 @@ describe('deleteApplicationAgentCredential', () => {
 
     it('throws an error', () => {
       expect(thrownError.message).toBe('No application agent credential response');
+    });
+  });
+});
+
+describe('createApplicationWithAgentCredentials', () => {
+  let sdk: ConfigClient;
+  let createApplicationMock: jest.SpyInstance;
+  let createApplicationAgentMock: jest.SpyInstance;
+  let registerApplicationCredentialMock: jest.SpyInstance;
+  let returnedValue: Awaited<
+    ReturnType<(typeof ConfigClient)['prototype']['createApplicationWithAgentCredentials']>
+  >;
+
+  describe('when all of the instances are created', () => {
+    beforeEach(async () => {
+      sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
+      createApplicationMock = jest.spyOn(sdk, 'createApplication').mockImplementation(async () => {
+        return new Application('app-id', 'app-name', 'app-space-id');
+      });
+      createApplicationAgentMock = jest
+        .spyOn(sdk, 'createApplicationAgent')
+        .mockImplementation(async () => {
+          return new ApplicationAgent('app-agent-id', 'app-agent-name', 'app-id');
+        });
+      registerApplicationCredentialMock = jest
+        .spyOn(sdk, 'registerApplicationCredential')
+        .mockImplementation(async () => {
+          return new ApplicationAgentCredential('app-agent-credential-id', 'ked', 'app-agent-id');
+        });
+
+      returnedValue = await sdk.createApplicationWithAgentCredentials(
+        'app-space-id',
+        'app-name',
+        'app-agent-name',
+        'app-agent-credential-name',
+        undefined,
+        undefined,
+        'default-tenant-id',
+      );
+    });
+
+    afterEach(() => {
+      createApplicationMock.mockRestore();
+      createApplicationAgentMock.mockRestore();
+      registerApplicationCredentialMock.mockRestore();
+    });
+
+    it('returns correct values', async () => {
+      expect(returnedValue.application?.id).toBe('app-id');
+      expect(returnedValue.applicationAgent?.id).toBe('app-agent-id');
+      expect(returnedValue.applicationAgentCredentials?.id).toBe('app-agent-credential-id');
+      expect(returnedValue.error).toBeUndefined();
+    });
+
+    it('calls correct functions', async () => {
+      expect(createApplicationMock).toBeCalledWith('app-space-id', 'app-name');
+      expect(createApplicationAgentMock).toBeCalledWith('app-id', 'app-agent-name');
+      expect(registerApplicationCredentialMock).toBeCalledWith(
+        'app-agent-id',
+        'app-agent-credential-name',
+        'default-tenant-id',
+        undefined,
+        undefined,
+        undefined,
+      );
+    });
+  });
+
+  describe('when credentials can not be created', () => {
+    const error = new Error('Credentials mocked error');
+
+    beforeEach(async () => {
+      sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
+      createApplicationMock = jest.spyOn(sdk, 'createApplication').mockImplementation(async () => {
+        return new Application('app-id', 'app-name', 'app-space-id');
+      });
+      createApplicationAgentMock = jest
+        .spyOn(sdk, 'createApplicationAgent')
+        .mockImplementation(async () => {
+          return new ApplicationAgent('app-agent-id', 'app-agent-name', 'app-id');
+        });
+      registerApplicationCredentialMock = jest
+        .spyOn(sdk, 'registerApplicationCredential')
+        .mockImplementation(async () => {
+          throw error;
+        });
+
+      returnedValue = await sdk.createApplicationWithAgentCredentials(
+        'app-space-id',
+        'app-name',
+        'app-agent-name',
+        'app-agent-credential-name',
+        undefined,
+        undefined,
+        'default-tenant-id',
+      );
+    });
+
+    afterEach(() => {
+      createApplicationMock.mockRestore();
+      createApplicationAgentMock.mockRestore();
+      registerApplicationCredentialMock.mockRestore();
+    });
+
+    it('returns correct values', async () => {
+      expect(returnedValue.application?.id).toBe('app-id');
+      expect(returnedValue.applicationAgent?.id).toBe('app-agent-id');
+      expect(returnedValue.applicationAgentCredentials).toBeUndefined();
+      expect(returnedValue.error).toBe(error);
+    });
+
+    it('calls correct functions', async () => {
+      expect(createApplicationMock).toBeCalledWith('app-space-id', 'app-name');
+      expect(createApplicationAgentMock).toBeCalledWith('app-id', 'app-agent-name');
+      expect(registerApplicationCredentialMock).toBeCalledWith(
+        'app-agent-id',
+        'app-agent-credential-name',
+        'default-tenant-id',
+        undefined,
+        undefined,
+        undefined,
+      );
+    });
+  });
+
+  describe('when application agent can not be created', () => {
+    const error = new Error('App agent mocked error');
+
+    beforeEach(async () => {
+      sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
+      createApplicationMock = jest.spyOn(sdk, 'createApplication').mockImplementation(async () => {
+        return new Application('app-id', 'app-name', 'app-space-id');
+      });
+      createApplicationAgentMock = jest
+        .spyOn(sdk, 'createApplicationAgent')
+        .mockImplementation(async () => {
+          throw error;
+        });
+      registerApplicationCredentialMock = jest
+        .spyOn(sdk, 'registerApplicationCredential')
+        .mockImplementation(async () => {
+          throw new Error('This should not be called');
+        });
+
+      returnedValue = await sdk.createApplicationWithAgentCredentials(
+        'app-space-id',
+        'app-name',
+        'app-agent-name',
+        'app-agent-credential-name',
+        undefined,
+        undefined,
+        'default-tenant-id',
+      );
+    });
+
+    afterEach(() => {
+      createApplicationMock.mockRestore();
+      createApplicationAgentMock.mockRestore();
+      registerApplicationCredentialMock.mockRestore();
+    });
+
+    it('returns correct values', async () => {
+      expect(returnedValue.application?.id).toBe('app-id');
+      expect(returnedValue.applicationAgent).toBeUndefined();
+      expect(returnedValue.applicationAgentCredentials).toBeUndefined();
+      expect(returnedValue.error).toBe(error);
+    });
+
+    it('calls correct functions', async () => {
+      expect(createApplicationMock).toBeCalledWith('app-space-id', 'app-name');
+      expect(createApplicationAgentMock).toBeCalledWith('app-id', 'app-agent-name');
+      expect(registerApplicationCredentialMock).toBeCalledTimes(0);
+    });
+  });
+
+  describe('when application can not be created', () => {
+    const error = new Error('App agent mocked error');
+
+    beforeEach(async () => {
+      sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
+      createApplicationMock = jest.spyOn(sdk, 'createApplication').mockImplementation(async () => {
+        throw error;
+      });
+      createApplicationAgentMock = jest
+        .spyOn(sdk, 'createApplicationAgent')
+        .mockImplementation(async () => {
+          throw new Error('This should not be called');
+        });
+      registerApplicationCredentialMock = jest
+        .spyOn(sdk, 'registerApplicationCredential')
+        .mockImplementation(async () => {
+          throw new Error('This should not be called');
+        });
+
+      returnedValue = await sdk.createApplicationWithAgentCredentials(
+        'app-space-id',
+        'app-name',
+        'app-agent-name',
+        'app-agent-credential-name',
+        undefined,
+        undefined,
+        'default-tenant-id',
+      );
+    });
+
+    afterEach(() => {
+      createApplicationMock.mockRestore();
+      createApplicationAgentMock.mockRestore();
+      registerApplicationCredentialMock.mockRestore();
+    });
+
+    it('returns correct values', async () => {
+      expect(returnedValue.application).toBeUndefined();
+      expect(returnedValue.applicationAgent).toBeUndefined();
+      expect(returnedValue.applicationAgentCredentials).toBeUndefined();
+      expect(returnedValue.error).toBe(error);
+    });
+
+    it('calls correct functions', async () => {
+      expect(createApplicationMock).toBeCalledWith('app-space-id', 'app-name');
+      expect(createApplicationAgentMock).toBeCalledTimes(0);
+      expect(registerApplicationCredentialMock).toBeCalledTimes(0);
     });
   });
 });
