@@ -5,10 +5,12 @@ import {
   WhoAuthorizedRequest,
 } from '../grpc/indykite/authorization/v1beta1/authorization_service';
 import { AuthorizationAPIClient } from '../grpc/indykite/authorization/v1beta1/authorization_service.grpc-client';
-import { Option } from '../grpc/indykite/authorization/v1beta1/model';
+import { InputParam } from '../grpc/indykite/authorization/v1beta1/model';
 import { DigitalTwinCore } from './model';
 import { SdkError, SdkErrorCode } from './error';
 import { Utils } from './utils/utils';
+
+export type InputParameter = string | number | boolean;
 
 export interface IsAuthorizedResponse {
   /**
@@ -116,7 +118,7 @@ export interface AuthorizationResourceType {
   actions: string[];
 }
 
-export type AuthorizationOptions = string | boolean | number;
+export type InputParameters = string | boolean | number;
 
 export interface PropertyFilter {
   type: string;
@@ -161,7 +163,8 @@ export class AuthorizationClient {
    * @since 0.3.0
    * @param subject Subject to check if is authorized to perform given actions.
    * @param resources A list of resources to authorize against.
-   * @param options Authorization options
+   * @param inputParameters Policy input params.
+   * @param policyTags Only evaluate polices containing provided tags.
    * @example
    * function printAuthorization(token: string) {
    *   AuthorizationClient.createInstance()
@@ -194,7 +197,8 @@ export class AuthorizationClient {
   isAuthorized(
     digitalTwin: DigitalTwinCore,
     resources: AuthorizationResource[],
-    options: Record<string, AuthorizationOptions> = {},
+    inputParameters: Record<string, InputParameters> = {},
+    policyTags?: string[],
   ): Promise<IsAuthorizedResponse> {
     return new Promise((resolve, reject) => {
       const request = IsAuthorizedRequest.create({
@@ -210,7 +214,8 @@ export class AuthorizationClient {
             },
           },
         },
-        options: this.marshalAuthorizationOptions(options),
+        inputParams: this.marshalAuthorizationInputParameters(inputParameters),
+        policyTags,
       });
 
       this.client.isAuthorized(request, (err, res) => {
@@ -232,7 +237,8 @@ export class AuthorizationClient {
    * @since 0.3.0
    * @param subjectToken Subject to check if is authorized to perform given actions.
    * @param resources A list of resources to authorize against.
-   * @param options Authorization options
+   * @param inputParameters Policy input params.
+   * @param policyTags Only evaluate polices containing provided tags.
    * @example
    * function printAuthorization(token: string) {
    *   AuthorizationClient.createInstance()
@@ -257,7 +263,8 @@ export class AuthorizationClient {
   isAuthorizedByToken(
     subjectToken: string,
     resources: AuthorizationResource[],
-    options: Record<string, AuthorizationOptions> = {},
+    inputParameters: Record<string, InputParameters> = {},
+    policyTags?: string[],
   ): Promise<IsAuthorizedResponse> {
     return new Promise((resolve, reject) => {
       const request = IsAuthorizedRequest.create({
@@ -273,7 +280,8 @@ export class AuthorizationClient {
             },
           },
         },
-        options: this.marshalAuthorizationOptions(options),
+        inputParams: this.marshalAuthorizationInputParameters(inputParameters),
+        policyTags,
       });
 
       this.client.isAuthorized(request, (err, res) => {
@@ -295,7 +303,8 @@ export class AuthorizationClient {
    * @since 0.3.0
    * @param subjectProperty Subject to check if is authorized to perform given actions.
    * @param resources A list of resources to authorize against.
-   * @param options Authorization options
+   * @param inputParameters Policy input params.
+   * @param policyTags Only evaluate polices containing provided tags.
    * @example
    * function printAuthorization(token: string) {
    *   AuthorizationClient.createInstance()
@@ -324,7 +333,8 @@ export class AuthorizationClient {
   isAuthorizedByProperty(
     subjectProperty: PropertyFilter,
     resources: AuthorizationResource[],
-    options: Record<string, AuthorizationOptions> = {},
+    inputParameters: Record<string, InputParameters> = {},
+    policyTags?: string[],
   ): Promise<IsAuthorizedResponse> {
     return new Promise((resolve, reject) => {
       const request = IsAuthorizedRequest.create({
@@ -345,7 +355,8 @@ export class AuthorizationClient {
             },
           },
         },
-        options: this.marshalAuthorizationOptions(options),
+        inputParams: this.marshalAuthorizationInputParameters(inputParameters),
+        policyTags,
       });
 
       this.client.isAuthorized(request, (err, res) => {
@@ -367,7 +378,8 @@ export class AuthorizationClient {
    * @since 0.3.0
    * @param subject Subject to check if is authorized to perform given actions.
    * @param resourceTypes A list of resources types that should be checked against.
-   * @param options Authorization options
+   * @param inputParameters Policy input params.
+   * @param policyTags Only evaluate polices containing provided tags.
    * @example
    * function getAuthorizedResources(token: string) {
    *   AuthorizationClient.createInstance()
@@ -397,7 +409,8 @@ export class AuthorizationClient {
   whatAuthorized(
     digitalTwin: DigitalTwinCore,
     resourceTypes: AuthorizationResourceType[],
-    options: Record<string, AuthorizationOptions> = {},
+    inputParameters: Record<string, InputParameters> = {},
+    policyTags?: string[],
   ): Promise<WhatAuthorizedResponse> {
     return new Promise((resolve, reject) => {
       const request = WhatAuthorizedRequest.create({
@@ -413,7 +426,8 @@ export class AuthorizationClient {
             },
           },
         },
-        options: this.marshalAuthorizationOptions(options),
+        inputParams: this.marshalAuthorizationInputParameters(inputParameters),
+        policyTags,
       });
 
       this.client.whatAuthorized(request, (err, res) => {
@@ -435,7 +449,8 @@ export class AuthorizationClient {
    * @since 0.3.0
    * @param subjectToken Subject to check if is authorized to perform given actions.
    * @param resourceTypes A list of resources types that should be checked against.
-   * @param options Authorization options
+   * @param inputParameters Policy input params.
+   * @param policyTags Only evaluate polices containing provided tags.
    * @example
    * function getAuthorizedResources(token: string) {
    *   AuthorizationClient.createInstance()
@@ -457,7 +472,8 @@ export class AuthorizationClient {
   whatAuthorizedByToken(
     subjectToken: string,
     resourceTypes: AuthorizationResourceType[],
-    options: Record<string, AuthorizationOptions> = {},
+    inputParameters: Record<string, InputParameters> = {},
+    policyTags?: string[],
   ): Promise<WhatAuthorizedResponse> {
     return new Promise((resolve, reject) => {
       const request = WhatAuthorizedRequest.create({
@@ -473,7 +489,8 @@ export class AuthorizationClient {
             },
           },
         },
-        options: this.marshalAuthorizationOptions(options),
+        inputParams: this.marshalAuthorizationInputParameters(inputParameters),
+        policyTags,
       });
 
       this.client.whatAuthorized(request, (err, res) => {
@@ -495,7 +512,8 @@ export class AuthorizationClient {
    * @since 0.3.0
    * @param subjectProperty Subject to check if is authorized to perform given actions.
    * @param resourceTypes A list of resources types that should be checked against.
-   * @param options Authorization options
+   * @param inputParameters Policy input params.
+   * @param policyTags Only evaluate polices containing provided tags.
    * @example
    * function getAuthorizedResources(token: string) {
    *   AuthorizationClient.createInstance()
@@ -524,7 +542,8 @@ export class AuthorizationClient {
   whatAuthorizedByProperty(
     subjectProperty: PropertyFilter,
     resourceTypes: AuthorizationResourceType[],
-    options: Record<string, AuthorizationOptions> = {},
+    inputParameters: Record<string, InputParameters> = {},
+    policyTags?: string[],
   ): Promise<WhatAuthorizedResponse> {
     return new Promise((resolve, reject) => {
       const request = WhatAuthorizedRequest.create({
@@ -545,7 +564,8 @@ export class AuthorizationClient {
             },
           },
         },
-        options: this.marshalAuthorizationOptions(options),
+        inputParams: this.marshalAuthorizationInputParameters(inputParameters),
+        policyTags,
       });
 
       this.client.whatAuthorized(request, (err, res) => {
@@ -569,7 +589,8 @@ export class AuthorizationClient {
    * Return a list of subjects and allowed actions for provided resources.
    * @since 0.3.3
    * @param resources A list of resources to authorize against.
-   * @param options Authorization options.
+   * @param inputParameters Policy input params.
+   * @param policyTags Only evaluate polices containing provided tags.
    * @example
    * function getAuthorizedSubjects() {
    *   AuthorizationClient.createInstance()
@@ -593,12 +614,14 @@ export class AuthorizationClient {
    */
   whoAuthorized(
     resources: AuthorizationResource[],
-    options: Record<string, AuthorizationOptions> = {},
+    inputParameters: Record<string, InputParameters> = {},
+    policyTags?: string[],
   ): Promise<WhoAuthorizedResponse> {
     return new Promise((resolve, reject) => {
       const request = WhoAuthorizedRequest.create({
         resources,
-        options: this.marshalAuthorizationOptions(options),
+        inputParams: this.marshalAuthorizationInputParameters(inputParameters),
+        policyTags,
       });
 
       this.client.whoAuthorized(request, (err, res) => {
@@ -615,12 +638,12 @@ export class AuthorizationClient {
     });
   }
 
-  private marshalAuthorizationOptions(
-    options: Record<string, AuthorizationOptions>,
-  ): Record<string, Option> {
+  private marshalAuthorizationInputParameters(
+    options: Record<string, InputParameters>,
+  ): Record<string, InputParam> {
     return Object.keys(options).reduce((newOptions, optionKey) => {
-      newOptions[optionKey] = Option.fromJson(Utils.objectToJsonValue(options[optionKey]));
+      newOptions[optionKey] = InputParam.fromJson(Utils.objectToJsonValue(options[optionKey]));
       return newOptions;
-    }, {} as Record<string, Option>);
+    }, {} as Record<string, InputParam>);
   }
 }
