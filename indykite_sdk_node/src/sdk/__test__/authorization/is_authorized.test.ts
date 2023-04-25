@@ -94,7 +94,8 @@ describe('isAuthorized', () => {
       expect(sdk['client'].isAuthorized).toBeCalledTimes(1);
       expect(sdk['client'].isAuthorized).toBeCalledWith(
         {
-          options: {},
+          inputParams: {},
+          policyTags: [],
           subject: {
             subject: {
               oneofKind: 'digitalTwinIdentifier',
@@ -300,23 +301,29 @@ describe('isAuthorizedByToken', () => {
 
       jest.spyOn(sdk['client'], 'isAuthorized').mockImplementation(mockFunc);
 
-      result = await sdk.isAuthorizedByToken(subject, resources, {
-        someOption: 'Some value',
-      });
+      result = await sdk.isAuthorizedByToken(
+        subject,
+        resources,
+        {
+          someInputParam: 'Some value',
+        },
+        ['some-tag'],
+      );
     });
 
     it('sends a correct request', () => {
       expect(sdk['client'].isAuthorized).toBeCalledTimes(1);
       expect(sdk['client'].isAuthorized).toBeCalledWith(
         {
-          options: {
-            someOption: {
+          inputParams: {
+            someInputParam: {
               value: {
                 oneofKind: 'stringValue',
                 stringValue: 'Some value',
               },
             },
           },
+          policyTags: ['some-tag'],
           subject: {
             subject: {
               oneofKind: 'digitalTwinIdentifier',
@@ -527,7 +534,8 @@ describe('isAuthorizedByProperty', () => {
       expect(sdk['client'].isAuthorized).toBeCalledTimes(1);
       expect(sdk['client'].isAuthorized).toBeCalledWith(
         {
-          options: {},
+          inputParams: {},
+          policyTags: [],
           subject: {
             subject: {
               oneofKind: 'digitalTwinIdentifier',

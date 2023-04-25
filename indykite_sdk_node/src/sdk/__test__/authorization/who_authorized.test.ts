@@ -88,7 +88,8 @@ describe('whoAuthorized', () => {
       expect(sdk['client'].whoAuthorized).toBeCalledTimes(1);
       expect(sdk['client'].whoAuthorized).toBeCalledWith(
         {
-          options: {},
+          inputParams: {},
+          policyTags: [],
           resources: [
             {
               id: 'parking-lot-id1',
