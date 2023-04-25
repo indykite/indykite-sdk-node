@@ -1,4 +1,12 @@
 # Changelog
+## [0.3.3](https://github.com/indykite/indykite-sdk-node/compare/v0.3.2...v0.3.3) (2023-04-25)
+
+
+### Features
+
+* add whoauthorized method ([3c6874d](https://github.com/indykite/indykite-sdk-node/commit/3c6874d24522c233e1b7ecccee70d8a699bee31c))
+* allow to create app agent creds in one step ([4c0d560](https://github.com/indykite/indykite-sdk-node/commit/4c0d560e6f9d6bbd67ecdb7b09e2bb3923950c58))
+
 ## [0.3.2](https://github.com/indykite/indykite-sdk-node/compare/v0.3.1...v0.3.2) (2023-04-18)
 
 
