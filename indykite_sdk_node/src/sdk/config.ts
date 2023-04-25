@@ -1709,6 +1709,23 @@ export class ConfigClient {
     });
   }
 
+  /**
+   * Create application, application agent and application agent credentials in one step.
+   * @since 0.3.3
+   * @example
+   *   const { applicationAgentCredentials: creds } = await sdk.createApplicationWithAgentCredentials(
+   *     'application-space-id',
+   *     'application-name',
+   *     'application-agent-name',
+   *     'Application agent credentials',
+   *     undefined,
+   *     undefined,
+   *     'default-tenant-id',
+   *   );
+   *   if (!creds.agentConfig) {
+   *     throw new Error("Application agent credentials were not created");
+   *   }
+   */
   async createApplicationWithAgentCredentials(
     appSpaceId: string,
     applicationName: string,
