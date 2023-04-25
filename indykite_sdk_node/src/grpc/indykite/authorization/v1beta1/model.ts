@@ -45,9 +45,9 @@ export interface Subject {
     };
 }
 /**
- * @generated from protobuf message indykite.authorization.v1beta1.Option
+ * @generated from protobuf message indykite.authorization.v1beta1.InputParam
  */
-export interface Option {
+export interface InputParam {
     /**
      * @generated from protobuf oneof: value
      */
@@ -138,23 +138,23 @@ class Subject$Type extends MessageType<Subject> {
  */
 export const Subject = new Subject$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class Option$Type extends MessageType<Option> {
+class InputParam$Type extends MessageType<InputParam> {
     constructor() {
-        super("indykite.authorization.v1beta1.Option", [
+        super("indykite.authorization.v1beta1.InputParam", [
             { no: 1, name: "string_value", kind: "scalar", oneof: "value", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "1", maxLen: "50" } } } },
             { no: 2, name: "bool_value", kind: "scalar", oneof: "value", T: 8 /*ScalarType.BOOL*/ },
             { no: 3, name: "integer_value", kind: "scalar", oneof: "value", T: 3 /*ScalarType.INT64*/ },
             { no: 4, name: "double_value", kind: "scalar", oneof: "value", T: 1 /*ScalarType.DOUBLE*/ }
         ]);
     }
-    create(value?: PartialMessage<Option>): Option {
+    create(value?: PartialMessage<InputParam>): InputParam {
         const message = { value: { oneofKind: undefined } };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
-            reflectionMergePartial<Option>(this, message, value);
+            reflectionMergePartial<InputParam>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: Option): Option {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: InputParam): InputParam {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
@@ -194,7 +194,7 @@ class Option$Type extends MessageType<Option> {
         }
         return message;
     }
-    internalBinaryWrite(message: Option, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+    internalBinaryWrite(message: InputParam, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* string string_value = 1; */
         if (message.value.oneofKind === "stringValue")
             writer.tag(1, WireType.LengthDelimited).string(message.value.stringValue);
@@ -214,6 +214,6 @@ class Option$Type extends MessageType<Option> {
     }
 }
 /**
- * @generated MessageType for protobuf message indykite.authorization.v1beta1.Option
+ * @generated MessageType for protobuf message indykite.authorization.v1beta1.InputParam
  */
-export const Option = new Option$Type();
+export const InputParam = new InputParam$Type();

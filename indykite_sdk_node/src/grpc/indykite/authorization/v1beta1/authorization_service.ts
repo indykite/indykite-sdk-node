@@ -26,7 +26,7 @@ import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MESSAGE_TYPE } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 import { Timestamp } from "../../../google/protobuf/timestamp";
-import { Option } from "./model";
+import { InputParam } from "./model";
 import { Subject } from "./model";
 /**
  * @generated from protobuf message indykite.authorization.v1beta1.IsAuthorizedRequest
@@ -45,13 +45,19 @@ export interface IsAuthorizedRequest {
      */
     resources: IsAuthorizedRequest_Resource[];
     /**
-     * Authorization options
+     * Policy input params
      *
-     * @generated from protobuf field: map<string, indykite.authorization.v1beta1.Option> options = 3;
+     * @generated from protobuf field: map<string, indykite.authorization.v1beta1.InputParam> input_params = 3;
      */
-    options: {
-        [key: string]: Option;
+    inputParams: {
+        [key: string]: InputParam;
     };
+    /**
+     * Only evaluate polices containing provided tags
+     *
+     * @generated from protobuf field: repeated string policy_tags = 4;
+     */
+    policyTags: string[];
 }
 /**
  * Resource to authorize against.
@@ -149,13 +155,19 @@ export interface WhatAuthorizedRequest {
      */
     resourceTypes: WhatAuthorizedRequest_ResourceType[];
     /**
-     * Authorization options
+     * Policy input params
      *
-     * @generated from protobuf field: map<string, indykite.authorization.v1beta1.Option> options = 3;
+     * @generated from protobuf field: map<string, indykite.authorization.v1beta1.InputParam> input_params = 3;
      */
-    options: {
-        [key: string]: Option;
+    inputParams: {
+        [key: string]: InputParam;
     };
+    /**
+     * Only evaluate polices containing provided tags
+     *
+     * @generated from protobuf field: repeated string policy_tags = 4;
+     */
+    policyTags: string[];
 }
 /**
  * Resource type to authorize against.
@@ -241,13 +253,19 @@ export interface WhoAuthorizedRequest {
      */
     resources: WhoAuthorizedRequest_Resource[];
     /**
-     * Authorization options
+     * Policy input params
      *
-     * @generated from protobuf field: map<string, indykite.authorization.v1beta1.Option> options = 2;
+     * @generated from protobuf field: map<string, indykite.authorization.v1beta1.InputParam> input_params = 2;
      */
-    options: {
-        [key: string]: Option;
+    inputParams: {
+        [key: string]: InputParam;
     };
+    /**
+     * Only evaluate polices containing provided tags
+     *
+     * @generated from protobuf field: repeated string policy_tags = 3;
+     */
+    policyTags: string[];
 }
 /**
  * Resource to authorize against.
@@ -347,11 +365,12 @@ class IsAuthorizedRequest$Type extends MessageType<IsAuthorizedRequest> {
         super("indykite.authorization.v1beta1.IsAuthorizedRequest", [
             { no: 1, name: "subject", kind: "message", T: () => Subject, options: { "validate.rules": { message: { required: true } } } },
             { no: 2, name: "resources", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => IsAuthorizedRequest_Resource, options: { "validate.rules": { repeated: { minItems: "1", maxItems: "32" } } } },
-            { no: 3, name: "options", kind: "map", K: 9 /*ScalarType.STRING*/, V: { kind: "message", T: () => Option }, options: { "validate.rules": { map: { minPairs: "0", maxPairs: "20", keys: { string: { minLen: "1", maxLen: "20", pattern: "^(?:[a-zA-Z][a-zA-Z0-9]+)+$" } } } } } }
+            { no: 3, name: "input_params", kind: "map", K: 9 /*ScalarType.STRING*/, V: { kind: "message", T: () => InputParam }, options: { "validate.rules": { map: { minPairs: "0", maxPairs: "20", keys: { string: { minLen: "1", maxLen: "20", pattern: "^(?:[a-zA-Z][a-zA-Z0-9]+)+$" } } } } } },
+            { no: 4, name: "policy_tags", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { unique: true, items: { string: { minLen: "1", maxLen: "20", pattern: "^[a-zA-Z0-9]+$" } }, ignoreEmpty: true } } } }
         ]);
     }
     create(value?: PartialMessage<IsAuthorizedRequest>): IsAuthorizedRequest {
-        const message = { resources: [], options: {} };
+        const message = { resources: [], inputParams: {}, policyTags: [] };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<IsAuthorizedRequest>(this, message, value);
@@ -368,8 +387,11 @@ class IsAuthorizedRequest$Type extends MessageType<IsAuthorizedRequest> {
                 case /* repeated indykite.authorization.v1beta1.IsAuthorizedRequest.Resource resources */ 2:
                     message.resources.push(IsAuthorizedRequest_Resource.internalBinaryRead(reader, reader.uint32(), options));
                     break;
-                case /* map<string, indykite.authorization.v1beta1.Option> options */ 3:
-                    this.binaryReadMap3(message.options, reader, options);
+                case /* map<string, indykite.authorization.v1beta1.InputParam> input_params */ 3:
+                    this.binaryReadMap3(message.inputParams, reader, options);
+                    break;
+                case /* repeated string policy_tags */ 4:
+                    message.policyTags.push(reader.string());
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -382,8 +404,8 @@ class IsAuthorizedRequest$Type extends MessageType<IsAuthorizedRequest> {
         }
         return message;
     }
-    private binaryReadMap3(map: IsAuthorizedRequest["options"], reader: IBinaryReader, options: BinaryReadOptions): void {
-        let len = reader.uint32(), end = reader.pos + len, key: keyof IsAuthorizedRequest["options"] | undefined, val: IsAuthorizedRequest["options"][any] | undefined;
+    private binaryReadMap3(map: IsAuthorizedRequest["inputParams"], reader: IBinaryReader, options: BinaryReadOptions): void {
+        let len = reader.uint32(), end = reader.pos + len, key: keyof IsAuthorizedRequest["inputParams"] | undefined, val: IsAuthorizedRequest["inputParams"][any] | undefined;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
@@ -391,12 +413,12 @@ class IsAuthorizedRequest$Type extends MessageType<IsAuthorizedRequest> {
                     key = reader.string();
                     break;
                 case 2:
-                    val = Option.internalBinaryRead(reader, reader.uint32(), options);
+                    val = InputParam.internalBinaryRead(reader, reader.uint32(), options);
                     break;
-                default: throw new globalThis.Error("unknown map entry field for field indykite.authorization.v1beta1.IsAuthorizedRequest.options");
+                default: throw new globalThis.Error("unknown map entry field for field indykite.authorization.v1beta1.IsAuthorizedRequest.input_params");
             }
         }
-        map[key ?? ""] = val ?? Option.create();
+        map[key ?? ""] = val ?? InputParam.create();
     }
     internalBinaryWrite(message: IsAuthorizedRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* indykite.authorization.v1beta1.Subject subject = 1; */
@@ -405,13 +427,16 @@ class IsAuthorizedRequest$Type extends MessageType<IsAuthorizedRequest> {
         /* repeated indykite.authorization.v1beta1.IsAuthorizedRequest.Resource resources = 2; */
         for (let i = 0; i < message.resources.length; i++)
             IsAuthorizedRequest_Resource.internalBinaryWrite(message.resources[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* map<string, indykite.authorization.v1beta1.Option> options = 3; */
-        for (let k of Object.keys(message.options)) {
+        /* map<string, indykite.authorization.v1beta1.InputParam> input_params = 3; */
+        for (let k of Object.keys(message.inputParams)) {
             writer.tag(3, WireType.LengthDelimited).fork().tag(1, WireType.LengthDelimited).string(k);
             writer.tag(2, WireType.LengthDelimited).fork();
-            Option.internalBinaryWrite(message.options[k], writer, options);
+            InputParam.internalBinaryWrite(message.inputParams[k], writer, options);
             writer.join().join();
         }
+        /* repeated string policy_tags = 4; */
+        for (let i = 0; i < message.policyTags.length; i++)
+            writer.tag(4, WireType.LengthDelimited).string(message.policyTags[i]);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -744,11 +769,12 @@ class WhatAuthorizedRequest$Type extends MessageType<WhatAuthorizedRequest> {
         super("indykite.authorization.v1beta1.WhatAuthorizedRequest", [
             { no: 1, name: "subject", kind: "message", T: () => Subject, options: { "validate.rules": { message: { required: true } } } },
             { no: 2, name: "resource_types", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => WhatAuthorizedRequest_ResourceType, options: { "validate.rules": { repeated: { minItems: "1", maxItems: "10" } } } },
-            { no: 3, name: "options", kind: "map", K: 9 /*ScalarType.STRING*/, V: { kind: "message", T: () => Option }, options: { "validate.rules": { map: { minPairs: "0", maxPairs: "20", keys: { string: { minLen: "1", maxLen: "20", pattern: "^(?:[a-zA-Z][a-zA-Z0-9]+)+$" } } } } } }
+            { no: 3, name: "input_params", kind: "map", K: 9 /*ScalarType.STRING*/, V: { kind: "message", T: () => InputParam }, options: { "validate.rules": { map: { minPairs: "0", maxPairs: "20", keys: { string: { minLen: "1", maxLen: "20", pattern: "^(?:[a-zA-Z][a-zA-Z0-9]+)+$" } } } } } },
+            { no: 4, name: "policy_tags", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { unique: true, items: { string: { minLen: "1", maxLen: "20", pattern: "^[a-zA-Z0-9]+$" } }, ignoreEmpty: true } } } }
         ]);
     }
     create(value?: PartialMessage<WhatAuthorizedRequest>): WhatAuthorizedRequest {
-        const message = { resourceTypes: [], options: {} };
+        const message = { resourceTypes: [], inputParams: {}, policyTags: [] };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<WhatAuthorizedRequest>(this, message, value);
@@ -765,8 +791,11 @@ class WhatAuthorizedRequest$Type extends MessageType<WhatAuthorizedRequest> {
                 case /* repeated indykite.authorization.v1beta1.WhatAuthorizedRequest.ResourceType resource_types */ 2:
                     message.resourceTypes.push(WhatAuthorizedRequest_ResourceType.internalBinaryRead(reader, reader.uint32(), options));
                     break;
-                case /* map<string, indykite.authorization.v1beta1.Option> options */ 3:
-                    this.binaryReadMap3(message.options, reader, options);
+                case /* map<string, indykite.authorization.v1beta1.InputParam> input_params */ 3:
+                    this.binaryReadMap3(message.inputParams, reader, options);
+                    break;
+                case /* repeated string policy_tags */ 4:
+                    message.policyTags.push(reader.string());
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -779,8 +808,8 @@ class WhatAuthorizedRequest$Type extends MessageType<WhatAuthorizedRequest> {
         }
         return message;
     }
-    private binaryReadMap3(map: WhatAuthorizedRequest["options"], reader: IBinaryReader, options: BinaryReadOptions): void {
-        let len = reader.uint32(), end = reader.pos + len, key: keyof WhatAuthorizedRequest["options"] | undefined, val: WhatAuthorizedRequest["options"][any] | undefined;
+    private binaryReadMap3(map: WhatAuthorizedRequest["inputParams"], reader: IBinaryReader, options: BinaryReadOptions): void {
+        let len = reader.uint32(), end = reader.pos + len, key: keyof WhatAuthorizedRequest["inputParams"] | undefined, val: WhatAuthorizedRequest["inputParams"][any] | undefined;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
@@ -788,12 +817,12 @@ class WhatAuthorizedRequest$Type extends MessageType<WhatAuthorizedRequest> {
                     key = reader.string();
                     break;
                 case 2:
-                    val = Option.internalBinaryRead(reader, reader.uint32(), options);
+                    val = InputParam.internalBinaryRead(reader, reader.uint32(), options);
                     break;
-                default: throw new globalThis.Error("unknown map entry field for field indykite.authorization.v1beta1.WhatAuthorizedRequest.options");
+                default: throw new globalThis.Error("unknown map entry field for field indykite.authorization.v1beta1.WhatAuthorizedRequest.input_params");
             }
         }
-        map[key ?? ""] = val ?? Option.create();
+        map[key ?? ""] = val ?? InputParam.create();
     }
     internalBinaryWrite(message: WhatAuthorizedRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* indykite.authorization.v1beta1.Subject subject = 1; */
@@ -802,13 +831,16 @@ class WhatAuthorizedRequest$Type extends MessageType<WhatAuthorizedRequest> {
         /* repeated indykite.authorization.v1beta1.WhatAuthorizedRequest.ResourceType resource_types = 2; */
         for (let i = 0; i < message.resourceTypes.length; i++)
             WhatAuthorizedRequest_ResourceType.internalBinaryWrite(message.resourceTypes[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* map<string, indykite.authorization.v1beta1.Option> options = 3; */
-        for (let k of Object.keys(message.options)) {
+        /* map<string, indykite.authorization.v1beta1.InputParam> input_params = 3; */
+        for (let k of Object.keys(message.inputParams)) {
             writer.tag(3, WireType.LengthDelimited).fork().tag(1, WireType.LengthDelimited).string(k);
             writer.tag(2, WireType.LengthDelimited).fork();
-            Option.internalBinaryWrite(message.options[k], writer, options);
+            InputParam.internalBinaryWrite(message.inputParams[k], writer, options);
             writer.join().join();
         }
+        /* repeated string policy_tags = 4; */
+        for (let i = 0; i < message.policyTags.length; i++)
+            writer.tag(4, WireType.LengthDelimited).string(message.policyTags[i]);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -1113,11 +1145,12 @@ class WhoAuthorizedRequest$Type extends MessageType<WhoAuthorizedRequest> {
     constructor() {
         super("indykite.authorization.v1beta1.WhoAuthorizedRequest", [
             { no: 1, name: "resources", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => WhoAuthorizedRequest_Resource, options: { "validate.rules": { repeated: { minItems: "1", maxItems: "32" } } } },
-            { no: 2, name: "options", kind: "map", K: 9 /*ScalarType.STRING*/, V: { kind: "message", T: () => Option }, options: { "validate.rules": { map: { minPairs: "0", maxPairs: "20", keys: { string: { minLen: "1", maxLen: "20", pattern: "^(?:[a-zA-Z][a-zA-Z0-9]+)+$" } } } } } }
+            { no: 2, name: "input_params", kind: "map", K: 9 /*ScalarType.STRING*/, V: { kind: "message", T: () => InputParam }, options: { "validate.rules": { map: { minPairs: "0", maxPairs: "20", keys: { string: { minLen: "1", maxLen: "20", pattern: "^(?:[a-zA-Z][a-zA-Z0-9]+)+$" } } } } } },
+            { no: 3, name: "policy_tags", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { unique: true, items: { string: { minLen: "1", maxLen: "20", pattern: "^[a-zA-Z0-9]+$" } }, ignoreEmpty: true } } } }
         ]);
     }
     create(value?: PartialMessage<WhoAuthorizedRequest>): WhoAuthorizedRequest {
-        const message = { resources: [], options: {} };
+        const message = { resources: [], inputParams: {}, policyTags: [] };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<WhoAuthorizedRequest>(this, message, value);
@@ -1131,8 +1164,11 @@ class WhoAuthorizedRequest$Type extends MessageType<WhoAuthorizedRequest> {
                 case /* repeated indykite.authorization.v1beta1.WhoAuthorizedRequest.Resource resources */ 1:
                     message.resources.push(WhoAuthorizedRequest_Resource.internalBinaryRead(reader, reader.uint32(), options));
                     break;
-                case /* map<string, indykite.authorization.v1beta1.Option> options */ 2:
-                    this.binaryReadMap2(message.options, reader, options);
+                case /* map<string, indykite.authorization.v1beta1.InputParam> input_params */ 2:
+                    this.binaryReadMap2(message.inputParams, reader, options);
+                    break;
+                case /* repeated string policy_tags */ 3:
+                    message.policyTags.push(reader.string());
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -1145,8 +1181,8 @@ class WhoAuthorizedRequest$Type extends MessageType<WhoAuthorizedRequest> {
         }
         return message;
     }
-    private binaryReadMap2(map: WhoAuthorizedRequest["options"], reader: IBinaryReader, options: BinaryReadOptions): void {
-        let len = reader.uint32(), end = reader.pos + len, key: keyof WhoAuthorizedRequest["options"] | undefined, val: WhoAuthorizedRequest["options"][any] | undefined;
+    private binaryReadMap2(map: WhoAuthorizedRequest["inputParams"], reader: IBinaryReader, options: BinaryReadOptions): void {
+        let len = reader.uint32(), end = reader.pos + len, key: keyof WhoAuthorizedRequest["inputParams"] | undefined, val: WhoAuthorizedRequest["inputParams"][any] | undefined;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
@@ -1154,24 +1190,27 @@ class WhoAuthorizedRequest$Type extends MessageType<WhoAuthorizedRequest> {
                     key = reader.string();
                     break;
                 case 2:
-                    val = Option.internalBinaryRead(reader, reader.uint32(), options);
+                    val = InputParam.internalBinaryRead(reader, reader.uint32(), options);
                     break;
-                default: throw new globalThis.Error("unknown map entry field for field indykite.authorization.v1beta1.WhoAuthorizedRequest.options");
+                default: throw new globalThis.Error("unknown map entry field for field indykite.authorization.v1beta1.WhoAuthorizedRequest.input_params");
             }
         }
-        map[key ?? ""] = val ?? Option.create();
+        map[key ?? ""] = val ?? InputParam.create();
     }
     internalBinaryWrite(message: WhoAuthorizedRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* repeated indykite.authorization.v1beta1.WhoAuthorizedRequest.Resource resources = 1; */
         for (let i = 0; i < message.resources.length; i++)
             WhoAuthorizedRequest_Resource.internalBinaryWrite(message.resources[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* map<string, indykite.authorization.v1beta1.Option> options = 2; */
-        for (let k of Object.keys(message.options)) {
+        /* map<string, indykite.authorization.v1beta1.InputParam> input_params = 2; */
+        for (let k of Object.keys(message.inputParams)) {
             writer.tag(2, WireType.LengthDelimited).fork().tag(1, WireType.LengthDelimited).string(k);
             writer.tag(2, WireType.LengthDelimited).fork();
-            Option.internalBinaryWrite(message.options[k], writer, options);
+            InputParam.internalBinaryWrite(message.inputParams[k], writer, options);
             writer.join().join();
         }
+        /* repeated string policy_tags = 3; */
+        for (let i = 0; i < message.policyTags.length; i++)
+            writer.tag(3, WireType.LengthDelimited).string(message.policyTags[i]);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
