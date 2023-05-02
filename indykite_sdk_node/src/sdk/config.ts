@@ -2274,12 +2274,23 @@ export class ConfigClient {
     });
   }
 
-  deleteServiceAccount(id: string, bookmarks: string[] = []): Promise<void> {
+  deleteServiceAccount(id: string, bookmarks?: string[]): Promise<void>;
+  deleteServiceAccount(serviceAccount: ServiceAccount, bookmarks?: string[]): Promise<void>;
+  deleteServiceAccount(
+    idOrServiceAccount: string | ServiceAccount,
+    bookmarks: string[] = [],
+  ): Promise<void> {
+    const id = typeof idOrServiceAccount === 'string' ? idOrServiceAccount : idOrServiceAccount.id;
+
     return new Promise((resolve, reject) => {
       const req: DeleteServiceAccountRequest = {
         id,
         bookmarks,
       };
+
+      if (idOrServiceAccount instanceof ServiceAccount && idOrServiceAccount.etag !== undefined) {
+        req.etag = StringValue.create({ value: idOrServiceAccount.etag });
+      }
 
       this.client.deleteServiceAccount(req, (err, response) => {
         if (err) reject(err);
