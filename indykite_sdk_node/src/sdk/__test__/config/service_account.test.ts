@@ -672,108 +672,159 @@ describe('updateServiceAccount', () => {
 });
 
 describe('deleteServiceAccount', () => {
-  describe('when no error is returned', () => {
-    let deleteServiceAccountSpy: jest.SpyInstance;
-    let sdk: ConfigClient;
+  describe('when id is used', () => {
+    describe('when no error is returned', () => {
+      let deleteServiceAccountSpy: jest.SpyInstance;
+      let sdk: ConfigClient;
 
-    beforeEach(async () => {
-      sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
-      deleteServiceAccountSpy = jest
-        .spyOn(sdk['client'], 'deleteServiceAccount')
-        .mockImplementation(
-          (
-            req,
-            res:
-              | Metadata
-              | CallOptions
-              | ((err: ServiceError | null, response: DeleteServiceAccountResponse) => void),
-          ) => {
-            if (typeof res === 'function') {
-              res(null, {
-                bookmark: 'bookmark-token',
-              });
-            }
-            return {} as SurfaceCall;
+      beforeEach(async () => {
+        sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
+        deleteServiceAccountSpy = jest
+          .spyOn(sdk['client'], 'deleteServiceAccount')
+          .mockImplementation(
+            (
+              req,
+              res:
+                | Metadata
+                | CallOptions
+                | ((err: ServiceError | null, response: DeleteServiceAccountResponse) => void),
+            ) => {
+              if (typeof res === 'function') {
+                res(null, {
+                  bookmark: 'bookmark-token',
+                });
+              }
+              return {} as SurfaceCall;
+            },
+          );
+        return sdk.deleteServiceAccount('service-account-id');
+      });
+
+      it('sends correct request', () => {
+        expect(deleteServiceAccountSpy).toBeCalledWith(
+          {
+            id: 'service-account-id',
+            bookmarks: [],
           },
+          expect.any(Function),
         );
-      return sdk.deleteServiceAccount('service-account-id');
-    });
-
-    it('sends correct request', () => {
-      expect(deleteServiceAccountSpy).toBeCalledWith(
-        {
-          id: 'service-account-id',
-          bookmarks: [],
-        },
-        expect.any(Function),
-      );
-    });
-  });
-
-  describe('when an error is returned', () => {
-    const error = {
-      code: Status.NOT_FOUND,
-      details: 'DETAILS',
-      metadata: {},
-    } as ServiceError;
-    let thrownError: Error;
-
-    beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
-      jest
-        .spyOn(sdk['client'], 'deleteServiceAccount')
-        .mockImplementation(
-          (
-            req,
-            res:
-              | Metadata
-              | CallOptions
-              | ((err: ServiceError | null, response?: DeleteServiceAccountResponse) => void),
-          ) => {
-            if (typeof res === 'function') {
-              res(error);
-            }
-            return {} as SurfaceCall;
-          },
-        );
-      sdk.deleteServiceAccount('service-account-id').catch((err) => {
-        thrownError = err;
       });
     });
 
-    it('throws an error', () => {
-      expect(thrownError).toBe(error);
-    });
-  });
+    describe('when an error is returned', () => {
+      const error = {
+        code: Status.NOT_FOUND,
+        details: 'DETAILS',
+        metadata: {},
+      } as ServiceError;
+      let thrownError: Error;
 
-  describe('when no response is returned', () => {
-    let thrownError: Error;
+      beforeEach(async () => {
+        const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
+        jest
+          .spyOn(sdk['client'], 'deleteServiceAccount')
+          .mockImplementation(
+            (
+              req,
+              res:
+                | Metadata
+                | CallOptions
+                | ((err: ServiceError | null, response?: DeleteServiceAccountResponse) => void),
+            ) => {
+              if (typeof res === 'function') {
+                res(error);
+              }
+              return {} as SurfaceCall;
+            },
+          );
+        sdk.deleteServiceAccount('service-account-id').catch((err) => {
+          thrownError = err;
+        });
+      });
 
-    beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
-      jest
-        .spyOn(sdk['client'], 'deleteServiceAccount')
-        .mockImplementation(
-          (
-            req,
-            res:
-              | Metadata
-              | CallOptions
-              | ((err: ServiceError | null, response?: DeleteServiceAccountResponse) => void),
-          ) => {
-            if (typeof res === 'function') {
-              res(null);
-            }
-            return {} as SurfaceCall;
-          },
-        );
-      sdk.deleteServiceAccount('service-account-id').catch((err) => {
-        thrownError = err;
+      it('throws an error', () => {
+        expect(thrownError).toBe(error);
       });
     });
 
-    it('throws an error', () => {
-      expect(thrownError.message).toBe('No service account response');
+    describe('when no response is returned', () => {
+      let thrownError: Error;
+
+      beforeEach(async () => {
+        const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
+        jest
+          .spyOn(sdk['client'], 'deleteServiceAccount')
+          .mockImplementation(
+            (
+              req,
+              res:
+                | Metadata
+                | CallOptions
+                | ((err: ServiceError | null, response?: DeleteServiceAccountResponse) => void),
+            ) => {
+              if (typeof res === 'function') {
+                res(null);
+              }
+              return {} as SurfaceCall;
+            },
+          );
+        sdk.deleteServiceAccount('service-account-id').catch((err) => {
+          thrownError = err;
+        });
+      });
+
+      it('throws an error', () => {
+        expect(thrownError.message).toBe('No service account response');
+      });
+    });
+  });
+
+  describe('when an instance is used', () => {
+    describe('when no error is returned', () => {
+      let deleteServiceAccountSpy: jest.SpyInstance;
+      let sdk: ConfigClient;
+      let serviceAccountInstance: ServiceAccount;
+
+      beforeEach(async () => {
+        serviceAccountInstance = new ServiceAccount(
+          'service-account-id',
+          'service-account-name',
+          'etag-token',
+        );
+        sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
+        deleteServiceAccountSpy = jest
+          .spyOn(sdk['client'], 'deleteServiceAccount')
+          .mockImplementation(
+            (
+              req,
+              res:
+                | Metadata
+                | CallOptions
+                | ((err: ServiceError | null, response: DeleteServiceAccountResponse) => void),
+            ) => {
+              if (typeof res === 'function') {
+                res(null, {
+                  bookmark: 'bookmark-token',
+                });
+              }
+              return {} as SurfaceCall;
+            },
+          );
+        return sdk.deleteServiceAccount(serviceAccountInstance);
+      });
+
+      it('sends correct request', () => {
+        expect(deleteServiceAccountSpy).toBeCalledWith(
+          {
+            id: 'service-account-id',
+            bookmarks: [],
+            etag: {
+              value: 'etag-token',
+            },
+          },
+          expect.any(Function),
+        );
+      });
     });
   });
 });
