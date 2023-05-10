@@ -4,6 +4,7 @@ export { IdentityClient } from './sdk/identity';
 export { ConfigClient } from './sdk/config';
 export { HTTPClient, HTTPResponse } from './sdk/http';
 export { IngestClient } from './sdk/ingest';
+export * from './sdk/ingest_v2';
 export * from './sdk/model';
 export {
   ChangePasswordRequest,
