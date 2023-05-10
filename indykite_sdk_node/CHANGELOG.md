@@ -1,4 +1,17 @@
 # Changelog
+## [0.3.4](https://github.com/indykite/indykite-sdk-node/compare/v0.3.3...v0.3.4) (2023-05-10)
+
+
+### Features
+
+* authorization functions accept policy tags ([e977cd1](https://github.com/indykite/indykite-sdk-node/commit/e977cd1a8f32de80aac7f333e1fb8b6065ceb2bd))
+* new ingest client ([5c07287](https://github.com/indykite/indykite-sdk-node/commit/5c07287c10df449f111b70760e519e27698ffb63))
+
+
+### Bug Fixes
+
+* use etag in delete service account function ([18b10e1](https://github.com/indykite/indykite-sdk-node/commit/18b10e1b8ca9e62b7dedd04db9ce93309e71c277))
+
 ## [0.3.3](https://github.com/indykite/indykite-sdk-node/compare/v0.3.2...v0.3.3) (2023-04-25)
 
 
