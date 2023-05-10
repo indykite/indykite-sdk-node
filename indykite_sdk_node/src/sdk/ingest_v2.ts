@@ -67,7 +67,7 @@ export class IngestRecord {
   }
 }
 
-class IngestRecordUpsert extends IngestRecord {
+export class IngestRecordUpsert extends IngestRecord {
   constructor(id: string) {
     super();
     this.request.record = {
@@ -94,7 +94,7 @@ class IngestRecordUpsert extends IngestRecord {
    * );
    */
   get node() {
-    return new IngestNodeRecord(this.request);
+    return new IngestRecordUpsertNode(this.request);
   }
 
   /**
@@ -131,7 +131,7 @@ class IngestRecordUpsert extends IngestRecord {
   }
 }
 
-class IngestRecordDelete extends IngestRecord {
+export class IngestRecordDelete extends IngestRecord {
   constructor(id: string) {
     super();
     this.request.record = {
@@ -262,7 +262,7 @@ class IngestRecordDelete extends IngestRecord {
   }
 }
 
-class IngestNodeRecord extends IngestRecord {
+export class IngestRecordUpsertNode extends IngestRecord {
   constructor(request: IngestRecordRequest) {
     super(request);
     if (!this.request.record) return;
