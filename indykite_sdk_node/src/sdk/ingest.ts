@@ -11,6 +11,7 @@ import { IngestResults } from './model/ingest/ingest_response';
 import { IndexFixer, streamKeeper } from './utils/stream';
 
 /**
+ * @deprecated Use {@link IngestClientV2} instead.
  * @category Clients
  * @example
  * // Example how to create a new ingest client
@@ -33,6 +34,9 @@ export class IngestClient {
     });
   }
 
+  /**
+   * @deprecated
+   */
   ingest(
     mappingId: string,
     externalId: string,
