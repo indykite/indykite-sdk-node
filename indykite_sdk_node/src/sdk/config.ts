@@ -57,6 +57,7 @@ import {
   PermissionsList,
   ServiceAccount,
   ServiceAccountCredential,
+  ServiceAccountRole,
   Tenant,
   WebAuthnProvider,
 } from './model';
@@ -115,6 +116,19 @@ export class ConfigClient {
     return bookmarkList;
   }
 
+  /**
+   * @since 0.1.0
+   * @example
+   * const sendgrid = new SendgridEmailProvider(
+   *   'default-email-provider',
+   *   '963843b5-983e-4d73-b666-069a98f1ef57',
+   *   true,
+   * );
+   * await sdk.createEmailServiceConfiguration(
+   *   APPLICATION_SPACE_ID,
+   *   sendgrid,
+   * );
+   */
   createEmailServiceConfiguration(
     location: string,
     config: EmailProviderType,
@@ -144,6 +158,13 @@ export class ConfigClient {
     });
   }
 
+  /**
+   * @since 0.1.0
+   * @example
+   * const config = await sdk.readEmailServiceConfiguration(EMAIL_SERVICE_CONFIG_ID);
+   * config.displayName = 'My new name';
+   * await sdk.updateEmailServiceConfiguration(config);
+   */
   readEmailServiceConfiguration(id: string, bookmarks: string[] = []): Promise<EmailProviderType> {
     return new Promise((resolve, reject) => {
       this.client.readConfigNode({ id, bookmarks }, (err, response) => {
@@ -165,6 +186,13 @@ export class ConfigClient {
     });
   }
 
+  /**
+   * @since 0.1.0
+   * @example
+   * const config = await sdk.readEmailServiceConfiguration(EMAIL_SERVICE_CONFIG_ID);
+   * config.displayName = 'My new name';
+   * await sdk.updateEmailServiceConfiguration(config);
+   */
   updateEmailServiceConfiguration(
     config: EmailProviderType,
     bookmarks: string[] = [],
@@ -210,6 +238,12 @@ export class ConfigClient {
     });
   }
 
+  /**
+   * @since 0.1.0
+   * @example
+   * const config = await sdk.readEmailServiceConfiguration(EMAIL_SERVICE_CONFIG_ID);
+   * await sdk.deleteEmailServiceConfiguration(config);
+   */
   deleteEmailServiceConfiguration(
     config: EmailProviderType,
     bookmarks: string[] = [],
@@ -233,6 +267,59 @@ export class ConfigClient {
     });
   }
 
+  /**
+   * @since 0.1.0
+   * @example
+   * // auth-flow.yaml file
+   * // configuration:
+   * //     activities:
+   * //         '00000000':
+   * //             '@type': input
+   * //         '00000034':
+   * //             '@type': password
+   * //             nodeConfig:
+   * //                 minPassword: 5
+   * //         000000F0:
+   * //             '@type': success
+   * //         '00000020':
+   * //             '@type': router
+   * //             nodeConfig:
+   * //                 orders:
+   * //                     - '00000034' # Password
+   * //                     - '00000036'
+   * //         '00000036':
+   * //             '@type': action
+   * //             nodeConfig:
+   * //                 actions:
+   * //                     register:
+   * //                         order: 0
+   * //                         locale_key: I18N_REGISTER
+   * //                         icon: register
+   * //         '00000054':
+   * //             '@type': passwordCreate
+   * //     sequences:
+   * //         - sourceRef: '00000000' # Input -> Router
+   * //           targetRef: '00000020'
+   * //         - sourceRef: '00000020' # Router -> Password
+   * //           targetRef: '00000034'
+   * //         - sourceRef: '00000020' # Router -> Action
+   * //           targetRef: '00000036'
+   * //         - sourceRef: '00000034' # Password -> Success
+   * //           targetRef: 000000F0
+   * //           condition: success
+   * //         - sourceRef: '00000036' # Action -> Create password
+   * //           targetRef: '00000054'
+   * //           condition: register
+   * //         - sourceRef: '00000054' # Create password -> Success
+   * //           targetRef: 000000F0
+   * //           condition: success
+   *
+   * const afData = await fs.readFile('./auth-flow.yaml');
+   * await sdk.createAuthflowConfiguration(
+   *   APPLICATION_SPACE_ID,
+   *   new AuthFlow('my-authflow', AuthFlowConfig_Format.BARE_YAML, afData, true),
+   * );
+   */
   createAuthflowConfiguration(
     location: string,
     config: AuthFlow,
@@ -272,6 +359,13 @@ export class ConfigClient {
     });
   }
 
+  /**
+   * @since 0.1.0
+   * @example
+   * const config = await sdk.readAuthflowConfiguration(AUTH_FLOW_CONFIG_ID);
+   * config.displayName = 'My new name';
+   * await sdk.updateAuthflowConfiguration(config);
+   */
   readAuthflowConfiguration(id: string, bookmarks: string[] = []): Promise<AuthFlow> {
     return new Promise((resolve, reject) => {
       this.client.readConfigNode({ id, bookmarks }, (err, response) => {
@@ -293,6 +387,13 @@ export class ConfigClient {
     });
   }
 
+  /**
+   * @since 0.1.0
+   * @example
+   * const config = await sdk.readAuthflowConfiguration(AUTH_FLOW_CONFIG_ID);
+   * config.displayName = 'My new name';
+   * await sdk.updateAuthflowConfiguration(config);
+   */
   updateAuthflowConfiguration(config: AuthFlow, bookmarks: string[] = []): Promise<AuthFlow> {
     const req = {
       id: config.id,
@@ -335,6 +436,12 @@ export class ConfigClient {
     });
   }
 
+  /**
+   * @since 0.1.0
+   * @example
+   * const config = await sdk.readAuthflowConfiguration(AUTH_FLOW_CONFIG_ID);
+   * await sdk.deleteAuthflowConfiguration(config);
+   */
   deleteAuthflowConfiguration(config: AuthFlow, bookmarks: string[] = []): Promise<boolean> {
     const req = {
       id: config.id,
@@ -355,6 +462,68 @@ export class ConfigClient {
     });
   }
 
+  /**
+   * @since 0.1.18
+   * @example
+   * await sdk.createIngestMappingConfiguration(
+   *   APPLICATION_SPACE_ID,
+   *   new IngestMapping({
+   *     name: 'ingest-mapping-test',
+   *     entities: [new IngestMappingEntity({
+   *       externalId: {
+   *         isRequired: true,
+   *         mappedName: 'ExternalId',
+   *         sourceName: 'vehicleId',
+   *       },
+   *       labels: ['Vehicle'],
+   *       tenantId: TENANT_ID,
+   *       properties: [],
+   *       relationships: [
+   *         {
+   *           externalId: 'parkingLotId',
+   *           type: 'HAS_FREE_PARKING',
+   *           direction: IngestMappingRelationshipDirection.OUTBOUND,
+   *           matchLabel: 'ParkingLot',
+   *         },
+   *         {
+   *           externalId: 'ownerId',
+   *           type: 'OWNS',
+   *           direction: IngestMappingRelationshipDirection.INBOUND,
+   *           matchLabel: 'DigitalTwin',
+   *         },
+   *       ],
+   *     }).withType(IngestMappingEntityType.UPSERT),
+   *     new IngestMappingEntity({
+   *       externalId: {
+   *         isRequired: true,
+   *         mappedName: 'ExternalId',
+   *         sourceName: 'parkingLotId',
+   *       },
+   *       labels: ['ParkingLot'],
+   *       tenantId: defaultTenant.id,
+   *       properties: [
+   *         {
+   *           isRequired: false,
+   *           mappedName: 'isOutdoor',
+   *           sourceName: 'isOutdoor',
+   *         },
+   *       ],
+   *       relationships: [],
+   *     }).withType(IngestMappingEntityType.UPSERT),
+   *     new IngestMappingEntity({
+   *       externalId: {
+   *         isRequired: true,
+   *         mappedName: 'ExternalId',
+   *         sourceName: 'driverId',
+   *       },
+   *       labels: ['DigitalTwin'],
+   *       tenantId: defaultTenant.id,
+   *       properties: [],
+   *       relationships: [],
+   *     }).withType(IngestMappingEntityType.UPSERT)],
+   *   }),
+   * );
+   */
   createIngestMappingConfiguration(
     location: string,
     config: IngestMapping,
@@ -396,6 +565,13 @@ export class ConfigClient {
     });
   }
 
+  /**
+   * @since 0.1.18
+   * @example
+   * const config = await sdk.readIngestMappingConfiguration(INGEST_MAPPING_CONFIG_ID);
+   * config.displayName = 'My new name';
+   * await sdk.updateIngestMappingConfiguration(config);
+   */
   readIngestMappingConfiguration(id: string, bookmarks: string[] = []): Promise<IngestMapping> {
     return new Promise((resolve, reject) => {
       this.client.readConfigNode({ id, bookmarks }, (err, response) => {
@@ -412,6 +588,13 @@ export class ConfigClient {
     });
   }
 
+  /**
+   * @since 0.1.18
+   * @example
+   * const config = await sdk.readIngestMappingConfiguration(INGEST_MAPPING_CONFIG_ID);
+   * config.displayName = 'My new name';
+   * await sdk.updateIngestMappingConfiguration(config);
+   */
   updateIngestMappingConfiguration(
     config: IngestMapping,
     bookmarks: string[] = [],
@@ -451,6 +634,12 @@ export class ConfigClient {
     });
   }
 
+  /**
+   * @since 0.1.18
+   * @example
+   * const config = await sdk.readIngestMappingConfiguration(INGEST_MAPPING_CONFIG_ID);
+   * await sdk.deleteIngestMappingConfiguration(config);
+   */
   deleteIngestMappingConfiguration(
     config: IngestMapping,
     bookmarks: string[] = [],
@@ -474,7 +663,7 @@ export class ConfigClient {
    * @example
    * async function example(sdk: ConfigClient) {
    *   await sdk.createWebAuthnProviderConfiguration(
-   *     'gid:AAAAAnsT41Yr8ENenpK4ogi9gyo',
+   *     APPLICATION_SPACE_ID,
    *     new WebAuthnProvider({
    *       attestationPreference: ConveyancePreference.NONE,
    *       authenticatorAttachment: AuthenticatorAttachment.DEFAULT,
@@ -535,7 +724,7 @@ export class ConfigClient {
    * @example
    * async function example(sdk: ConfigClient) {
    *   const createdWp = await sdk.createWebAuthnProviderConfiguration(
-   *     'gid:AAAAAnsT41Yr8ENenpK4ogi9gyo',
+   *     APPLICATION_SPACE_ID,
    *     new WebAuthnProvider({
    *       attestationPreference: ConveyancePreference.NONE,
    *       authenticatorAttachment: AuthenticatorAttachment.DEFAULT,
@@ -655,49 +844,30 @@ export class ConfigClient {
    * @since 0.3.2
    * @example
    * async function example(sdk: ConfigClient) {
-   *   await sdk.createWebAuthnProviderConfiguration(
-   *     'gid:AAAAAnsT41Yr8ENenpK4ogi9gyo',
+   *   await sdk.createAuthorizationPolicyConfiguration(
+   *     APPLICATION_SPACE_ID,
    *     new AuthorizationPolicy({
    *       name: 'my-authorization-policy',
    *       policy: `
    *         {
-   *           "path": {
-   *             "subjectId": "66444564",
-   *             "resourceId": "53102471",
-   *             "entities": [
-   *               {
-   *                 "id": "66444564",
-   *                 "labels": [
-   *                   "Subject"
-   *                 ],
-   *                 "identityProperties": []
-   *               },
-   *               {
-   *                 "id": "53102471",
-   *                 "labels": [
-   *                   "Resource"
-   *                 ],
-   *                 "knowledgeProperties": []
-   *               }
-   *             ],
-   *             "relationships": [
-   *               {
-   *                 "source": "66444564",
-   *                 "target": "53102471",
-   *                 "types": [
-   *                   "AUTHORIZED_TO"
-   *                 ],
-   *                 "nonDirectional": false
-   *               }
-   *             ]
+   *           "meta": {
+   *             "policyVersion": "1.0-indykite"
+   *           },
+   *           "subject": {
+   *             "type": "DigitalTwin"
    *           },
    *           "actions": [
-   *             "IS_AUTHORIZED"
+   *             "HAS_FREE_PARKING"
    *           ],
-   *           "active": true
+   *           "resource": {
+   *             "type": "ParkingLot"
+   *           },
+   *           "condition": {
+   *             "cypher": "MATCH (subject:DigitalTwin)-[:OWNS]->(:Vehicle)-[:HAS_FREE_PARKING]->(resource:ParkingLot)"
+   *           }
    *         }
    *       `,
-   *       status: 'ACTIVE',
+   *       status: AuthorizationPolicyConfig_Status.ACTIVE,
    *     }),
    *   );
    * }
@@ -748,45 +918,26 @@ export class ConfigClient {
    * @example
    * async function example(sdk: ConfigClient) {
    *   const createdAp = await sdk.createAuthorizationPolicyConfiguration(
-   *     'gid:AAAAAgjp68hPDkSxjZ0U7f-NazM',
+   *     APPLICATION_SPACE_ID,
    *     new AuthorizationPolicy({
-   *       name: 'node-test',
+   *       name: 'my-authorization-policy',
    *       policy: `
    *         {
-   *           "path": {
-   *             "subjectId": "66444564",
-   *             "resourceId": "53102471",
-   *             "entities": [
-   *               {
-   *                 "id": "66444564",
-   *                 "labels": [
-   *                   "Subject"
-   *                 ],
-   *                 "identityProperties": []
-   *               },
-   *               {
-   *                 "id": "53102471",
-   *                 "labels": [
-   *                   "Resource"
-   *                 ],
-   *                 "knowledgeProperties": []
-   *               }
-   *             ],
-   *             "relationships": [
-   *               {
-   *                 "source": "66444564",
-   *                 "target": "53102471",
-   *                 "types": [
-   *                   "AUTHORIZED_TO"
-   *                 ],
-   *                 "nonDirectional": false
-   *               }
-   *             ]
+   *           "meta": {
+   *             "policyVersion": "1.0-indykite"
+   *           },
+   *           "subject": {
+   *             "type": "DigitalTwin"
    *           },
    *           "actions": [
-   *             "IS_AUTHORIZED"
+   *             "HAS_FREE_PARKING"
    *           ],
-   *           "active": true
+   *           "resource": {
+   *             "type": "ParkingLot"
+   *           },
+   *           "condition": {
+   *             "cypher": "MATCH (subject:DigitalTwin)-[:OWNS]->(:Vehicle)-[:HAS_FREE_PARKING]->(resource:ParkingLot)"
+   *           }
    *         }
    *       `,
    *       status: AuthorizationPolicyConfig_Status.ACTIVE,
@@ -897,6 +1048,11 @@ export class ConfigClient {
     });
   }
 
+  /**
+   * @since 0.1.6
+   * @example
+   * const customer = await sdk.readCustomerById(CUSTOMER_ID);
+   */
   readCustomerById(id: string, bookmarks: string[] = []): Promise<Customer> {
     return new Promise((resolve, reject) => {
       this.client.readCustomer(
@@ -916,6 +1072,11 @@ export class ConfigClient {
     });
   }
 
+  /**
+   * @since 0.1.6
+   * @example
+   * const customer = await sdk.readCustomerByName('customer-name');
+   */
   readCustomerByName(name: string, bookmarks: string[] = []): Promise<Customer> {
     return new Promise((resolve, reject) => {
       this.client.readCustomer(
@@ -935,6 +1096,15 @@ export class ConfigClient {
     });
   }
 
+  /**
+   * @since 0.1.6
+   * @example
+   * await sdk.createApplicationSpace(
+   *   CUSTOMER_ID,
+   *   'app-space-name',
+   *   "My Application Space",
+   * );
+   */
   createApplicationSpace(
     customerId: string,
     name: string,
@@ -966,6 +1136,11 @@ export class ConfigClient {
     });
   }
 
+  /**
+   * @since 0.1.6
+   * @example
+   * const appSpace = await sdk.readApplicationSpaceById(APPLICATION_SPACE_ID);
+   */
   readApplicationSpaceById(id: string, bookmarks: string[] = []): Promise<ApplicationSpace> {
     return new Promise((resolve, reject) => {
       this.client.readApplicationSpace(
@@ -988,6 +1163,14 @@ export class ConfigClient {
     });
   }
 
+  /**
+   * @since 0.1.6
+   * @example
+   * const appSpace = await sdk.readApplicationSpaceByName(
+   *   CUSTOMER_ID,
+   *   'app-space-name',
+   * );
+   */
   readApplicationSpaceByName(
     location: string,
     name: string,
@@ -1017,6 +1200,14 @@ export class ConfigClient {
     });
   }
 
+  /**
+   * @since 0.1.6
+   * @example
+   * const appSpaces = await sdk.readApplicationSpaceList(
+   *   CUSTOMER_ID,
+   *   ['appspace-name1', 'appspace-name2'],
+   * );
+   */
   readApplicationSpaceList(
     customerId: string,
     appSpaceNames: string[],
@@ -1045,6 +1236,16 @@ export class ConfigClient {
     });
   }
 
+  /**
+   * @since 0.1.6
+   * @example
+   * const appSpace = await sdk.readApplicationSpaceByName(
+   *   CUSTOMER_ID,
+   *   'app-space-name',
+   * );
+   * appSpace.displayName = 'New Name';
+   * await sdk.updateApplicationSpace(appSpace);
+   */
   updateApplicationSpace(
     appSpace: ApplicationSpace,
     bookmarks: string[] = [],
@@ -1088,6 +1289,15 @@ export class ConfigClient {
     });
   }
 
+  /**
+   * @since 0.1.6
+   * @example
+   * const appSpace = await sdk.readApplicationSpaceByName(
+   *   CUSTOMER_ID,
+   *   'app-space-name',
+   * );
+   * await sdk.deleteApplicationSpace(appSpace);
+   */
   deleteApplicationSpace(appSpace: ApplicationSpace, bookmarks: string[] = []): Promise<boolean> {
     const req = {
       id: appSpace.id,
@@ -1109,6 +1319,19 @@ export class ConfigClient {
     });
   }
 
+  /**
+   * @since 0.1.10
+   * @example
+   * const appSpace = await sdk.readApplicationSpaceByName(
+   *   CUSTOMER_ID,
+   *   'app-space-name',
+   * );
+   * await sdk.createTenant(
+   *   appSpace.issuerId,
+   *   'tenant-name',
+   *   "Default tenant",
+   * );
+   */
   createTenant(
     issuerId: string,
     name: string,
@@ -1137,6 +1360,11 @@ export class ConfigClient {
     });
   }
 
+  /**
+   * @since 0.1.10
+   * @example
+   * const tenant = await sdk.readTenantById(TENANT_ID);
+   */
   readTenantById(id: string, bookmarks: string[] = []): Promise<Tenant> {
     return new Promise((resolve, reject) => {
       this.client.readTenant(
@@ -1159,6 +1387,14 @@ export class ConfigClient {
     });
   }
 
+  /**
+   * @since 0.1.10
+   * @example
+   * const tenant = await sdk.readTenantByName(
+   *   APPLICATION_SPACE_ID,
+   *   'tenant-name',
+   * );
+   */
   readTenantByName(location: string, name: string, bookmarks: string[] = []): Promise<Tenant> {
     return new Promise((resolve, reject) => {
       this.client.readTenant(
@@ -1184,6 +1420,16 @@ export class ConfigClient {
     });
   }
 
+  /**
+   * @since 0.1.10
+   * @example
+   * const tenant = await sdk.readTenantByName(
+   *   APPLICATION_SPACE_ID,
+   *   'tenant-name',
+   * );
+   * tenant.displayName = 'New Name';
+   * await sdk.updateTenant(tenant);
+   */
   updateTenant(tenant: Tenant, bookmarks: string[] = []): Promise<Tenant> {
     return new Promise((resolve, reject) => {
       const req: UpdateTenantRequest = {
@@ -1224,6 +1470,14 @@ export class ConfigClient {
     });
   }
 
+  /**
+   * @since 0.1.10
+   * @example
+   * const tenants = await sdk.readTenantList(
+   *   APPLICATION_SPACE_ID,
+   *   ['tenant-name1', 'tenant-name2'],
+   * );
+   */
   readTenantList(
     appSpaceId: string,
     tenantIds: string[],
@@ -1251,6 +1505,15 @@ export class ConfigClient {
     });
   }
 
+  /**
+   * @since 0.1.10
+   * @example
+   * const tenant = await sdk.readTenantByName(
+   *   APPLICATION_SPACE_ID,
+   *   'tenant-name',
+   * );
+   * await sdk.deleteTenant(tenant);
+   */
   deleteTenant(tenant: Tenant, bookmarks: string[] = []): Promise<boolean> {
     const req = {
       id: tenant.id,
@@ -1271,6 +1534,14 @@ export class ConfigClient {
     });
   }
 
+  /**
+   * @since 0.1.10
+   * @example
+   * const application = await sdk.createApplication(
+   *   APPLICATION_SPACE_ID,
+   *   'application-name',
+   * );
+   */
   createApplication(
     appSpaceId: string,
     name: string,
@@ -1300,6 +1571,11 @@ export class ConfigClient {
     });
   }
 
+  /**
+   * @since 0.1.10
+   * @example
+   * const application = await sdk.readApplicationById(APPLICATION_ID);
+   */
   readApplicationById(applicationId: string, bookmarks: string[] = []): Promise<Application> {
     return new Promise((resolve, reject) => {
       this.client.readApplication(
@@ -1322,6 +1598,14 @@ export class ConfigClient {
     });
   }
 
+  /**
+   * @since 0.1.10
+   * @example
+   * const application = await sdk.readApplicationByName(
+   *   APPLICATION_SPACE_ID,
+   *   'application-name'
+   * );
+   */
   readApplicationByName(
     appSpaceId: string,
     name: string,
@@ -1351,6 +1635,16 @@ export class ConfigClient {
     });
   }
 
+  /**
+   * @since 0.1.10
+   * @example
+   * const application = await sdk.readApplicationByName(
+   *   APPLICATION_SPACE_ID,
+   *   'application-name'
+   * );
+   * application.displayName = 'New Name';
+   * await sdk.updateApplication(application);
+   */
   updateApplication(application: Application, bookmarks: string[] = []): Promise<Application> {
     return new Promise((resolve, reject) => {
       const req: UpdateApplicationRequest = {
@@ -1392,6 +1686,14 @@ export class ConfigClient {
     });
   }
 
+  /**
+   * @since 0.1.10
+   * @example
+   * const applications = await sdk.readApplicationList(
+   *   APPLICATION_SPACE_ID,
+   *   ['app-name1', 'app-name2'],
+   * );
+   */
   readApplicationList(
     appSpaceId: string,
     applicationIds: string[],
@@ -1419,6 +1721,15 @@ export class ConfigClient {
     });
   }
 
+  /**
+   * @since 0.1.10
+   * @example
+   * const application = await sdk.readApplicationByName(
+   *   APPLICATION_SPACE_ID,
+   *   'application-name'
+   * );
+   * await sdk.deleteApplication(application);
+   */
   deleteApplication(application: Application, bookmarks: string[] = []): Promise<boolean> {
     const req = {
       id: application.id,
@@ -1440,6 +1751,14 @@ export class ConfigClient {
     });
   }
 
+  /**
+   * @since 0.1.10
+   * @example
+   * const agent = await sdk.createApplicationAgent(
+   *   APPLICATION_ID,
+   *   'application-agent-name',
+   * );
+   */
   createApplicationAgent(
     applicationId: string,
     name: string,
@@ -1469,6 +1788,11 @@ export class ConfigClient {
     });
   }
 
+  /**
+   * @since 0.1.10
+   * @example
+   * const agent = await sdk.readApplicationAgentById(APPLICATION_AGENT_ID);
+   */
   readApplicationAgentById(
     applicationAgentId: string,
     bookmarks: string[] = [],
@@ -1494,6 +1818,14 @@ export class ConfigClient {
     });
   }
 
+  /**
+   * @since 0.1.10
+   * @example
+   * const agent = await sdk.readApplicationAgentByName(
+   *   APPLICATION_SPACE_ID,
+   *   'application-agent-name',
+   * );
+   */
   readApplicationAgentByName(
     appSpaceId: string,
     name: string,
@@ -1523,6 +1855,16 @@ export class ConfigClient {
     });
   }
 
+  /**
+   * @since 0.1.10
+   * @example
+   * const agent = await sdk.readApplicationAgentByName(
+   *   APPLICATION_SPACE_ID,
+   *   'application-agent-name',
+   * );
+   * agent.displayName = 'New Name';
+   * await sdk.updateApplicationAgent(agent);
+   */
   updateApplicationAgent(
     applicationAgent: ApplicationAgent,
     bookmarks: string[] = [],
@@ -1567,6 +1909,14 @@ export class ConfigClient {
     });
   }
 
+  /**
+   * @since 0.1.10
+   * @example
+   * const agents = await sdk.readApplicationAgentList(
+   *   APPLICATION_SPACE_ID,
+   *   ['app-agent-name1', 'app-agent-name2'],
+   * );
+   */
   readApplicationAgentList(
     appSpaceId: string,
     applicationAgentIds: string[],
@@ -1594,6 +1944,15 @@ export class ConfigClient {
     });
   }
 
+  /**
+   * @since 0.1.10
+   * @example
+   * const agent = await sdk.readApplicationAgentByName(
+   *   APPLICATION_SPACE_ID,
+   *   'application-agent-name',
+   * );
+   * await sdk.deleteApplicationAgent(agent);
+   */
   deleteApplicationAgent(
     appAgentId: string,
     bookmarks: string[] = [],
@@ -1619,6 +1978,17 @@ export class ConfigClient {
     });
   }
 
+  /**
+   * @since 0.1.10
+   * @example
+   * const appCredentials = await sdk.registerApplicationCredential(
+   *   APPLICATION_AGENT_ID,
+   *   'Credential Name',
+   *   TENANT_ID,
+   * );
+   * // Credentials are stored in `appCredentials.agentConfig` property
+   * // and are returned after the creation only
+   */
   registerApplicationCredential(
     appAgentId: string,
     displayName: string,
@@ -1665,6 +2035,12 @@ export class ConfigClient {
     });
   }
 
+  /**
+   * @since 0.1.10
+   * @example
+   * const credentials = await sdk.readApplicationAgentCredential(APPLICATION_AGENT_CREDENTIAL_ID);
+   * // Credentials in `appCredentials.agentConfig` property are not accessible
+   */
   readApplicationAgentCredential(
     appCredentialId: string,
     bookmarks: string[] = [],
@@ -1684,6 +2060,11 @@ export class ConfigClient {
     });
   }
 
+  /**
+   * @since 0.1.10
+   * @example
+   * await sdk.deleteApplicationAgentCredential(APPLICATION_AGENT_CREDENTIAL_ID);
+   */
   deleteApplicationAgentCredential(
     appCredentialId: string,
     bookmarks: string[] = [],
@@ -1777,6 +2158,23 @@ export class ConfigClient {
     };
   }
 
+  /**
+   * @since 0.1.17
+   * @example
+   * const provider = await sdk.createOAuth2Provider(
+   *   appSpace.id,
+   *   'default-oauth2-provider',
+   *   new OAuth2ProviderConfig({
+   *     frontChannelConsentUri: { default: 'http://localhost:3000/consent' },
+   *     frontChannelLoginUri: { default: 'http://localhost:3000/login' },
+   *     grantTypes: [GrantType.AUTHORIZATION_CODE],
+   *     responseTypes: [ResponseType.CODE],
+   *     scopes: ['openid'],
+   *     tokenEndpointAuthMethod: [TokenEndpointAuthMethod.CLIENT_SECRET_BASIC],
+   *     tokenEndpointAuthSigningAlg: ['RS256'],
+   *   })
+   * );
+   */
   createOAuth2Provider(
     appSpaceId: string,
     name: string,
@@ -1827,6 +2225,11 @@ export class ConfigClient {
     });
   }
 
+  /**
+   * @since 0.1.17
+   * @example
+   * const provider = await sdk.readOAuth2Provider(OAUTH2_PROVIDER_ID);
+   */
   readOAuth2Provider(id: string, bookmarks: string[] = []): Promise<OAuth2Provider> {
     return new Promise((resolve, reject) => {
       this.client.readOAuth2Provider({ id, bookmarks }, (err, response) => {
@@ -1840,6 +2243,13 @@ export class ConfigClient {
     });
   }
 
+  /**
+   * @since 0.1.17
+   * @example
+   * const provider = await sdk.readOAuth2Provider(OAUTH2_PROVIDER_ID);
+   * provider.displayName = 'New Name';
+   * await sdk.updateOAuth2Provider(provider);
+   */
   updateOAuth2Provider(
     oauth2Provider: OAuth2Provider,
     bookmarks: string[] = [],
@@ -1887,6 +2297,11 @@ export class ConfigClient {
     });
   }
 
+  /**
+   * @since 0.1.17
+   * @example
+   * const provider = await sdk.deleteOAuth2Provider(OAUTH2_PROVIDER_ID);
+   */
   deleteOAuth2Provider(id: string, bookmarks: string[] = []): Promise<void> {
     return new Promise((resolve, reject) => {
       const req: DeleteOAuth2ProviderRequest = {
@@ -1906,6 +2321,29 @@ export class ConfigClient {
     });
   }
 
+  /**
+   * @since 0.1.10
+   * @example
+   * const oauth2App = await sdk.createOAuth2Application(
+   *   OAUTH2_PROVIDER_ID,
+   *   'default-oauth2-application',
+   *   new OAuth2ApplicationConfig({
+   *     clientId: 'client-id-123456789123456789',
+   *     displayName: 'OAuth2 Application Name',
+   *     owner: 'Owner Name',
+   *     redirectUris: ['http://localhost:3000/callback'],
+   *     scopes: ['openid'],
+   *     subjectType: ClientSubjectType.PUBLIC,
+   *     tokenEndpointAuthMethod: TokenEndpointAuthMethod.CLIENT_SECRET_BASIC,
+   *     tokenEndpointAuthSigningAlg: 'RS256',
+   *     clientUri: 'http://localhost:3000',
+   *     logoUri: 'http://localhost:3000/logo.png',
+   *     policyUri: 'http://localhost:3000/policy',
+   *     termsOfServiceUri: 'http://localhost:3000/tos',
+   *     userSupportEmailAddress: 'user@example.com',
+   *   })
+   * );
+   */
   createOAuth2Application(
     oauth2ProviderId: string,
     name: string,
@@ -1947,6 +2385,11 @@ export class ConfigClient {
     });
   }
 
+  /**
+   * @since 0.1.10
+   * @example
+   * const oauth2App = await sdk.readOAuth2Application(OAUTH2_APPLICATION_ID);
+   */
   readOAuth2Application(id: string, bookmarks: string[] = []): Promise<OAuth2Application> {
     return new Promise((resolve, reject) => {
       this.client.readOAuth2Application({ id, bookmarks }, (err, response) => {
@@ -1960,6 +2403,13 @@ export class ConfigClient {
     });
   }
 
+  /**
+   * @since 0.1.10
+   * @example
+   * const oauth2App = await sdk.readOAuth2Application(OAUTH2_APPLICATION_ID);
+   * oauth2App.displayName = 'New Name';
+   * await sdk.updateOAuth2Application(oauth2App);
+   */
   updateOAuth2Application(
     oauth2Client: OAuth2Application,
     bookmarks: string[] = [],
@@ -2007,6 +2457,11 @@ export class ConfigClient {
     });
   }
 
+  /**
+   * @since 0.1.10
+   * @example
+   * const oauth2App = await sdk.deleteOAuth2Application(OAUTH2_APPLICATION_ID);
+   */
   deleteOAuth2Application(id: string, bookmarks: string[] = []): Promise<void> {
     return new Promise((resolve, reject) => {
       const req: DeleteOAuth2ApplicationRequest = {
@@ -2026,6 +2481,22 @@ export class ConfigClient {
     });
   }
 
+  /**
+   * @since 0.1.13
+   * @example
+   * const oauth2Client = await sdk.createOAuth2Client(
+   *   APPLICATION_SPACE_ID,
+   *   new OAuth2Client({
+   *     name: 'default-oauth2-client-tmp',
+   *     allowedScopes: ['openid', 'email', 'profile'],
+   *     clientId: 'client-id-123456789123456789',
+   *     clientSecret: 'client-secret-123456789123456789',
+   *     defaultScopes: ['openid', 'email', 'profile'],
+   *     providerType: OAuth2ProviderType.GOOGLE_COM,
+   *     redirectUri: ['http://localhost:3000/callback'],
+   *   }),
+   * );
+   */
   createOAuth2Client(
     location: string,
     oauth2Client: OAuth2Client,
@@ -2071,6 +2542,11 @@ export class ConfigClient {
     });
   }
 
+  /**
+   * @since 0.1.13
+   * @example
+   * const oauth2Client = await sdk.readOAuth2Client(OAUTH2_CLIENT_ID);
+   */
   readOAuth2Client(id: string, bookmarks: string[] = []): Promise<OAuth2Client> {
     return new Promise((resolve, reject) => {
       this.client.readConfigNode({ id, bookmarks }, (err, response) => {
@@ -2090,6 +2566,13 @@ export class ConfigClient {
     });
   }
 
+  /**
+   * @since 0.1.13
+   * @example
+   * const oauth2Client = await sdk.readOAuth2Client(OAUTH2_CLIENT_ID);
+   * oauth2Client.displayName = 'New Name';
+   * await sdk.updateOAuth2Client(oauth2Client);
+   */
   updateOAuth2Client(config: OAuth2Client, bookmarks: string[] = []): Promise<OAuth2Client> {
     const req = {
       id: config.id,
@@ -2132,6 +2615,11 @@ export class ConfigClient {
     });
   }
 
+  /**
+   * @since 0.1.13
+   * @example
+   * const oauth2Client = await sdk.deleteOAuth2Client(OAUTH2_CLIENT_ID);
+   */
   deleteOAuth2Client(config: OAuth2Client, bookmarks: string[] = []): Promise<void> {
     const req = {
       id: config.id,
@@ -2152,10 +2640,19 @@ export class ConfigClient {
     });
   }
 
+  /**
+   * @since 0.1.17
+   * @example
+   * const serviceAccount = await sdk.createServiceAccount(
+   *   CUSTOMER_ID,
+   *   'service-account-name',
+   *   ServiceAccountRole.ALL_EDITOR,
+   * );
+   */
   createServiceAccount(
     location: string,
     name: string,
-    role: string,
+    role: ServiceAccountRole | 'all_editor' | 'all_viewer',
     displayName?: string,
     description?: string,
     bookmarks: string[] = [],
@@ -2183,6 +2680,11 @@ export class ConfigClient {
     });
   }
 
+  /**
+   * @since 0.1.17
+   * @example
+   * const serviceAccount = await sdk.readServiceAccountById(SERVICE_ACCOUNT_ID);
+   */
   readServiceAccountById(id: string, bookmarks: string[] = []): Promise<ServiceAccount> {
     return new Promise((resolve, reject) => {
       this.client.readServiceAccount(
@@ -2205,6 +2707,14 @@ export class ConfigClient {
     });
   }
 
+  /**
+   * @since 0.1.17
+   * @example
+   * const serviceAccount = await sdk.readServiceAccountByName(
+   *   CUSTOMER_ID,
+   *   'service-account-name',
+   * );
+   */
   readServiceAccountByName(
     location: string,
     name: string,
@@ -2234,6 +2744,16 @@ export class ConfigClient {
     });
   }
 
+  /**
+   * @since 0.1.17
+   * @example
+   * const serviceAccount = await sdk.readServiceAccountByName(
+   *   CUSTOMER_ID,
+   *   'service-account-name',
+   * );
+   * serviceAccount.displayName = 'New Name';
+   * await sdk.updateServiceAccount(serviceAccount);
+   */
   updateServiceAccount(
     serviceAccount: ServiceAccount,
     bookmarks: string[] = [],
@@ -2274,7 +2794,22 @@ export class ConfigClient {
     });
   }
 
+  /**
+   * @since 0.1.17
+   * @example
+   * await sdk.deleteServiceAccount(SERVICE_ACCOUNT_ID);
+   */
   deleteServiceAccount(id: string, bookmarks?: string[]): Promise<void>;
+
+  /**
+   * @since 0.1.17
+   * @example
+   * const serviceAccount = await sdk.readServiceAccountByName(
+   *   CUSTOMER_ID,
+   *   'service-account-name',
+   * );
+   * await sdk.deleteServiceAccount(serviceAccount);
+   */
   deleteServiceAccount(serviceAccount: ServiceAccount, bookmarks?: string[]): Promise<void>;
   deleteServiceAccount(
     idOrServiceAccount: string | ServiceAccount,
@@ -2305,12 +2840,25 @@ export class ConfigClient {
   }
 
   /**
+   * @since 0.1.17
    * Create new credentials for given Service Account. Methods either accept Public key,
    * which is registered with credentials. Or will generate new Public-Private pair and
    * Private key is returned in Response. Be aware, that in this case, Private key is sent
    * back only once and cannot be retrieved ever again.
    * @param bookmarks Database bookmarks to handle Read-after-Write consistency. Insert
    * one or multiple bookmarks returned from the previous Write operation if needed.
+   * @example
+   * const account = await sdk.createServiceAccount(
+   *   CUSTOMER_ID,
+   *   'service-account-name',
+   *   ServiceAccountRole.ALL_EDITOR,
+   * );
+   * const creds = await sdk.registerServiceAccountCredential(
+   *   account.id,
+   *   'Service Account Credentials'
+   * );
+   * // Credentials are stored in `creds.serviceAccountConfig` property
+   * // and are returned after the creation only
    */
   registerServiceAccountCredential(
     serviceAccountId: string,
@@ -2357,11 +2905,15 @@ export class ConfigClient {
   }
 
   /**
+   * @since 0.1.17
    * Read service account credential by ID and returns all attributes.
    * But not Private or Public key, so keep them saved.
    * @param serviceAccountId Id contains the Globally Unique Identifier of the object with server generated id.
    * @param bookmarks Database bookmarks to handle Read-after-Write consistency. Insert
    * one or multiple bookmarks returned from the previous Write operation if needed.
+   * @example
+   * const creds = await sdk.readServiceAccountCredential(SERVICE_ACCOUNT_CREDENTIALS_ID);
+   * // Credentials in `creds.serviceAccountConfig` property are not accessible
    */
   readServiceAccountCredential(
     serviceAccountId: string,
@@ -2383,18 +2935,21 @@ export class ConfigClient {
   }
 
   /**
+   * @since 0.1.17
    * Delete service account credential by ID.
-   * @param serviceAccountId Id is the Globally unique identifier of object to delete.
+   * @param serviceAccountCredsId Id is the Globally unique identifier of object to delete.
    * @param bookmarks Database bookmarks to handle Read-after-Write consistency. Insert
    * one or multiple bookmarks returned from the previous Write operation if needed.
+   * @example
+   * await sdk.readServiceAccountCredential(SERVICE_ACCOUNT_CREDENTIALS_ID);
    */
   deleteServiceAccountCredential(
-    serviceAccountId: string,
+    serviceAccountCredsId: string,
     bookmarks: string[] = [],
   ): Promise<void> {
     return new Promise((resolve, reject) => {
       const req: DeleteServiceAccountCredentialRequest = {
-        id: serviceAccountId,
+        id: serviceAccountCredsId,
         bookmarks,
       };
 

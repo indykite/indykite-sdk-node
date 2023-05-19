@@ -5,6 +5,11 @@ import {
 import { SdkError, SdkErrorCode } from '../../error';
 import { Utils } from '../../utils/utils';
 
+export enum ServiceAccountRole {
+  ALL_EDITOR = 'all_editor',
+  ALL_VIEWER = 'all_viewer',
+}
+
 type IOptions = {
   id: string;
   name: string;
