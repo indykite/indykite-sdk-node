@@ -55,6 +55,7 @@ import { ImportDigitalTwin, ImportResult } from './model/import_digitaltwin';
 import { BoolValue } from '../grpc/google/protobuf/wrappers';
 import { Readable } from 'stream';
 import { IndexFixer, streamSplitter } from './utils/stream';
+import { Value } from '../grpc/indykite/objects/v1beta1/struct';
 
 /**
  * @category Clients
@@ -222,6 +223,72 @@ export class IdentityClient {
           }
         }
       });
+    });
+  }
+
+  /**
+   * Gets a DigitalTwin and requested properties.
+   * @since 0.3.5
+   * @param properties The list of requested properties to get
+   * @example
+   * const digitalTwin = await identitySdk.getDigitalTwinByProperty(
+   *   'gid:AAAAA4Q3HC-juEL3npOxIUwx_sM',
+   *   'email',
+   *   'user@example.com',
+   *   ['mobile']
+   * );
+   */
+  getDigitalTwinByProperty(
+    tenantId: string,
+    propertyName: string,
+    propertyValue: unknown,
+    properties: string[] = [],
+  ): Promise<{ digitalTwin?: sdkTypes.DigitalTwin; tokenInfo?: sdkTypes.TokenInfo }> {
+    return new Promise((resolve, reject) => {
+      this.client.getDigitalTwin(
+        {
+          id: {
+            filter: {
+              oneofKind: 'propertyFilter',
+              propertyFilter: {
+                tenantId,
+                type: propertyName,
+                value: Value.fromJson(Utils.objectToJsonValue(propertyValue)),
+              },
+            },
+          },
+          properties: properties.map((property) => ({
+            definition: {
+              property,
+              context: '',
+              type: '',
+            },
+          })),
+        },
+        (err, response) => {
+          if (err) reject(err);
+          else {
+            try {
+              const dtResponse: {
+                digitalTwin?: sdkTypes.DigitalTwin;
+                tokenInfo?: sdkTypes.TokenInfo;
+              } = {};
+              if (response && response.digitalTwin) {
+                dtResponse.digitalTwin = sdkTypes.DigitalTwin.deserialize(response);
+              }
+
+              if (response && response.tokenInfo) {
+                dtResponse.tokenInfo = sdkTypes.TokenInfo.deserialize(
+                  response.tokenInfo as IdentityTokenInfo,
+                );
+              }
+              resolve(dtResponse);
+            } catch (err) {
+              reject(err);
+            }
+          }
+        },
+      );
     });
   }
 
