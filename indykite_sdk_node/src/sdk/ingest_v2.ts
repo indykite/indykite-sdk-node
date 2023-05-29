@@ -5,7 +5,6 @@ import {
   IngestRecordRequest,
   IngestRecordResponse,
 } from '../grpc/indykite/ingest/v1beta2/ingest_api';
-import { DigitalTwinKind } from '../grpc/indykite/identity/v1beta2/model';
 import { SdkError, SdkErrorCode } from './error';
 import { Readable } from 'stream';
 import { IndexFixer, streamKeeper } from './utils/stream';
@@ -19,7 +18,6 @@ export interface IngestResourceRecord {
 
 export interface IngestDigitalTwinRecord extends IngestResourceRecord {
   tenantId: string;
-  kind: DigitalTwinKind;
   identityProperties?: Record<string, unknown>;
 }
 
@@ -286,7 +284,6 @@ export class IngestRecordUpsertNode extends IngestRecord {
    * ingestSdk.ingestRecord(
    *   IngestRecord.upsert('record-id').node.digitalTwin({
    *     externalId: 'external-dt-id',
-   *     kind: DigitalTwinKind.PERSON,
    *     tenantId: 'tenant-id',
    *     type: 'CarOwner'
    *   })
@@ -434,7 +431,6 @@ export class IngestClientV2 {
    *       externalId: 'person1',
    *       type: 'Person',
    *       tenantId: 'gid:AAAAAxe5-tWaWUvfnFwaMnFwsRk',
-   *       kind: DigitalTwinKind.PERSON,
    *       properties: {
    *         customProp: '42',
    *       },
