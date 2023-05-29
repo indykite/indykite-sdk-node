@@ -11,7 +11,6 @@ import { SurfaceCall } from '@grpc/grpc-js/build/src/call';
 import { Status } from '@grpc/grpc-js/build/src/constants';
 import { streamKeeper } from '../../utils/stream';
 import { Stream } from 'stream';
-import { DigitalTwinKind } from '../../../grpc/indykite/identity/v1beta2/model';
 
 class ClientMock extends EventEmitter {
   end() {
@@ -91,7 +90,10 @@ describe('ingestRecord', () => {
           ) => {
             if (typeof res === 'function') {
               res(null, {
-                recordError: undefined,
+                error: {
+                  oneofKind: undefined,
+                },
+                recordId: 'record-id',
               });
             }
             return {} as SurfaceCall;
@@ -132,7 +134,8 @@ describe('ingestRecord', () => {
     });
 
     it('returns a correct response', () => {
-      expect(response?.recordError).toBeUndefined();
+      expect(response?.error.oneofKind).toBeUndefined();
+      expect(response?.recordId).toBe('record-id');
     });
   });
 
@@ -211,14 +214,24 @@ describe('ingestRecord', () => {
 describe('streamRecords', () => {
   let mockedWrite: jest.SpyInstance;
   let returnedValue: ClientMock;
-  let returnedData: unknown;
+  let returnedData: unknown[] = [];
 
   beforeEach(async () => {
+    returnedData = [];
     const [input, output] = streamKeeper(null as unknown as Parameters<typeof streamKeeper>[0]);
     input.write = jest.fn();
     input.end = jest.fn().mockImplementation(() => {
       output.emit('data', {
-        recordError: undefined,
+        error: {
+          oneofKind: undefined,
+        },
+        recordId: 'lot-1',
+      } as IngestRecordResponse);
+      output.emit('data', {
+        error: {
+          oneofKind: undefined,
+        },
+        recordId: 'lot-2',
       } as IngestRecordResponse);
       output.emit('end');
     });
@@ -244,11 +257,14 @@ describe('streamRecords', () => {
 
     returnedValue = sdk.streamRecords(stream) as unknown as ClientMock;
     returnedValue.on('data', (data) => {
-      returnedData = data;
+      returnedData.push(data);
     });
 
-    return new Promise((resolve) => {
-      returnedValue.on('end', resolve);
+    return new Promise<void>((resolve) => {
+      returnedValue.on('end', () => {
+        returnedValue.removeAllListeners();
+        resolve();
+      });
     });
   });
 
@@ -305,9 +321,20 @@ describe('streamRecords', () => {
   });
 
   it('returns correct response', () => {
-    expect(returnedData).toEqual({
-      recordError: undefined,
-    });
+    expect(returnedData).toEqual([
+      {
+        error: {
+          oneofkind: undefined,
+        },
+        recordId: 'lot-1',
+      },
+      {
+        error: {
+          oneofkind: undefined,
+        },
+        recordId: 'lot-2',
+      },
+    ]);
   });
 });
 
@@ -636,7 +663,6 @@ describe('IngestRecord builder', () => {
               .digitalTwin({
                 externalId: 'person-id',
                 type: 'Owner',
-                kind: DigitalTwinKind.PERSON,
                 tenantId: 'tenant-id',
               })
               .marshal(),
@@ -679,7 +705,6 @@ describe('IngestRecord builder', () => {
               .digitalTwin({
                 externalId: 'person-id',
                 type: 'Owner',
-                kind: DigitalTwinKind.PERSON,
                 tenantId: 'tenant-id',
               })
               .marshal(),
@@ -697,7 +722,6 @@ describe('IngestRecord builder', () => {
                         digitalTwin: {
                           externalId: 'person-id',
                           type: 'Owner',
-                          kind: DigitalTwinKind.PERSON,
                           tenantId: 'tenant-id',
                           tags: [],
                           properties: [],
@@ -716,7 +740,6 @@ describe('IngestRecord builder', () => {
               .digitalTwin({
                 externalId: 'person-id',
                 type: 'Owner',
-                kind: DigitalTwinKind.PERSON,
                 tags: ['MyTag'],
                 properties: {
                   propertyKey: 'property-value',
@@ -741,7 +764,6 @@ describe('IngestRecord builder', () => {
                         digitalTwin: {
                           externalId: 'person-id',
                           type: 'Owner',
-                          kind: DigitalTwinKind.PERSON,
                           tenantId: 'tenant-id',
                           tags: ['MyTag'],
                           properties: [
