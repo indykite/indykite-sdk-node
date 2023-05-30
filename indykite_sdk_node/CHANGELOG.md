@@ -1,4 +1,25 @@
 # Changelog
+## [0.4.0](https://github.com/indykite/indykite-sdk-node/compare/v0.3.4...v0.4.0) (2023-05-30)
+
+
+### ⚠ BREAKING CHANGES
+
+* remove ingest mapping config
+* remove old ingest client
+* update ingest client
+
+### Features
+
+* get digital twin by property ([34b895c](https://github.com/indykite/indykite-sdk-node/commit/34b895c2e35adc965027ccc96baeb39bb3e746a6))
+
+
+### Bug Fixes
+
+* fix optional oauth2 client properties ([4522b1e](https://github.com/indykite/indykite-sdk-node/commit/4522b1ebfe94f5d0271c08219fa3034a3703d62e))
+* remove ingest mapping config ([545d473](https://github.com/indykite/indykite-sdk-node/commit/545d4736530a9f674f72a9ba035a105f56ea46fa))
+* remove old ingest client ([acb1af2](https://github.com/indykite/indykite-sdk-node/commit/acb1af2bab676ceb017c95e54e11a51a8a56646b))
+* update ingest client ([a0d6b8b](https://github.com/indykite/indykite-sdk-node/commit/a0d6b8b7b11bdb1f17dc04731db60160548e0ddf))
+
 ## [0.3.4](https://github.com/indykite/indykite-sdk-node/compare/v0.3.3...v0.3.4) (2023-05-10)
 
 
