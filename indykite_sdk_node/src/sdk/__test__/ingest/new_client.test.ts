@@ -1,4 +1,4 @@
-import { IngestAPIClient } from '../../../grpc/indykite/ingest/v1beta1/ingest_api.grpc-client';
+import { IngestAPIClient } from '../../../grpc/indykite/ingest/v1beta2/ingest_api.grpc-client';
 import { SdkClient } from '../../client/client';
 import { IngestClient } from '../../ingest';
 import { applicationTokenMock } from '../../utils/test_utils';
