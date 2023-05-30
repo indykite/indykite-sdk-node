@@ -1,13 +1,16 @@
-import { IngestResults } from './../../model/ingest/ingest_response';
 import { EventEmitter } from 'events';
-import { Stream } from 'stream';
-import { StreamRecordsResponse } from '../../../grpc/indykite/ingest/v1beta1/ingest_api';
 import { SdkClient } from '../../client/client';
-import { IngestClient } from '../../ingest';
-import { Any } from '../../../grpc/google/protobuf/any';
-import { StringValue } from '../../../grpc/google/protobuf/wrappers';
-
-let sdk: IngestClient;
+import { IngestClient, IngestRecord } from '../../ingest';
+import { applicationTokenMock } from '../../utils/test_utils';
+import { CallOptions, Metadata, ServiceError } from '@grpc/grpc-js';
+import {
+  IngestRecordRequest,
+  IngestRecordResponse,
+} from '../../../grpc/indykite/ingest/v1beta2/ingest_api';
+import { SurfaceCall } from '@grpc/grpc-js/build/src/call';
+import { Status } from '@grpc/grpc-js/build/src/constants';
+import { streamKeeper } from '../../utils/stream';
+import { Stream } from 'stream';
 
 class ClientMock extends EventEmitter {
   end() {
@@ -19,6 +22,25 @@ class ClientMock extends EventEmitter {
     throw new Error('Not implemented');
   }
 }
+
+jest.mock('../../utils/stream', () => {
+  let input: ClientMock;
+  let output: ClientMock;
+
+  return {
+    streamKeeper: () => {
+      if (!input || !output) {
+        input = new ClientMock();
+        output = new ClientMock();
+      }
+
+      return [input, output];
+    },
+    IndexFixer: class {},
+  };
+});
+
+let sdk: IngestClient;
 
 beforeAll(() => {
   jest.spyOn(console, 'log').mockImplementation();
@@ -38,602 +60,1094 @@ afterAll(() => {
   (console.error as unknown as jest.SpyInstance).mockRestore();
 });
 
-describe('when recordId is not used', () => {
-  let mockedClient: ClientMock;
-  let mockedWrite: jest.SpyInstance;
-  let returnedValue: IngestResults;
+describe('ingestRecord', () => {
+  let record: IngestRecord;
+  let response: IngestRecordResponse | undefined;
 
   beforeEach(() => {
-    let indexCounter = 0;
-    mockedClient = new ClientMock();
-    mockedWrite = jest
-      .spyOn(mockedClient, 'write')
-      .mockImplementation((obj: { record: { id: string } }) => {
-        mockedClient.emit('data', {
-          recordId: obj.record.id,
-          recordIndex: indexCounter++,
-          error: {},
-        } as StreamRecordsResponse);
-      });
-    jest.spyOn(mockedClient, 'end').mockImplementation(() => {
-      indexCounter = 0;
-      mockedClient.emit('end');
+    record = IngestRecord.upsert('record-id').node.resource({
+      externalId: 'lot-1',
+      type: 'ParkingLot',
     });
-
-    const mockFunc = jest.fn().mockImplementation(() => mockedClient);
-    jest.spyOn(sdk['client'], 'streamRecords').mockImplementation(mockFunc);
+    response = undefined;
   });
 
-  describe('when an empty list of objects is sent', () => {
+  describe('when no error is returned', () => {
+    let ingestRecordSpy: jest.SpyInstance;
+    let sdk: IngestClient;
+
     beforeEach(async () => {
-      returnedValue = await sdk.ingest('mapping-id', 'fodselsnr', []);
-    });
-
-    it('sends a correct request', () => {
-      expect(mockedWrite).toBeCalledTimes(0);
-    });
-
-    it('returns correct response', () => {
-      expect(returnedValue.hasError).toBe(false);
-      expect(returnedValue.errorResults.length).toBe(0);
-      expect(returnedValue.results.length).toBe(0);
-    });
-  });
-
-  describe('when one object is sent', () => {
-    beforeEach(async () => {
-      returnedValue = await sdk.ingest('mapping-id', 'fodselsnr', [
-        {
-          fodselsnr: 15120599558,
-          slektsnavn: 'FAMILIE',
-          fornavn: 'ULF',
-          familienummer: 15125049580,
-          mors_fodselsnr: 15125149682,
-          fars_fodselsnr: 15125049580,
-        },
-      ]);
-    });
-
-    it('sends a correct request', () => {
-      expect(mockedWrite).toBeCalledTimes(1);
-      expect(mockedWrite).toBeCalledWith({
-        mappingConfigId: 'mapping-id',
-        record: {
-          data: {
-            fodselsnr: { value: { oneofKind: 'doubleValue', doubleValue: 15120599558 } },
-            slektsnavn: { value: { oneofKind: 'stringValue', stringValue: 'FAMILIE' } },
-            fornavn: { value: { oneofKind: 'stringValue', stringValue: 'ULF' } },
-            familienummer: { value: { oneofKind: 'doubleValue', doubleValue: 15125049580 } },
-            mors_fodselsnr: { value: { oneofKind: 'doubleValue', doubleValue: 15125149682 } },
-            fars_fodselsnr: { value: { oneofKind: 'doubleValue', doubleValue: 15125049580 } },
+      sdk = await IngestClient.createInstance(JSON.stringify(applicationTokenMock));
+      ingestRecordSpy = jest
+        .spyOn(sdk['client'], 'ingestRecord')
+        .mockImplementation(
+          (
+            req,
+            res:
+              | Metadata
+              | CallOptions
+              | ((err: ServiceError | null, response: IngestRecordResponse) => void),
+          ) => {
+            if (typeof res === 'function') {
+              res(null, {
+                error: {
+                  oneofKind: undefined,
+                },
+                recordId: 'record-id',
+              });
+            }
+            return {} as SurfaceCall;
           },
-          externalId: 'fodselsnr',
-          id: '15120599558',
-        },
-      });
+        );
+
+      response = await sdk.ingestRecord(record);
     });
 
-    it('returns correct response', () => {
-      expect(returnedValue.hasError).toBe(false);
-      expect(returnedValue.errorResults.length).toBe(0);
-      expect(returnedValue.results.length).toBe(1);
-      expect(returnedValue.results[0].id).toBe('15120599558');
-      expect(returnedValue.results[0].index).toBe(0);
-      expect(returnedValue.results[0].isError()).toBe(false);
-      expect(returnedValue.results[0].isSuccess()).toBe(true);
+    it('sends correct request', () => {
+      expect(ingestRecordSpy).toBeCalledWith(
+        {
+          record: {
+            id: 'record-id',
+            operation: {
+              oneofKind: 'upsert',
+              upsert: {
+                data: {
+                  oneofKind: 'node',
+                  node: {
+                    type: {
+                      oneofKind: 'resource',
+                      resource: {
+                        externalId: 'lot-1',
+                        type: 'ParkingLot',
+                        tags: [],
+                        properties: [],
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+        expect.any(Function),
+      );
+    });
+
+    it('returns a correct response', () => {
+      expect(response?.error.oneofKind).toBeUndefined();
+      expect(response?.recordId).toBe('record-id');
     });
   });
 
-  describe('when two objects are sent', () => {
+  describe('when the response is empty', () => {
+    let thrownError: Error;
+    let sdk: IngestClient;
+
     beforeEach(async () => {
-      returnedValue = await sdk.ingest('mapping-id', 'fodselsnr', [
-        {
-          fodselsnr: 15120599558,
-          slektsnavn: 'FAMILIE',
-          fornavn: 'ULF',
-          familienummer: 15125049580,
-          mors_fodselsnr: 15125149682,
-          fars_fodselsnr: 15125049580,
-        },
-        {
-          fodselsnr: 15125049580,
-          slektsnavn: 'FAMILIE',
-          fornavn: 'OLE',
-          familienummer: 15125049580,
-        },
-      ]);
-    });
+      sdk = await IngestClient.createInstance(JSON.stringify(applicationTokenMock));
+      jest
+        .spyOn(sdk['client'], 'ingestRecord')
+        .mockImplementation(
+          (
+            req,
+            res:
+              | Metadata
+              | CallOptions
+              | ((err: ServiceError | null, response?: IngestRecordResponse) => void),
+          ) => {
+            if (typeof res === 'function') {
+              res(null);
+            }
+            return {} as SurfaceCall;
+          },
+        );
 
-    it('sends a correct request', () => {
-      expect(mockedWrite).toBeCalledTimes(2);
-      expect(mockedWrite).nthCalledWith(1, {
-        mappingConfigId: 'mapping-id',
-        record: {
-          data: {
-            fodselsnr: { value: { oneofKind: 'doubleValue', doubleValue: 15120599558 } },
-            slektsnavn: { value: { oneofKind: 'stringValue', stringValue: 'FAMILIE' } },
-            fornavn: { value: { oneofKind: 'stringValue', stringValue: 'ULF' } },
-            familienummer: { value: { oneofKind: 'doubleValue', doubleValue: 15125049580 } },
-            mors_fodselsnr: { value: { oneofKind: 'doubleValue', doubleValue: 15125149682 } },
-            fars_fodselsnr: { value: { oneofKind: 'doubleValue', doubleValue: 15125049580 } },
-          },
-          externalId: 'fodselsnr',
-          id: '15120599558',
-        },
-      });
-      expect(mockedWrite).nthCalledWith(2, {
-        mappingConfigId: 'mapping-id',
-        record: {
-          data: {
-            fodselsnr: { value: { oneofKind: 'doubleValue', doubleValue: 15125049580 } },
-            slektsnavn: { value: { oneofKind: 'stringValue', stringValue: 'FAMILIE' } },
-            fornavn: { value: { oneofKind: 'stringValue', stringValue: 'OLE' } },
-            familienummer: { value: { oneofKind: 'doubleValue', doubleValue: 15125049580 } },
-          },
-          externalId: 'fodselsnr',
-          id: '15125049580',
-        },
+      return sdk.ingestRecord(record).catch((err) => {
+        thrownError = err;
       });
     });
 
-    it('returns correct response', () => {
-      expect(returnedValue.hasError).toBe(false);
-      expect(returnedValue.errorResults.length).toBe(0);
-      expect(returnedValue.results.length).toBe(2);
-      expect(returnedValue.results[0].id).toBe('15120599558');
-      expect(returnedValue.results[0].index).toBe(0);
-      expect(returnedValue.results[0].isError()).toBe(false);
-      expect(returnedValue.results[0].isSuccess()).toBe(true);
-      expect(returnedValue.results[1].id).toBe('15125049580');
-      expect(returnedValue.results[1].index).toBe(1);
-      expect(returnedValue.results[1].isError()).toBe(false);
-      expect(returnedValue.results[1].isSuccess()).toBe(true);
+    it('throws an error', () => {
+      expect(thrownError.message).toBe('No ingest record response');
+    });
+  });
+
+  describe('when an error is returned', () => {
+    const error = {
+      code: Status.NOT_FOUND,
+      details: 'DETAILS',
+      metadata: {},
+    } as ServiceError;
+    let thrownError: Error;
+    let sdk: IngestClient;
+
+    beforeEach(async () => {
+      sdk = await IngestClient.createInstance(JSON.stringify(applicationTokenMock));
+      jest
+        .spyOn(sdk['client'], 'ingestRecord')
+        .mockImplementation(
+          (
+            req,
+            res:
+              | Metadata
+              | CallOptions
+              | ((err: ServiceError | null, response?: IngestRecordResponse) => void),
+          ) => {
+            if (typeof res === 'function') {
+              res(error);
+            }
+            return {} as SurfaceCall;
+          },
+        );
+
+      return sdk.ingestRecord(record).catch((err) => {
+        thrownError = err;
+      });
+    });
+
+    it('throws an error', () => {
+      expect(thrownError).toBe(error);
     });
   });
 });
 
-describe('when recordId is used', () => {
-  const recordId = 'specialId';
-  let mockedClient: ClientMock;
+describe('streamRecords', () => {
   let mockedWrite: jest.SpyInstance;
-  let returnedValue: IngestResults;
-
-  beforeEach(() => {
-    let indexCounter = 0;
-    mockedClient = new ClientMock();
-    mockedWrite = jest
-      .spyOn(mockedClient, 'write')
-      .mockImplementation((obj: { record: { id: string } }) => {
-        mockedClient.emit('data', {
-          recordId: obj.record.id,
-          recordIndex: indexCounter++,
-          error: {},
-        } as StreamRecordsResponse);
-      });
-    jest.spyOn(mockedClient, 'end').mockImplementation(() => {
-      indexCounter = 0;
-      mockedClient.emit('end');
-    });
-
-    const mockFunc = jest.fn().mockImplementation(() => mockedClient);
-    jest.spyOn(sdk['client'], 'streamRecords').mockImplementation(mockFunc);
-  });
-
-  describe('when an empty list of objects is sent', () => {
-    beforeEach(async () => {
-      returnedValue = await sdk.ingest('mapping-id', 'fodselsnr', [], recordId);
-    });
-
-    it('sends a correct request', () => {
-      expect(mockedWrite).toBeCalledTimes(0);
-    });
-
-    it('returns correct response', () => {
-      expect(returnedValue.hasError).toBe(false);
-      expect(returnedValue.errorResults.length).toBe(0);
-      expect(returnedValue.results.length).toBe(0);
-    });
-  });
-
-  describe('when one object is sent', () => {
-    beforeEach(async () => {
-      returnedValue = await sdk.ingest(
-        'mapping-id',
-        'fodselsnr',
-        [
-          {
-            fodselsnr: 15120599558,
-            slektsnavn: 'FAMILIE',
-            fornavn: 'ULF',
-            familienummer: 15125049580,
-            mors_fodselsnr: 15125149682,
-            fars_fodselsnr: 15125049580,
-            [recordId]: '1234',
-          },
-        ],
-        recordId,
-      );
-    });
-
-    it('sends a correct request', () => {
-      expect(mockedWrite).toBeCalledTimes(1);
-      expect(mockedWrite).toBeCalledWith({
-        mappingConfigId: 'mapping-id',
-        record: {
-          data: {
-            fodselsnr: { value: { oneofKind: 'doubleValue', doubleValue: 15120599558 } },
-            slektsnavn: { value: { oneofKind: 'stringValue', stringValue: 'FAMILIE' } },
-            fornavn: { value: { oneofKind: 'stringValue', stringValue: 'ULF' } },
-            familienummer: { value: { oneofKind: 'doubleValue', doubleValue: 15125049580 } },
-            mors_fodselsnr: { value: { oneofKind: 'doubleValue', doubleValue: 15125149682 } },
-            fars_fodselsnr: { value: { oneofKind: 'doubleValue', doubleValue: 15125049580 } },
-            [recordId]: { value: { oneofKind: 'stringValue', stringValue: '1234' } },
-          },
-          externalId: 'fodselsnr',
-          id: '1234',
-        },
-      });
-    });
-
-    it('returns correct response', () => {
-      expect(returnedValue.hasError).toBe(false);
-      expect(returnedValue.errorResults.length).toBe(0);
-      expect(returnedValue.results.length).toBe(1);
-      expect(returnedValue.results[0].id).toBe('1234');
-      expect(returnedValue.results[0].index).toBe(0);
-      expect(returnedValue.results[0].isError()).toBe(false);
-      expect(returnedValue.results[0].isSuccess()).toBe(true);
-    });
-  });
-
-  describe('when two objects are sent', () => {
-    beforeEach(async () => {
-      returnedValue = await sdk.ingest(
-        'mapping-id',
-        'fodselsnr',
-        [
-          {
-            fodselsnr: 15120599558,
-            slektsnavn: 'FAMILIE',
-            fornavn: 'ULF',
-            familienummer: 15125049580,
-            mors_fodselsnr: 15125149682,
-            fars_fodselsnr: 15125049580,
-            [recordId]: '1234',
-          },
-          {
-            fodselsnr: 15125049580,
-            slektsnavn: 'FAMILIE',
-            fornavn: 'OLE',
-            familienummer: 15125049580,
-          },
-        ],
-        recordId,
-      );
-    });
-
-    it('sends a correct request', () => {
-      expect(mockedWrite).toBeCalledTimes(2);
-      expect(mockedWrite).nthCalledWith(1, {
-        mappingConfigId: 'mapping-id',
-        record: {
-          data: {
-            fodselsnr: { value: { oneofKind: 'doubleValue', doubleValue: 15120599558 } },
-            slektsnavn: { value: { oneofKind: 'stringValue', stringValue: 'FAMILIE' } },
-            fornavn: { value: { oneofKind: 'stringValue', stringValue: 'ULF' } },
-            familienummer: { value: { oneofKind: 'doubleValue', doubleValue: 15125049580 } },
-            mors_fodselsnr: { value: { oneofKind: 'doubleValue', doubleValue: 15125149682 } },
-            fars_fodselsnr: { value: { oneofKind: 'doubleValue', doubleValue: 15125049580 } },
-            [recordId]: { value: { oneofKind: 'stringValue', stringValue: '1234' } },
-          },
-          externalId: 'fodselsnr',
-          id: '1234',
-        },
-      });
-      expect(mockedWrite).nthCalledWith(2, {
-        mappingConfigId: 'mapping-id',
-        record: {
-          data: {
-            fodselsnr: { value: { oneofKind: 'doubleValue', doubleValue: 15125049580 } },
-            slektsnavn: { value: { oneofKind: 'stringValue', stringValue: 'FAMILIE' } },
-            fornavn: { value: { oneofKind: 'stringValue', stringValue: 'OLE' } },
-            familienummer: { value: { oneofKind: 'doubleValue', doubleValue: 15125049580 } },
-          },
-          externalId: 'fodselsnr',
-          id: '15125049580',
-        },
-      });
-    });
-
-    it('returns correct response', () => {
-      expect(returnedValue.hasError).toBe(false);
-      expect(returnedValue.errorResults.length).toBe(0);
-      expect(returnedValue.results.length).toBe(2);
-      expect(returnedValue.results[0].id).toBe('1234');
-      expect(returnedValue.results[0].index).toBe(0);
-      expect(returnedValue.results[0].isError()).toBe(false);
-      expect(returnedValue.results[0].isSuccess()).toBe(true);
-      expect(returnedValue.results[1].id).toBe('15125049580');
-      expect(returnedValue.results[1].index).toBe(1);
-      expect(returnedValue.results[1].isError()).toBe(false);
-      expect(returnedValue.results[1].isSuccess()).toBe(true);
-    });
-  });
-});
-
-describe('when a stream is used', () => {
-  let mockedClient: ClientMock;
-  let mockedWrite: jest.SpyInstance;
-  let returnedValue: IngestResults;
+  let returnedValue: ClientMock;
+  let returnedData: unknown[] = [];
 
   beforeEach(async () => {
-    let indexCounter = 0;
-    mockedClient = new ClientMock();
-    mockedWrite = jest
-      .spyOn(mockedClient, 'write')
-      .mockImplementation((obj: { record: { id: string } }) => {
-        mockedClient.emit('data', {
-          recordId: obj.record.id,
-          recordIndex: indexCounter++,
-          error: {},
-        } as StreamRecordsResponse);
-      });
-    jest.spyOn(mockedClient, 'end').mockImplementation(() => {
-      indexCounter = 0;
-      mockedClient.emit('end');
+    returnedData = [];
+    const [input, output] = streamKeeper(null as unknown as Parameters<typeof streamKeeper>[0]);
+    input.write = jest.fn();
+    input.end = jest.fn().mockImplementation(() => {
+      output.emit('data', {
+        error: {
+          oneofKind: undefined,
+        },
+        recordId: 'lot-1',
+      } as IngestRecordResponse);
+      output.emit('data', {
+        error: {
+          oneofKind: undefined,
+        },
+        recordId: 'lot-2',
+      } as IngestRecordResponse);
+      output.emit('end');
     });
-
-    const mockFunc = jest.fn().mockImplementation(() => mockedClient);
-    jest.spyOn(sdk['client'], 'streamRecords').mockImplementation(mockFunc);
+    mockedWrite = input.write as jest.Mock;
 
     const stream = new Stream.Readable({
       objectMode: true,
       read: jest.fn(),
     });
-    stream.push({
-      fodselsnr: 15120599558,
-      slektsnavn: 'FAMILIE',
-      fornavn: 'ULF',
-      familienummer: 15125049580,
-      mors_fodselsnr: 15125149682,
-      fars_fodselsnr: 15125049580,
-    });
     stream.push(
-      Buffer.from(
-        JSON.stringify({
-          fodselsnr: 15125049580,
-          slektsnavn: 'FAMILIE',
-          fornavn: 'OLE',
-          familienummer: 15125049580,
-        }),
-      ),
+      IngestRecord.upsert('record-1').node.resource({
+        externalId: 'lot-1',
+        type: 'ParkingLot',
+      }),
+    );
+    stream.push(
+      IngestRecord.upsert('record-2').node.resource({
+        externalId: 'lot-2',
+        type: 'ParkingLot',
+      }),
     );
     stream.push(null);
 
-    returnedValue = await sdk.ingest('mapping-id', 'fodselsnr', stream);
+    returnedValue = sdk.streamRecords(stream) as unknown as ClientMock;
+    returnedValue.on('data', (data) => {
+      returnedData.push(data);
+    });
+
+    return new Promise<void>((resolve) => {
+      returnedValue.on('end', () => {
+        returnedValue.removeAllListeners();
+        resolve();
+      });
+    });
   });
 
   it('sends a correct request', () => {
     expect(mockedWrite).toBeCalledTimes(2);
     expect(mockedWrite).nthCalledWith(1, {
-      mappingConfigId: 'mapping-id',
       record: {
-        data: {
-          fodselsnr: { value: { oneofKind: 'doubleValue', doubleValue: 15120599558 } },
-          slektsnavn: { value: { oneofKind: 'stringValue', stringValue: 'FAMILIE' } },
-          fornavn: { value: { oneofKind: 'stringValue', stringValue: 'ULF' } },
-          familienummer: { value: { oneofKind: 'doubleValue', doubleValue: 15125049580 } },
-          mors_fodselsnr: { value: { oneofKind: 'doubleValue', doubleValue: 15125149682 } },
-          fars_fodselsnr: { value: { oneofKind: 'doubleValue', doubleValue: 15125049580 } },
-        },
-        externalId: 'fodselsnr',
-        id: '15120599558',
-      },
-    });
-    expect(mockedWrite).nthCalledWith(2, {
-      mappingConfigId: 'mapping-id',
-      record: {
-        data: {
-          fodselsnr: { value: { oneofKind: 'doubleValue', doubleValue: 15125049580 } },
-          slektsnavn: { value: { oneofKind: 'stringValue', stringValue: 'FAMILIE' } },
-          fornavn: { value: { oneofKind: 'stringValue', stringValue: 'OLE' } },
-          familienummer: { value: { oneofKind: 'doubleValue', doubleValue: 15125049580 } },
-        },
-        externalId: 'fodselsnr',
-        id: '15125049580',
-      },
-    });
-  });
-
-  it('returns correct response', () => {
-    expect(returnedValue.hasError).toBe(false);
-    expect(returnedValue.errorResults.length).toBe(0);
-    expect(returnedValue.results.length).toBe(2);
-    expect(returnedValue.results[0].id).toBe('15120599558');
-    expect(returnedValue.results[0].index).toBe(0);
-    expect(returnedValue.results[0].isError()).toBe(false);
-    expect(returnedValue.results[0].isSuccess()).toBe(true);
-    expect(returnedValue.results[1].id).toBe('15125049580');
-    expect(returnedValue.results[1].index).toBe(1);
-    expect(returnedValue.results[1].isError()).toBe(false);
-    expect(returnedValue.results[1].isSuccess()).toBe(true);
-  });
-});
-
-describe('when an error is returned', () => {
-  const error = new Error('Mock error');
-  let mockedClient: ClientMock;
-  let caughtError: unknown;
-
-  beforeEach(async () => {
-    mockedClient = new ClientMock();
-
-    const mockFunc = jest.fn().mockImplementation(() => mockedClient);
-    jest.spyOn(sdk['client'], 'streamRecords').mockImplementation(mockFunc);
-
-    const stream = new Stream.Readable({
-      objectMode: true,
-      read: jest.fn(),
-    });
-    stream.destroy(error);
-
-    try {
-      await sdk.ingest('mapping-id', 'fodselsnr', stream);
-    } catch (err) {
-      caughtError = err;
-    }
-  });
-
-  describe('when an empty list of objects is sent', () => {
-    beforeEach(async () => {
-      try {
-        await sdk.ingest('mapping-id', 'fodselsnr', []);
-      } catch (err) {
-        caughtError = err;
-      }
-    });
-
-    it('throws the error', () => {
-      expect(caughtError).toBe(error);
-    });
-  });
-});
-
-describe('when a record error result is returned', () => {
-  let mockedClient: ClientMock;
-  let returnedValue: IngestResults;
-
-  beforeEach(async () => {
-    let indexCounter = 0;
-    mockedClient = new ClientMock();
-    jest.spyOn(mockedClient, 'write').mockImplementation((obj: { record: { id: string } }) => {
-      mockedClient.emit('data', {
-        recordId: obj.record.id,
-        recordIndex: indexCounter++,
-        error: {
-          oneofKind: 'recordError',
-          recordError: {
-            propertyErrors: {
-              property1: {
-                messages: ['Error in property1'],
+        id: 'record-1',
+        operation: {
+          oneofKind: 'upsert',
+          upsert: {
+            data: {
+              oneofKind: 'node',
+              node: {
+                type: {
+                  oneofKind: 'resource',
+                  resource: {
+                    externalId: 'lot-1',
+                    type: 'ParkingLot',
+                    tags: [],
+                    properties: [],
+                  },
+                },
               },
             },
           },
         },
-      } as StreamRecordsResponse);
+      },
     });
-    jest.spyOn(mockedClient, 'end').mockImplementation(() => {
-      indexCounter = 0;
-      mockedClient.emit('end');
+    expect(mockedWrite).nthCalledWith(2, {
+      record: {
+        id: 'record-2',
+        operation: {
+          oneofKind: 'upsert',
+          upsert: {
+            data: {
+              oneofKind: 'node',
+              node: {
+                type: {
+                  oneofKind: 'resource',
+                  resource: {
+                    externalId: 'lot-2',
+                    type: 'ParkingLot',
+                    tags: [],
+                    properties: [],
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
     });
-
-    const mockFunc = jest.fn().mockImplementation(() => mockedClient);
-    jest.spyOn(sdk['client'], 'streamRecords').mockImplementation(mockFunc);
-
-    const stream = new Stream.Readable({
-      objectMode: true,
-      read: jest.fn(),
-    });
-    stream.push({
-      fodselsnr: 15120599558,
-      slektsnavn: 'FAMILIE',
-      fornavn: 'ULF',
-      familienummer: 15125049580,
-      mors_fodselsnr: 15125149682,
-      fars_fodselsnr: 15125049580,
-    });
-    stream.push(null);
-
-    returnedValue = await sdk.ingest('mapping-id', 'fodselsnr', stream);
   });
 
   it('returns correct response', () => {
-    expect(returnedValue.hasError).toBe(true);
-    expect(returnedValue.errorResults.length).toBe(1);
-    expect(returnedValue.results.length).toBe(1);
-    expect(returnedValue.results[0].id).toBe('15120599558');
-    expect(returnedValue.results[0].index).toBe(0);
-    expect(returnedValue.results[0].isError()).toBe(true);
-    expect(returnedValue.results[0].isSuccess()).toBe(false);
-    expect(returnedValue.errorResults[0].id).toBe('15120599558');
-    expect(returnedValue.errorResults[0].index).toBe(0);
-    expect(returnedValue.errorResults[0].isError()).toBe(true);
-    expect(returnedValue.errorResults[0].isSuccess()).toBe(false);
-    expect(returnedValue.errorResults[0].propertyErrors).toEqual({
-      property1: ['Error in property1'],
-    });
-    expect(returnedValue.errorResults[0].errorCode).toBeUndefined();
-    expect(returnedValue.errorResults[0].errorDetails).toBeUndefined();
-    expect(returnedValue.errorResults[0].errorMessage).toBeUndefined();
+    expect(returnedData).toEqual([
+      {
+        error: {
+          oneofkind: undefined,
+        },
+        recordId: 'lot-1',
+      },
+      {
+        error: {
+          oneofkind: undefined,
+        },
+        recordId: 'lot-2',
+      },
+    ]);
   });
 });
 
-describe('when a status error result is returned', () => {
-  let mockedClient: ClientMock;
-  let returnedValue: IngestResults;
-
-  beforeEach(async () => {
-    let indexCounter = 0;
-    mockedClient = new ClientMock();
-    jest.spyOn(mockedClient, 'write').mockImplementation((obj: { record: { id: string } }) => {
-      mockedClient.emit('data', {
-        recordId: obj.record.id,
-        recordIndex: indexCounter++,
-        error: {
-          oneofKind: 'statusError',
-          statusError: {
-            code: 500,
-            message: 'Server error',
-            details: [
-              Any.create({
-                typeUrl: Any.typeNameToUrl(StringValue.typeName),
-                value: StringValue.toBinary(StringValue.fromJson('Details')),
-              }),
-            ],
-          },
-        },
-      } as StreamRecordsResponse);
+describe('IngestRecord builder', () => {
+  it('empty', () => {
+    expect(new IngestRecord().marshal()).toEqual({
+      record: undefined,
     });
-    jest.spyOn(mockedClient, 'end').mockImplementation(() => {
-      indexCounter = 0;
-      mockedClient.emit('end');
-    });
-
-    const mockFunc = jest.fn().mockImplementation(() => mockedClient);
-    jest.spyOn(sdk['client'], 'streamRecords').mockImplementation(mockFunc);
-
-    const stream = new Stream.Readable({
-      objectMode: true,
-      read: jest.fn(),
-    });
-    stream.push({
-      fodselsnr: 15120599558,
-      slektsnavn: 'FAMILIE',
-      fornavn: 'ULF',
-      familienummer: 15125049580,
-      mors_fodselsnr: 15125149682,
-      fars_fodselsnr: 15125049580,
-    });
-    stream.push(null);
-
-    returnedValue = await sdk.ingest('mapping-id', 'fodselsnr', stream);
   });
 
-  it('returns correct response', () => {
-    expect(returnedValue.hasError).toBe(true);
-    expect(returnedValue.errorResults.length).toBe(1);
-    expect(returnedValue.results.length).toBe(1);
-    expect(returnedValue.results[0].id).toBe('15120599558');
-    expect(returnedValue.results[0].index).toBe(0);
-    expect(returnedValue.results[0].isError()).toBe(true);
-    expect(returnedValue.results[0].isSuccess()).toBe(false);
-    expect(returnedValue.errorResults[0].id).toBe('15120599558');
-    expect(returnedValue.errorResults[0].index).toBe(0);
-    expect(returnedValue.errorResults[0].isError()).toBe(true);
-    expect(returnedValue.errorResults[0].isSuccess()).toBe(false);
-    expect(returnedValue.errorResults[0].propertyErrors).toEqual({});
-    expect(returnedValue.errorResults[0].errorCode).toBe(500);
-    expect(returnedValue.errorResults[0].errorMessage).toBe('Server error');
-    expect(returnedValue.errorResults[0].errorDetails).toBeDefined();
+  describe('upsert', () => {
+    it('no more details', () => {
+      expect(IngestRecord.upsert('record-id').marshal()).toEqual({
+        record: {
+          id: 'record-id',
+          operation: {
+            oneofKind: 'upsert',
+            upsert: {
+              data: {
+                oneofKind: undefined,
+              },
+            },
+          },
+        },
+      });
+    });
+
+    describe('relation', () => {
+      it('no record', () => {
+        const upsert = IngestRecord.upsert('record-id');
+        const upsertRequest = (upsert as unknown as { request: IngestRecordRequest }).request;
+        upsertRequest.record = undefined;
+
+        expect(
+          upsert
+            .relation({
+              sourceMatch: {
+                externalId: 'vehicle-1',
+                type: 'Vehicle',
+              },
+              targetMatch: {
+                externalId: 'lot-1',
+                type: 'ParkingLot',
+              },
+              type: 'CanUse',
+            })
+            .marshal(),
+        ).toEqual({
+          record: undefined,
+        });
+      });
+
+      it('no operation', () => {
+        const upsert = IngestRecord.upsert('record-id');
+        const upsertRequest = (upsert as unknown as { request: IngestRecordRequest }).request;
+
+        if (!upsertRequest.record) {
+          throw new Error('Record must be defined');
+        }
+        upsertRequest.record.operation = { oneofKind: undefined };
+
+        expect(
+          upsert
+            .relation({
+              sourceMatch: {
+                externalId: 'vehicle-1',
+                type: 'Vehicle',
+              },
+              targetMatch: {
+                externalId: 'lot-1',
+                type: 'ParkingLot',
+              },
+              type: 'CanUse',
+            })
+            .marshal(),
+        ).toEqual({
+          record: {
+            id: 'record-id',
+            operation: {
+              oneofKind: undefined,
+            },
+          },
+        });
+      });
+
+      it('with operation', () => {
+        const upsert = IngestRecord.upsert('record-id');
+
+        expect(
+          upsert
+            .relation({
+              sourceMatch: {
+                externalId: 'vehicle-1',
+                type: 'Vehicle',
+              },
+              targetMatch: {
+                externalId: 'lot-1',
+                type: 'ParkingLot',
+              },
+              type: 'CanUse',
+            })
+            .marshal(),
+        ).toEqual({
+          record: {
+            id: 'record-id',
+            operation: {
+              oneofKind: 'upsert',
+              upsert: {
+                data: {
+                  oneofKind: 'relation',
+                  relation: {
+                    match: {
+                      sourceMatch: {
+                        externalId: 'vehicle-1',
+                        type: 'Vehicle',
+                      },
+                      targetMatch: {
+                        externalId: 'lot-1',
+                        type: 'ParkingLot',
+                      },
+                      type: 'CanUse',
+                    },
+                    properties: [],
+                  },
+                },
+              },
+            },
+          },
+        });
+
+        expect(
+          upsert
+            .relation(
+              {
+                sourceMatch: {
+                  externalId: 'vehicle-1',
+                  type: 'Vehicle',
+                },
+                targetMatch: {
+                  externalId: 'lot-1',
+                  type: 'ParkingLot',
+                },
+                type: 'CanUse',
+              },
+              {
+                propertyKey: 'propertyValue',
+              },
+            )
+            .marshal(),
+        ).toEqual({
+          record: {
+            id: 'record-id',
+            operation: {
+              oneofKind: 'upsert',
+              upsert: {
+                data: {
+                  oneofKind: 'relation',
+                  relation: {
+                    match: {
+                      sourceMatch: {
+                        externalId: 'vehicle-1',
+                        type: 'Vehicle',
+                      },
+                      targetMatch: {
+                        externalId: 'lot-1',
+                        type: 'ParkingLot',
+                      },
+                      type: 'CanUse',
+                    },
+                    properties: [
+                      {
+                        key: 'propertyKey',
+                        value: {
+                          value: {
+                            oneofKind: 'stringValue',
+                            stringValue: 'propertyValue',
+                          },
+                        },
+                      },
+                    ],
+                  },
+                },
+              },
+            },
+          },
+        });
+      });
+    });
+
+    describe('node', () => {
+      describe('resource', () => {
+        it('no record', () => {
+          const upsert = IngestRecord.upsert('record-id');
+          const upsertRequest = (upsert as unknown as { request: IngestRecordRequest }).request;
+          upsertRequest.record = undefined;
+
+          expect(
+            upsert.node
+              .resource({
+                externalId: 'lot-1',
+                type: 'ParkingLot',
+              })
+              .marshal(),
+          ).toEqual({
+            record: undefined,
+          });
+        });
+
+        it('no operation', () => {
+          const upsert = IngestRecord.upsert('record-id');
+          const upsertRequest = (upsert as unknown as { request: IngestRecordRequest }).request;
+
+          if (!upsertRequest.record) {
+            throw new Error('Record must be defined');
+          }
+          upsertRequest.record.operation = { oneofKind: undefined };
+
+          expect(
+            upsert.node
+              .resource({
+                externalId: 'lot-1',
+                type: 'ParkingLot',
+              })
+              .marshal(),
+          ).toEqual({
+            record: {
+              id: 'record-id',
+              operation: {
+                oneofKind: undefined,
+              },
+            },
+          });
+        });
+
+        it('with operation', () => {
+          const upsert = IngestRecord.upsert('record-id');
+
+          expect(
+            upsert.node
+              .resource({
+                externalId: 'lot-1',
+                type: 'ParkingLot',
+              })
+              .marshal(),
+          ).toEqual({
+            record: {
+              id: 'record-id',
+              operation: {
+                oneofKind: 'upsert',
+                upsert: {
+                  data: {
+                    oneofKind: 'node',
+                    node: {
+                      type: {
+                        oneofKind: 'resource',
+                        resource: {
+                          externalId: 'lot-1',
+                          type: 'ParkingLot',
+                          tags: [],
+                          properties: [],
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          });
+
+          expect(
+            upsert.node
+              .resource({
+                externalId: 'lot-1',
+                type: 'ParkingLot',
+                tags: ['MyTag'],
+                properties: {
+                  propertyKey: 'property-value',
+                },
+              })
+              .marshal(),
+          ).toEqual({
+            record: {
+              id: 'record-id',
+              operation: {
+                oneofKind: 'upsert',
+                upsert: {
+                  data: {
+                    oneofKind: 'node',
+                    node: {
+                      type: {
+                        oneofKind: 'resource',
+                        resource: {
+                          externalId: 'lot-1',
+                          type: 'ParkingLot',
+                          tags: ['MyTag'],
+                          properties: [
+                            {
+                              key: 'propertyKey',
+                              value: {
+                                value: {
+                                  oneofKind: 'stringValue',
+                                  stringValue: 'property-value',
+                                },
+                              },
+                            },
+                          ],
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          });
+        });
+      });
+
+      describe('digital twin', () => {
+        it('no record', () => {
+          const upsert = IngestRecord.upsert('record-id');
+          const upsertRequest = (upsert as unknown as { request: IngestRecordRequest }).request;
+          upsertRequest.record = undefined;
+
+          expect(
+            upsert.node
+              .digitalTwin({
+                externalId: 'person-id',
+                type: 'Owner',
+                tenantId: 'tenant-id',
+              })
+              .marshal(),
+          ).toEqual({
+            record: undefined,
+          });
+        });
+
+        it('no operation', () => {
+          const upsert = IngestRecord.upsert('record-id');
+          const upsertRequest = (upsert as unknown as { request: IngestRecordRequest }).request;
+
+          if (!upsertRequest.record) {
+            throw new Error('Record must be defined');
+          }
+          upsertRequest.record.operation = { oneofKind: undefined };
+
+          expect(
+            upsert.node
+              .resource({
+                externalId: 'lot-1',
+                type: 'ParkingLot',
+              })
+              .marshal(),
+          ).toEqual({
+            record: {
+              id: 'record-id',
+              operation: {
+                oneofKind: undefined,
+              },
+            },
+          });
+        });
+
+        it('with operation', () => {
+          const upsert = IngestRecord.upsert('record-id');
+
+          expect(
+            upsert.node
+              .digitalTwin({
+                externalId: 'person-id',
+                type: 'Owner',
+                tenantId: 'tenant-id',
+              })
+              .marshal(),
+          ).toEqual({
+            record: {
+              id: 'record-id',
+              operation: {
+                oneofKind: 'upsert',
+                upsert: {
+                  data: {
+                    oneofKind: 'node',
+                    node: {
+                      type: {
+                        oneofKind: 'digitalTwin',
+                        digitalTwin: {
+                          externalId: 'person-id',
+                          type: 'Owner',
+                          tenantId: 'tenant-id',
+                          tags: [],
+                          properties: [],
+                          identityProperties: [],
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          });
+
+          expect(
+            upsert.node
+              .digitalTwin({
+                externalId: 'person-id',
+                type: 'Owner',
+                tags: ['MyTag'],
+                properties: {
+                  propertyKey: 'property-value',
+                },
+                tenantId: 'tenant-id',
+                identityProperties: {
+                  identityProperty: 'some-value',
+                },
+              })
+              .marshal(),
+          ).toEqual({
+            record: {
+              id: 'record-id',
+              operation: {
+                oneofKind: 'upsert',
+                upsert: {
+                  data: {
+                    oneofKind: 'node',
+                    node: {
+                      type: {
+                        oneofKind: 'digitalTwin',
+                        digitalTwin: {
+                          externalId: 'person-id',
+                          type: 'Owner',
+                          tenantId: 'tenant-id',
+                          tags: ['MyTag'],
+                          properties: [
+                            {
+                              key: 'propertyKey',
+                              value: {
+                                value: {
+                                  oneofKind: 'stringValue',
+                                  stringValue: 'property-value',
+                                },
+                              },
+                            },
+                          ],
+                          identityProperties: [
+                            {
+                              key: 'identityProperty',
+                              value: {
+                                value: {
+                                  oneofKind: 'stringValue',
+                                  stringValue: 'some-value',
+                                },
+                              },
+                            },
+                          ],
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          });
+        });
+      });
+    });
+  });
+
+  describe('delete', () => {
+    it('no more details', () => {
+      expect(IngestRecord.delete('record-id').marshal()).toEqual({
+        record: {
+          id: 'record-id',
+          operation: {
+            oneofKind: 'delete',
+            delete: {
+              data: {
+                oneofKind: undefined,
+              },
+            },
+          },
+        },
+      });
+    });
+
+    describe('node', () => {
+      it('no record', () => {
+        const deleteRecord = IngestRecord.delete('record-id');
+        const deleteRequest = (deleteRecord as unknown as { request: IngestRecordRequest }).request;
+        deleteRequest.record = undefined;
+
+        expect(
+          deleteRecord
+            .node({
+              externalId: 'lot-1',
+              type: 'ParkingLot',
+            })
+            .marshal(),
+        ).toEqual({
+          record: undefined,
+        });
+      });
+
+      it('no operation', () => {
+        const deleteRecord = IngestRecord.delete('record-id');
+        const deleteRequest = (deleteRecord as unknown as { request: IngestRecordRequest }).request;
+
+        if (!deleteRequest.record) {
+          throw new Error('Record must be defined');
+        }
+        deleteRequest.record.operation = { oneofKind: undefined };
+
+        expect(
+          deleteRecord
+            .node({
+              externalId: 'lot-1',
+              type: 'ParkingLot',
+            })
+            .marshal(),
+        ).toEqual({
+          record: {
+            id: 'record-id',
+            operation: {
+              oneofKind: undefined,
+            },
+          },
+        });
+      });
+
+      it('with operation', () => {
+        expect(
+          IngestRecord.delete('record-id')
+            .node({
+              externalId: 'lot-1',
+              type: 'ParkingLot',
+            })
+            .marshal(),
+        ).toEqual({
+          record: {
+            id: 'record-id',
+            operation: {
+              oneofKind: 'delete',
+              delete: {
+                data: {
+                  oneofKind: 'node',
+                  node: {
+                    externalId: 'lot-1',
+                    type: 'ParkingLot',
+                  },
+                },
+              },
+            },
+          },
+        });
+      });
+    });
+
+    describe('nodeProperty', () => {
+      it('no record', () => {
+        const deleteRecord = IngestRecord.delete('record-id');
+        const deleteRequest = (deleteRecord as unknown as { request: IngestRecordRequest }).request;
+        deleteRequest.record = undefined;
+
+        expect(
+          deleteRecord
+            .nodeProperty(
+              {
+                externalId: 'lot-1',
+                type: 'ParkingLot',
+              },
+              'propertyKey',
+            )
+            .marshal(),
+        ).toEqual({
+          record: undefined,
+        });
+      });
+
+      it('no operation', () => {
+        const deleteRecord = IngestRecord.delete('record-id');
+        const deleteRequest = (deleteRecord as unknown as { request: IngestRecordRequest }).request;
+
+        if (!deleteRequest.record) {
+          throw new Error('Record must be defined');
+        }
+        deleteRequest.record.operation = { oneofKind: undefined };
+
+        expect(
+          deleteRecord
+            .nodeProperty(
+              {
+                externalId: 'lot-1',
+                type: 'ParkingLot',
+              },
+              'propertyKey',
+            )
+            .marshal(),
+        ).toEqual({
+          record: {
+            id: 'record-id',
+            operation: {
+              oneofKind: undefined,
+            },
+          },
+        });
+      });
+
+      it('with operation', () => {
+        expect(
+          IngestRecord.delete('record-id')
+            .nodeProperty(
+              {
+                externalId: 'lot-1',
+                type: 'ParkingLot',
+              },
+              'propertyKey',
+            )
+            .marshal(),
+        ).toEqual({
+          record: {
+            id: 'record-id',
+            operation: {
+              oneofKind: 'delete',
+              delete: {
+                data: {
+                  oneofKind: 'nodeProperty',
+                  nodeProperty: {
+                    key: 'propertyKey',
+                    match: {
+                      externalId: 'lot-1',
+                      type: 'ParkingLot',
+                    },
+                  },
+                },
+              },
+            },
+          },
+        });
+      });
+    });
+
+    describe('relation', () => {
+      it('no record', () => {
+        const deleteRecord = IngestRecord.delete('record-id');
+        const deleteRequest = (deleteRecord as unknown as { request: IngestRecordRequest }).request;
+        deleteRequest.record = undefined;
+
+        expect(
+          deleteRecord
+            .relation({
+              sourceMatch: { externalId: 'vehicle-1', type: 'Vehicle' },
+              targetMatch: { externalId: 'lot-1', type: 'ParkingLot' },
+              type: 'CanUse',
+            })
+            .marshal(),
+        ).toEqual({
+          record: undefined,
+        });
+      });
+
+      it('no operation', () => {
+        const deleteRecord = IngestRecord.delete('record-id');
+        const deleteRequest = (deleteRecord as unknown as { request: IngestRecordRequest }).request;
+
+        if (!deleteRequest.record) {
+          throw new Error('Record must be defined');
+        }
+        deleteRequest.record.operation = { oneofKind: undefined };
+
+        expect(
+          deleteRecord
+            .relation({
+              sourceMatch: { externalId: 'vehicle-1', type: 'Vehicle' },
+              targetMatch: { externalId: 'lot-1', type: 'ParkingLot' },
+              type: 'CanUse',
+            })
+            .marshal(),
+        ).toEqual({
+          record: {
+            id: 'record-id',
+            operation: {
+              oneofKind: undefined,
+            },
+          },
+        });
+      });
+
+      it('with operation', () => {
+        expect(
+          IngestRecord.delete('record-id')
+            .relation({
+              sourceMatch: { externalId: 'vehicle-1', type: 'Vehicle' },
+              targetMatch: { externalId: 'lot-1', type: 'ParkingLot' },
+              type: 'CanUse',
+            })
+            .marshal(),
+        ).toEqual({
+          record: {
+            id: 'record-id',
+            operation: {
+              oneofKind: 'delete',
+              delete: {
+                data: {
+                  oneofKind: 'relation',
+                  relation: {
+                    sourceMatch: {
+                      externalId: 'vehicle-1',
+                      type: 'Vehicle',
+                    },
+                    targetMatch: {
+                      externalId: 'lot-1',
+                      type: 'ParkingLot',
+                    },
+                    type: 'CanUse',
+                  },
+                },
+              },
+            },
+          },
+        });
+      });
+    });
+
+    describe('relationProperty', () => {
+      it('no record', () => {
+        const deleteRecord = IngestRecord.delete('record-id');
+        const deleteRequest = (deleteRecord as unknown as { request: IngestRecordRequest }).request;
+        deleteRequest.record = undefined;
+
+        expect(
+          deleteRecord
+            .relationProperty(
+              {
+                sourceMatch: { externalId: 'vehicle-1', type: 'Vehicle' },
+                targetMatch: { externalId: 'lot-1', type: 'ParkingLot' },
+                type: 'CanUse',
+              },
+              'relationPropertyKey',
+            )
+            .marshal(),
+        ).toEqual({
+          record: undefined,
+        });
+      });
+
+      it('no operation', () => {
+        const deleteRecord = IngestRecord.delete('record-id');
+        const deleteRequest = (deleteRecord as unknown as { request: IngestRecordRequest }).request;
+
+        if (!deleteRequest.record) {
+          throw new Error('Record must be defined');
+        }
+        deleteRequest.record.operation = { oneofKind: undefined };
+
+        expect(
+          deleteRecord
+            .relationProperty(
+              {
+                sourceMatch: { externalId: 'vehicle-1', type: 'Vehicle' },
+                targetMatch: { externalId: 'lot-1', type: 'ParkingLot' },
+                type: 'CanUse',
+              },
+              'relationPropertyKey',
+            )
+            .marshal(),
+        ).toEqual({
+          record: {
+            id: 'record-id',
+            operation: {
+              oneofKind: undefined,
+            },
+          },
+        });
+      });
+
+      it('with operation', () => {
+        expect(
+          IngestRecord.delete('record-id')
+            .relationProperty(
+              {
+                sourceMatch: { externalId: 'vehicle-1', type: 'Vehicle' },
+                targetMatch: { externalId: 'lot-1', type: 'ParkingLot' },
+                type: 'CanUse',
+              },
+              'relationPropertyKey',
+            )
+            .marshal(),
+        ).toEqual({
+          record: {
+            id: 'record-id',
+            operation: {
+              oneofKind: 'delete',
+              delete: {
+                data: {
+                  oneofKind: 'relationProperty',
+                  relationProperty: {
+                    key: 'relationPropertyKey',
+                    match: {
+                      sourceMatch: {
+                        externalId: 'vehicle-1',
+                        type: 'Vehicle',
+                      },
+                      targetMatch: {
+                        externalId: 'lot-1',
+                        type: 'ParkingLot',
+                      },
+                      type: 'CanUse',
+                    },
+                  },
+                },
+              },
+            },
+          },
+        });
+      });
+    });
   });
 });
