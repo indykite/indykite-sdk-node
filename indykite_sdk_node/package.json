@@ -22,7 +22,7 @@
     "coverage-ci": "jest --ci --silent --coverage --coverageReporters=json",
     "coverage-html": "jest --coverage --silent --coverageReporters=html",
     "buf-generate": "buf generate --template ../buf.gen.yaml buf.build/indykite/indykiteapis -o ..",
-    "doc-generate": "typedoc --options typedoc.json"
+    "doc-generate": "typedoc --options typedoc.json && ts-node scripts/fixApiDocLinks.ts"
   },
   "devDependencies": {
     "@babel/core": "7.22.9",
