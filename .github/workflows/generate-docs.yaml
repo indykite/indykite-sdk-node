@@ -6,13 +6,12 @@ on:
       - master
     paths:
       - "indykite_sdk_node/src/**"
-  workflow_dispatch:
 
 jobs:
   generate-docs:
     runs-on: ubuntu-latest
     env:
-      BRANCH_NAME: tokens-update
+      BRANCH_NAME: docs-update
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
