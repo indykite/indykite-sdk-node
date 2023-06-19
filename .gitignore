@@ -29,6 +29,7 @@ yarn-error.log*
 *.orig
 *.sublime-project
 *.sublime-workspace
+.vscode/*
 
 # dbdump
 dump
