@@ -34,6 +34,8 @@ describe('readCustomerById', () => {
                   name: 'customer-name',
                   displayName: 'Customer Name',
                   etag: '123456',
+                  createdBy: 'Lorem ipsum - creator',
+                  updatedBy: 'Lorem ipsum - updater',
                 },
               });
             }
@@ -156,6 +158,8 @@ describe('readCustomerByName', () => {
                   name: 'customer-name',
                   displayName: 'Customer Name',
                   etag: '123456',
+                  createdBy: 'Lorem ipsum - creator',
+                  updatedBy: 'Lorem ipsum - updater',
                 },
               });
             }

@@ -67,6 +67,8 @@ describe('createOAuth2Application', () => {
                 clientId: 'client-id-token',
                 clientSecret: 'client-secret-token',
                 bookmark: 'bookmark-token',
+                createdBy: 'Lorem ipsum - creator',
+                updatedBy: 'Lorem ipsum - updater',
               });
             }
             return {} as SurfaceCall;
@@ -279,6 +281,8 @@ describe('readOAuth2Application', () => {
                   name: 'oauth2-application-name',
                   etag: 'etag-token',
                   displayName: 'OAuth2 Application Name',
+                  createdBy: 'Lorem ipsum - creator',
+                  updatedBy: 'Lorem ipsum - updater',
                   createTime: Utils.dateToTimestamp(new Date(2022, 5, 28, 11, 54)),
                   updateTime: Utils.dateToTimestamp(new Date(2022, 5, 28, 11, 55)),
                   deleteTime: Utils.dateToTimestamp(new Date(2022, 5, 28, 11, 56)),
@@ -440,6 +444,8 @@ describe('updateOAuth2Application', () => {
                 id: 'oauth2-app-id',
                 updateTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 16)),
                 bookmark: 'bookmark-token',
+                createdBy: 'Lorem ipsum - creator',
+                updatedBy: 'Lorem ipsum - updater',
               });
             }
             return {} as SurfaceCall;
@@ -548,6 +554,8 @@ describe('updateOAuth2Application', () => {
                 id: 'different-oauth2-app-id',
                 updateTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 16)),
                 bookmark: 'bookmark-token',
+                createdBy: 'Lorem ipsum - creator',
+                updatedBy: 'Lorem ipsum - updater'
               });
             }
             return {} as SurfaceCall;

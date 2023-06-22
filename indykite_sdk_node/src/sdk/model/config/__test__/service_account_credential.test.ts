@@ -15,6 +15,7 @@ describe('deserialize', () => {
           displayName: 'Display Name',
           id: 'app-agent-credential-id',
           kid: 'kid-id',
+          createdBy: 'Lorem ipsum - creator',
           createTime: Utils.dateToTimestamp(new Date(2022, 2, 17, 12, 17)),
           deleteTime: Utils.dateToTimestamp(new Date(2022, 2, 17, 12, 19)),
           destroyTime: Utils.dateToTimestamp(new Date(2022, 2, 17, 12, 20)),

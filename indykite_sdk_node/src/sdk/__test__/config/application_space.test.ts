@@ -45,6 +45,8 @@ describe('createApplicationSpace', () => {
                 createTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 12)),
                 updateTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 13)),
                 bookmark: 'bookmark-token',
+                createdBy: 'Lorem ipsum - creator',
+                updatedBy: 'Lorem ipsum - updater'
               });
             }
             return {} as SurfaceCall;
@@ -223,6 +225,8 @@ describe('readApplicationSpaceById', () => {
                   displayName: 'App Space Name',
                   etag: '5432',
                   issuerId: 'issuer-id',
+                  createdBy: 'Lorem ipsum - creator',
+                  updatedBy: 'Lorem ipsum - updater',
                   createTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 12)),
                   updateTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 13)),
                   deleteTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 14)),
@@ -359,6 +363,8 @@ describe('readApplicationSpaceByName', () => {
                   displayName: 'App Space Name',
                   etag: '5432',
                   issuerId: 'issuer-id',
+                  createdBy: 'Lorem ipsum - creator',
+                  updatedBy: 'Lorem ipsum - updater',
                   createTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 12)),
                   updateTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 13)),
                   deleteTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 14)),
@@ -591,6 +597,8 @@ describe('updateApplicationSpace', () => {
                 id: 'app-space-id',
                 updateTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 16)),
                 bookmark: 'bookmark-token',
+                createdBy: 'Lorem ipsum - creator',
+                updatedBy: 'Lorem ipsum - updater'
               });
             }
             return {} as SurfaceCall;
@@ -697,6 +705,8 @@ describe('updateApplicationSpace', () => {
                 id: 'different-app-space-id',
                 updateTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 16)),
                 bookmark: 'bookmark-token',
+                createdBy: 'Lorem ipsum - creator',
+                updatedBy: 'Lorem ipsum - updater'
               });
             }
             return {} as SurfaceCall;

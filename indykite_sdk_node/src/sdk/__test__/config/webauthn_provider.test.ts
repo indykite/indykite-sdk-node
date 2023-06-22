@@ -62,6 +62,8 @@ describe('createWebAuthnProviderConfiguration', () => {
               res(null, {
                 id: 'new-webauthn-provider-id',
                 etag: 'etag-token',
+                createdBy: 'Lorem ipsum - creator',
+                updatedBy: 'Lorem ipsum - updater',
                 createTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 6, 21, 13, 5))),
                 updateTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 6, 21, 13, 6))),
                 bookmark: 'bookmark-token',
@@ -269,6 +271,8 @@ describe('readWebAuthnProviderConfiguration', () => {
                   description: StringValue.fromJson('Instance description'),
                   etag: 'etag-token',
                   id: 'webauthn-provider-id',
+                  createdBy: 'Lorem ipsum - creator',
+                  updatedBy: 'Lorem ipsum - updater',
                   createTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 6, 21, 11, 13))),
                   updateTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 6, 21, 11, 14))),
                   customerId: 'customer-id',
@@ -433,6 +437,8 @@ describe('updateWebAuthnProviderConfiguration', () => {
                 id: 'webauthn-provider-id',
                 updateTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 6, 21, 14, 56))),
                 bookmark: 'bookmark-token',
+                createdBy: 'Lorem ipsum - creator',
+                updatedBy: 'Lorem ipsum - updater',
               });
             }
             return {} as SurfaceCall;
@@ -586,6 +592,8 @@ describe('updateWebAuthnProviderConfiguration', () => {
                 id: 'different-webauthn-provider-id',
                 updateTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 6, 21, 14, 56))),
                 bookmark: 'bookmark-token',
+                createdBy: 'Lorem ipsum - creator',
+                updatedBy: 'Lorem ipsum - updater',
               });
             }
             return {} as SurfaceCall;

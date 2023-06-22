@@ -16,6 +16,7 @@ describe('deserialize', () => {
           displayName: 'Display Name',
           id: 'app-agent-credential-id',
           kid: 'kid-id',
+          createdBy: 'Lorem ipsum - creator',
           createTime: Utils.dateToTimestamp(new Date(2022, 2, 17, 12, 17)),
           deleteTime: Utils.dateToTimestamp(new Date(2022, 2, 17, 12, 19)),
           destroyTime: Utils.dateToTimestamp(new Date(2022, 2, 17, 12, 20)),
@@ -50,6 +51,7 @@ describe('deserialize', () => {
       appAgentCredential = ApplicationAgentCredential.deserialize(
         {
           id: 'app-agent-credential-id',
+          displayName: 'Display Name',
           kid: 'kid-id',
           applicationAgentId: 'app-agent-id',
           agentConfig: new Uint8Array(

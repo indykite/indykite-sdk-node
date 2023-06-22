@@ -15,6 +15,8 @@ describe('deserialize', () => {
           etag: 'etag',
           name: 'customer-name',
           description: StringValue.create({ value: 'Lorem ipsum' }),
+          createdBy: 'Lorem ipsum - creator',
+          updatedBy: 'Lorem ipsum - updater',
           createTime: Utils.dateToTimestamp(new Date(2022, 2, 17, 12, 17)),
           updateTime: Utils.dateToTimestamp(new Date(2022, 2, 17, 12, 18)),
           deleteTime: Utils.dateToTimestamp(new Date(2022, 2, 17, 12, 19)),
