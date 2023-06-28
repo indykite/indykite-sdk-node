@@ -46,6 +46,8 @@ describe('when the bookmark list is empty', () => {
                 createTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 12)),
                 updateTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 13)),
                 bookmark: 'create-appspace-bookmark-token',
+                createdBy: 'Lorem ipsum - creator',
+                updatedBy: 'Lorem ipsum - updater',
               });
             }
             return {} as SurfaceCall;
@@ -82,6 +84,8 @@ describe('when the bookmark list is empty', () => {
                   id: 'app-space-id',
                   updateTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 16)),
                   bookmark: 'update-appspace-bookmark-token',
+                  createdBy: 'Lorem ipsum - creator',
+                  updatedBy: 'Lorem ipsum - updater',
                 });
               }
               return {} as SurfaceCall;

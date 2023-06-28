@@ -88,6 +88,8 @@ describe('createAuthorizationPolicyConfiguration', () => {
               res(null, {
                 id: 'new-authorization-policy-id',
                 etag: 'etag-token',
+                createdBy: 'Lorem ipsum - creator',
+                updatedBy: 'Lorem ipsum - updater',
                 createTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 6, 21, 13, 5))),
                 updateTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 6, 21, 13, 6))),
                 bookmark: 'bookmark-token',
@@ -275,6 +277,8 @@ describe('readAuthorizationPolicyConfiguration', () => {
                   description: StringValue.fromJson('Instance description'),
                   etag: 'etag-token',
                   id: 'authorization-policy-id',
+                  createdBy: 'Lorem ipsum - creator',
+                  updatedBy: 'Lorem ipsum - updater',
                   createTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 6, 21, 11, 13))),
                   updateTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 6, 21, 11, 14))),
                   customerId: 'customer-id',
@@ -431,6 +435,8 @@ describe('updateAuthorizationPolicyConfiguration', () => {
                 id: 'authorization-policy-id',
                 updateTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 6, 21, 14, 56))),
                 bookmark: 'bookmark-token',
+                createdBy: 'Lorem ipsum - creator',
+                updatedBy: 'Lorem ipsum - updater',
               });
             }
             return {} as SurfaceCall;
@@ -560,6 +566,8 @@ describe('updateAuthorizationPolicyConfiguration', () => {
                 id: 'different-authorization-policy-id',
                 updateTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 6, 21, 14, 56))),
                 bookmark: 'bookmark-token',
+                createdBy: 'Lorem ipsum - creator',
+                updatedBy: 'Lorem ipsum - updater',
               });
             }
             return {} as SurfaceCall;

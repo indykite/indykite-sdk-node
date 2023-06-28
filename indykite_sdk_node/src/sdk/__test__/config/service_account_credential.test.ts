@@ -300,6 +300,7 @@ describe('readServiceAccountCredential', () => {
                   serviceAccountId: 'service-account-id',
                   customerId: 'customer-id',
                   displayName: 'Service Account Credential',
+                  createdBy: 'Lorem ipsum - creator',
                   createTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 13)),
                   deleteTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 14)),
                   destroyTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 15)),

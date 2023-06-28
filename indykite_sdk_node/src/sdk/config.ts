@@ -348,6 +348,8 @@ export class ConfigClient {
             config.etag = response.etag;
             config.createTime = Utils.timestampToDate(response.createTime);
             config.updateTime = Utils.timestampToDate(response.updateTime);
+            config.createdBy = response.createdBy;
+            config.updatedBy = response.updatedBy;
             this.saveReturnedBookmark(response.bookmark);
             resolve(config);
           } catch (err) {

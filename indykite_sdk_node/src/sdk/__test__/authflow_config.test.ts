@@ -38,6 +38,8 @@ describe('Authentication Flow', () => {
       etag: new Date().toISOString(),
       createTime: new Date().toISOString(),
       updateTime: new Date().toISOString(),
+      // createdBy: 'Lorem ipsum - creator',
+      // updatedBy: 'Lorem ipsum - updater',
       bookmark: 'bookmark-token',
     });
     const mockFunc = jest.fn(

@@ -43,6 +43,8 @@ describe('createApplicationAgent', () => {
                 id: 'new-app-agent-id',
                 etag: '111',
                 bookmark: 'bookmark-token',
+                createdBy: 'Lorem ipsum - creator',
+                updatedBy: 'Lorem ipsum - updater'
               });
             }
             return {} as SurfaceCall;
@@ -220,6 +222,8 @@ describe('readApplicationAgentById', () => {
                   description: StringValue.create({ value: 'Application Agent description' }),
                   displayName: 'Application Agent Name',
                   etag: '5432',
+                  createdBy: 'Lorem ipsum - creator',
+                  updatedBy: 'Lorem ipsum - updater',
                   createTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 12)),
                   updateTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 13)),
                   deleteTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 14)),
@@ -366,6 +370,8 @@ describe('readApplicationAgentByName', () => {
                   description: StringValue.create({ value: 'Application Agent description' }),
                   displayName: 'Application Agent Name',
                   etag: '5432',
+                  createdBy: 'Lorem ipsum - creator',
+                  updatedBy: 'Lorem ipsum - updater',
                   createTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 12)),
                   updateTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 13)),
                   deleteTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 14)),
@@ -516,6 +522,8 @@ describe('updateApplicationAgent', () => {
               res(null, {
                 etag: 'new-etag-id',
                 id: 'app-agent-id',
+                createdBy: 'Lorem ipsum - creator',
+                updatedBy: 'Lorem ipsum - updater',
                 updateTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 16)),
                 bookmark: 'bookmark-token',
               });
@@ -632,6 +640,8 @@ describe('updateApplicationAgent', () => {
               res(null, {
                 etag: '777',
                 id: 'different-app-agent-id',
+                createdBy: 'Lorem ipsum - creator',
+                updatedBy: 'Lorem ipsum - updater',
                 updateTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 16)),
                 bookmark: 'bookmark-token',
               });

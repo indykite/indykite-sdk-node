@@ -41,6 +41,7 @@ describe('registerApplicationCredential', () => {
               res(null, {
                 id: 'new-app-agent-credentials-id',
                 applicationAgentId: 'app-agent-id',
+                displayName: 'Application Agent Credential',
                 kid: 'kid-id',
                 agentConfig: new Uint8Array(
                   Buffer.from(
@@ -311,6 +312,7 @@ describe('readApplicationAgentCredential', () => {
                   applicationAgentId: 'app-agent-id',
                   customerId: 'customer-id',
                   displayName: 'Application Agent Credential',
+                  createdBy: 'Lorem ipsum - creator',
                   createTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 13)),
                   deleteTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 14)),
                   destroyTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 15)),
