@@ -54,7 +54,7 @@
     "typescript": "5.0.4"
   },
   "dependencies": {
-    "@grpc/grpc-js": "1.7.3",
+    "@grpc/grpc-js": "1.8.8",
     "@protobuf-ts/runtime-rpc": "2.8.3",
     "@protobuf-ts/runtime": "2.8.3",
     "google-protobuf": "3.21.2",
