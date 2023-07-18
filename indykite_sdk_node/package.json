@@ -59,7 +59,7 @@
     "@protobuf-ts/runtime": "2.8.3",
     "google-protobuf": "3.21.2",
     "jose": "^4.6.0",
-    "protobufjs": "7.2.3",
+    "protobufjs": "7.2.4",
     "uuid": "^9.0.0"
   },
   "repository": {
