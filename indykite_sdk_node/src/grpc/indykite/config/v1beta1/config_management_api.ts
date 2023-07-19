@@ -2,7 +2,7 @@
 // @generated from protobuf file "indykite/config/v1beta1/config_management_api.proto" (package "indykite.config.v1beta1", syntax proto3)
 // tslint:disable
 //
-// Copyright (c) 2020 IndyKite
+// Copyright (c) 2023 IndyKite
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -44,16 +44,19 @@ import { OAuth2ClientConfig } from "./model";
 import { SMSServiceConfig } from "./model";
 import { EmailServiceConfig } from "./model";
 import { AuthFlowConfig } from "./model";
+import { TenantConfig } from "./model";
 import { Tenant } from "./model";
 import { ServiceAccountCredential } from "./model";
 import { ServiceAccount } from "./model";
 import { ApplicationAgentCredential } from "./model";
 import { ApplicationAgent } from "./model";
 import { Application } from "./model";
+import { ApplicationSpaceConfig } from "./model";
 import { ApplicationSpace } from "./model";
 import { UniqueNameIdentifier } from "./model";
 import { Timestamp } from "../../../google/protobuf/timestamp";
 import { StringValue } from "../../../google/protobuf/wrappers";
+import { CustomerConfig } from "./model";
 import { Customer } from "./model";
 /**
  * @generated from protobuf message indykite.config.v1beta1.ReadCustomerRequest
@@ -98,6 +101,120 @@ export interface ReadCustomerResponse {
      * @generated from protobuf field: indykite.config.v1beta1.Customer customer = 1;
      */
     customer?: Customer;
+}
+/**
+ * @generated from protobuf message indykite.config.v1beta1.ReadCustomerConfigRequest
+ */
+export interface ReadCustomerConfigRequest {
+    /**
+     * Id of Customer
+     *
+     * @generated from protobuf field: string id = 1;
+     */
+    id: string;
+    /**
+     * Database bookmarks to handle Read-after-Write consistency.
+     * Insert one or multiple bookmarks returned from the previous Write operation if needed.
+     *
+     * @generated from protobuf field: repeated string bookmarks = 3;
+     */
+    bookmarks: string[];
+}
+/**
+ * @generated from protobuf message indykite.config.v1beta1.ReadCustomerConfigResponse
+ */
+export interface ReadCustomerConfigResponse {
+    /**
+     * Globally unique identifier pointing to Customer this config belongs to.
+     *
+     * @generated from protobuf field: string id = 1;
+     */
+    id: string;
+    /**
+     * Output only. Multiversion concurrency control version.
+     *
+     * @generated from protobuf field: string etag = 2;
+     */
+    etag: string;
+    /**
+     * @generated from protobuf field: indykite.config.v1beta1.CustomerConfig config = 3;
+     */
+    config?: CustomerConfig;
+}
+/**
+ * @generated from protobuf message indykite.config.v1beta1.UpdateCustomerConfigRequest
+ */
+export interface UpdateCustomerConfigRequest {
+    /**
+     * Globally unique identifier pointing to Customer this config belongs to.
+     *
+     * @generated from protobuf field: string id = 1;
+     */
+    id: string;
+    /**
+     * @generated from protobuf field: google.protobuf.StringValue etag = 2;
+     */
+    etag?: StringValue;
+    /**
+     * @generated from protobuf field: indykite.config.v1beta1.CustomerConfig config = 3;
+     */
+    config?: CustomerConfig;
+    /**
+     * Database bookmarks to handle Read-after-Write consistency.
+     * Insert one or multiple bookmarks returned from the previous Write operation if needed.
+     *
+     * @generated from protobuf field: repeated string bookmarks = 4;
+     */
+    bookmarks: string[];
+}
+/**
+ * @generated from protobuf message indykite.config.v1beta1.UpdateCustomerConfigResponse
+ */
+export interface UpdateCustomerConfigResponse {
+    /**
+     * Globally unique identifier.
+     *
+     * @generated from protobuf field: string id = 1;
+     */
+    id: string;
+    /**
+     * Output only. The time at which the configuration was created.
+     *
+     * @generated from protobuf field: google.protobuf.Timestamp create_time = 2;
+     */
+    createTime?: Timestamp;
+    /**
+     * Output only. The user/service id who created the configuration.
+     *
+     * @generated from protobuf field: string created_by = 3;
+     */
+    createdBy: string;
+    /**
+     * Output only. The time at which the configuration was last changed.
+     *
+     * This value is initially set to the `create_time` then increases monotonically with each change.
+     *
+     * @generated from protobuf field: google.protobuf.Timestamp update_time = 4;
+     */
+    updateTime?: Timestamp;
+    /**
+     * Output only. The user/service id who last changed the configuration.
+     *
+     * @generated from protobuf field: string updated_by = 5;
+     */
+    updatedBy: string;
+    /**
+     * Output only. Multiversion concurrency control version.
+     *
+     * @generated from protobuf field: string etag = 6;
+     */
+    etag: string;
+    /**
+     * Database bookmark to handle Read-after-Write consistency.
+     *
+     * @generated from protobuf field: string bookmark = 7;
+     */
+    bookmark: string;
 }
 /**
  * @generated from protobuf message indykite.config.v1beta1.CreateApplicationSpaceRequest
@@ -373,6 +490,120 @@ export interface DeleteApplicationSpaceResponse {
      * Database bookmark to handle Read-after-Write consistency.
      *
      * @generated from protobuf field: string bookmark = 1;
+     */
+    bookmark: string;
+}
+/**
+ * @generated from protobuf message indykite.config.v1beta1.ReadApplicationSpaceConfigRequest
+ */
+export interface ReadApplicationSpaceConfigRequest {
+    /**
+     * Id of ApplicationSpace
+     *
+     * @generated from protobuf field: string id = 1;
+     */
+    id: string;
+    /**
+     * Database bookmarks to handle Read-after-Write consistency.
+     * Insert one or multiple bookmarks returned from the previous Write operation if needed.
+     *
+     * @generated from protobuf field: repeated string bookmarks = 3;
+     */
+    bookmarks: string[];
+}
+/**
+ * @generated from protobuf message indykite.config.v1beta1.ReadApplicationSpaceConfigResponse
+ */
+export interface ReadApplicationSpaceConfigResponse {
+    /**
+     * Globally unique identifier pointing to ApplicationSpace this config belongs to.
+     *
+     * @generated from protobuf field: string id = 1;
+     */
+    id: string;
+    /**
+     * Output only. Multiversion concurrency control version.
+     *
+     * @generated from protobuf field: string etag = 2;
+     */
+    etag: string;
+    /**
+     * @generated from protobuf field: indykite.config.v1beta1.ApplicationSpaceConfig config = 3;
+     */
+    config?: ApplicationSpaceConfig;
+}
+/**
+ * @generated from protobuf message indykite.config.v1beta1.UpdateApplicationSpaceConfigRequest
+ */
+export interface UpdateApplicationSpaceConfigRequest {
+    /**
+     * Globally unique identifier pointing to ApplicationSpace this config belongs to.
+     *
+     * @generated from protobuf field: string id = 1;
+     */
+    id: string;
+    /**
+     * @generated from protobuf field: google.protobuf.StringValue etag = 2;
+     */
+    etag?: StringValue;
+    /**
+     * @generated from protobuf field: indykite.config.v1beta1.ApplicationSpaceConfig config = 3;
+     */
+    config?: ApplicationSpaceConfig;
+    /**
+     * Database bookmarks to handle Read-after-Write consistency.
+     * Insert one or multiple bookmarks returned from the previous Write operation if needed.
+     *
+     * @generated from protobuf field: repeated string bookmarks = 4;
+     */
+    bookmarks: string[];
+}
+/**
+ * @generated from protobuf message indykite.config.v1beta1.UpdateApplicationSpaceConfigResponse
+ */
+export interface UpdateApplicationSpaceConfigResponse {
+    /**
+     * Globally unique identifier.
+     *
+     * @generated from protobuf field: string id = 1;
+     */
+    id: string;
+    /**
+     * Output only. The time at which the configuration was created.
+     *
+     * @generated from protobuf field: google.protobuf.Timestamp create_time = 2;
+     */
+    createTime?: Timestamp;
+    /**
+     * Output only. The user/service id who created the configuration.
+     *
+     * @generated from protobuf field: string created_by = 3;
+     */
+    createdBy: string;
+    /**
+     * Output only. The time at which the configuration was last changed.
+     *
+     * This value is initially set to the `create_time` then increases monotonically with each change.
+     *
+     * @generated from protobuf field: google.protobuf.Timestamp update_time = 4;
+     */
+    updateTime?: Timestamp;
+    /**
+     * Output only. The user/service id who last changed the configuration.
+     *
+     * @generated from protobuf field: string updated_by = 5;
+     */
+    updatedBy: string;
+    /**
+     * Output only. Multiversion concurrency control version.
+     *
+     * @generated from protobuf field: string etag = 6;
+     */
+    etag: string;
+    /**
+     * Database bookmark to handle Read-after-Write consistency.
+     *
+     * @generated from protobuf field: string bookmark = 7;
      */
     bookmark: string;
 }
@@ -1742,6 +1973,120 @@ export interface DeleteTenantResponse {
     bookmark: string;
 }
 /**
+ * @generated from protobuf message indykite.config.v1beta1.ReadTenantConfigRequest
+ */
+export interface ReadTenantConfigRequest {
+    /**
+     * Id of Tenant
+     *
+     * @generated from protobuf field: string id = 1;
+     */
+    id: string;
+    /**
+     * Database bookmarks to handle Read-after-Write consistency.
+     * Insert one or multiple bookmarks returned from the previous Write operation if needed.
+     *
+     * @generated from protobuf field: repeated string bookmarks = 2;
+     */
+    bookmarks: string[];
+}
+/**
+ * @generated from protobuf message indykite.config.v1beta1.ReadTenantConfigResponse
+ */
+export interface ReadTenantConfigResponse {
+    /**
+     * Globally unique identifier pointing to Tenant this config belongs to.
+     *
+     * @generated from protobuf field: string id = 1;
+     */
+    id: string;
+    /**
+     * Output only. Multiversion concurrency control version.
+     *
+     * @generated from protobuf field: string etag = 2;
+     */
+    etag: string;
+    /**
+     * @generated from protobuf field: indykite.config.v1beta1.TenantConfig config = 3;
+     */
+    config?: TenantConfig;
+}
+/**
+ * @generated from protobuf message indykite.config.v1beta1.UpdateTenantConfigRequest
+ */
+export interface UpdateTenantConfigRequest {
+    /**
+     * Globally unique identifier pointing to Tenant this config belongs to.
+     *
+     * @generated from protobuf field: string id = 1;
+     */
+    id: string;
+    /**
+     * @generated from protobuf field: google.protobuf.StringValue etag = 2;
+     */
+    etag?: StringValue;
+    /**
+     * @generated from protobuf field: indykite.config.v1beta1.TenantConfig config = 3;
+     */
+    config?: TenantConfig;
+    /**
+     * Database bookmarks to handle Read-after-Write consistency.
+     * Insert one or multiple bookmarks returned from the previous Write operation if needed.
+     *
+     * @generated from protobuf field: repeated string bookmarks = 4;
+     */
+    bookmarks: string[];
+}
+/**
+ * @generated from protobuf message indykite.config.v1beta1.UpdateTenantConfigResponse
+ */
+export interface UpdateTenantConfigResponse {
+    /**
+     * Globally unique identifier.
+     *
+     * @generated from protobuf field: string id = 1;
+     */
+    id: string;
+    /**
+     * Output only. The time at which the configuration was created.
+     *
+     * @generated from protobuf field: google.protobuf.Timestamp create_time = 2;
+     */
+    createTime?: Timestamp;
+    /**
+     * Output only. The user/service id who created the configuration.
+     *
+     * @generated from protobuf field: string created_by = 3;
+     */
+    createdBy: string;
+    /**
+     * Output only. The time at which the configuration was last changed.
+     *
+     * This value is initially set to the `create_time` then increases monotonically with each change.
+     *
+     * @generated from protobuf field: google.protobuf.Timestamp update_time = 4;
+     */
+    updateTime?: Timestamp;
+    /**
+     * Output only. The user/service id who last changed the configuration.
+     *
+     * @generated from protobuf field: string updated_by = 5;
+     */
+    updatedBy: string;
+    /**
+     * Output only. Multiversion concurrency control version.
+     *
+     * @generated from protobuf field: string etag = 6;
+     */
+    etag: string;
+    /**
+     * Database bookmark to handle Read-after-Write consistency.
+     *
+     * @generated from protobuf field: string bookmark = 7;
+     */
+    bookmark: string;
+}
+/**
  * @generated from protobuf message indykite.config.v1beta1.CreateConfigNodeRequest
  */
 export interface CreateConfigNodeRequest {
@@ -1861,6 +2206,13 @@ export interface CreateConfigNodeResponse {
      * @generated from protobuf field: string id = 1;
      */
     id: string;
+    /**
+     * LocationID identifies which container configuration this config directly belongs to.
+     * It can be a Customer, AppSpace or Tenant identifier.
+     *
+     * @generated from protobuf field: string location_id = 8;
+     */
+    locationId: string;
     /**
      * Output only. The time at which the configuration was created.
      *
@@ -2051,6 +2403,13 @@ export interface UpdateConfigNodeResponse {
      * @generated from protobuf field: string id = 1;
      */
     id: string;
+    /**
+     * LocationID identifies which container configuration this config directly belongs to.
+     * It can be a Customer, AppSpace or Tenant identifier.
+     *
+     * @generated from protobuf field: string location_id = 8;
+     */
+    locationId: string;
     /**
      * Output only. The time at which the configuration was created.
      *
@@ -2959,6 +3318,278 @@ class ReadCustomerResponse$Type extends MessageType<ReadCustomerResponse> {
  */
 export const ReadCustomerResponse = new ReadCustomerResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
+class ReadCustomerConfigRequest$Type extends MessageType<ReadCustomerConfigRequest> {
+    constructor() {
+        super("indykite.config.v1beta1.ReadCustomerConfigRequest", [
+            { no: 1, name: "id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
+            { no: 3, name: "bookmarks", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { items: { string: { minLen: "40", pattern: "^[a-zA-Z0-9_-]{40,}$" } } } } } }
+        ]);
+    }
+    create(value?: PartialMessage<ReadCustomerConfigRequest>): ReadCustomerConfigRequest {
+        const message = { id: "", bookmarks: [] };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<ReadCustomerConfigRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ReadCustomerConfigRequest): ReadCustomerConfigRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string id */ 1:
+                    message.id = reader.string();
+                    break;
+                case /* repeated string bookmarks */ 3:
+                    message.bookmarks.push(reader.string());
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ReadCustomerConfigRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string id = 1; */
+        if (message.id !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.id);
+        /* repeated string bookmarks = 3; */
+        for (let i = 0; i < message.bookmarks.length; i++)
+            writer.tag(3, WireType.LengthDelimited).string(message.bookmarks[i]);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message indykite.config.v1beta1.ReadCustomerConfigRequest
+ */
+export const ReadCustomerConfigRequest = new ReadCustomerConfigRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ReadCustomerConfigResponse$Type extends MessageType<ReadCustomerConfigResponse> {
+    constructor() {
+        super("indykite.config.v1beta1.ReadCustomerConfigResponse", [
+            { no: 1, name: "id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
+            { no: 2, name: "etag", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 3, name: "config", kind: "message", T: () => CustomerConfig, options: { "validate.rules": { message: { required: true } } } }
+        ]);
+    }
+    create(value?: PartialMessage<ReadCustomerConfigResponse>): ReadCustomerConfigResponse {
+        const message = { id: "", etag: "" };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<ReadCustomerConfigResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ReadCustomerConfigResponse): ReadCustomerConfigResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string id */ 1:
+                    message.id = reader.string();
+                    break;
+                case /* string etag */ 2:
+                    message.etag = reader.string();
+                    break;
+                case /* indykite.config.v1beta1.CustomerConfig config */ 3:
+                    message.config = CustomerConfig.internalBinaryRead(reader, reader.uint32(), options, message.config);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ReadCustomerConfigResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string id = 1; */
+        if (message.id !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.id);
+        /* string etag = 2; */
+        if (message.etag !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.etag);
+        /* indykite.config.v1beta1.CustomerConfig config = 3; */
+        if (message.config)
+            CustomerConfig.internalBinaryWrite(message.config, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message indykite.config.v1beta1.ReadCustomerConfigResponse
+ */
+export const ReadCustomerConfigResponse = new ReadCustomerConfigResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class UpdateCustomerConfigRequest$Type extends MessageType<UpdateCustomerConfigRequest> {
+    constructor() {
+        super("indykite.config.v1beta1.UpdateCustomerConfigRequest", [
+            { no: 1, name: "id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
+            { no: 2, name: "etag", kind: "message", T: () => StringValue, options: { "validate.rules": { string: { minLen: "8", maxLen: "18", pattern: "^[A-Za-z0-9-_]{8,18}$", ignoreEmpty: true } } } },
+            { no: 3, name: "config", kind: "message", T: () => CustomerConfig, options: { "validate.rules": { message: { required: true } } } },
+            { no: 4, name: "bookmarks", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { items: { string: { minLen: "40", pattern: "^[a-zA-Z0-9_-]{40,}$" } } } } } }
+        ]);
+    }
+    create(value?: PartialMessage<UpdateCustomerConfigRequest>): UpdateCustomerConfigRequest {
+        const message = { id: "", bookmarks: [] };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<UpdateCustomerConfigRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: UpdateCustomerConfigRequest): UpdateCustomerConfigRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string id */ 1:
+                    message.id = reader.string();
+                    break;
+                case /* google.protobuf.StringValue etag */ 2:
+                    message.etag = StringValue.internalBinaryRead(reader, reader.uint32(), options, message.etag);
+                    break;
+                case /* indykite.config.v1beta1.CustomerConfig config */ 3:
+                    message.config = CustomerConfig.internalBinaryRead(reader, reader.uint32(), options, message.config);
+                    break;
+                case /* repeated string bookmarks */ 4:
+                    message.bookmarks.push(reader.string());
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: UpdateCustomerConfigRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string id = 1; */
+        if (message.id !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.id);
+        /* google.protobuf.StringValue etag = 2; */
+        if (message.etag)
+            StringValue.internalBinaryWrite(message.etag, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* indykite.config.v1beta1.CustomerConfig config = 3; */
+        if (message.config)
+            CustomerConfig.internalBinaryWrite(message.config, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        /* repeated string bookmarks = 4; */
+        for (let i = 0; i < message.bookmarks.length; i++)
+            writer.tag(4, WireType.LengthDelimited).string(message.bookmarks[i]);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message indykite.config.v1beta1.UpdateCustomerConfigRequest
+ */
+export const UpdateCustomerConfigRequest = new UpdateCustomerConfigRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class UpdateCustomerConfigResponse$Type extends MessageType<UpdateCustomerConfigResponse> {
+    constructor() {
+        super("indykite.config.v1beta1.UpdateCustomerConfigResponse", [
+            { no: 1, name: "id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
+            { no: 2, name: "create_time", kind: "message", T: () => Timestamp },
+            { no: 3, name: "created_by", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 4, name: "update_time", kind: "message", T: () => Timestamp },
+            { no: 5, name: "updated_by", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 6, name: "etag", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 7, name: "bookmark", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+        ]);
+    }
+    create(value?: PartialMessage<UpdateCustomerConfigResponse>): UpdateCustomerConfigResponse {
+        const message = { id: "", createdBy: "", updatedBy: "", etag: "", bookmark: "" };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<UpdateCustomerConfigResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: UpdateCustomerConfigResponse): UpdateCustomerConfigResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string id */ 1:
+                    message.id = reader.string();
+                    break;
+                case /* google.protobuf.Timestamp create_time */ 2:
+                    message.createTime = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createTime);
+                    break;
+                case /* string created_by */ 3:
+                    message.createdBy = reader.string();
+                    break;
+                case /* google.protobuf.Timestamp update_time */ 4:
+                    message.updateTime = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.updateTime);
+                    break;
+                case /* string updated_by */ 5:
+                    message.updatedBy = reader.string();
+                    break;
+                case /* string etag */ 6:
+                    message.etag = reader.string();
+                    break;
+                case /* string bookmark */ 7:
+                    message.bookmark = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: UpdateCustomerConfigResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string id = 1; */
+        if (message.id !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.id);
+        /* google.protobuf.Timestamp create_time = 2; */
+        if (message.createTime)
+            Timestamp.internalBinaryWrite(message.createTime, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* string created_by = 3; */
+        if (message.createdBy !== "")
+            writer.tag(3, WireType.LengthDelimited).string(message.createdBy);
+        /* google.protobuf.Timestamp update_time = 4; */
+        if (message.updateTime)
+            Timestamp.internalBinaryWrite(message.updateTime, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+        /* string updated_by = 5; */
+        if (message.updatedBy !== "")
+            writer.tag(5, WireType.LengthDelimited).string(message.updatedBy);
+        /* string etag = 6; */
+        if (message.etag !== "")
+            writer.tag(6, WireType.LengthDelimited).string(message.etag);
+        /* string bookmark = 7; */
+        if (message.bookmark !== "")
+            writer.tag(7, WireType.LengthDelimited).string(message.bookmark);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message indykite.config.v1beta1.UpdateCustomerConfigResponse
+ */
+export const UpdateCustomerConfigResponse = new UpdateCustomerConfigResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
 class CreateApplicationSpaceRequest$Type extends MessageType<CreateApplicationSpaceRequest> {
     constructor() {
         super("indykite.config.v1beta1.CreateApplicationSpaceRequest", [
@@ -3616,6 +4247,278 @@ class DeleteApplicationSpaceResponse$Type extends MessageType<DeleteApplicationS
  * @generated MessageType for protobuf message indykite.config.v1beta1.DeleteApplicationSpaceResponse
  */
 export const DeleteApplicationSpaceResponse = new DeleteApplicationSpaceResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ReadApplicationSpaceConfigRequest$Type extends MessageType<ReadApplicationSpaceConfigRequest> {
+    constructor() {
+        super("indykite.config.v1beta1.ReadApplicationSpaceConfigRequest", [
+            { no: 1, name: "id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
+            { no: 3, name: "bookmarks", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { items: { string: { minLen: "40", pattern: "^[a-zA-Z0-9_-]{40,}$" } } } } } }
+        ]);
+    }
+    create(value?: PartialMessage<ReadApplicationSpaceConfigRequest>): ReadApplicationSpaceConfigRequest {
+        const message = { id: "", bookmarks: [] };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<ReadApplicationSpaceConfigRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ReadApplicationSpaceConfigRequest): ReadApplicationSpaceConfigRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string id */ 1:
+                    message.id = reader.string();
+                    break;
+                case /* repeated string bookmarks */ 3:
+                    message.bookmarks.push(reader.string());
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ReadApplicationSpaceConfigRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string id = 1; */
+        if (message.id !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.id);
+        /* repeated string bookmarks = 3; */
+        for (let i = 0; i < message.bookmarks.length; i++)
+            writer.tag(3, WireType.LengthDelimited).string(message.bookmarks[i]);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message indykite.config.v1beta1.ReadApplicationSpaceConfigRequest
+ */
+export const ReadApplicationSpaceConfigRequest = new ReadApplicationSpaceConfigRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ReadApplicationSpaceConfigResponse$Type extends MessageType<ReadApplicationSpaceConfigResponse> {
+    constructor() {
+        super("indykite.config.v1beta1.ReadApplicationSpaceConfigResponse", [
+            { no: 1, name: "id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
+            { no: 2, name: "etag", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 3, name: "config", kind: "message", T: () => ApplicationSpaceConfig, options: { "validate.rules": { message: { required: true } } } }
+        ]);
+    }
+    create(value?: PartialMessage<ReadApplicationSpaceConfigResponse>): ReadApplicationSpaceConfigResponse {
+        const message = { id: "", etag: "" };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<ReadApplicationSpaceConfigResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ReadApplicationSpaceConfigResponse): ReadApplicationSpaceConfigResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string id */ 1:
+                    message.id = reader.string();
+                    break;
+                case /* string etag */ 2:
+                    message.etag = reader.string();
+                    break;
+                case /* indykite.config.v1beta1.ApplicationSpaceConfig config */ 3:
+                    message.config = ApplicationSpaceConfig.internalBinaryRead(reader, reader.uint32(), options, message.config);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ReadApplicationSpaceConfigResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string id = 1; */
+        if (message.id !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.id);
+        /* string etag = 2; */
+        if (message.etag !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.etag);
+        /* indykite.config.v1beta1.ApplicationSpaceConfig config = 3; */
+        if (message.config)
+            ApplicationSpaceConfig.internalBinaryWrite(message.config, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message indykite.config.v1beta1.ReadApplicationSpaceConfigResponse
+ */
+export const ReadApplicationSpaceConfigResponse = new ReadApplicationSpaceConfigResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class UpdateApplicationSpaceConfigRequest$Type extends MessageType<UpdateApplicationSpaceConfigRequest> {
+    constructor() {
+        super("indykite.config.v1beta1.UpdateApplicationSpaceConfigRequest", [
+            { no: 1, name: "id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
+            { no: 2, name: "etag", kind: "message", T: () => StringValue, options: { "validate.rules": { string: { minLen: "8", maxLen: "18", pattern: "^[A-Za-z0-9-_]{8,18}$", ignoreEmpty: true } } } },
+            { no: 3, name: "config", kind: "message", T: () => ApplicationSpaceConfig, options: { "validate.rules": { message: { required: true } } } },
+            { no: 4, name: "bookmarks", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { items: { string: { minLen: "40", pattern: "^[a-zA-Z0-9_-]{40,}$" } } } } } }
+        ]);
+    }
+    create(value?: PartialMessage<UpdateApplicationSpaceConfigRequest>): UpdateApplicationSpaceConfigRequest {
+        const message = { id: "", bookmarks: [] };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<UpdateApplicationSpaceConfigRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: UpdateApplicationSpaceConfigRequest): UpdateApplicationSpaceConfigRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string id */ 1:
+                    message.id = reader.string();
+                    break;
+                case /* google.protobuf.StringValue etag */ 2:
+                    message.etag = StringValue.internalBinaryRead(reader, reader.uint32(), options, message.etag);
+                    break;
+                case /* indykite.config.v1beta1.ApplicationSpaceConfig config */ 3:
+                    message.config = ApplicationSpaceConfig.internalBinaryRead(reader, reader.uint32(), options, message.config);
+                    break;
+                case /* repeated string bookmarks */ 4:
+                    message.bookmarks.push(reader.string());
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: UpdateApplicationSpaceConfigRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string id = 1; */
+        if (message.id !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.id);
+        /* google.protobuf.StringValue etag = 2; */
+        if (message.etag)
+            StringValue.internalBinaryWrite(message.etag, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* indykite.config.v1beta1.ApplicationSpaceConfig config = 3; */
+        if (message.config)
+            ApplicationSpaceConfig.internalBinaryWrite(message.config, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        /* repeated string bookmarks = 4; */
+        for (let i = 0; i < message.bookmarks.length; i++)
+            writer.tag(4, WireType.LengthDelimited).string(message.bookmarks[i]);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message indykite.config.v1beta1.UpdateApplicationSpaceConfigRequest
+ */
+export const UpdateApplicationSpaceConfigRequest = new UpdateApplicationSpaceConfigRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class UpdateApplicationSpaceConfigResponse$Type extends MessageType<UpdateApplicationSpaceConfigResponse> {
+    constructor() {
+        super("indykite.config.v1beta1.UpdateApplicationSpaceConfigResponse", [
+            { no: 1, name: "id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
+            { no: 2, name: "create_time", kind: "message", T: () => Timestamp },
+            { no: 3, name: "created_by", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 4, name: "update_time", kind: "message", T: () => Timestamp },
+            { no: 5, name: "updated_by", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 6, name: "etag", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 7, name: "bookmark", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+        ]);
+    }
+    create(value?: PartialMessage<UpdateApplicationSpaceConfigResponse>): UpdateApplicationSpaceConfigResponse {
+        const message = { id: "", createdBy: "", updatedBy: "", etag: "", bookmark: "" };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<UpdateApplicationSpaceConfigResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: UpdateApplicationSpaceConfigResponse): UpdateApplicationSpaceConfigResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string id */ 1:
+                    message.id = reader.string();
+                    break;
+                case /* google.protobuf.Timestamp create_time */ 2:
+                    message.createTime = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createTime);
+                    break;
+                case /* string created_by */ 3:
+                    message.createdBy = reader.string();
+                    break;
+                case /* google.protobuf.Timestamp update_time */ 4:
+                    message.updateTime = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.updateTime);
+                    break;
+                case /* string updated_by */ 5:
+                    message.updatedBy = reader.string();
+                    break;
+                case /* string etag */ 6:
+                    message.etag = reader.string();
+                    break;
+                case /* string bookmark */ 7:
+                    message.bookmark = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: UpdateApplicationSpaceConfigResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string id = 1; */
+        if (message.id !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.id);
+        /* google.protobuf.Timestamp create_time = 2; */
+        if (message.createTime)
+            Timestamp.internalBinaryWrite(message.createTime, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* string created_by = 3; */
+        if (message.createdBy !== "")
+            writer.tag(3, WireType.LengthDelimited).string(message.createdBy);
+        /* google.protobuf.Timestamp update_time = 4; */
+        if (message.updateTime)
+            Timestamp.internalBinaryWrite(message.updateTime, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+        /* string updated_by = 5; */
+        if (message.updatedBy !== "")
+            writer.tag(5, WireType.LengthDelimited).string(message.updatedBy);
+        /* string etag = 6; */
+        if (message.etag !== "")
+            writer.tag(6, WireType.LengthDelimited).string(message.etag);
+        /* string bookmark = 7; */
+        if (message.bookmark !== "")
+            writer.tag(7, WireType.LengthDelimited).string(message.bookmark);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message indykite.config.v1beta1.UpdateApplicationSpaceConfigResponse
+ */
+export const UpdateApplicationSpaceConfigResponse = new UpdateApplicationSpaceConfigResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class CreateApplicationRequest$Type extends MessageType<CreateApplicationRequest> {
     constructor() {
@@ -6934,6 +7837,278 @@ class DeleteTenantResponse$Type extends MessageType<DeleteTenantResponse> {
  */
 export const DeleteTenantResponse = new DeleteTenantResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
+class ReadTenantConfigRequest$Type extends MessageType<ReadTenantConfigRequest> {
+    constructor() {
+        super("indykite.config.v1beta1.ReadTenantConfigRequest", [
+            { no: 1, name: "id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
+            { no: 2, name: "bookmarks", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { items: { string: { minLen: "40", pattern: "^[a-zA-Z0-9_-]{40,}$" } } } } } }
+        ]);
+    }
+    create(value?: PartialMessage<ReadTenantConfigRequest>): ReadTenantConfigRequest {
+        const message = { id: "", bookmarks: [] };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<ReadTenantConfigRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ReadTenantConfigRequest): ReadTenantConfigRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string id */ 1:
+                    message.id = reader.string();
+                    break;
+                case /* repeated string bookmarks */ 2:
+                    message.bookmarks.push(reader.string());
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ReadTenantConfigRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string id = 1; */
+        if (message.id !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.id);
+        /* repeated string bookmarks = 2; */
+        for (let i = 0; i < message.bookmarks.length; i++)
+            writer.tag(2, WireType.LengthDelimited).string(message.bookmarks[i]);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message indykite.config.v1beta1.ReadTenantConfigRequest
+ */
+export const ReadTenantConfigRequest = new ReadTenantConfigRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ReadTenantConfigResponse$Type extends MessageType<ReadTenantConfigResponse> {
+    constructor() {
+        super("indykite.config.v1beta1.ReadTenantConfigResponse", [
+            { no: 1, name: "id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
+            { no: 2, name: "etag", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 3, name: "config", kind: "message", T: () => TenantConfig, options: { "validate.rules": { message: { required: true } } } }
+        ]);
+    }
+    create(value?: PartialMessage<ReadTenantConfigResponse>): ReadTenantConfigResponse {
+        const message = { id: "", etag: "" };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<ReadTenantConfigResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ReadTenantConfigResponse): ReadTenantConfigResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string id */ 1:
+                    message.id = reader.string();
+                    break;
+                case /* string etag */ 2:
+                    message.etag = reader.string();
+                    break;
+                case /* indykite.config.v1beta1.TenantConfig config */ 3:
+                    message.config = TenantConfig.internalBinaryRead(reader, reader.uint32(), options, message.config);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ReadTenantConfigResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string id = 1; */
+        if (message.id !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.id);
+        /* string etag = 2; */
+        if (message.etag !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.etag);
+        /* indykite.config.v1beta1.TenantConfig config = 3; */
+        if (message.config)
+            TenantConfig.internalBinaryWrite(message.config, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message indykite.config.v1beta1.ReadTenantConfigResponse
+ */
+export const ReadTenantConfigResponse = new ReadTenantConfigResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class UpdateTenantConfigRequest$Type extends MessageType<UpdateTenantConfigRequest> {
+    constructor() {
+        super("indykite.config.v1beta1.UpdateTenantConfigRequest", [
+            { no: 1, name: "id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
+            { no: 2, name: "etag", kind: "message", T: () => StringValue, options: { "validate.rules": { string: { minLen: "8", maxLen: "18", pattern: "^[A-Za-z0-9-_]{8,18}$", ignoreEmpty: true } } } },
+            { no: 3, name: "config", kind: "message", T: () => TenantConfig, options: { "validate.rules": { message: { required: true } } } },
+            { no: 4, name: "bookmarks", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { items: { string: { minLen: "40", pattern: "^[a-zA-Z0-9_-]{40,}$" } } } } } }
+        ]);
+    }
+    create(value?: PartialMessage<UpdateTenantConfigRequest>): UpdateTenantConfigRequest {
+        const message = { id: "", bookmarks: [] };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<UpdateTenantConfigRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: UpdateTenantConfigRequest): UpdateTenantConfigRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string id */ 1:
+                    message.id = reader.string();
+                    break;
+                case /* google.protobuf.StringValue etag */ 2:
+                    message.etag = StringValue.internalBinaryRead(reader, reader.uint32(), options, message.etag);
+                    break;
+                case /* indykite.config.v1beta1.TenantConfig config */ 3:
+                    message.config = TenantConfig.internalBinaryRead(reader, reader.uint32(), options, message.config);
+                    break;
+                case /* repeated string bookmarks */ 4:
+                    message.bookmarks.push(reader.string());
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: UpdateTenantConfigRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string id = 1; */
+        if (message.id !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.id);
+        /* google.protobuf.StringValue etag = 2; */
+        if (message.etag)
+            StringValue.internalBinaryWrite(message.etag, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* indykite.config.v1beta1.TenantConfig config = 3; */
+        if (message.config)
+            TenantConfig.internalBinaryWrite(message.config, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        /* repeated string bookmarks = 4; */
+        for (let i = 0; i < message.bookmarks.length; i++)
+            writer.tag(4, WireType.LengthDelimited).string(message.bookmarks[i]);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message indykite.config.v1beta1.UpdateTenantConfigRequest
+ */
+export const UpdateTenantConfigRequest = new UpdateTenantConfigRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class UpdateTenantConfigResponse$Type extends MessageType<UpdateTenantConfigResponse> {
+    constructor() {
+        super("indykite.config.v1beta1.UpdateTenantConfigResponse", [
+            { no: 1, name: "id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
+            { no: 2, name: "create_time", kind: "message", T: () => Timestamp },
+            { no: 3, name: "created_by", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 4, name: "update_time", kind: "message", T: () => Timestamp },
+            { no: 5, name: "updated_by", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 6, name: "etag", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 7, name: "bookmark", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+        ]);
+    }
+    create(value?: PartialMessage<UpdateTenantConfigResponse>): UpdateTenantConfigResponse {
+        const message = { id: "", createdBy: "", updatedBy: "", etag: "", bookmark: "" };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<UpdateTenantConfigResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: UpdateTenantConfigResponse): UpdateTenantConfigResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string id */ 1:
+                    message.id = reader.string();
+                    break;
+                case /* google.protobuf.Timestamp create_time */ 2:
+                    message.createTime = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createTime);
+                    break;
+                case /* string created_by */ 3:
+                    message.createdBy = reader.string();
+                    break;
+                case /* google.protobuf.Timestamp update_time */ 4:
+                    message.updateTime = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.updateTime);
+                    break;
+                case /* string updated_by */ 5:
+                    message.updatedBy = reader.string();
+                    break;
+                case /* string etag */ 6:
+                    message.etag = reader.string();
+                    break;
+                case /* string bookmark */ 7:
+                    message.bookmark = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: UpdateTenantConfigResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string id = 1; */
+        if (message.id !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.id);
+        /* google.protobuf.Timestamp create_time = 2; */
+        if (message.createTime)
+            Timestamp.internalBinaryWrite(message.createTime, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* string created_by = 3; */
+        if (message.createdBy !== "")
+            writer.tag(3, WireType.LengthDelimited).string(message.createdBy);
+        /* google.protobuf.Timestamp update_time = 4; */
+        if (message.updateTime)
+            Timestamp.internalBinaryWrite(message.updateTime, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+        /* string updated_by = 5; */
+        if (message.updatedBy !== "")
+            writer.tag(5, WireType.LengthDelimited).string(message.updatedBy);
+        /* string etag = 6; */
+        if (message.etag !== "")
+            writer.tag(6, WireType.LengthDelimited).string(message.etag);
+        /* string bookmark = 7; */
+        if (message.bookmark !== "")
+            writer.tag(7, WireType.LengthDelimited).string(message.bookmark);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message indykite.config.v1beta1.UpdateTenantConfigResponse
+ */
+export const UpdateTenantConfigResponse = new UpdateTenantConfigResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
 class CreateConfigNodeRequest$Type extends MessageType<CreateConfigNodeRequest> {
     constructor() {
         super("indykite.config.v1beta1.CreateConfigNodeRequest", [
@@ -7123,6 +8298,7 @@ class CreateConfigNodeResponse$Type extends MessageType<CreateConfigNodeResponse
     constructor() {
         super("indykite.config.v1beta1.CreateConfigNodeResponse", [
             { no: 1, name: "id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
+            { no: 8, name: "location_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
             { no: 2, name: "create_time", kind: "message", T: () => Timestamp },
             { no: 3, name: "update_time", kind: "message", T: () => Timestamp },
             { no: 6, name: "created_by", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
@@ -7132,7 +8308,7 @@ class CreateConfigNodeResponse$Type extends MessageType<CreateConfigNodeResponse
         ]);
     }
     create(value?: PartialMessage<CreateConfigNodeResponse>): CreateConfigNodeResponse {
-        const message = { id: "", createdBy: "", updatedBy: "", etag: "", bookmark: "" };
+        const message = { id: "", locationId: "", createdBy: "", updatedBy: "", etag: "", bookmark: "" };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<CreateConfigNodeResponse>(this, message, value);
@@ -7145,6 +8321,9 @@ class CreateConfigNodeResponse$Type extends MessageType<CreateConfigNodeResponse
             switch (fieldNo) {
                 case /* string id */ 1:
                     message.id = reader.string();
+                    break;
+                case /* string location_id */ 8:
+                    message.locationId = reader.string();
                     break;
                 case /* google.protobuf.Timestamp create_time */ 2:
                     message.createTime = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createTime);
@@ -7179,6 +8358,9 @@ class CreateConfigNodeResponse$Type extends MessageType<CreateConfigNodeResponse
         /* string id = 1; */
         if (message.id !== "")
             writer.tag(1, WireType.LengthDelimited).string(message.id);
+        /* string location_id = 8; */
+        if (message.locationId !== "")
+            writer.tag(8, WireType.LengthDelimited).string(message.locationId);
         /* google.protobuf.Timestamp create_time = 2; */
         if (message.createTime)
             Timestamp.internalBinaryWrite(message.createTime, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
@@ -7498,6 +8680,7 @@ class UpdateConfigNodeResponse$Type extends MessageType<UpdateConfigNodeResponse
     constructor() {
         super("indykite.config.v1beta1.UpdateConfigNodeResponse", [
             { no: 1, name: "id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
+            { no: 8, name: "location_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
             { no: 5, name: "create_time", kind: "message", T: () => Timestamp },
             { no: 2, name: "update_time", kind: "message", T: () => Timestamp },
             { no: 6, name: "created_by", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
@@ -7507,7 +8690,7 @@ class UpdateConfigNodeResponse$Type extends MessageType<UpdateConfigNodeResponse
         ]);
     }
     create(value?: PartialMessage<UpdateConfigNodeResponse>): UpdateConfigNodeResponse {
-        const message = { id: "", createdBy: "", updatedBy: "", etag: "", bookmark: "" };
+        const message = { id: "", locationId: "", createdBy: "", updatedBy: "", etag: "", bookmark: "" };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<UpdateConfigNodeResponse>(this, message, value);
@@ -7520,6 +8703,9 @@ class UpdateConfigNodeResponse$Type extends MessageType<UpdateConfigNodeResponse
             switch (fieldNo) {
                 case /* string id */ 1:
                     message.id = reader.string();
+                    break;
+                case /* string location_id */ 8:
+                    message.locationId = reader.string();
                     break;
                 case /* google.protobuf.Timestamp create_time */ 5:
                     message.createTime = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createTime);
@@ -7554,6 +8740,9 @@ class UpdateConfigNodeResponse$Type extends MessageType<UpdateConfigNodeResponse
         /* string id = 1; */
         if (message.id !== "")
             writer.tag(1, WireType.LengthDelimited).string(message.id);
+        /* string location_id = 8; */
+        if (message.locationId !== "")
+            writer.tag(8, WireType.LengthDelimited).string(message.locationId);
         /* google.protobuf.Timestamp create_time = 5; */
         if (message.createTime)
             Timestamp.internalBinaryWrite(message.createTime, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
@@ -9487,11 +10676,15 @@ export const GetSchemaHelpersResponse = new GetSchemaHelpersResponse$Type();
  */
 export const ConfigManagementAPI = new ServiceType("indykite.config.v1beta1.ConfigManagementAPI", [
     { name: "ReadCustomer", options: {}, I: ReadCustomerRequest, O: ReadCustomerResponse },
+    { name: "ReadCustomerConfig", options: {}, I: ReadCustomerConfigRequest, O: ReadCustomerConfigResponse },
+    { name: "UpdateCustomerConfig", options: {}, I: UpdateCustomerConfigRequest, O: UpdateCustomerConfigResponse },
     { name: "CreateApplicationSpace", options: {}, I: CreateApplicationSpaceRequest, O: CreateApplicationSpaceResponse },
     { name: "ReadApplicationSpace", options: {}, I: ReadApplicationSpaceRequest, O: ReadApplicationSpaceResponse },
     { name: "ListApplicationSpaces", serverStreaming: true, options: {}, I: ListApplicationSpacesRequest, O: ListApplicationSpacesResponse },
     { name: "UpdateApplicationSpace", options: {}, I: UpdateApplicationSpaceRequest, O: UpdateApplicationSpaceResponse },
     { name: "DeleteApplicationSpace", options: {}, I: DeleteApplicationSpaceRequest, O: DeleteApplicationSpaceResponse },
+    { name: "ReadApplicationSpaceConfig", options: {}, I: ReadApplicationSpaceConfigRequest, O: ReadApplicationSpaceConfigResponse },
+    { name: "UpdateApplicationSpaceConfig", options: {}, I: UpdateApplicationSpaceConfigRequest, O: UpdateApplicationSpaceConfigResponse },
     { name: "CreateApplication", options: {}, I: CreateApplicationRequest, O: CreateApplicationResponse },
     { name: "ReadApplication", options: {}, I: ReadApplicationRequest, O: ReadApplicationResponse },
     { name: "ListApplications", serverStreaming: true, options: {}, I: ListApplicationsRequest, O: ListApplicationsResponse },
@@ -9517,6 +10710,8 @@ export const ConfigManagementAPI = new ServiceType("indykite.config.v1beta1.Conf
     { name: "ListTenants", serverStreaming: true, options: {}, I: ListTenantsRequest, O: ListTenantsResponse },
     { name: "UpdateTenant", options: {}, I: UpdateTenantRequest, O: UpdateTenantResponse },
     { name: "DeleteTenant", options: {}, I: DeleteTenantRequest, O: DeleteTenantResponse },
+    { name: "ReadTenantConfig", options: {}, I: ReadTenantConfigRequest, O: ReadTenantConfigResponse },
+    { name: "UpdateTenantConfig", options: {}, I: UpdateTenantConfigRequest, O: UpdateTenantConfigResponse },
     { name: "CreateConfigNode", options: {}, I: CreateConfigNodeRequest, O: CreateConfigNodeResponse },
     { name: "ReadConfigNode", options: {}, I: ReadConfigNodeRequest, O: ReadConfigNodeResponse },
     { name: "UpdateConfigNode", options: {}, I: UpdateConfigNodeRequest, O: UpdateConfigNodeResponse },

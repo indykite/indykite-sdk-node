@@ -299,7 +299,8 @@ export interface RegisterDigitalTwinWithoutCredentialRequest {
      */
     properties: Property[];
     /**
-     * bookmarks to use with neo4j Transaction
+     * Database bookmarks to handle Read-after-Write consistency.
+     * Insert one or multiple bookmarks returned from the previous Write operation if needed.
      *
      * @generated from protobuf field: repeated string bookmarks = 4;
      */
@@ -1998,7 +1999,7 @@ class RegisterDigitalTwinWithoutCredentialRequest$Type extends MessageType<Regis
             { no: 1, name: "digital_twin_kind", kind: "enum", T: () => ["indykite.identity.v1beta2.DigitalTwinKind", DigitalTwinKind, "DIGITAL_TWIN_KIND_"], options: { "validate.rules": { enum: { definedOnly: true, notIn: [0] } } } },
             { no: 5, name: "digital_twin_tags", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { maxItems: "32", unique: true, items: { string: { maxLen: "64", pattern: "^([A-Z][a-z]+)+$" } } } } } },
             { no: 3, name: "properties", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Property, options: { "validate.rules": { repeated: { minItems: "1", items: { message: { required: true } } } } } },
-            { no: 4, name: "bookmarks", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/ }
+            { no: 4, name: "bookmarks", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { items: { string: { minLen: "40", pattern: "^[a-zA-Z0-9_-]{40,}$" } } } } } }
         ]);
     }
     create(value?: PartialMessage<RegisterDigitalTwinWithoutCredentialRequest>): RegisterDigitalTwinWithoutCredentialRequest {
