@@ -17,13 +17,12 @@ import { PropertyFilter } from '../grpc/indykite/identity/v1beta2/attributes';
 import { SdkError, SdkErrorCode } from './error';
 import { Utils } from './utils/utils';
 
-
 export type InputParameters = string | boolean | number;
 
-export const DIGITAL_TWIN_IDENTIFIER = 'digitalTwinIdentifier'
+export const DIGITAL_TWIN_IDENTIFIER = 'digitalTwinIdentifier';
 export const DIGITAL_TWIN_IDENTIFIER_DIGITAL_TWIN = 'digitalTwin';
 export const DIGITAL_TWIN_IDENTIFIER_PROPERTY_FILTER = 'propertyFilter';
-export const DIGITAL_TWIN_IDENTIFIER_ACCESS_TOKEN = 'accessToken'
+export const DIGITAL_TWIN_IDENTIFIER_ACCESS_TOKEN = 'accessToken';
 
 /**
  * @category Clients
@@ -56,19 +55,20 @@ export class AuthorizationClientV2 {
         });
     });
   }
-  
+
   /**
    * Convert simple (string | boolean | number) map of parameters into `InputParam`
    * https://buf.build/indykite/indykiteapis/docs/main:indykite.authorization.v1beta1#indykite.authorization.v1beta1.InputParam
    * @since 0.4.1
    */
-  static getInputParams(
-    options: Record<string, InputParameters>,
-  ): Record<string, InputParam> {
-    return Object.keys(options).reduce((newOptions, optionKey) => {
-      newOptions[optionKey] = InputParam.fromJson(Utils.objectToJsonValue(options[optionKey]));
-      return newOptions;
-    }, {} as Record<string, InputParam>);
+  static getInputParams(options: Record<string, InputParameters>): Record<string, InputParam> {
+    return Object.keys(options).reduce(
+      (newOptions, optionKey) => {
+        newOptions[optionKey] = InputParam.fromJson(Utils.objectToJsonValue(options[optionKey]));
+        return newOptions;
+      },
+      {} as Record<string, InputParam>,
+    );
   }
 
   /**
@@ -180,7 +180,7 @@ export class AuthorizationClientV2 {
           digitalTwinIdentifier: {
             filter: {
               oneofKind: DIGITAL_TWIN_IDENTIFIER_PROPERTY_FILTER,
-              propertyFilter
+              propertyFilter,
             },
           },
         },
@@ -373,7 +373,7 @@ export class AuthorizationClientV2 {
           digitalTwinIdentifier: {
             filter: {
               oneofKind: DIGITAL_TWIN_IDENTIFIER_PROPERTY_FILTER,
-              propertyFilter
+              propertyFilter,
             },
           },
         },
@@ -472,7 +472,7 @@ export class AuthorizationClientV2 {
     resources: WhoAuthorizedRequest_Resource[],
     inputParams: Record<string, InputParam> = {},
     policyTags?: string[],
-  ):WhoAuthorizedRequest {
+  ): WhoAuthorizedRequest {
     return WhoAuthorizedRequest.create({
       resources,
       inputParams,
@@ -511,7 +511,7 @@ export class AuthorizationClientV2 {
       this.client.whoAuthorized(request, (err, response) => {
         if (err) {
           reject(err);
-        } else { 
+        } else {
           if (!response) {
             // TODO: use constants
             throw new SdkError(SdkErrorCode.SDK_CODE_1, 'No data in whoAuthorized response');
@@ -522,5 +522,4 @@ export class AuthorizationClientV2 {
       });
     });
   }
-
 }
