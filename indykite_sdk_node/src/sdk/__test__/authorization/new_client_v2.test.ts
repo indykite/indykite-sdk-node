@@ -2,8 +2,6 @@ import { AuthorizationAPIClient } from '../../../grpc/indykite/authorization/v1b
 import { SdkClient } from '../../client/client';
 import { AuthorizationClientV2, InputParameters } from '../../authorization_v2';
 import { applicationTokenMock } from '../../utils/test_utils';
-import { InputParam } from '../../../grpc/indykite/authorization/v1beta1/model';
-import { Utils } from '../../utils/utils';
 
 afterEach(() => {
   jest.restoreAllMocks();
@@ -59,37 +57,4 @@ describe('when a new client is created', () => {
       expect(caughtError).toBe(error);
     });
   });
-
-  // describe('use getInputParams', () => {
-  //   let returnedValue: Record<string, InputParam>;
-
-  //   beforeEach(async () => {
-  //     jest
-  //       .spyOn(AuthorizationClientV2, 'getInputParams')
-  //       .mockImplementation((): Record<string, InputParam> => {
-  //         return {
-  //           key1: InputParam.fromJson(Utils.objectToJsonValue('value1')),
-  //           key2: InputParam.fromJson(Utils.objectToJsonValue('value2')),
-  //         };
-  //       });
-
-  //     returnedValue = await AuthorizationClientV2.getInputParams({
-  //       key1: 'value1',
-  //       key2: 'value2',
-  //     } as Record<string, InputParameters>);
-  //   });
-
-  //   it('creates a new instance', () => {
-  //     expect(AuthorizationClientV2.getInputParams).toBeCalledWith({
-  //       key1: 'value1',
-  //       key2: 'value2',
-  //     } as Record<string, InputParameters>);
-  //     expect(returnedValue.toString()).toBe(
-  //       {
-  //         key1: { value: { oneofKind: 'stringValue', stringValue: 'value1' } },
-  //         key2: { value: { oneofKind: 'stringValue', stringValue: 'value2' } },
-  //       }.toString(),
-  //     );
-  //   });
-  // });
 });
