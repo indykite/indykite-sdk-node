@@ -1,8 +1,9 @@
+import { StringValue } from '../../../../grpc/google/protobuf/wrappers';
 import {
   AuthorizationPolicyConfig,
   AuthorizationPolicyConfig_Status,
 } from '../../../../grpc/indykite/config/v1beta1/model';
-import { NodeConfiguration } from '../configuration';
+import { ConfigNode } from '../config_node';
 
 type IOptions = {
   policy: string;
@@ -10,10 +11,13 @@ type IOptions = {
   tags?: string[];
   name: string;
   displayName?: string;
-  description?: string;
+  description?: StringValue;
 };
 
-export class AuthorizationPolicy extends NodeConfiguration {
+/**
+ * https://buf.build/indykite/indykiteapis/docs/main:indykite.config.v1beta1#indykite.config.v1beta1.AuthorizationPolicyConfig
+ */
+export class AuthorizationPolicy extends ConfigNode {
   public policy: string;
   public status: AuthorizationPolicyConfig_Status;
   public tags: string[];

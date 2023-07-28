@@ -1,5 +1,5 @@
 import { Email, EmailServiceConfig } from '../../../../grpc/indykite/config/v1beta1/model';
-import { NodeConfiguration } from '../configuration';
+import { ConfigNode } from '../config_node';
 import { EmailMessage } from './message';
 import { EmailTemplate } from './template';
 
@@ -13,18 +13,24 @@ export {
 
 export type EmailMessageType = 'oneTimePassword' | 'invitation' | 'resetPassword' | 'verification';
 
-export class EmailProvider extends NodeConfiguration {
+/**
+ * https://buf.build/indykite/indykiteapis/docs/main:indykite.config.v1beta1#indykite.config.v1beta1.EmailServiceConfig
+ */
+export class EmailService extends ConfigNode {
   defaultFromAddress?: Email;
   oneTimePasswordMessage?: EmailMessage | EmailTemplate;
   invitationMessage?: EmailMessage | EmailTemplate;
   resetPasswordMessage?: EmailMessage | EmailTemplate;
   verificationMessage?: EmailMessage | EmailTemplate;
 
+  // Default is read only value indicating this instance is used by default.
+  default?: boolean;
+
   constructor(name: string) {
     super(name);
   }
 
-  marshalWithoutProvider(): Omit<EmailServiceConfig, 'provider'> {
+  marshalWithoutProvider(): Omit<EmailServiceConfig, 'provider' | 'default'> {
     const svc: Partial<EmailServiceConfig> = {};
     if (this.defaultFromAddress) {
       svc.defaultFromAddress = this.defaultFromAddress;
@@ -34,6 +40,9 @@ export class EmailProvider extends NodeConfiguration {
     if (this.invitationMessage) svc.invitationMessage = this.invitationMessage.marshal();
     if (this.resetPasswordMessage) svc.resetPasswordMessage = this.resetPasswordMessage.marshal();
     if (this.verificationMessage) svc.verificationMessage = this.verificationMessage.marshal();
+
+    // force boolean
+    this.default = !!svc.default ?? false;
 
     return svc;
   }

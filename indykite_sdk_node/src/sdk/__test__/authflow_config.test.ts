@@ -2,7 +2,6 @@ import { CallOptions, Metadata, ServiceError } from '@grpc/grpc-js';
 import { ClientUnaryCall } from '@grpc/grpc-js/build/src/call';
 import { Status } from '@grpc/grpc-js/build/src/constants';
 import { v4 } from 'uuid';
-import { BoolValue } from '../../grpc/google/protobuf/wrappers';
 import {
   CreateConfigNodeRequest,
   CreateConfigNodeResponse,
@@ -15,10 +14,12 @@ import {
 } from '../../grpc/indykite/config/v1beta1/config_management_api';
 import { AuthFlowConfig_Format } from '../../grpc/indykite/config/v1beta1/model';
 import { ConfigClient } from '../config';
-import { SdkError, SdkErrorCode } from '../error';
+import { SdkError, SkdErrorText, SdkErrorCode } from '../error';
 import { AuthFlow } from '../model/config/authflow/flow';
 import { serviceAccountTokenMock } from '../utils/test_utils';
 import { Utils } from '../utils/utils';
+import { ConfigNode } from '../model';
+import { StringValue } from '../../grpc/google/protobuf/wrappers';
 
 let sdk: ConfigClient;
 
@@ -41,6 +42,7 @@ describe('Authentication Flow', () => {
       // createdBy: 'Lorem ipsum - creator',
       // updatedBy: 'Lorem ipsum - updater',
       bookmark: 'bookmark-token',
+      locationId: 'location-id',
     });
     const mockFunc = jest.fn(
       (
@@ -64,7 +66,10 @@ describe('Authentication Flow', () => {
     );
     const resp = await sdk.createAuthflowConfiguration('gid:KAEyEGluZHlraURlgAAAAAAAAA8', authFlow);
 
-    const expectedResp = Object.assign(mockResp, authFlow, { bookmark: undefined });
+    const expectedResp = Object.assign(mockResp, authFlow, {
+      bookmark: undefined,
+      locationId: undefined,
+    });
 
     expect(mockFunc).toBeCalled();
     expect(resp).toEqual(expectedResp);
@@ -119,6 +124,7 @@ describe('Authentication Flow', () => {
         authFlowConfig: {
           sourceFormat: AuthFlowConfig_Format.BARE_JSON,
           source: Buffer.from('AUTH_FLOW'),
+          default: false,
         },
       };
     }
@@ -150,7 +156,9 @@ describe('Authentication Flow', () => {
       expectedAuthFlow.customerId = mockResp.configNode.customerId;
       expectedAuthFlow.appSpaceId = mockResp.configNode.appSpaceId;
       expectedAuthFlow.tenantId = mockResp.configNode.tenantId;
-      expectedAuthFlow.description = mockResp.configNode.description?.value;
+      expectedAuthFlow.description = mockResp.configNode.description;
+      expectedAuthFlow.createdBy = mockResp.configNode.createdBy;
+      expectedAuthFlow.updatedBy = mockResp.configNode.updatedBy;
     }
 
     const resp = await sdk.readAuthflowConfiguration(objectId);
@@ -192,8 +200,8 @@ describe('Authentication Flow', () => {
       expect(true).toEqual(false);
     } catch (error) {
       const e = error as SdkError;
-      expect(e.code).toBe(SdkErrorCode.SDK_CODE_1);
-      expect(e.message).toBe("can't unmarshal configuration: undefined");
+      expect(e.code).toBe(SdkErrorCode.SDK_CODE_2);
+      expect(e.message).toBe(SkdErrorText.SDK_CODE_2(ConfigNode.name, undefined));
     }
     expect(mockFunc).toBeCalled();
   });
@@ -219,7 +227,7 @@ describe('Authentication Flow', () => {
         authFlowConfig: {
           sourceFormat: AuthFlowConfig_Format.BARE_JSON,
           source: Buffer.from('AUTH_FLOW'),
-          default: BoolValue.fromJson(true),
+          default: true,
         },
       };
     }
@@ -251,6 +259,8 @@ describe('Authentication Flow', () => {
       expectedAuthFlow.customerId = mockResp.configNode.customerId;
       expectedAuthFlow.appSpaceId = mockResp.configNode.appSpaceId;
       expectedAuthFlow.tenantId = mockResp.configNode.tenantId;
+      expectedAuthFlow.createdBy = mockResp.configNode.createdBy;
+      expectedAuthFlow.updatedBy = mockResp.configNode.updatedBy;
     }
 
     const resp = await sdk.readAuthflowConfiguration(objectId);
@@ -275,7 +285,7 @@ describe('Authentication Flow', () => {
     authFlow.createTime = new Date();
     authFlow.updateTime = Utils.timestampToDate(mockResp.updateTime);
     authFlow.etag = mockResp.etag;
-    authFlow.description = 'NEW_DESCRIPTION';
+    authFlow.description = StringValue.create({ value: 'NEW_DESCRIPTION' });
 
     const mockFunc = jest.fn(
       (
@@ -313,7 +323,7 @@ describe('Authentication Flow', () => {
     authFlow.createTime = new Date();
     authFlow.updateTime = Utils.timestampToDate(mockResp.updateTime);
     authFlow.etag = mockResp.etag;
-    authFlow.description = 'NEW_DESCRIPTION';
+    authFlow.description = StringValue.create({ value: 'NEW_DESCRIPTION' });
 
     const mockFunc = jest.fn(
       (
@@ -345,7 +355,7 @@ describe('Authentication Flow', () => {
     authFlow.createTime = new Date();
     authFlow.updateTime = new Date();
     authFlow.etag = new Date().toISOString();
-    authFlow.description = 'NEW_DESCRIPTION';
+    authFlow.description = StringValue.create({ value: 'NEW_DESCRIPTION' });
 
     const mockFunc = jest.fn(
       (

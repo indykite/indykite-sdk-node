@@ -1,20 +1,21 @@
 import * as grpc from '../../../../grpc/indykite/config/v1beta1/model';
 import { SdkErrorCode, SdkError } from '../../../error';
 import { EmailMessage } from './message';
-import { EmailProvider } from './provider';
-import { SendgridEmailProvider } from './providers/sendgrid';
+import { EmailService } from './service';
+import { SendgridEmailService } from './providers/sendgrid';
 import { EmailTemplate } from './template';
 
-export type EmailProviderType = SendgridEmailProvider;
+export class EmailServiceConfigType extends SendgridEmailService {}
+export const EMAIL_SERVICE_CONFIG = 'emailServiceConfig';
 
 type EmailDefinitionType =
   | { oneofKind: 'template'; template: EmailTemplate }
   | { oneofKind: 'message'; message: EmailMessage };
 
-export class EmailProviderFactory {
+export class EmailServiceFactory {
   private static createMessageOrTemplate(def: EmailDefinitionType): EmailMessage | EmailTemplate {
     if (def.oneofKind === 'message') {
-      const e = def.message as grpc.EmailMessage;
+      const e = def.message;
       const msg = new EmailMessage(e.to, e.subject);
       msg.bcc = e.bcc;
       msg.cc = e.cc;
@@ -40,22 +41,22 @@ export class EmailProviderFactory {
     }
   }
 
-  static createInstance(name: string, provider: grpc.EmailServiceConfig): EmailProviderType {
-    const messages = {} as EmailProvider;
+  static createInstance(name: string, provider: grpc.EmailServiceConfig): EmailServiceConfigType {
+    const messages = {} as EmailService;
     if (provider.oneTimePasswordMessage?.email)
-      messages.oneTimePasswordMessage = EmailProviderFactory.createMessageOrTemplate(
+      messages.oneTimePasswordMessage = EmailServiceFactory.createMessageOrTemplate(
         provider.oneTimePasswordMessage.email as EmailDefinitionType,
       );
     if (provider.invitationMessage?.email)
-      messages.invitationMessage = EmailProviderFactory.createMessageOrTemplate(
+      messages.invitationMessage = EmailServiceFactory.createMessageOrTemplate(
         provider.invitationMessage.email as EmailDefinitionType,
       );
     if (provider.resetPasswordMessage?.email)
-      messages.resetPasswordMessage = EmailProviderFactory.createMessageOrTemplate(
+      messages.resetPasswordMessage = EmailServiceFactory.createMessageOrTemplate(
         provider.resetPasswordMessage.email as EmailDefinitionType,
       );
     if (provider.verificationMessage?.email)
-      messages.verificationMessage = EmailProviderFactory.createMessageOrTemplate(
+      messages.verificationMessage = EmailServiceFactory.createMessageOrTemplate(
         provider.verificationMessage.email as EmailDefinitionType,
       );
 
@@ -63,7 +64,7 @@ export class EmailProviderFactory {
       switch (provider.provider.oneofKind) {
         case 'sendgrid': {
           const s = provider.provider.sendgrid;
-          const sendgrid = new SendgridEmailProvider(name, s.apiKey, s.sandboxMode);
+          const sendgrid = new SendgridEmailService(name, s.apiKey, s.sandboxMode);
           sendgrid.host = s.host;
           sendgrid.ipPoolName = s.ipPoolName;
 

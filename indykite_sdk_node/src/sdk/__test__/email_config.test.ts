@@ -21,7 +21,7 @@ import {
 } from '../../grpc/indykite/config/v1beta1/model';
 import { ConfigClient } from '../config';
 import { SdkError, SdkErrorCode } from '../error';
-import { EmailMessage, SendgridEmailProvider } from '../model';
+import { EmailMessage, SendgridEmailService } from '../model';
 import { AuthFlow } from '../model/config/authflow/flow';
 import { EmailTemplate } from '../model/config/email/template';
 import { serviceAccountTokenMock } from '../utils/test_utils';
@@ -40,8 +40,8 @@ afterEach(() => {
   jest.resetAllMocks();
 });
 
-function createSendgridObject(msg = true): SendgridEmailProvider {
-  const sendgrid = new SendgridEmailProvider('nodejs-ec-1', v4(), true);
+function createSendgridObject(msg = true): SendgridEmailService {
+  const sendgrid = new SendgridEmailService('nodejs-ec-1', v4(), true);
   const tmpl = new EmailTemplate(v4(), [TEST_TO_EMAIL], 'subject');
   tmpl.headers['HEADER_1'] = 'header1';
   tmpl.from = { address: 'test+from@indykite.com', name: 'From' };
@@ -61,7 +61,7 @@ function createSendgridObject(msg = true): SendgridEmailProvider {
     sendgrid.setMessage('verification', tmpl);
   }
   sendgrid.setDefaultFrom(TEST_TO_EMAIL);
-  sendgrid.description = 'description-';
+  sendgrid.description = StringValue.create({ value: 'description-' });
   return sendgrid;
 }
 
@@ -232,6 +232,7 @@ describe('Read, Update, Delete - Email Configuration', () => {
         oneofKind: 'emailServiceConfig',
         emailServiceConfig: {
           defaultFromAddress: TEST_TO_EMAIL,
+          default: false,
           provider: {
             oneofKind: 'sendgrid',
             sendgrid: {
@@ -314,6 +315,8 @@ describe('Read, Update, Delete - Email Configuration', () => {
       tenantId: mockResp.configNode?.tenantId,
       createTime: Utils.timestampToDate(mockResp.configNode?.createTime),
       updateTime: Utils.timestampToDate(mockResp.configNode?.updateTime),
+      createdBy: mockResp.configNode?.createdBy,
+      updatedBy: mockResp.configNode?.updatedBy,
     };
 
     expect(mockFunc).toBeCalled();
@@ -385,6 +388,7 @@ describe('Read, Update, Delete - Email Configuration', () => {
         oneofKind: 'emailServiceConfig',
         emailServiceConfig: {
           defaultFromAddress: TEST_TO_EMAIL,
+          default: false,
           provider: {
             oneofKind: 'sendgrid',
             sendgrid: {
@@ -465,6 +469,8 @@ describe('Read, Update, Delete - Email Configuration', () => {
       tenantId: mockResp.configNode?.tenantId,
       createTime: Utils.timestampToDate(mockResp.configNode?.createTime),
       updateTime: Utils.timestampToDate(mockResp.configNode?.updateTime),
+      createdBy: mockResp.configNode?.createdBy,
+      updatedBy: mockResp.configNode?.updatedBy,
     };
 
     expect(mockFunc).toBeCalled();
@@ -512,6 +518,7 @@ describe('Read, Update, Delete - Email Configuration', () => {
         oneofKind: 'emailServiceConfig',
         emailServiceConfig: {
           defaultFromAddress: TEST_TO_EMAIL,
+          default: false,
           provider: {
             oneofKind: 'mailjet', // unsupported yet
             mailjet: {

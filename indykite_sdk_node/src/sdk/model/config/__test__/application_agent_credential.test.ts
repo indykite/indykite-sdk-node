@@ -1,4 +1,4 @@
-import { SdkError, SdkErrorCode } from '../../../error';
+import { SdkError, SkdErrorText, SdkErrorCode } from '../../../error';
 import { Utils } from '../../../utils/utils';
 import { ApplicationAgentCredential } from '../application_agent_credential';
 
@@ -41,6 +41,7 @@ describe('deserialize', () => {
       expect(appAgentCredential.destroyTime?.toString()).toBe(
         new Date(2022, 2, 17, 12, 20).toString(),
       );
+      expect(appAgentCredential.createdBy).toBe('Lorem ipsum - creator');
     });
   });
 
@@ -78,6 +79,7 @@ describe('deserialize', () => {
       expect(appAgentCredential.createTime).toBeUndefined();
       expect(appAgentCredential.deleteTime).toBeUndefined();
       expect(appAgentCredential.destroyTime).toBeUndefined();
+      expect(appAgentCredential.createdBy).toBeUndefined();
     });
   });
 
@@ -94,7 +96,9 @@ describe('deserialize', () => {
 
     it('throws an error', () => {
       expect(thrownError.code).toBe(SdkErrorCode.SDK_CODE_1);
-      expect(thrownError.description).toBe("Can't deserialize application agent credential");
+      expect(thrownError.description).toBe(
+        SkdErrorText.SDK_CODE_1(ApplicationAgentCredential.name),
+      );
     });
   });
 });

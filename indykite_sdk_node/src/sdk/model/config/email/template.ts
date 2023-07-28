@@ -1,7 +1,7 @@
 import { StringValue } from '../../../../grpc/google/protobuf/wrappers';
 import * as grpc from '../../../../grpc/indykite/config/v1beta1/model';
 import { Value } from '../../../../grpc/indykite/objects/v1beta1/struct';
-import { Email } from './provider';
+import { Email } from './service';
 
 export class EmailTemplate {
   // templateId: string;

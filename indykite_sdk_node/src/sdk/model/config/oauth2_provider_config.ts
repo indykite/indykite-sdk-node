@@ -16,6 +16,7 @@ export type IOAuth2ProviderConfigOptions = {
   requestObjectSigningAlg?: string;
   frontChannelLoginUri: Record<string, string>;
   frontChannelConsentUri: Record<string, string>;
+  trusted: boolean;
 };
 
 export { GrantType, ResponseType, TokenEndpointAuthMethod };
@@ -28,6 +29,7 @@ export class OAuth2ProviderConfig {
   public tokenEndpointAuthSigningAlg: string[];
   public frontChannelLoginUri: Record<string, string>;
   public frontChannelConsentUri: Record<string, string>;
+  public trusted: boolean;
 
   constructor(
     grantTypes: GrantType[],
@@ -39,6 +41,7 @@ export class OAuth2ProviderConfig {
     frontChannelConsentUri: Record<string, string>,
     requestUris?: string[],
     requestObjectSigningAlg?: string,
+    trusted?: boolean,
   );
   constructor(options: IOAuth2ProviderConfigOptions);
   constructor(
@@ -51,6 +54,7 @@ export class OAuth2ProviderConfig {
     frontChannelConsentUri?: Record<string, string>,
     public requestUris?: string[],
     public requestObjectSigningAlg?: string,
+    trusted?: boolean,
   ) {
     if (!Array.isArray(grantTypesOrOptions)) {
       this.grantTypes = grantTypesOrOptions.grantTypes;
@@ -62,6 +66,7 @@ export class OAuth2ProviderConfig {
       this.requestObjectSigningAlg = grantTypesOrOptions.requestObjectSigningAlg;
       this.frontChannelLoginUri = grantTypesOrOptions.frontChannelLoginUri;
       this.frontChannelConsentUri = grantTypesOrOptions.frontChannelConsentUri;
+      this.trusted = grantTypesOrOptions.trusted ?? false;
       return;
     }
 
@@ -85,6 +90,7 @@ export class OAuth2ProviderConfig {
     this.requestObjectSigningAlg = requestObjectSigningAlg;
     this.frontChannelLoginUri = frontChannelLoginUri;
     this.frontChannelConsentUri = frontChannelConsentUri;
+    this.trusted = trusted ?? false;
   }
 
   static deserialize(config: OAuth2ProviderConfigModel): OAuth2ProviderConfig {
@@ -112,6 +118,7 @@ export class OAuth2ProviderConfig {
       requestObjectSigningAlg: this.requestObjectSigningAlg ?? '',
       frontChannelLoginUri: this.frontChannelLoginUri,
       frontChannelConsentUri: this.frontChannelConsentUri,
+      trusted: this.trusted ?? false,
     };
   }
 }

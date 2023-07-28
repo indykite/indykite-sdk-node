@@ -35,6 +35,7 @@ describe('deserialize', () => {
         responseTypes: [ResponseType.CODE],
         audiences: ['audience'],
         userinfoSignedResponseAlg: 'RS256',
+        trusted: false,
       });
     });
 
@@ -92,6 +93,7 @@ describe('deserialize', () => {
           responseTypes: [ResponseType.CODE],
           audiences: ['audience'],
           userinfoSignedResponseAlg: 'RS256',
+          trusted: false,
         });
       } catch (err) {
         thrownError = err as SdkError;
@@ -132,6 +134,7 @@ describe('construct with the object argument', () => {
         responseTypes: [ResponseType.CODE],
         audiences: ['audience'],
         userinfoSignedResponseAlg: 'RS256',
+        trusted: false,
       });
     });
 
@@ -191,6 +194,7 @@ describe('construct with the object argument', () => {
           responseTypes: [ResponseType.CODE],
           audiences: ['audience'],
           userinfoSignedResponseAlg: 'RS256',
+          trusted: false,
         });
       });
     });
@@ -214,6 +218,7 @@ describe('construct with the object argument', () => {
         scopes: ['openid'],
         tokenEndpointAuthMethod: TokenEndpointAuthMethod.CLIENT_SECRET_BASIC,
         tokenEndpointAuthSigningAlg: 'ES256',
+        trusted: false,
       });
     });
 
@@ -273,6 +278,7 @@ describe('construct with the object argument', () => {
           responseTypes: [],
           audiences: [],
           userinfoSignedResponseAlg: '',
+          trusted: false,
         });
       });
     });

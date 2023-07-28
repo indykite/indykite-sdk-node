@@ -2,12 +2,11 @@ import {
   AuthFlowConfig,
   AuthFlowConfig_Format,
 } from '../../../../grpc/indykite/config/v1beta1/model';
-import { NodeConfiguration } from '../configuration';
-import { BoolValue } from '../../../../grpc/google/protobuf/wrappers';
+import { ConfigNode } from '../config_node';
 
 export type AuthFlowSourceType = AuthFlowConfig_Format;
 
-export class AuthFlow extends NodeConfiguration {
+export class AuthFlow extends ConfigNode {
   constructor(
     name: string,
     public type: AuthFlowSourceType,
@@ -21,7 +20,7 @@ export class AuthFlow extends NodeConfiguration {
     const flow: AuthFlowConfig = {
       sourceFormat: this.type,
       source: this.source,
-      default: BoolValue.create({ value: this.defaultFlow }),
+      default: this.defaultFlow ?? false,
     };
 
     return flow;

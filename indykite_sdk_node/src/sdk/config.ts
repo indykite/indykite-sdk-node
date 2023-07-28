@@ -45,9 +45,9 @@ import {
   ApplicationSpace,
   AuthFlow,
   AuthorizationPolicy,
-  ConfigurationFactory,
+  ConfigNodeFactory,
   Customer,
-  EmailProviderType,
+  EmailServiceConfigType,
   OAuth2Application,
   OAuth2ApplicationConfig,
   OAuth2Client,
@@ -118,7 +118,7 @@ export class ConfigClient {
   /**
    * @since 0.1.0
    * @example
-   * const sendgrid = new SendgridEmailProvider(
+   * const sendgrid = new SendgridEmailService(
    *   'default-email-provider',
    *   '963843b5-983e-4d73-b666-069a98f1ef57',
    *   true,
@@ -130,9 +130,9 @@ export class ConfigClient {
    */
   createEmailServiceConfiguration(
     location: string,
-    config: EmailProviderType,
+    config: EmailServiceConfigType,
     bookmarks: string[] = [],
-  ): Promise<EmailProviderType> {
+  ): Promise<EmailServiceConfigType> {
     const req = CreateConfigNodeRequest.fromJson({
       location,
       name: config.name,
@@ -142,14 +142,14 @@ export class ConfigClient {
       oneofKind: 'emailServiceConfig',
       emailServiceConfig: config.marshal(),
     };
-    return new Promise<EmailProviderType>((resolve, reject) => {
+    return new Promise<EmailServiceConfigType>((resolve, reject) => {
       this.client.createConfigNode(req, (err, response) => {
         if (err) reject(err);
         else if (!response) new SdkError(SdkErrorCode.SDK_CODE_1, 'No email config response');
         else
           try {
             this.saveReturnedBookmark(response.bookmark);
-            resolve(response as unknown as EmailProviderType);
+            resolve(response as unknown as EmailServiceConfigType);
           } catch (err) {
             reject(err);
           }
@@ -164,16 +164,19 @@ export class ConfigClient {
    * config.displayName = 'My new name';
    * await sdk.updateEmailServiceConfiguration(config);
    */
-  readEmailServiceConfiguration(id: string, bookmarks: string[] = []): Promise<EmailProviderType> {
+  readEmailServiceConfiguration(
+    id: string,
+    bookmarks: string[] = [],
+  ): Promise<EmailServiceConfigType> {
     return new Promise((resolve, reject) => {
       this.client.readConfigNode({ id, bookmarks }, (err, response) => {
         if (err) reject(err);
         else
           try {
             if (response && response.configNode) {
-              const ret = ConfigurationFactory.createInstance(
+              const ret = ConfigNodeFactory.createInstance(
                 response.configNode,
-              ) as EmailProviderType;
+              ) as EmailServiceConfigType;
               resolve(ret);
             } else {
               reject(new SdkError(SdkErrorCode.SDK_CODE_1, 'config_error_read_emailconfiguration'));
@@ -193,24 +196,23 @@ export class ConfigClient {
    * await sdk.updateEmailServiceConfiguration(config);
    */
   updateEmailServiceConfiguration(
-    config: EmailProviderType,
+    config: EmailServiceConfigType,
     bookmarks: string[] = [],
-  ): Promise<EmailProviderType> {
+  ): Promise<EmailServiceConfigType> {
     const req = {
       id: config.id,
       bookmarks,
     } as UpdateConfigNodeRequest;
-    if (config.etag) req.etag = StringValue.create({ value: config.etag });
+    if (config.etag) req.etag = StringValue.fromJson(config.etag);
     if (config.displayName !== undefined)
-      req.displayName = StringValue.create({ value: config.displayName });
-    if (config.description !== undefined)
-      req.description = StringValue.create({ value: config.description });
+      req.displayName = StringValue.fromJson(config.displayName);
+    if (config.description !== undefined) req.description = StringValue.create(config.description);
     req.config = {
       oneofKind: 'emailServiceConfig',
       emailServiceConfig: config.marshal(),
     };
 
-    return new Promise<EmailProviderType>((resolve, reject) => {
+    return new Promise<EmailServiceConfigType>((resolve, reject) => {
       this.client.updateConfigNode(req, (err, response) => {
         if (err) reject(err);
         else
@@ -244,14 +246,14 @@ export class ConfigClient {
    * await sdk.deleteEmailServiceConfiguration(config);
    */
   deleteEmailServiceConfiguration(
-    config: EmailProviderType,
+    config: EmailServiceConfigType,
     bookmarks: string[] = [],
   ): Promise<boolean> {
     const req = {
       id: config.id,
       bookmarks,
     } as DeleteConfigNodeRequest;
-    if (config.etag !== undefined) req.etag = StringValue.create({ value: config.etag });
+    if (config.etag !== undefined) req.etag = StringValue.fromJson(config.etag);
 
     return new Promise<boolean>((resolve, reject) => {
       this.client.deleteConfigNode(req, (err, response) => {
@@ -374,7 +376,7 @@ export class ConfigClient {
         else
           try {
             if (response && response.configNode) {
-              const ret = ConfigurationFactory.createInstance(response.configNode) as AuthFlow;
+              const ret = ConfigNodeFactory.createInstance(response.configNode) as AuthFlow;
               resolve(ret);
             } else {
               reject(
@@ -400,11 +402,10 @@ export class ConfigClient {
       id: config.id,
       bookmarks,
     } as UpdateConfigNodeRequest;
-    if (config.etag !== undefined) req.etag = StringValue.create({ value: config.etag });
+    if (config.etag !== undefined) req.etag = StringValue.fromJson(config.etag);
     if (config.displayName !== undefined)
-      req.displayName = StringValue.create({ value: config.displayName });
-    if (config.description !== undefined)
-      req.description = StringValue.create({ value: config.description });
+      req.displayName = StringValue.fromJson(config.displayName);
+    if (config.description !== undefined) req.description = StringValue.create(config.description);
     req.config = {
       oneofKind: 'authFlowConfig',
       authFlowConfig: config.marshal(),
@@ -502,7 +503,7 @@ export class ConfigClient {
       req.displayName = StringValue.fromJson(config.displayName);
     }
     if (config.description !== undefined) {
-      req.description = StringValue.fromJson(config.description);
+      req.description = StringValue.create(config.description);
     }
 
     return new Promise((resolve, reject) => {
@@ -557,7 +558,7 @@ export class ConfigClient {
       this.client.readConfigNode({ id, bookmarks }, (err, response) => {
         if (err) reject(err);
         else if (response && response.configNode) {
-          const ret = ConfigurationFactory.createInstance(response.configNode) as WebAuthnProvider;
+          const ret = ConfigNodeFactory.createInstance(response.configNode) as WebAuthnProvider;
           resolve(ret);
         } else {
           reject(
@@ -591,8 +592,7 @@ export class ConfigClient {
     if (config.etag !== undefined) req.etag = StringValue.create({ value: config.etag });
     if (config.displayName !== undefined)
       req.displayName = StringValue.create({ value: config.displayName });
-    if (config.description !== undefined)
-      req.description = StringValue.create({ value: config.description });
+    if (config.description !== undefined) req.description = StringValue.create(config.description);
     req.config = {
       oneofKind: 'webauthnProviderConfig',
       webauthnProviderConfig: config.marshal(),
@@ -696,7 +696,7 @@ export class ConfigClient {
       req.displayName = StringValue.fromJson(config.displayName);
     }
     if (config.description !== undefined) {
-      req.description = StringValue.fromJson(config.description);
+      req.description = StringValue.create(config.description);
     }
 
     return new Promise((resolve, reject) => {
@@ -763,9 +763,7 @@ export class ConfigClient {
       this.client.readConfigNode({ id, bookmarks }, (err, response) => {
         if (err) reject(err);
         else if (response && response.configNode) {
-          const ret = ConfigurationFactory.createInstance(
-            response.configNode,
-          ) as AuthorizationPolicy;
+          const ret = ConfigNodeFactory.createInstance(response.configNode) as AuthorizationPolicy;
           resolve(ret);
         } else {
           reject(
@@ -799,8 +797,7 @@ export class ConfigClient {
     if (config.etag !== undefined) req.etag = StringValue.create({ value: config.etag });
     if (config.displayName !== undefined)
       req.displayName = StringValue.create({ value: config.displayName });
-    if (config.description !== undefined)
-      req.description = StringValue.create({ value: config.description });
+    if (config.description !== undefined) req.description = StringValue.create(config.description);
     req.config = {
       oneofKind: 'authorizationPolicyConfig',
       authorizationPolicyConfig: config.marshal(),
@@ -2316,7 +2313,7 @@ export class ConfigClient {
       req.displayName = StringValue.fromJson(oauth2Client.displayName);
     }
     if (oauth2Client.description !== undefined) {
-      req.description = StringValue.fromJson(oauth2Client.description);
+      req.description = StringValue.create(oauth2Client.description);
     }
     req.config = {
       oneofKind: 'oauth2ClientConfig',
@@ -2359,7 +2356,7 @@ export class ConfigClient {
         else
           try {
             if (response && response.configNode) {
-              const ret = ConfigurationFactory.createInstance(response.configNode) as OAuth2Client;
+              const ret = ConfigNodeFactory.createInstance(response.configNode) as OAuth2Client;
               resolve(ret);
             } else {
               reject(new SdkError(SdkErrorCode.SDK_CODE_1, 'config_error_read_oauth2client'));
@@ -2386,8 +2383,7 @@ export class ConfigClient {
     if (config.etag !== undefined) req.etag = StringValue.create({ value: config.etag });
     if (config.displayName !== undefined)
       req.displayName = StringValue.create({ value: config.displayName });
-    if (config.description !== undefined)
-      req.description = StringValue.create({ value: config.description });
+    if (config.description !== undefined) req.description = StringValue.create(config.description);
     req.config = {
       oneofKind: 'oauth2ClientConfig',
       oauth2ClientConfig: config.marshal(),

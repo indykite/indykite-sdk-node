@@ -45,7 +45,7 @@ describe('when the instance is created', () => {
     client = new AuthorizationPolicy({
       name: 'instance-name',
       displayName: 'Instance Name',
-      description: 'Instance description',
+      description: { value: 'Instance description' },
       policy,
       status: AuthorizationPolicyConfig_Status.ACTIVE,
     });
@@ -54,7 +54,7 @@ describe('when the instance is created', () => {
   it('creates a correct instance', () => {
     expect(client.name).toBe('instance-name');
     expect(client.displayName).toBe('Instance Name');
-    expect(client.description).toBe('Instance description');
+    expect(client.description?.value).toBe('Instance description');
     expect(client.policy).toBe(policy);
     expect(client.status).toBe(AuthorizationPolicyConfig_Status.ACTIVE);
     expect(client.tags).toEqual([]);

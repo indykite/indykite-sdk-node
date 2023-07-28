@@ -2,7 +2,7 @@
 // @generated from protobuf file "indykite/config/v1beta1/config_management_api.proto" (package "indykite.config.v1beta1", syntax proto3)
 // tslint:disable
 //
-// Copyright (c) 2020 IndyKite
+// Copyright (c) 2023 IndyKite
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -51,6 +51,10 @@ import type { ReadConfigNodeResponse } from "./config_management_api";
 import type { ReadConfigNodeRequest } from "./config_management_api";
 import type { CreateConfigNodeResponse } from "./config_management_api";
 import type { CreateConfigNodeRequest } from "./config_management_api";
+import type { UpdateTenantConfigResponse } from "./config_management_api";
+import type { UpdateTenantConfigRequest } from "./config_management_api";
+import type { ReadTenantConfigResponse } from "./config_management_api";
+import type { ReadTenantConfigRequest } from "./config_management_api";
 import type { DeleteTenantResponse } from "./config_management_api";
 import type { DeleteTenantRequest } from "./config_management_api";
 import type { UpdateTenantResponse } from "./config_management_api";
@@ -101,6 +105,10 @@ import type { ReadApplicationResponse } from "./config_management_api";
 import type { ReadApplicationRequest } from "./config_management_api";
 import type { CreateApplicationResponse } from "./config_management_api";
 import type { CreateApplicationRequest } from "./config_management_api";
+import type { UpdateApplicationSpaceConfigResponse } from "./config_management_api";
+import type { UpdateApplicationSpaceConfigRequest } from "./config_management_api";
+import type { ReadApplicationSpaceConfigResponse } from "./config_management_api";
+import type { ReadApplicationSpaceConfigRequest } from "./config_management_api";
 import type { DeleteApplicationSpaceResponse } from "./config_management_api";
 import type { DeleteApplicationSpaceRequest } from "./config_management_api";
 import type { UpdateApplicationSpaceResponse } from "./config_management_api";
@@ -111,6 +119,10 @@ import type { ReadApplicationSpaceResponse } from "./config_management_api";
 import type { ReadApplicationSpaceRequest } from "./config_management_api";
 import type { CreateApplicationSpaceResponse } from "./config_management_api";
 import type { CreateApplicationSpaceRequest } from "./config_management_api";
+import type { UpdateCustomerConfigResponse } from "./config_management_api";
+import type { UpdateCustomerConfigRequest } from "./config_management_api";
+import type { ReadCustomerConfigResponse } from "./config_management_api";
+import type { ReadCustomerConfigRequest } from "./config_management_api";
 import type { ReadCustomerResponse } from "./config_management_api";
 import type { ReadCustomerRequest } from "./config_management_api";
 import * as grpc from "@grpc/grpc-js";
@@ -129,6 +141,24 @@ export interface IConfigManagementAPIClient {
     readCustomer(input: ReadCustomerRequest, metadata: grpc.Metadata, callback: (err: grpc.ServiceError | null, value?: ReadCustomerResponse) => void): grpc.ClientUnaryCall;
     readCustomer(input: ReadCustomerRequest, options: grpc.CallOptions, callback: (err: grpc.ServiceError | null, value?: ReadCustomerResponse) => void): grpc.ClientUnaryCall;
     readCustomer(input: ReadCustomerRequest, callback: (err: grpc.ServiceError | null, value?: ReadCustomerResponse) => void): grpc.ClientUnaryCall;
+    /**
+     * ReadApplicationSpaceConfig reads the default settings of the ApplicationSpace.
+     *
+     * @generated from protobuf rpc: ReadCustomerConfig(indykite.config.v1beta1.ReadCustomerConfigRequest) returns (indykite.config.v1beta1.ReadCustomerConfigResponse);
+     */
+    readCustomerConfig(input: ReadCustomerConfigRequest, metadata: grpc.Metadata, options: grpc.CallOptions, callback: (err: grpc.ServiceError | null, value?: ReadCustomerConfigResponse) => void): grpc.ClientUnaryCall;
+    readCustomerConfig(input: ReadCustomerConfigRequest, metadata: grpc.Metadata, callback: (err: grpc.ServiceError | null, value?: ReadCustomerConfigResponse) => void): grpc.ClientUnaryCall;
+    readCustomerConfig(input: ReadCustomerConfigRequest, options: grpc.CallOptions, callback: (err: grpc.ServiceError | null, value?: ReadCustomerConfigResponse) => void): grpc.ClientUnaryCall;
+    readCustomerConfig(input: ReadCustomerConfigRequest, callback: (err: grpc.ServiceError | null, value?: ReadCustomerConfigResponse) => void): grpc.ClientUnaryCall;
+    /**
+     * UpdateApplicationSpaceConfig updates the default settings of the ApplicationSpace.
+     *
+     * @generated from protobuf rpc: UpdateCustomerConfig(indykite.config.v1beta1.UpdateCustomerConfigRequest) returns (indykite.config.v1beta1.UpdateCustomerConfigResponse);
+     */
+    updateCustomerConfig(input: UpdateCustomerConfigRequest, metadata: grpc.Metadata, options: grpc.CallOptions, callback: (err: grpc.ServiceError | null, value?: UpdateCustomerConfigResponse) => void): grpc.ClientUnaryCall;
+    updateCustomerConfig(input: UpdateCustomerConfigRequest, metadata: grpc.Metadata, callback: (err: grpc.ServiceError | null, value?: UpdateCustomerConfigResponse) => void): grpc.ClientUnaryCall;
+    updateCustomerConfig(input: UpdateCustomerConfigRequest, options: grpc.CallOptions, callback: (err: grpc.ServiceError | null, value?: UpdateCustomerConfigResponse) => void): grpc.ClientUnaryCall;
+    updateCustomerConfig(input: UpdateCustomerConfigRequest, callback: (err: grpc.ServiceError | null, value?: UpdateCustomerConfigResponse) => void): grpc.ClientUnaryCall;
     /**
      * CreateApplicationSpace for a customer.
      * For now, we do not support creating custom Issuers, so implicit Issuer is created automatically with this call.
@@ -174,6 +204,24 @@ export interface IConfigManagementAPIClient {
     deleteApplicationSpace(input: DeleteApplicationSpaceRequest, metadata: grpc.Metadata, callback: (err: grpc.ServiceError | null, value?: DeleteApplicationSpaceResponse) => void): grpc.ClientUnaryCall;
     deleteApplicationSpace(input: DeleteApplicationSpaceRequest, options: grpc.CallOptions, callback: (err: grpc.ServiceError | null, value?: DeleteApplicationSpaceResponse) => void): grpc.ClientUnaryCall;
     deleteApplicationSpace(input: DeleteApplicationSpaceRequest, callback: (err: grpc.ServiceError | null, value?: DeleteApplicationSpaceResponse) => void): grpc.ClientUnaryCall;
+    /**
+     * ReadApplicationSpaceConfig reads the default settings of the ApplicationSpace.
+     *
+     * @generated from protobuf rpc: ReadApplicationSpaceConfig(indykite.config.v1beta1.ReadApplicationSpaceConfigRequest) returns (indykite.config.v1beta1.ReadApplicationSpaceConfigResponse);
+     */
+    readApplicationSpaceConfig(input: ReadApplicationSpaceConfigRequest, metadata: grpc.Metadata, options: grpc.CallOptions, callback: (err: grpc.ServiceError | null, value?: ReadApplicationSpaceConfigResponse) => void): grpc.ClientUnaryCall;
+    readApplicationSpaceConfig(input: ReadApplicationSpaceConfigRequest, metadata: grpc.Metadata, callback: (err: grpc.ServiceError | null, value?: ReadApplicationSpaceConfigResponse) => void): grpc.ClientUnaryCall;
+    readApplicationSpaceConfig(input: ReadApplicationSpaceConfigRequest, options: grpc.CallOptions, callback: (err: grpc.ServiceError | null, value?: ReadApplicationSpaceConfigResponse) => void): grpc.ClientUnaryCall;
+    readApplicationSpaceConfig(input: ReadApplicationSpaceConfigRequest, callback: (err: grpc.ServiceError | null, value?: ReadApplicationSpaceConfigResponse) => void): grpc.ClientUnaryCall;
+    /**
+     * UpdateApplicationSpaceConfig updates the default settings of the ApplicationSpace.
+     *
+     * @generated from protobuf rpc: UpdateApplicationSpaceConfig(indykite.config.v1beta1.UpdateApplicationSpaceConfigRequest) returns (indykite.config.v1beta1.UpdateApplicationSpaceConfigResponse);
+     */
+    updateApplicationSpaceConfig(input: UpdateApplicationSpaceConfigRequest, metadata: grpc.Metadata, options: grpc.CallOptions, callback: (err: grpc.ServiceError | null, value?: UpdateApplicationSpaceConfigResponse) => void): grpc.ClientUnaryCall;
+    updateApplicationSpaceConfig(input: UpdateApplicationSpaceConfigRequest, metadata: grpc.Metadata, callback: (err: grpc.ServiceError | null, value?: UpdateApplicationSpaceConfigResponse) => void): grpc.ClientUnaryCall;
+    updateApplicationSpaceConfig(input: UpdateApplicationSpaceConfigRequest, options: grpc.CallOptions, callback: (err: grpc.ServiceError | null, value?: UpdateApplicationSpaceConfigResponse) => void): grpc.ClientUnaryCall;
+    updateApplicationSpaceConfig(input: UpdateApplicationSpaceConfigRequest, callback: (err: grpc.ServiceError | null, value?: UpdateApplicationSpaceConfigResponse) => void): grpc.ClientUnaryCall;
     /**
      * CreateApplication in an Application Space.
      *
@@ -402,6 +450,24 @@ export interface IConfigManagementAPIClient {
     deleteTenant(input: DeleteTenantRequest, options: grpc.CallOptions, callback: (err: grpc.ServiceError | null, value?: DeleteTenantResponse) => void): grpc.ClientUnaryCall;
     deleteTenant(input: DeleteTenantRequest, callback: (err: grpc.ServiceError | null, value?: DeleteTenantResponse) => void): grpc.ClientUnaryCall;
     /**
+     * ReadTenantConfig reads the default settings of the Tenant.
+     *
+     * @generated from protobuf rpc: ReadTenantConfig(indykite.config.v1beta1.ReadTenantConfigRequest) returns (indykite.config.v1beta1.ReadTenantConfigResponse);
+     */
+    readTenantConfig(input: ReadTenantConfigRequest, metadata: grpc.Metadata, options: grpc.CallOptions, callback: (err: grpc.ServiceError | null, value?: ReadTenantConfigResponse) => void): grpc.ClientUnaryCall;
+    readTenantConfig(input: ReadTenantConfigRequest, metadata: grpc.Metadata, callback: (err: grpc.ServiceError | null, value?: ReadTenantConfigResponse) => void): grpc.ClientUnaryCall;
+    readTenantConfig(input: ReadTenantConfigRequest, options: grpc.CallOptions, callback: (err: grpc.ServiceError | null, value?: ReadTenantConfigResponse) => void): grpc.ClientUnaryCall;
+    readTenantConfig(input: ReadTenantConfigRequest, callback: (err: grpc.ServiceError | null, value?: ReadTenantConfigResponse) => void): grpc.ClientUnaryCall;
+    /**
+     * UpdateTenantConfig updates the default settings of the Tenant.
+     *
+     * @generated from protobuf rpc: UpdateTenantConfig(indykite.config.v1beta1.UpdateTenantConfigRequest) returns (indykite.config.v1beta1.UpdateTenantConfigResponse);
+     */
+    updateTenantConfig(input: UpdateTenantConfigRequest, metadata: grpc.Metadata, options: grpc.CallOptions, callback: (err: grpc.ServiceError | null, value?: UpdateTenantConfigResponse) => void): grpc.ClientUnaryCall;
+    updateTenantConfig(input: UpdateTenantConfigRequest, metadata: grpc.Metadata, callback: (err: grpc.ServiceError | null, value?: UpdateTenantConfigResponse) => void): grpc.ClientUnaryCall;
+    updateTenantConfig(input: UpdateTenantConfigRequest, options: grpc.CallOptions, callback: (err: grpc.ServiceError | null, value?: UpdateTenantConfigResponse) => void): grpc.ClientUnaryCall;
+    updateTenantConfig(input: UpdateTenantConfigRequest, callback: (err: grpc.ServiceError | null, value?: UpdateTenantConfigResponse) => void): grpc.ClientUnaryCall;
+    /**
      * CreateConfigNode on Customer, Application Space or Tenant level.
      * All generic configuration nodes are created by this endpoint.
      *
@@ -568,6 +634,24 @@ export class ConfigManagementAPIClient extends grpc.Client implements IConfigMan
         return this.makeUnaryRequest<ReadCustomerRequest, ReadCustomerResponse>(`/${ConfigManagementAPI.typeName}/${method.name}`, (value: ReadCustomerRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): ReadCustomerResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), (options as any), (callback as any));
     }
     /**
+     * ReadApplicationSpaceConfig reads the default settings of the ApplicationSpace.
+     *
+     * @generated from protobuf rpc: ReadCustomerConfig(indykite.config.v1beta1.ReadCustomerConfigRequest) returns (indykite.config.v1beta1.ReadCustomerConfigResponse);
+     */
+    readCustomerConfig(input: ReadCustomerConfigRequest, metadata: grpc.Metadata | grpc.CallOptions | ((err: grpc.ServiceError | null, value?: ReadCustomerConfigResponse) => void), options?: grpc.CallOptions | ((err: grpc.ServiceError | null, value?: ReadCustomerConfigResponse) => void), callback?: ((err: grpc.ServiceError | null, value?: ReadCustomerConfigResponse) => void)): grpc.ClientUnaryCall {
+        const method = ConfigManagementAPI.methods[1];
+        return this.makeUnaryRequest<ReadCustomerConfigRequest, ReadCustomerConfigResponse>(`/${ConfigManagementAPI.typeName}/${method.name}`, (value: ReadCustomerConfigRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): ReadCustomerConfigResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), (options as any), (callback as any));
+    }
+    /**
+     * UpdateApplicationSpaceConfig updates the default settings of the ApplicationSpace.
+     *
+     * @generated from protobuf rpc: UpdateCustomerConfig(indykite.config.v1beta1.UpdateCustomerConfigRequest) returns (indykite.config.v1beta1.UpdateCustomerConfigResponse);
+     */
+    updateCustomerConfig(input: UpdateCustomerConfigRequest, metadata: grpc.Metadata | grpc.CallOptions | ((err: grpc.ServiceError | null, value?: UpdateCustomerConfigResponse) => void), options?: grpc.CallOptions | ((err: grpc.ServiceError | null, value?: UpdateCustomerConfigResponse) => void), callback?: ((err: grpc.ServiceError | null, value?: UpdateCustomerConfigResponse) => void)): grpc.ClientUnaryCall {
+        const method = ConfigManagementAPI.methods[2];
+        return this.makeUnaryRequest<UpdateCustomerConfigRequest, UpdateCustomerConfigResponse>(`/${ConfigManagementAPI.typeName}/${method.name}`, (value: UpdateCustomerConfigRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): UpdateCustomerConfigResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), (options as any), (callback as any));
+    }
+    /**
      * CreateApplicationSpace for a customer.
      * For now, we do not support creating custom Issuers, so implicit Issuer is created automatically with this call.
      * To get IssuerID, which is required to create Tenant later, use ReadApplicationSpace.
@@ -575,7 +659,7 @@ export class ConfigManagementAPIClient extends grpc.Client implements IConfigMan
      * @generated from protobuf rpc: CreateApplicationSpace(indykite.config.v1beta1.CreateApplicationSpaceRequest) returns (indykite.config.v1beta1.CreateApplicationSpaceResponse);
      */
     createApplicationSpace(input: CreateApplicationSpaceRequest, metadata: grpc.Metadata | grpc.CallOptions | ((err: grpc.ServiceError | null, value?: CreateApplicationSpaceResponse) => void), options?: grpc.CallOptions | ((err: grpc.ServiceError | null, value?: CreateApplicationSpaceResponse) => void), callback?: ((err: grpc.ServiceError | null, value?: CreateApplicationSpaceResponse) => void)): grpc.ClientUnaryCall {
-        const method = ConfigManagementAPI.methods[1];
+        const method = ConfigManagementAPI.methods[3];
         return this.makeUnaryRequest<CreateApplicationSpaceRequest, CreateApplicationSpaceResponse>(`/${ConfigManagementAPI.typeName}/${method.name}`, (value: CreateApplicationSpaceRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): CreateApplicationSpaceResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), (options as any), (callback as any));
     }
     /**
@@ -584,7 +668,7 @@ export class ConfigManagementAPIClient extends grpc.Client implements IConfigMan
      * @generated from protobuf rpc: ReadApplicationSpace(indykite.config.v1beta1.ReadApplicationSpaceRequest) returns (indykite.config.v1beta1.ReadApplicationSpaceResponse);
      */
     readApplicationSpace(input: ReadApplicationSpaceRequest, metadata: grpc.Metadata | grpc.CallOptions | ((err: grpc.ServiceError | null, value?: ReadApplicationSpaceResponse) => void), options?: grpc.CallOptions | ((err: grpc.ServiceError | null, value?: ReadApplicationSpaceResponse) => void), callback?: ((err: grpc.ServiceError | null, value?: ReadApplicationSpaceResponse) => void)): grpc.ClientUnaryCall {
-        const method = ConfigManagementAPI.methods[2];
+        const method = ConfigManagementAPI.methods[4];
         return this.makeUnaryRequest<ReadApplicationSpaceRequest, ReadApplicationSpaceResponse>(`/${ConfigManagementAPI.typeName}/${method.name}`, (value: ReadApplicationSpaceRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): ReadApplicationSpaceResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), (options as any), (callback as any));
     }
     /**
@@ -593,7 +677,7 @@ export class ConfigManagementAPIClient extends grpc.Client implements IConfigMan
      * @generated from protobuf rpc: ListApplicationSpaces(indykite.config.v1beta1.ListApplicationSpacesRequest) returns (stream indykite.config.v1beta1.ListApplicationSpacesResponse);
      */
     listApplicationSpaces(input: ListApplicationSpacesRequest, metadata?: grpc.Metadata | grpc.CallOptions, options?: grpc.CallOptions): grpc.ClientReadableStream<ListApplicationSpacesResponse> {
-        const method = ConfigManagementAPI.methods[3];
+        const method = ConfigManagementAPI.methods[5];
         return this.makeServerStreamRequest<ListApplicationSpacesRequest, ListApplicationSpacesResponse>(`/${ConfigManagementAPI.typeName}/${method.name}`, (value: ListApplicationSpacesRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): ListApplicationSpacesResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), options);
     }
     /**
@@ -602,7 +686,7 @@ export class ConfigManagementAPIClient extends grpc.Client implements IConfigMan
      * @generated from protobuf rpc: UpdateApplicationSpace(indykite.config.v1beta1.UpdateApplicationSpaceRequest) returns (indykite.config.v1beta1.UpdateApplicationSpaceResponse);
      */
     updateApplicationSpace(input: UpdateApplicationSpaceRequest, metadata: grpc.Metadata | grpc.CallOptions | ((err: grpc.ServiceError | null, value?: UpdateApplicationSpaceResponse) => void), options?: grpc.CallOptions | ((err: grpc.ServiceError | null, value?: UpdateApplicationSpaceResponse) => void), callback?: ((err: grpc.ServiceError | null, value?: UpdateApplicationSpaceResponse) => void)): grpc.ClientUnaryCall {
-        const method = ConfigManagementAPI.methods[4];
+        const method = ConfigManagementAPI.methods[6];
         return this.makeUnaryRequest<UpdateApplicationSpaceRequest, UpdateApplicationSpaceResponse>(`/${ConfigManagementAPI.typeName}/${method.name}`, (value: UpdateApplicationSpaceRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): UpdateApplicationSpaceResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), (options as any), (callback as any));
     }
     /**
@@ -611,8 +695,26 @@ export class ConfigManagementAPIClient extends grpc.Client implements IConfigMan
      * @generated from protobuf rpc: DeleteApplicationSpace(indykite.config.v1beta1.DeleteApplicationSpaceRequest) returns (indykite.config.v1beta1.DeleteApplicationSpaceResponse);
      */
     deleteApplicationSpace(input: DeleteApplicationSpaceRequest, metadata: grpc.Metadata | grpc.CallOptions | ((err: grpc.ServiceError | null, value?: DeleteApplicationSpaceResponse) => void), options?: grpc.CallOptions | ((err: grpc.ServiceError | null, value?: DeleteApplicationSpaceResponse) => void), callback?: ((err: grpc.ServiceError | null, value?: DeleteApplicationSpaceResponse) => void)): grpc.ClientUnaryCall {
-        const method = ConfigManagementAPI.methods[5];
+        const method = ConfigManagementAPI.methods[7];
         return this.makeUnaryRequest<DeleteApplicationSpaceRequest, DeleteApplicationSpaceResponse>(`/${ConfigManagementAPI.typeName}/${method.name}`, (value: DeleteApplicationSpaceRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): DeleteApplicationSpaceResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), (options as any), (callback as any));
+    }
+    /**
+     * ReadApplicationSpaceConfig reads the default settings of the ApplicationSpace.
+     *
+     * @generated from protobuf rpc: ReadApplicationSpaceConfig(indykite.config.v1beta1.ReadApplicationSpaceConfigRequest) returns (indykite.config.v1beta1.ReadApplicationSpaceConfigResponse);
+     */
+    readApplicationSpaceConfig(input: ReadApplicationSpaceConfigRequest, metadata: grpc.Metadata | grpc.CallOptions | ((err: grpc.ServiceError | null, value?: ReadApplicationSpaceConfigResponse) => void), options?: grpc.CallOptions | ((err: grpc.ServiceError | null, value?: ReadApplicationSpaceConfigResponse) => void), callback?: ((err: grpc.ServiceError | null, value?: ReadApplicationSpaceConfigResponse) => void)): grpc.ClientUnaryCall {
+        const method = ConfigManagementAPI.methods[8];
+        return this.makeUnaryRequest<ReadApplicationSpaceConfigRequest, ReadApplicationSpaceConfigResponse>(`/${ConfigManagementAPI.typeName}/${method.name}`, (value: ReadApplicationSpaceConfigRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): ReadApplicationSpaceConfigResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), (options as any), (callback as any));
+    }
+    /**
+     * UpdateApplicationSpaceConfig updates the default settings of the ApplicationSpace.
+     *
+     * @generated from protobuf rpc: UpdateApplicationSpaceConfig(indykite.config.v1beta1.UpdateApplicationSpaceConfigRequest) returns (indykite.config.v1beta1.UpdateApplicationSpaceConfigResponse);
+     */
+    updateApplicationSpaceConfig(input: UpdateApplicationSpaceConfigRequest, metadata: grpc.Metadata | grpc.CallOptions | ((err: grpc.ServiceError | null, value?: UpdateApplicationSpaceConfigResponse) => void), options?: grpc.CallOptions | ((err: grpc.ServiceError | null, value?: UpdateApplicationSpaceConfigResponse) => void), callback?: ((err: grpc.ServiceError | null, value?: UpdateApplicationSpaceConfigResponse) => void)): grpc.ClientUnaryCall {
+        const method = ConfigManagementAPI.methods[9];
+        return this.makeUnaryRequest<UpdateApplicationSpaceConfigRequest, UpdateApplicationSpaceConfigResponse>(`/${ConfigManagementAPI.typeName}/${method.name}`, (value: UpdateApplicationSpaceConfigRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): UpdateApplicationSpaceConfigResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), (options as any), (callback as any));
     }
     /**
      * CreateApplication in an Application Space.
@@ -620,7 +722,7 @@ export class ConfigManagementAPIClient extends grpc.Client implements IConfigMan
      * @generated from protobuf rpc: CreateApplication(indykite.config.v1beta1.CreateApplicationRequest) returns (indykite.config.v1beta1.CreateApplicationResponse);
      */
     createApplication(input: CreateApplicationRequest, metadata: grpc.Metadata | grpc.CallOptions | ((err: grpc.ServiceError | null, value?: CreateApplicationResponse) => void), options?: grpc.CallOptions | ((err: grpc.ServiceError | null, value?: CreateApplicationResponse) => void), callback?: ((err: grpc.ServiceError | null, value?: CreateApplicationResponse) => void)): grpc.ClientUnaryCall {
-        const method = ConfigManagementAPI.methods[6];
+        const method = ConfigManagementAPI.methods[10];
         return this.makeUnaryRequest<CreateApplicationRequest, CreateApplicationResponse>(`/${ConfigManagementAPI.typeName}/${method.name}`, (value: CreateApplicationRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): CreateApplicationResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), (options as any), (callback as any));
     }
     /**
@@ -629,7 +731,7 @@ export class ConfigManagementAPIClient extends grpc.Client implements IConfigMan
      * @generated from protobuf rpc: ReadApplication(indykite.config.v1beta1.ReadApplicationRequest) returns (indykite.config.v1beta1.ReadApplicationResponse);
      */
     readApplication(input: ReadApplicationRequest, metadata: grpc.Metadata | grpc.CallOptions | ((err: grpc.ServiceError | null, value?: ReadApplicationResponse) => void), options?: grpc.CallOptions | ((err: grpc.ServiceError | null, value?: ReadApplicationResponse) => void), callback?: ((err: grpc.ServiceError | null, value?: ReadApplicationResponse) => void)): grpc.ClientUnaryCall {
-        const method = ConfigManagementAPI.methods[7];
+        const method = ConfigManagementAPI.methods[11];
         return this.makeUnaryRequest<ReadApplicationRequest, ReadApplicationResponse>(`/${ConfigManagementAPI.typeName}/${method.name}`, (value: ReadApplicationRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): ReadApplicationResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), (options as any), (callback as any));
     }
     /**
@@ -638,7 +740,7 @@ export class ConfigManagementAPIClient extends grpc.Client implements IConfigMan
      * @generated from protobuf rpc: ListApplications(indykite.config.v1beta1.ListApplicationsRequest) returns (stream indykite.config.v1beta1.ListApplicationsResponse);
      */
     listApplications(input: ListApplicationsRequest, metadata?: grpc.Metadata | grpc.CallOptions, options?: grpc.CallOptions): grpc.ClientReadableStream<ListApplicationsResponse> {
-        const method = ConfigManagementAPI.methods[8];
+        const method = ConfigManagementAPI.methods[12];
         return this.makeServerStreamRequest<ListApplicationsRequest, ListApplicationsResponse>(`/${ConfigManagementAPI.typeName}/${method.name}`, (value: ListApplicationsRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): ListApplicationsResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), options);
     }
     /**
@@ -647,7 +749,7 @@ export class ConfigManagementAPIClient extends grpc.Client implements IConfigMan
      * @generated from protobuf rpc: UpdateApplication(indykite.config.v1beta1.UpdateApplicationRequest) returns (indykite.config.v1beta1.UpdateApplicationResponse);
      */
     updateApplication(input: UpdateApplicationRequest, metadata: grpc.Metadata | grpc.CallOptions | ((err: grpc.ServiceError | null, value?: UpdateApplicationResponse) => void), options?: grpc.CallOptions | ((err: grpc.ServiceError | null, value?: UpdateApplicationResponse) => void), callback?: ((err: grpc.ServiceError | null, value?: UpdateApplicationResponse) => void)): grpc.ClientUnaryCall {
-        const method = ConfigManagementAPI.methods[9];
+        const method = ConfigManagementAPI.methods[13];
         return this.makeUnaryRequest<UpdateApplicationRequest, UpdateApplicationResponse>(`/${ConfigManagementAPI.typeName}/${method.name}`, (value: UpdateApplicationRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): UpdateApplicationResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), (options as any), (callback as any));
     }
     /**
@@ -656,7 +758,7 @@ export class ConfigManagementAPIClient extends grpc.Client implements IConfigMan
      * @generated from protobuf rpc: DeleteApplication(indykite.config.v1beta1.DeleteApplicationRequest) returns (indykite.config.v1beta1.DeleteApplicationResponse);
      */
     deleteApplication(input: DeleteApplicationRequest, metadata: grpc.Metadata | grpc.CallOptions | ((err: grpc.ServiceError | null, value?: DeleteApplicationResponse) => void), options?: grpc.CallOptions | ((err: grpc.ServiceError | null, value?: DeleteApplicationResponse) => void), callback?: ((err: grpc.ServiceError | null, value?: DeleteApplicationResponse) => void)): grpc.ClientUnaryCall {
-        const method = ConfigManagementAPI.methods[10];
+        const method = ConfigManagementAPI.methods[14];
         return this.makeUnaryRequest<DeleteApplicationRequest, DeleteApplicationResponse>(`/${ConfigManagementAPI.typeName}/${method.name}`, (value: DeleteApplicationRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): DeleteApplicationResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), (options as any), (callback as any));
     }
     /**
@@ -665,7 +767,7 @@ export class ConfigManagementAPIClient extends grpc.Client implements IConfigMan
      * @generated from protobuf rpc: CreateApplicationAgent(indykite.config.v1beta1.CreateApplicationAgentRequest) returns (indykite.config.v1beta1.CreateApplicationAgentResponse);
      */
     createApplicationAgent(input: CreateApplicationAgentRequest, metadata: grpc.Metadata | grpc.CallOptions | ((err: grpc.ServiceError | null, value?: CreateApplicationAgentResponse) => void), options?: grpc.CallOptions | ((err: grpc.ServiceError | null, value?: CreateApplicationAgentResponse) => void), callback?: ((err: grpc.ServiceError | null, value?: CreateApplicationAgentResponse) => void)): grpc.ClientUnaryCall {
-        const method = ConfigManagementAPI.methods[11];
+        const method = ConfigManagementAPI.methods[15];
         return this.makeUnaryRequest<CreateApplicationAgentRequest, CreateApplicationAgentResponse>(`/${ConfigManagementAPI.typeName}/${method.name}`, (value: CreateApplicationAgentRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): CreateApplicationAgentResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), (options as any), (callback as any));
     }
     /**
@@ -674,7 +776,7 @@ export class ConfigManagementAPIClient extends grpc.Client implements IConfigMan
      * @generated from protobuf rpc: ReadApplicationAgent(indykite.config.v1beta1.ReadApplicationAgentRequest) returns (indykite.config.v1beta1.ReadApplicationAgentResponse);
      */
     readApplicationAgent(input: ReadApplicationAgentRequest, metadata: grpc.Metadata | grpc.CallOptions | ((err: grpc.ServiceError | null, value?: ReadApplicationAgentResponse) => void), options?: grpc.CallOptions | ((err: grpc.ServiceError | null, value?: ReadApplicationAgentResponse) => void), callback?: ((err: grpc.ServiceError | null, value?: ReadApplicationAgentResponse) => void)): grpc.ClientUnaryCall {
-        const method = ConfigManagementAPI.methods[12];
+        const method = ConfigManagementAPI.methods[16];
         return this.makeUnaryRequest<ReadApplicationAgentRequest, ReadApplicationAgentResponse>(`/${ConfigManagementAPI.typeName}/${method.name}`, (value: ReadApplicationAgentRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): ReadApplicationAgentResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), (options as any), (callback as any));
     }
     /**
@@ -684,7 +786,7 @@ export class ConfigManagementAPIClient extends grpc.Client implements IConfigMan
      * @generated from protobuf rpc: ListApplicationAgents(indykite.config.v1beta1.ListApplicationAgentsRequest) returns (stream indykite.config.v1beta1.ListApplicationAgentsResponse);
      */
     listApplicationAgents(input: ListApplicationAgentsRequest, metadata?: grpc.Metadata | grpc.CallOptions, options?: grpc.CallOptions): grpc.ClientReadableStream<ListApplicationAgentsResponse> {
-        const method = ConfigManagementAPI.methods[13];
+        const method = ConfigManagementAPI.methods[17];
         return this.makeServerStreamRequest<ListApplicationAgentsRequest, ListApplicationAgentsResponse>(`/${ConfigManagementAPI.typeName}/${method.name}`, (value: ListApplicationAgentsRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): ListApplicationAgentsResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), options);
     }
     /**
@@ -693,7 +795,7 @@ export class ConfigManagementAPIClient extends grpc.Client implements IConfigMan
      * @generated from protobuf rpc: UpdateApplicationAgent(indykite.config.v1beta1.UpdateApplicationAgentRequest) returns (indykite.config.v1beta1.UpdateApplicationAgentResponse);
      */
     updateApplicationAgent(input: UpdateApplicationAgentRequest, metadata: grpc.Metadata | grpc.CallOptions | ((err: grpc.ServiceError | null, value?: UpdateApplicationAgentResponse) => void), options?: grpc.CallOptions | ((err: grpc.ServiceError | null, value?: UpdateApplicationAgentResponse) => void), callback?: ((err: grpc.ServiceError | null, value?: UpdateApplicationAgentResponse) => void)): grpc.ClientUnaryCall {
-        const method = ConfigManagementAPI.methods[14];
+        const method = ConfigManagementAPI.methods[18];
         return this.makeUnaryRequest<UpdateApplicationAgentRequest, UpdateApplicationAgentResponse>(`/${ConfigManagementAPI.typeName}/${method.name}`, (value: UpdateApplicationAgentRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): UpdateApplicationAgentResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), (options as any), (callback as any));
     }
     /**
@@ -702,7 +804,7 @@ export class ConfigManagementAPIClient extends grpc.Client implements IConfigMan
      * @generated from protobuf rpc: DeleteApplicationAgent(indykite.config.v1beta1.DeleteApplicationAgentRequest) returns (indykite.config.v1beta1.DeleteApplicationAgentResponse);
      */
     deleteApplicationAgent(input: DeleteApplicationAgentRequest, metadata: grpc.Metadata | grpc.CallOptions | ((err: grpc.ServiceError | null, value?: DeleteApplicationAgentResponse) => void), options?: grpc.CallOptions | ((err: grpc.ServiceError | null, value?: DeleteApplicationAgentResponse) => void), callback?: ((err: grpc.ServiceError | null, value?: DeleteApplicationAgentResponse) => void)): grpc.ClientUnaryCall {
-        const method = ConfigManagementAPI.methods[15];
+        const method = ConfigManagementAPI.methods[19];
         return this.makeUnaryRequest<DeleteApplicationAgentRequest, DeleteApplicationAgentResponse>(`/${ConfigManagementAPI.typeName}/${method.name}`, (value: DeleteApplicationAgentRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): DeleteApplicationAgentResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), (options as any), (callback as any));
     }
     /**
@@ -714,7 +816,7 @@ export class ConfigManagementAPIClient extends grpc.Client implements IConfigMan
      * @generated from protobuf rpc: RegisterApplicationAgentCredential(indykite.config.v1beta1.RegisterApplicationAgentCredentialRequest) returns (indykite.config.v1beta1.RegisterApplicationAgentCredentialResponse);
      */
     registerApplicationAgentCredential(input: RegisterApplicationAgentCredentialRequest, metadata: grpc.Metadata | grpc.CallOptions | ((err: grpc.ServiceError | null, value?: RegisterApplicationAgentCredentialResponse) => void), options?: grpc.CallOptions | ((err: grpc.ServiceError | null, value?: RegisterApplicationAgentCredentialResponse) => void), callback?: ((err: grpc.ServiceError | null, value?: RegisterApplicationAgentCredentialResponse) => void)): grpc.ClientUnaryCall {
-        const method = ConfigManagementAPI.methods[16];
+        const method = ConfigManagementAPI.methods[20];
         return this.makeUnaryRequest<RegisterApplicationAgentCredentialRequest, RegisterApplicationAgentCredentialResponse>(`/${ConfigManagementAPI.typeName}/${method.name}`, (value: RegisterApplicationAgentCredentialRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): RegisterApplicationAgentCredentialResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), (options as any), (callback as any));
     }
     /**
@@ -723,7 +825,7 @@ export class ConfigManagementAPIClient extends grpc.Client implements IConfigMan
      * @generated from protobuf rpc: ReadApplicationAgentCredential(indykite.config.v1beta1.ReadApplicationAgentCredentialRequest) returns (indykite.config.v1beta1.ReadApplicationAgentCredentialResponse);
      */
     readApplicationAgentCredential(input: ReadApplicationAgentCredentialRequest, metadata: grpc.Metadata | grpc.CallOptions | ((err: grpc.ServiceError | null, value?: ReadApplicationAgentCredentialResponse) => void), options?: grpc.CallOptions | ((err: grpc.ServiceError | null, value?: ReadApplicationAgentCredentialResponse) => void), callback?: ((err: grpc.ServiceError | null, value?: ReadApplicationAgentCredentialResponse) => void)): grpc.ClientUnaryCall {
-        const method = ConfigManagementAPI.methods[17];
+        const method = ConfigManagementAPI.methods[21];
         return this.makeUnaryRequest<ReadApplicationAgentCredentialRequest, ReadApplicationAgentCredentialResponse>(`/${ConfigManagementAPI.typeName}/${method.name}`, (value: ReadApplicationAgentCredentialRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): ReadApplicationAgentCredentialResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), (options as any), (callback as any));
     }
     /**
@@ -732,7 +834,7 @@ export class ConfigManagementAPIClient extends grpc.Client implements IConfigMan
      * @generated from protobuf rpc: DeleteApplicationAgentCredential(indykite.config.v1beta1.DeleteApplicationAgentCredentialRequest) returns (indykite.config.v1beta1.DeleteApplicationAgentCredentialResponse);
      */
     deleteApplicationAgentCredential(input: DeleteApplicationAgentCredentialRequest, metadata: grpc.Metadata | grpc.CallOptions | ((err: grpc.ServiceError | null, value?: DeleteApplicationAgentCredentialResponse) => void), options?: grpc.CallOptions | ((err: grpc.ServiceError | null, value?: DeleteApplicationAgentCredentialResponse) => void), callback?: ((err: grpc.ServiceError | null, value?: DeleteApplicationAgentCredentialResponse) => void)): grpc.ClientUnaryCall {
-        const method = ConfigManagementAPI.methods[18];
+        const method = ConfigManagementAPI.methods[22];
         return this.makeUnaryRequest<DeleteApplicationAgentCredentialRequest, DeleteApplicationAgentCredentialResponse>(`/${ConfigManagementAPI.typeName}/${method.name}`, (value: DeleteApplicationAgentCredentialRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): DeleteApplicationAgentCredentialResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), (options as any), (callback as any));
     }
     /**
@@ -741,7 +843,7 @@ export class ConfigManagementAPIClient extends grpc.Client implements IConfigMan
      * @generated from protobuf rpc: CreateServiceAccount(indykite.config.v1beta1.CreateServiceAccountRequest) returns (indykite.config.v1beta1.CreateServiceAccountResponse);
      */
     createServiceAccount(input: CreateServiceAccountRequest, metadata: grpc.Metadata | grpc.CallOptions | ((err: grpc.ServiceError | null, value?: CreateServiceAccountResponse) => void), options?: grpc.CallOptions | ((err: grpc.ServiceError | null, value?: CreateServiceAccountResponse) => void), callback?: ((err: grpc.ServiceError | null, value?: CreateServiceAccountResponse) => void)): grpc.ClientUnaryCall {
-        const method = ConfigManagementAPI.methods[19];
+        const method = ConfigManagementAPI.methods[23];
         return this.makeUnaryRequest<CreateServiceAccountRequest, CreateServiceAccountResponse>(`/${ConfigManagementAPI.typeName}/${method.name}`, (value: CreateServiceAccountRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): CreateServiceAccountResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), (options as any), (callback as any));
     }
     /**
@@ -750,7 +852,7 @@ export class ConfigManagementAPIClient extends grpc.Client implements IConfigMan
      * @generated from protobuf rpc: ReadServiceAccount(indykite.config.v1beta1.ReadServiceAccountRequest) returns (indykite.config.v1beta1.ReadServiceAccountResponse);
      */
     readServiceAccount(input: ReadServiceAccountRequest, metadata: grpc.Metadata | grpc.CallOptions | ((err: grpc.ServiceError | null, value?: ReadServiceAccountResponse) => void), options?: grpc.CallOptions | ((err: grpc.ServiceError | null, value?: ReadServiceAccountResponse) => void), callback?: ((err: grpc.ServiceError | null, value?: ReadServiceAccountResponse) => void)): grpc.ClientUnaryCall {
-        const method = ConfigManagementAPI.methods[20];
+        const method = ConfigManagementAPI.methods[24];
         return this.makeUnaryRequest<ReadServiceAccountRequest, ReadServiceAccountResponse>(`/${ConfigManagementAPI.typeName}/${method.name}`, (value: ReadServiceAccountRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): ReadServiceAccountResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), (options as any), (callback as any));
     }
     /**
@@ -759,7 +861,7 @@ export class ConfigManagementAPIClient extends grpc.Client implements IConfigMan
      * @generated from protobuf rpc: UpdateServiceAccount(indykite.config.v1beta1.UpdateServiceAccountRequest) returns (indykite.config.v1beta1.UpdateServiceAccountResponse);
      */
     updateServiceAccount(input: UpdateServiceAccountRequest, metadata: grpc.Metadata | grpc.CallOptions | ((err: grpc.ServiceError | null, value?: UpdateServiceAccountResponse) => void), options?: grpc.CallOptions | ((err: grpc.ServiceError | null, value?: UpdateServiceAccountResponse) => void), callback?: ((err: grpc.ServiceError | null, value?: UpdateServiceAccountResponse) => void)): grpc.ClientUnaryCall {
-        const method = ConfigManagementAPI.methods[21];
+        const method = ConfigManagementAPI.methods[25];
         return this.makeUnaryRequest<UpdateServiceAccountRequest, UpdateServiceAccountResponse>(`/${ConfigManagementAPI.typeName}/${method.name}`, (value: UpdateServiceAccountRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): UpdateServiceAccountResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), (options as any), (callback as any));
     }
     /**
@@ -768,7 +870,7 @@ export class ConfigManagementAPIClient extends grpc.Client implements IConfigMan
      * @generated from protobuf rpc: DeleteServiceAccount(indykite.config.v1beta1.DeleteServiceAccountRequest) returns (indykite.config.v1beta1.DeleteServiceAccountResponse);
      */
     deleteServiceAccount(input: DeleteServiceAccountRequest, metadata: grpc.Metadata | grpc.CallOptions | ((err: grpc.ServiceError | null, value?: DeleteServiceAccountResponse) => void), options?: grpc.CallOptions | ((err: grpc.ServiceError | null, value?: DeleteServiceAccountResponse) => void), callback?: ((err: grpc.ServiceError | null, value?: DeleteServiceAccountResponse) => void)): grpc.ClientUnaryCall {
-        const method = ConfigManagementAPI.methods[22];
+        const method = ConfigManagementAPI.methods[26];
         return this.makeUnaryRequest<DeleteServiceAccountRequest, DeleteServiceAccountResponse>(`/${ConfigManagementAPI.typeName}/${method.name}`, (value: DeleteServiceAccountRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): DeleteServiceAccountResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), (options as any), (callback as any));
     }
     /**
@@ -780,7 +882,7 @@ export class ConfigManagementAPIClient extends grpc.Client implements IConfigMan
      * @generated from protobuf rpc: RegisterServiceAccountCredential(indykite.config.v1beta1.RegisterServiceAccountCredentialRequest) returns (indykite.config.v1beta1.RegisterServiceAccountCredentialResponse);
      */
     registerServiceAccountCredential(input: RegisterServiceAccountCredentialRequest, metadata: grpc.Metadata | grpc.CallOptions | ((err: grpc.ServiceError | null, value?: RegisterServiceAccountCredentialResponse) => void), options?: grpc.CallOptions | ((err: grpc.ServiceError | null, value?: RegisterServiceAccountCredentialResponse) => void), callback?: ((err: grpc.ServiceError | null, value?: RegisterServiceAccountCredentialResponse) => void)): grpc.ClientUnaryCall {
-        const method = ConfigManagementAPI.methods[23];
+        const method = ConfigManagementAPI.methods[27];
         return this.makeUnaryRequest<RegisterServiceAccountCredentialRequest, RegisterServiceAccountCredentialResponse>(`/${ConfigManagementAPI.typeName}/${method.name}`, (value: RegisterServiceAccountCredentialRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): RegisterServiceAccountCredentialResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), (options as any), (callback as any));
     }
     /**
@@ -789,7 +891,7 @@ export class ConfigManagementAPIClient extends grpc.Client implements IConfigMan
      * @generated from protobuf rpc: ReadServiceAccountCredential(indykite.config.v1beta1.ReadServiceAccountCredentialRequest) returns (indykite.config.v1beta1.ReadServiceAccountCredentialResponse);
      */
     readServiceAccountCredential(input: ReadServiceAccountCredentialRequest, metadata: grpc.Metadata | grpc.CallOptions | ((err: grpc.ServiceError | null, value?: ReadServiceAccountCredentialResponse) => void), options?: grpc.CallOptions | ((err: grpc.ServiceError | null, value?: ReadServiceAccountCredentialResponse) => void), callback?: ((err: grpc.ServiceError | null, value?: ReadServiceAccountCredentialResponse) => void)): grpc.ClientUnaryCall {
-        const method = ConfigManagementAPI.methods[24];
+        const method = ConfigManagementAPI.methods[28];
         return this.makeUnaryRequest<ReadServiceAccountCredentialRequest, ReadServiceAccountCredentialResponse>(`/${ConfigManagementAPI.typeName}/${method.name}`, (value: ReadServiceAccountCredentialRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): ReadServiceAccountCredentialResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), (options as any), (callback as any));
     }
     /**
@@ -798,7 +900,7 @@ export class ConfigManagementAPIClient extends grpc.Client implements IConfigMan
      * @generated from protobuf rpc: DeleteServiceAccountCredential(indykite.config.v1beta1.DeleteServiceAccountCredentialRequest) returns (indykite.config.v1beta1.DeleteServiceAccountCredentialResponse);
      */
     deleteServiceAccountCredential(input: DeleteServiceAccountCredentialRequest, metadata: grpc.Metadata | grpc.CallOptions | ((err: grpc.ServiceError | null, value?: DeleteServiceAccountCredentialResponse) => void), options?: grpc.CallOptions | ((err: grpc.ServiceError | null, value?: DeleteServiceAccountCredentialResponse) => void), callback?: ((err: grpc.ServiceError | null, value?: DeleteServiceAccountCredentialResponse) => void)): grpc.ClientUnaryCall {
-        const method = ConfigManagementAPI.methods[25];
+        const method = ConfigManagementAPI.methods[29];
         return this.makeUnaryRequest<DeleteServiceAccountCredentialRequest, DeleteServiceAccountCredentialResponse>(`/${ConfigManagementAPI.typeName}/${method.name}`, (value: DeleteServiceAccountCredentialRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): DeleteServiceAccountCredentialResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), (options as any), (callback as any));
     }
     /**
@@ -808,7 +910,7 @@ export class ConfigManagementAPIClient extends grpc.Client implements IConfigMan
      * @generated from protobuf rpc: CreateTenant(indykite.config.v1beta1.CreateTenantRequest) returns (indykite.config.v1beta1.CreateTenantResponse);
      */
     createTenant(input: CreateTenantRequest, metadata: grpc.Metadata | grpc.CallOptions | ((err: grpc.ServiceError | null, value?: CreateTenantResponse) => void), options?: grpc.CallOptions | ((err: grpc.ServiceError | null, value?: CreateTenantResponse) => void), callback?: ((err: grpc.ServiceError | null, value?: CreateTenantResponse) => void)): grpc.ClientUnaryCall {
-        const method = ConfigManagementAPI.methods[26];
+        const method = ConfigManagementAPI.methods[30];
         return this.makeUnaryRequest<CreateTenantRequest, CreateTenantResponse>(`/${ConfigManagementAPI.typeName}/${method.name}`, (value: CreateTenantRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): CreateTenantResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), (options as any), (callback as any));
     }
     /**
@@ -817,7 +919,7 @@ export class ConfigManagementAPIClient extends grpc.Client implements IConfigMan
      * @generated from protobuf rpc: ReadTenant(indykite.config.v1beta1.ReadTenantRequest) returns (indykite.config.v1beta1.ReadTenantResponse);
      */
     readTenant(input: ReadTenantRequest, metadata: grpc.Metadata | grpc.CallOptions | ((err: grpc.ServiceError | null, value?: ReadTenantResponse) => void), options?: grpc.CallOptions | ((err: grpc.ServiceError | null, value?: ReadTenantResponse) => void), callback?: ((err: grpc.ServiceError | null, value?: ReadTenantResponse) => void)): grpc.ClientUnaryCall {
-        const method = ConfigManagementAPI.methods[27];
+        const method = ConfigManagementAPI.methods[31];
         return this.makeUnaryRequest<ReadTenantRequest, ReadTenantResponse>(`/${ConfigManagementAPI.typeName}/${method.name}`, (value: ReadTenantRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): ReadTenantResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), (options as any), (callback as any));
     }
     /**
@@ -826,7 +928,7 @@ export class ConfigManagementAPIClient extends grpc.Client implements IConfigMan
      * @generated from protobuf rpc: ListTenants(indykite.config.v1beta1.ListTenantsRequest) returns (stream indykite.config.v1beta1.ListTenantsResponse);
      */
     listTenants(input: ListTenantsRequest, metadata?: grpc.Metadata | grpc.CallOptions, options?: grpc.CallOptions): grpc.ClientReadableStream<ListTenantsResponse> {
-        const method = ConfigManagementAPI.methods[28];
+        const method = ConfigManagementAPI.methods[32];
         return this.makeServerStreamRequest<ListTenantsRequest, ListTenantsResponse>(`/${ConfigManagementAPI.typeName}/${method.name}`, (value: ListTenantsRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): ListTenantsResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), options);
     }
     /**
@@ -835,7 +937,7 @@ export class ConfigManagementAPIClient extends grpc.Client implements IConfigMan
      * @generated from protobuf rpc: UpdateTenant(indykite.config.v1beta1.UpdateTenantRequest) returns (indykite.config.v1beta1.UpdateTenantResponse);
      */
     updateTenant(input: UpdateTenantRequest, metadata: grpc.Metadata | grpc.CallOptions | ((err: grpc.ServiceError | null, value?: UpdateTenantResponse) => void), options?: grpc.CallOptions | ((err: grpc.ServiceError | null, value?: UpdateTenantResponse) => void), callback?: ((err: grpc.ServiceError | null, value?: UpdateTenantResponse) => void)): grpc.ClientUnaryCall {
-        const method = ConfigManagementAPI.methods[29];
+        const method = ConfigManagementAPI.methods[33];
         return this.makeUnaryRequest<UpdateTenantRequest, UpdateTenantResponse>(`/${ConfigManagementAPI.typeName}/${method.name}`, (value: UpdateTenantRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): UpdateTenantResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), (options as any), (callback as any));
     }
     /**
@@ -844,8 +946,26 @@ export class ConfigManagementAPIClient extends grpc.Client implements IConfigMan
      * @generated from protobuf rpc: DeleteTenant(indykite.config.v1beta1.DeleteTenantRequest) returns (indykite.config.v1beta1.DeleteTenantResponse);
      */
     deleteTenant(input: DeleteTenantRequest, metadata: grpc.Metadata | grpc.CallOptions | ((err: grpc.ServiceError | null, value?: DeleteTenantResponse) => void), options?: grpc.CallOptions | ((err: grpc.ServiceError | null, value?: DeleteTenantResponse) => void), callback?: ((err: grpc.ServiceError | null, value?: DeleteTenantResponse) => void)): grpc.ClientUnaryCall {
-        const method = ConfigManagementAPI.methods[30];
+        const method = ConfigManagementAPI.methods[34];
         return this.makeUnaryRequest<DeleteTenantRequest, DeleteTenantResponse>(`/${ConfigManagementAPI.typeName}/${method.name}`, (value: DeleteTenantRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): DeleteTenantResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), (options as any), (callback as any));
+    }
+    /**
+     * ReadTenantConfig reads the default settings of the Tenant.
+     *
+     * @generated from protobuf rpc: ReadTenantConfig(indykite.config.v1beta1.ReadTenantConfigRequest) returns (indykite.config.v1beta1.ReadTenantConfigResponse);
+     */
+    readTenantConfig(input: ReadTenantConfigRequest, metadata: grpc.Metadata | grpc.CallOptions | ((err: grpc.ServiceError | null, value?: ReadTenantConfigResponse) => void), options?: grpc.CallOptions | ((err: grpc.ServiceError | null, value?: ReadTenantConfigResponse) => void), callback?: ((err: grpc.ServiceError | null, value?: ReadTenantConfigResponse) => void)): grpc.ClientUnaryCall {
+        const method = ConfigManagementAPI.methods[35];
+        return this.makeUnaryRequest<ReadTenantConfigRequest, ReadTenantConfigResponse>(`/${ConfigManagementAPI.typeName}/${method.name}`, (value: ReadTenantConfigRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): ReadTenantConfigResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), (options as any), (callback as any));
+    }
+    /**
+     * UpdateTenantConfig updates the default settings of the Tenant.
+     *
+     * @generated from protobuf rpc: UpdateTenantConfig(indykite.config.v1beta1.UpdateTenantConfigRequest) returns (indykite.config.v1beta1.UpdateTenantConfigResponse);
+     */
+    updateTenantConfig(input: UpdateTenantConfigRequest, metadata: grpc.Metadata | grpc.CallOptions | ((err: grpc.ServiceError | null, value?: UpdateTenantConfigResponse) => void), options?: grpc.CallOptions | ((err: grpc.ServiceError | null, value?: UpdateTenantConfigResponse) => void), callback?: ((err: grpc.ServiceError | null, value?: UpdateTenantConfigResponse) => void)): grpc.ClientUnaryCall {
+        const method = ConfigManagementAPI.methods[36];
+        return this.makeUnaryRequest<UpdateTenantConfigRequest, UpdateTenantConfigResponse>(`/${ConfigManagementAPI.typeName}/${method.name}`, (value: UpdateTenantConfigRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): UpdateTenantConfigResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), (options as any), (callback as any));
     }
     /**
      * CreateConfigNode on Customer, Application Space or Tenant level.
@@ -854,7 +974,7 @@ export class ConfigManagementAPIClient extends grpc.Client implements IConfigMan
      * @generated from protobuf rpc: CreateConfigNode(indykite.config.v1beta1.CreateConfigNodeRequest) returns (indykite.config.v1beta1.CreateConfigNodeResponse);
      */
     createConfigNode(input: CreateConfigNodeRequest, metadata: grpc.Metadata | grpc.CallOptions | ((err: grpc.ServiceError | null, value?: CreateConfigNodeResponse) => void), options?: grpc.CallOptions | ((err: grpc.ServiceError | null, value?: CreateConfigNodeResponse) => void), callback?: ((err: grpc.ServiceError | null, value?: CreateConfigNodeResponse) => void)): grpc.ClientUnaryCall {
-        const method = ConfigManagementAPI.methods[31];
+        const method = ConfigManagementAPI.methods[37];
         return this.makeUnaryRequest<CreateConfigNodeRequest, CreateConfigNodeResponse>(`/${ConfigManagementAPI.typeName}/${method.name}`, (value: CreateConfigNodeRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): CreateConfigNodeResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), (options as any), (callback as any));
     }
     /**
@@ -863,7 +983,7 @@ export class ConfigManagementAPIClient extends grpc.Client implements IConfigMan
      * @generated from protobuf rpc: ReadConfigNode(indykite.config.v1beta1.ReadConfigNodeRequest) returns (indykite.config.v1beta1.ReadConfigNodeResponse);
      */
     readConfigNode(input: ReadConfigNodeRequest, metadata: grpc.Metadata | grpc.CallOptions | ((err: grpc.ServiceError | null, value?: ReadConfigNodeResponse) => void), options?: grpc.CallOptions | ((err: grpc.ServiceError | null, value?: ReadConfigNodeResponse) => void), callback?: ((err: grpc.ServiceError | null, value?: ReadConfigNodeResponse) => void)): grpc.ClientUnaryCall {
-        const method = ConfigManagementAPI.methods[32];
+        const method = ConfigManagementAPI.methods[38];
         return this.makeUnaryRequest<ReadConfigNodeRequest, ReadConfigNodeResponse>(`/${ConfigManagementAPI.typeName}/${method.name}`, (value: ReadConfigNodeRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): ReadConfigNodeResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), (options as any), (callback as any));
     }
     /**
@@ -872,7 +992,7 @@ export class ConfigManagementAPIClient extends grpc.Client implements IConfigMan
      * @generated from protobuf rpc: UpdateConfigNode(indykite.config.v1beta1.UpdateConfigNodeRequest) returns (indykite.config.v1beta1.UpdateConfigNodeResponse);
      */
     updateConfigNode(input: UpdateConfigNodeRequest, metadata: grpc.Metadata | grpc.CallOptions | ((err: grpc.ServiceError | null, value?: UpdateConfigNodeResponse) => void), options?: grpc.CallOptions | ((err: grpc.ServiceError | null, value?: UpdateConfigNodeResponse) => void), callback?: ((err: grpc.ServiceError | null, value?: UpdateConfigNodeResponse) => void)): grpc.ClientUnaryCall {
-        const method = ConfigManagementAPI.methods[33];
+        const method = ConfigManagementAPI.methods[39];
         return this.makeUnaryRequest<UpdateConfigNodeRequest, UpdateConfigNodeResponse>(`/${ConfigManagementAPI.typeName}/${method.name}`, (value: UpdateConfigNodeRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): UpdateConfigNodeResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), (options as any), (callback as any));
     }
     /**
@@ -881,7 +1001,7 @@ export class ConfigManagementAPIClient extends grpc.Client implements IConfigMan
      * @generated from protobuf rpc: DeleteConfigNode(indykite.config.v1beta1.DeleteConfigNodeRequest) returns (indykite.config.v1beta1.DeleteConfigNodeResponse);
      */
     deleteConfigNode(input: DeleteConfigNodeRequest, metadata: grpc.Metadata | grpc.CallOptions | ((err: grpc.ServiceError | null, value?: DeleteConfigNodeResponse) => void), options?: grpc.CallOptions | ((err: grpc.ServiceError | null, value?: DeleteConfigNodeResponse) => void), callback?: ((err: grpc.ServiceError | null, value?: DeleteConfigNodeResponse) => void)): grpc.ClientUnaryCall {
-        const method = ConfigManagementAPI.methods[34];
+        const method = ConfigManagementAPI.methods[40];
         return this.makeUnaryRequest<DeleteConfigNodeRequest, DeleteConfigNodeResponse>(`/${ConfigManagementAPI.typeName}/${method.name}`, (value: DeleteConfigNodeRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): DeleteConfigNodeResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), (options as any), (callback as any));
     }
     /**
@@ -890,7 +1010,7 @@ export class ConfigManagementAPIClient extends grpc.Client implements IConfigMan
      * @generated from protobuf rpc: CreateOAuth2Provider(indykite.config.v1beta1.CreateOAuth2ProviderRequest) returns (indykite.config.v1beta1.CreateOAuth2ProviderResponse);
      */
     createOAuth2Provider(input: CreateOAuth2ProviderRequest, metadata: grpc.Metadata | grpc.CallOptions | ((err: grpc.ServiceError | null, value?: CreateOAuth2ProviderResponse) => void), options?: grpc.CallOptions | ((err: grpc.ServiceError | null, value?: CreateOAuth2ProviderResponse) => void), callback?: ((err: grpc.ServiceError | null, value?: CreateOAuth2ProviderResponse) => void)): grpc.ClientUnaryCall {
-        const method = ConfigManagementAPI.methods[35];
+        const method = ConfigManagementAPI.methods[41];
         return this.makeUnaryRequest<CreateOAuth2ProviderRequest, CreateOAuth2ProviderResponse>(`/${ConfigManagementAPI.typeName}/${method.name}`, (value: CreateOAuth2ProviderRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): CreateOAuth2ProviderResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), (options as any), (callback as any));
     }
     /**
@@ -899,7 +1019,7 @@ export class ConfigManagementAPIClient extends grpc.Client implements IConfigMan
      * @generated from protobuf rpc: ReadOAuth2Provider(indykite.config.v1beta1.ReadOAuth2ProviderRequest) returns (indykite.config.v1beta1.ReadOAuth2ProviderResponse);
      */
     readOAuth2Provider(input: ReadOAuth2ProviderRequest, metadata: grpc.Metadata | grpc.CallOptions | ((err: grpc.ServiceError | null, value?: ReadOAuth2ProviderResponse) => void), options?: grpc.CallOptions | ((err: grpc.ServiceError | null, value?: ReadOAuth2ProviderResponse) => void), callback?: ((err: grpc.ServiceError | null, value?: ReadOAuth2ProviderResponse) => void)): grpc.ClientUnaryCall {
-        const method = ConfigManagementAPI.methods[36];
+        const method = ConfigManagementAPI.methods[42];
         return this.makeUnaryRequest<ReadOAuth2ProviderRequest, ReadOAuth2ProviderResponse>(`/${ConfigManagementAPI.typeName}/${method.name}`, (value: ReadOAuth2ProviderRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): ReadOAuth2ProviderResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), (options as any), (callback as any));
     }
     /**
@@ -908,7 +1028,7 @@ export class ConfigManagementAPIClient extends grpc.Client implements IConfigMan
      * @generated from protobuf rpc: UpdateOAuth2Provider(indykite.config.v1beta1.UpdateOAuth2ProviderRequest) returns (indykite.config.v1beta1.UpdateOAuth2ProviderResponse);
      */
     updateOAuth2Provider(input: UpdateOAuth2ProviderRequest, metadata: grpc.Metadata | grpc.CallOptions | ((err: grpc.ServiceError | null, value?: UpdateOAuth2ProviderResponse) => void), options?: grpc.CallOptions | ((err: grpc.ServiceError | null, value?: UpdateOAuth2ProviderResponse) => void), callback?: ((err: grpc.ServiceError | null, value?: UpdateOAuth2ProviderResponse) => void)): grpc.ClientUnaryCall {
-        const method = ConfigManagementAPI.methods[37];
+        const method = ConfigManagementAPI.methods[43];
         return this.makeUnaryRequest<UpdateOAuth2ProviderRequest, UpdateOAuth2ProviderResponse>(`/${ConfigManagementAPI.typeName}/${method.name}`, (value: UpdateOAuth2ProviderRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): UpdateOAuth2ProviderResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), (options as any), (callback as any));
     }
     /**
@@ -917,7 +1037,7 @@ export class ConfigManagementAPIClient extends grpc.Client implements IConfigMan
      * @generated from protobuf rpc: DeleteOAuth2Provider(indykite.config.v1beta1.DeleteOAuth2ProviderRequest) returns (indykite.config.v1beta1.DeleteOAuth2ProviderResponse);
      */
     deleteOAuth2Provider(input: DeleteOAuth2ProviderRequest, metadata: grpc.Metadata | grpc.CallOptions | ((err: grpc.ServiceError | null, value?: DeleteOAuth2ProviderResponse) => void), options?: grpc.CallOptions | ((err: grpc.ServiceError | null, value?: DeleteOAuth2ProviderResponse) => void), callback?: ((err: grpc.ServiceError | null, value?: DeleteOAuth2ProviderResponse) => void)): grpc.ClientUnaryCall {
-        const method = ConfigManagementAPI.methods[38];
+        const method = ConfigManagementAPI.methods[44];
         return this.makeUnaryRequest<DeleteOAuth2ProviderRequest, DeleteOAuth2ProviderResponse>(`/${ConfigManagementAPI.typeName}/${method.name}`, (value: DeleteOAuth2ProviderRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): DeleteOAuth2ProviderResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), (options as any), (callback as any));
     }
     /**
@@ -926,7 +1046,7 @@ export class ConfigManagementAPIClient extends grpc.Client implements IConfigMan
      * @generated from protobuf rpc: CreateOAuth2Application(indykite.config.v1beta1.CreateOAuth2ApplicationRequest) returns (indykite.config.v1beta1.CreateOAuth2ApplicationResponse);
      */
     createOAuth2Application(input: CreateOAuth2ApplicationRequest, metadata: grpc.Metadata | grpc.CallOptions | ((err: grpc.ServiceError | null, value?: CreateOAuth2ApplicationResponse) => void), options?: grpc.CallOptions | ((err: grpc.ServiceError | null, value?: CreateOAuth2ApplicationResponse) => void), callback?: ((err: grpc.ServiceError | null, value?: CreateOAuth2ApplicationResponse) => void)): grpc.ClientUnaryCall {
-        const method = ConfigManagementAPI.methods[39];
+        const method = ConfigManagementAPI.methods[45];
         return this.makeUnaryRequest<CreateOAuth2ApplicationRequest, CreateOAuth2ApplicationResponse>(`/${ConfigManagementAPI.typeName}/${method.name}`, (value: CreateOAuth2ApplicationRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): CreateOAuth2ApplicationResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), (options as any), (callback as any));
     }
     /**
@@ -935,7 +1055,7 @@ export class ConfigManagementAPIClient extends grpc.Client implements IConfigMan
      * @generated from protobuf rpc: ReadOAuth2Application(indykite.config.v1beta1.ReadOAuth2ApplicationRequest) returns (indykite.config.v1beta1.ReadOAuth2ApplicationResponse);
      */
     readOAuth2Application(input: ReadOAuth2ApplicationRequest, metadata: grpc.Metadata | grpc.CallOptions | ((err: grpc.ServiceError | null, value?: ReadOAuth2ApplicationResponse) => void), options?: grpc.CallOptions | ((err: grpc.ServiceError | null, value?: ReadOAuth2ApplicationResponse) => void), callback?: ((err: grpc.ServiceError | null, value?: ReadOAuth2ApplicationResponse) => void)): grpc.ClientUnaryCall {
-        const method = ConfigManagementAPI.methods[40];
+        const method = ConfigManagementAPI.methods[46];
         return this.makeUnaryRequest<ReadOAuth2ApplicationRequest, ReadOAuth2ApplicationResponse>(`/${ConfigManagementAPI.typeName}/${method.name}`, (value: ReadOAuth2ApplicationRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): ReadOAuth2ApplicationResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), (options as any), (callback as any));
     }
     /**
@@ -944,7 +1064,7 @@ export class ConfigManagementAPIClient extends grpc.Client implements IConfigMan
      * @generated from protobuf rpc: UpdateOAuth2Application(indykite.config.v1beta1.UpdateOAuth2ApplicationRequest) returns (indykite.config.v1beta1.UpdateOAuth2ApplicationResponse);
      */
     updateOAuth2Application(input: UpdateOAuth2ApplicationRequest, metadata: grpc.Metadata | grpc.CallOptions | ((err: grpc.ServiceError | null, value?: UpdateOAuth2ApplicationResponse) => void), options?: grpc.CallOptions | ((err: grpc.ServiceError | null, value?: UpdateOAuth2ApplicationResponse) => void), callback?: ((err: grpc.ServiceError | null, value?: UpdateOAuth2ApplicationResponse) => void)): grpc.ClientUnaryCall {
-        const method = ConfigManagementAPI.methods[41];
+        const method = ConfigManagementAPI.methods[47];
         return this.makeUnaryRequest<UpdateOAuth2ApplicationRequest, UpdateOAuth2ApplicationResponse>(`/${ConfigManagementAPI.typeName}/${method.name}`, (value: UpdateOAuth2ApplicationRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): UpdateOAuth2ApplicationResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), (options as any), (callback as any));
     }
     /**
@@ -953,7 +1073,7 @@ export class ConfigManagementAPIClient extends grpc.Client implements IConfigMan
      * @generated from protobuf rpc: DeleteOAuth2Application(indykite.config.v1beta1.DeleteOAuth2ApplicationRequest) returns (indykite.config.v1beta1.DeleteOAuth2ApplicationResponse);
      */
     deleteOAuth2Application(input: DeleteOAuth2ApplicationRequest, metadata: grpc.Metadata | grpc.CallOptions | ((err: grpc.ServiceError | null, value?: DeleteOAuth2ApplicationResponse) => void), options?: grpc.CallOptions | ((err: grpc.ServiceError | null, value?: DeleteOAuth2ApplicationResponse) => void), callback?: ((err: grpc.ServiceError | null, value?: DeleteOAuth2ApplicationResponse) => void)): grpc.ClientUnaryCall {
-        const method = ConfigManagementAPI.methods[42];
+        const method = ConfigManagementAPI.methods[48];
         return this.makeUnaryRequest<DeleteOAuth2ApplicationRequest, DeleteOAuth2ApplicationResponse>(`/${ConfigManagementAPI.typeName}/${method.name}`, (value: DeleteOAuth2ApplicationRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): DeleteOAuth2ApplicationResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), (options as any), (callback as any));
     }
     /**
@@ -962,7 +1082,7 @@ export class ConfigManagementAPIClient extends grpc.Client implements IConfigMan
      * @generated from protobuf rpc: AssignPermissions(indykite.config.v1beta1.AssignPermissionsRequest) returns (indykite.config.v1beta1.AssignPermissionsResponse);
      */
     assignPermissions(input: AssignPermissionsRequest, metadata: grpc.Metadata | grpc.CallOptions | ((err: grpc.ServiceError | null, value?: AssignPermissionsResponse) => void), options?: grpc.CallOptions | ((err: grpc.ServiceError | null, value?: AssignPermissionsResponse) => void), callback?: ((err: grpc.ServiceError | null, value?: AssignPermissionsResponse) => void)): grpc.ClientUnaryCall {
-        const method = ConfigManagementAPI.methods[43];
+        const method = ConfigManagementAPI.methods[49];
         return this.makeUnaryRequest<AssignPermissionsRequest, AssignPermissionsResponse>(`/${ConfigManagementAPI.typeName}/${method.name}`, (value: AssignPermissionsRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): AssignPermissionsResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), (options as any), (callback as any));
     }
     /**
@@ -971,7 +1091,7 @@ export class ConfigManagementAPIClient extends grpc.Client implements IConfigMan
      * @generated from protobuf rpc: RevokePermissions(indykite.config.v1beta1.RevokePermissionsRequest) returns (indykite.config.v1beta1.RevokePermissionsResponse);
      */
     revokePermissions(input: RevokePermissionsRequest, metadata: grpc.Metadata | grpc.CallOptions | ((err: grpc.ServiceError | null, value?: RevokePermissionsResponse) => void), options?: grpc.CallOptions | ((err: grpc.ServiceError | null, value?: RevokePermissionsResponse) => void), callback?: ((err: grpc.ServiceError | null, value?: RevokePermissionsResponse) => void)): grpc.ClientUnaryCall {
-        const method = ConfigManagementAPI.methods[44];
+        const method = ConfigManagementAPI.methods[50];
         return this.makeUnaryRequest<RevokePermissionsRequest, RevokePermissionsResponse>(`/${ConfigManagementAPI.typeName}/${method.name}`, (value: RevokePermissionsRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): RevokePermissionsResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), (options as any), (callback as any));
     }
     /**
@@ -980,7 +1100,7 @@ export class ConfigManagementAPIClient extends grpc.Client implements IConfigMan
      * @generated from protobuf rpc: ListPermissions(indykite.config.v1beta1.ListPermissionsRequest) returns (indykite.config.v1beta1.ListPermissionsResponse);
      */
     listPermissions(input: ListPermissionsRequest, metadata: grpc.Metadata | grpc.CallOptions | ((err: grpc.ServiceError | null, value?: ListPermissionsResponse) => void), options?: grpc.CallOptions | ((err: grpc.ServiceError | null, value?: ListPermissionsResponse) => void), callback?: ((err: grpc.ServiceError | null, value?: ListPermissionsResponse) => void)): grpc.ClientUnaryCall {
-        const method = ConfigManagementAPI.methods[45];
+        const method = ConfigManagementAPI.methods[51];
         return this.makeUnaryRequest<ListPermissionsRequest, ListPermissionsResponse>(`/${ConfigManagementAPI.typeName}/${method.name}`, (value: ListPermissionsRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): ListPermissionsResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), (options as any), (callback as any));
     }
     /**
@@ -989,7 +1109,7 @@ export class ConfigManagementAPIClient extends grpc.Client implements IConfigMan
      * @generated from protobuf rpc: GetSchemaHelpers(indykite.config.v1beta1.GetSchemaHelpersRequest) returns (indykite.config.v1beta1.GetSchemaHelpersResponse);
      */
     getSchemaHelpers(input: GetSchemaHelpersRequest, metadata: grpc.Metadata | grpc.CallOptions | ((err: grpc.ServiceError | null, value?: GetSchemaHelpersResponse) => void), options?: grpc.CallOptions | ((err: grpc.ServiceError | null, value?: GetSchemaHelpersResponse) => void), callback?: ((err: grpc.ServiceError | null, value?: GetSchemaHelpersResponse) => void)): grpc.ClientUnaryCall {
-        const method = ConfigManagementAPI.methods[46];
+        const method = ConfigManagementAPI.methods[52];
         return this.makeUnaryRequest<GetSchemaHelpersRequest, GetSchemaHelpersResponse>(`/${ConfigManagementAPI.typeName}/${method.name}`, (value: GetSchemaHelpersRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): GetSchemaHelpersResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), (options as any), (callback as any));
     }
 }
