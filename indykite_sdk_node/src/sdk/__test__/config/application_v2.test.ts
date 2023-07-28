@@ -530,12 +530,9 @@ describe('readApplicationByName', () => {
   });
 });
 
-describe('readApplicationList', () => {
+describe('listApplications', () => {
   describe('when no error is returned', () => {
-    const applications: Application[] = [];
-    let listApplicationsSpy: jest.SpyInstance;
-
-    beforeEach(async () => {
+    it('returns correct data', async () => {
       const sdk = await ConfigClientV2.createInstance(JSON.stringify(serviceAccountTokenMock));
       const eventEmitter = Object.assign(new EventEmitter(), {
         read: () => {
@@ -556,13 +553,16 @@ describe('readApplicationList', () => {
           };
         },
       });
-      listApplicationsSpy = jest.spyOn(sdk['client'], 'listApplications').mockImplementation(() => {
-        setTimeout(() => eventEmitter.emit('readable'), 0);
-        setTimeout(() => eventEmitter.emit('readable'), 0);
-        setTimeout(() => eventEmitter.emit('end'), 0);
-        return eventEmitter as unknown as ClientReadableStream<ListApplicationsResponse>;
-      });
-
+      const listApplicationsSpy: jest.SpyInstance = jest
+        .spyOn(sdk['client'], 'listApplications')
+        .mockImplementation(() => {
+          setTimeout(() => eventEmitter.emit('readable'), 0);
+          setTimeout(() => eventEmitter.emit('readable'), 0);
+          setTimeout(() => eventEmitter.emit('end'), 1);
+          setTimeout(() => eventEmitter.emit('close'), 1);
+          return eventEmitter as unknown as ClientReadableStream<ListApplicationsResponse>;
+        });
+      const applications: Application[] = [];
       await sdk
         .listApplications(
           ConfigClientV2.newListApplicationsRequest('app-space-id-request', ['application-name']),
@@ -575,40 +575,36 @@ describe('readApplicationList', () => {
             applications.push(Application.deserialize(data));
           }
         })
-        .on('end', () => {
+        .on('close', () => {
           // Nothing to do here.
+        })
+        .on('end', () => {
+          expect(applications.length).toBe(2);
+          expect(applications[0].id).toBe('application-id');
+          expect(applications[0].appSpaceId).toBe('app-space-id');
+          expect(applications[0].customerId).toBe('customer-id');
+          expect(applications[0].name).toBe('application-name');
+          expect(applications[0].description).toBe('Application description');
+          expect(applications[0].displayName).toBe('Application Name');
+          expect(applications[0].etag).toBe('5432');
+          expect(applications[0].createTime?.toString()).toBe(
+            new Date(Date.UTC(2022, 2, 15, 13, 12)).toString(),
+          );
+          expect(applications[0].updateTime?.toString()).toBe(
+            new Date(Date.UTC(2022, 2, 15, 13, 13)).toString(),
+          );
+          expect(applications[0].deleteTime?.toString()).toBe(
+            new Date(Date.UTC(2022, 2, 15, 13, 14)).toString(),
+          );
+          expect(applications[0].destroyTime?.toString()).toBe(
+            new Date(Date.UTC(2022, 2, 15, 13, 15)).toString(),
+          );
         });
-    });
-
-    it('sends correct request', () => {
       expect(listApplicationsSpy).toBeCalledWith({
         appSpaceId: 'app-space-id-request',
         match: ['application-name'],
         bookmarks: [],
       });
-    });
-
-    it('returns a correct instance', () => {
-      expect(applications.length).toBe(2);
-      expect(applications[0].id).toBe('application-id');
-      expect(applications[0].appSpaceId).toBe('app-space-id');
-      expect(applications[0].customerId).toBe('customer-id');
-      expect(applications[0].name).toBe('application-name');
-      expect(applications[0].description).toBe('Application description');
-      expect(applications[0].displayName).toBe('Application Name');
-      expect(applications[0].etag).toBe('5432');
-      expect(applications[0].createTime?.toString()).toBe(
-        new Date(Date.UTC(2022, 2, 15, 13, 12)).toString(),
-      );
-      expect(applications[0].updateTime?.toString()).toBe(
-        new Date(Date.UTC(2022, 2, 15, 13, 13)).toString(),
-      );
-      expect(applications[0].deleteTime?.toString()).toBe(
-        new Date(Date.UTC(2022, 2, 15, 13, 14)).toString(),
-      );
-      expect(applications[0].destroyTime?.toString()).toBe(
-        new Date(Date.UTC(2022, 2, 15, 13, 15)).toString(),
-      );
     });
   });
 

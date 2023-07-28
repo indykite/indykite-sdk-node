@@ -830,10 +830,7 @@ describe('updateApplicationAgent', () => {
 
 describe('readApplicationAgentList', () => {
   describe('when no error is returned', () => {
-    const applicationAgents: ApplicationAgent[] = [];
-    let listApplicationAgentsSpy: jest.SpyInstance;
-
-    beforeEach(async () => {
+    it('returns correct data', async () => {
       const sdk = await ConfigClientV2.createInstance(JSON.stringify(serviceAccountTokenMock));
       const eventEmitter = Object.assign(new EventEmitter(), {
         read: () => {
@@ -855,12 +852,14 @@ describe('readApplicationAgentList', () => {
           };
         },
       });
-      listApplicationAgentsSpy = jest
+      const applicationAgents: ApplicationAgent[] = [];
+      const listApplicationAgentsSpy: jest.SpyInstance = jest
         .spyOn(sdk['client'], 'listApplicationAgents')
         .mockImplementation(() => {
           setTimeout(() => eventEmitter.emit('readable'), 0);
           setTimeout(() => eventEmitter.emit('readable'), 0);
           setTimeout(() => eventEmitter.emit('end'), 0);
+          setTimeout(() => eventEmitter.emit('close'), 1);
           return eventEmitter as unknown as ClientReadableStream<ListApplicationAgentsResponse>;
         });
 
@@ -880,39 +879,33 @@ describe('readApplicationAgentList', () => {
         })
         .on('end', () => {
           // Nothing to do here.
+          expect(applicationAgents.length).toBe(2);
+          expect(applicationAgents[0].id).toBe('app-agent-id');
+          expect(applicationAgents[0].appSpaceId).toBe('app-space-id');
+          expect(applicationAgents[0].applicationId).toBe('application-id');
+          expect(applicationAgents[0].customerId).toBe('customer-id');
+          expect(applicationAgents[0].name).toBe('app-agent-name');
+          expect(applicationAgents[0].description).toBe('Application Agent description');
+          expect(applicationAgents[0].displayName).toBe('Application Agent Name');
+          expect(applicationAgents[0].etag).toBe('etag-id');
+          expect(applicationAgents[0].createTime?.toString()).toBe(
+            new Date(Date.UTC(2022, 2, 15, 13, 12)).toString(),
+          );
+          expect(applicationAgents[0].updateTime?.toString()).toBe(
+            new Date(Date.UTC(2022, 2, 15, 13, 13)).toString(),
+          );
+          expect(applicationAgents[0].deleteTime?.toString()).toBe(
+            new Date(Date.UTC(2022, 2, 15, 13, 14)).toString(),
+          );
+          expect(applicationAgents[0].destroyTime?.toString()).toBe(
+            new Date(Date.UTC(2022, 2, 15, 13, 15)).toString(),
+          );
         });
-    });
-
-    it('sends correct request', () => {
       expect(listApplicationAgentsSpy).toBeCalledWith({
         appSpaceId: 'app-space-id-request',
         match: ['app-agent-name'],
         bookmarks: [],
       });
-    });
-
-    it('returns a correct instance', () => {
-      expect(applicationAgents.length).toBe(2);
-      expect(applicationAgents[0].id).toBe('app-agent-id');
-      expect(applicationAgents[0].appSpaceId).toBe('app-space-id');
-      expect(applicationAgents[0].applicationId).toBe('application-id');
-      expect(applicationAgents[0].customerId).toBe('customer-id');
-      expect(applicationAgents[0].name).toBe('app-agent-name');
-      expect(applicationAgents[0].description).toBe('Application Agent description');
-      expect(applicationAgents[0].displayName).toBe('Application Agent Name');
-      expect(applicationAgents[0].etag).toBe('etag-id');
-      expect(applicationAgents[0].createTime?.toString()).toBe(
-        new Date(Date.UTC(2022, 2, 15, 13, 12)).toString(),
-      );
-      expect(applicationAgents[0].updateTime?.toString()).toBe(
-        new Date(Date.UTC(2022, 2, 15, 13, 13)).toString(),
-      );
-      expect(applicationAgents[0].deleteTime?.toString()).toBe(
-        new Date(Date.UTC(2022, 2, 15, 13, 14)).toString(),
-      );
-      expect(applicationAgents[0].destroyTime?.toString()).toBe(
-        new Date(Date.UTC(2022, 2, 15, 13, 15)).toString(),
-      );
     });
   });
 

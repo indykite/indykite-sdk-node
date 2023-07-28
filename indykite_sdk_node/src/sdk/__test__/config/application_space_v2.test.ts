@@ -557,10 +557,7 @@ describe('readApplicationSpaceByName', () => {
 
 describe('listApplicationSpaces', () => {
   describe('when no error is returned', () => {
-    const appSpaces: ApplicationSpace[] = [];
-    let listApplicationSpacesSpy: jest.SpyInstance;
-
-    beforeEach(async () => {
+    it('returns correct data', async () => {
       const sdk = await ConfigClientV2.createInstance(JSON.stringify(serviceAccountTokenMock));
       const eventEmitter = Object.assign(new EventEmitter(), {
         read: () => {
@@ -581,15 +578,16 @@ describe('listApplicationSpaces', () => {
           };
         },
       });
-      listApplicationSpacesSpy = jest
+      const appSpaces: ApplicationSpace[] = [];
+      const listApplicationSpacesSpy: jest.SpyInstance = jest
         .spyOn(sdk['client'], 'listApplicationSpaces')
         .mockImplementation(() => {
           setTimeout(() => eventEmitter.emit('readable'), 0);
           setTimeout(() => eventEmitter.emit('readable'), 0);
           setTimeout(() => eventEmitter.emit('end'), 0);
+          setTimeout(() => eventEmitter.emit('close'), 1);
           return eventEmitter as unknown as ClientReadableStream<ListApplicationSpacesResponse>;
         });
-
       await sdk
         .listApplicationSpaces(
           ConfigClientV2.newListApplicationSpacesRequest('customer-id-request', ['app-space-name']),
@@ -602,40 +600,37 @@ describe('listApplicationSpaces', () => {
             appSpaces.push(ApplicationSpace.deserialize(data));
           }
         })
+        .on('close', () => {
+          // Nothing to do here.
+        })
         .on('end', () => {
           // Nothing to do here.
+          expect(appSpaces.length).toBe(2);
+          expect(appSpaces[0].id).toBe('app-space-id');
+          expect(appSpaces[0].customerId).toBe('customer-id');
+          expect(appSpaces[0].name).toBe('app-space-name');
+          expect(appSpaces[0].description).toBe('App space description');
+          expect(appSpaces[0].displayName).toBe('App Space Name');
+          expect(appSpaces[0].etag).toBe('5432');
+          expect(appSpaces[0].issuerId).toBe('issuer-id');
+          expect(appSpaces[0].createTime?.toString()).toBe(
+            new Date(Date.UTC(2022, 2, 15, 13, 12)).toString(),
+          );
+          expect(appSpaces[0].updateTime?.toString()).toBe(
+            new Date(Date.UTC(2022, 2, 15, 13, 13)).toString(),
+          );
+          expect(appSpaces[0].deleteTime?.toString()).toBe(
+            new Date(Date.UTC(2022, 2, 15, 13, 14)).toString(),
+          );
+          expect(appSpaces[0].destroyTime?.toString()).toBe(
+            new Date(Date.UTC(2022, 2, 15, 13, 15)).toString(),
+          );
         });
-    });
-
-    it('sends correct request', () => {
       expect(listApplicationSpacesSpy).toBeCalledWith({
         customerId: 'customer-id-request',
         match: ['app-space-name'],
         bookmarks: [],
       });
-    });
-
-    it('returns a correct instance', () => {
-      expect(appSpaces.length).toBe(2);
-      expect(appSpaces[0].id).toBe('app-space-id');
-      expect(appSpaces[0].customerId).toBe('customer-id');
-      expect(appSpaces[0].name).toBe('app-space-name');
-      expect(appSpaces[0].description).toBe('App space description');
-      expect(appSpaces[0].displayName).toBe('App Space Name');
-      expect(appSpaces[0].etag).toBe('5432');
-      expect(appSpaces[0].issuerId).toBe('issuer-id');
-      expect(appSpaces[0].createTime?.toString()).toBe(
-        new Date(Date.UTC(2022, 2, 15, 13, 12)).toString(),
-      );
-      expect(appSpaces[0].updateTime?.toString()).toBe(
-        new Date(Date.UTC(2022, 2, 15, 13, 13)).toString(),
-      );
-      expect(appSpaces[0].deleteTime?.toString()).toBe(
-        new Date(Date.UTC(2022, 2, 15, 13, 14)).toString(),
-      );
-      expect(appSpaces[0].destroyTime?.toString()).toBe(
-        new Date(Date.UTC(2022, 2, 15, 13, 15)).toString(),
-      );
     });
   });
 
