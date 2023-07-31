@@ -11,6 +11,12 @@ describe('Crednetial', () => {
     const credObj = ApplicationCredential.fromObject(applicationTokenMock);
     expect(credBuff).toEqual(credObj);
     expect(credStr).toEqual(credBuff);
+    const err = new SdkError(SdkErrorCode.SDK_CODE_1, 'Must run buildToken() function first');
+    try {
+      credStr.getExpirationTime();
+    } catch (error) {
+      expect(error).toEqual(err);
+    }
   });
 
   it('with ...', () => {

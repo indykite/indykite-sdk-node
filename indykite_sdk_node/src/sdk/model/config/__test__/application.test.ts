@@ -1,5 +1,5 @@
 import { StringValue } from '../../../../grpc/google/protobuf/wrappers';
-import { SdkError, SdkErrorCode } from '../../../error';
+import { SdkError, SkdErrorText, SdkErrorCode } from '../../../error';
 import { Utils } from '../../../utils/utils';
 import { Application } from '../application';
 
@@ -39,6 +39,8 @@ describe('deserialize', () => {
       expect(application.updateTime?.toString()).toBe(new Date(2022, 2, 17, 12, 18).toString());
       expect(application.deleteTime?.toString()).toBe(new Date(2022, 2, 17, 12, 19).toString());
       expect(application.destroyTime?.toString()).toBe(new Date(2022, 2, 17, 12, 20).toString());
+      expect(application.createdBy).toBe('Lorem ipsum - creator');
+      expect(application.updatedBy).toBe('Lorem ipsum - updater');
     });
   });
 
@@ -55,7 +57,7 @@ describe('deserialize', () => {
 
     it('throws an error', () => {
       expect(thrownError.code).toBe(SdkErrorCode.SDK_CODE_1);
-      expect(thrownError.description).toBe("Can't deserialize application");
+      expect(thrownError.description).toBe(SkdErrorText.SDK_CODE_1(Application.name));
     });
   });
 });

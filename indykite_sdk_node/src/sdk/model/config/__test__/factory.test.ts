@@ -7,18 +7,22 @@ import {
   ProviderType,
   UserVerificationRequirement,
 } from '../../../../grpc/indykite/config/v1beta1/model';
-import { SdkError, SdkErrorCode } from '../../../error';
+import { SdkError, SkdErrorText, SdkErrorCode } from '../../../error';
 import { Utils } from '../../../utils/utils';
-import { ConfigurationFactory, ConfigurationType } from '../factory';
+import { ConfigNode } from '../config_node';
+import { ConfigNodeFactory } from '../factory';
+import { ConfigNodeType } from '../config_node';
 import { OAuth2Client } from '../oauth2_client/oauth2_client';
 import { WebAuthnProvider } from '../webauthn_provider';
+import { AuthFlow } from '../authflow/flow';
+import { EmailServiceConfigType } from '../email/factory';
 
 describe('createInstance', () => {
-  let instance: ConfigurationType;
+  let instance: ConfigNodeType;
 
   describe('when the kind is "webauthnProviderConfig"', () => {
     beforeEach(() => {
-      instance = ConfigurationFactory.createInstance({
+      instance = ConfigNodeFactory.createInstance({
         displayName: 'Instance Name',
         description: StringValue.fromJson('Instance description'),
         etag: 'etag-token',
@@ -65,7 +69,7 @@ describe('createInstance', () => {
         }),
         {
           displayName: 'Instance Name',
-          description: 'Instance description',
+          description: { value: 'Instance description' },
           etag: 'etag-token',
           id: 'instance-id',
           createTime: new Date(Date.UTC(2022, 6, 21, 11, 13)),
@@ -73,6 +77,8 @@ describe('createInstance', () => {
           customerId: 'customer-id',
           appSpaceId: 'app-space-id',
           tenantId: 'tenant-id',
+          createdBy: 'Lorem ipsum - creator',
+          updatedBy: 'Lorem ipsum - updater',
         },
       );
 
@@ -82,7 +88,7 @@ describe('createInstance', () => {
 
   describe('when the kind is "oauth2ClientConfig"', () => {
     beforeEach(() => {
-      instance = ConfigurationFactory.createInstance({
+      instance = ConfigNodeFactory.createInstance({
         displayName: 'Instance Name',
         description: StringValue.fromJson('Instance description'),
         etag: 'etag-token',
@@ -145,7 +151,7 @@ describe('createInstance', () => {
         hostedDomain: 'https://example.com',
         authStyle: AuthStyle.AUTO_DETECT,
         displayName: 'Instance Name',
-        description: 'Instance description',
+        description: { value: 'Instance description' },
         etag: 'etag-token',
         id: 'instance-id',
         createTime: new Date(Date.UTC(2022, 6, 21, 11, 13)),
@@ -157,13 +163,15 @@ describe('createInstance', () => {
         privateKeyId: '',
         privateKeyPem: Buffer.from(''),
         teamId: '',
+        createdBy: 'Lorem ipsum - creator',
+        updatedBy: 'Lorem ipsum - updater',
       });
     });
   });
 
   describe('when the kind is "authFlowConfig"', () => {
     beforeEach(() => {
-      instance = ConfigurationFactory.createInstance({
+      instance = ConfigNodeFactory.createInstance({
         displayName: 'Instance Name',
         description: StringValue.fromJson('Instance description'),
         etag: 'etag-token',
@@ -181,17 +189,18 @@ describe('createInstance', () => {
           authFlowConfig: {
             source: Buffer.from('{}'),
             sourceFormat: AuthFlowConfig_Format.BARE_JSON,
+            default: false,
           },
         },
       });
     });
 
     it('creates a correct instance', () => {
-      const typedInstance = instance as OAuth2Client;
+      const typedInstance = instance as AuthFlow;
 
       expect(typedInstance).toEqual({
         displayName: 'Instance Name',
-        description: 'Instance description',
+        description: { value: 'Instance description' },
         etag: 'etag-token',
         id: 'instance-id',
         createTime: new Date(Date.UTC(2022, 6, 21, 11, 13)),
@@ -203,13 +212,15 @@ describe('createInstance', () => {
         defaultFlow: false,
         type: AuthFlowConfig_Format.BARE_JSON,
         source: Buffer.from('{}'),
+        createdBy: 'Lorem ipsum - creator',
+        updatedBy: 'Lorem ipsum - updater',
       });
     });
   });
 
   describe('when the kind is "emailServiceConfig"', () => {
     beforeEach(() => {
-      instance = ConfigurationFactory.createInstance({
+      instance = ConfigNodeFactory.createInstance({
         displayName: 'Instance Name',
         etag: 'etag-token',
         id: 'instance-id',
@@ -224,6 +235,7 @@ describe('createInstance', () => {
         config: {
           oneofKind: 'emailServiceConfig',
           emailServiceConfig: {
+            default: false,
             provider: {
               oneofKind: 'sendgrid',
               sendgrid: {
@@ -238,7 +250,7 @@ describe('createInstance', () => {
     });
 
     it('creates a correct instance', () => {
-      const typedInstance = instance as OAuth2Client;
+      const typedInstance = instance as EmailServiceConfigType;
 
       expect(typedInstance).toEqual({
         displayName: 'Instance Name',
@@ -253,6 +265,8 @@ describe('createInstance', () => {
         apiKey: 'sdfsdfsdf',
         host: StringValue.fromJson('https://example.com/mail'),
         sandboxMode: false,
+        createdBy: 'Lorem ipsum - creator',
+        updatedBy: 'Lorem ipsum - updater',
       });
     });
   });
@@ -262,7 +276,7 @@ describe('createInstance', () => {
 
     beforeEach(() => {
       try {
-        ConfigurationFactory.createInstance({
+        ConfigNodeFactory.createInstance({
           displayName: 'Instance Name',
           description: StringValue.fromJson('Instance description'),
           etag: 'etag-token',
@@ -285,8 +299,8 @@ describe('createInstance', () => {
     });
 
     it('throws an error', () => {
-      expect(caughtError.code).toBe(SdkErrorCode.SDK_CODE_1);
-      expect(caughtError.message).toBe("can't unmarshal configuration: undefined");
+      expect(caughtError.code).toBe(SdkErrorCode.SDK_CODE_2);
+      expect(caughtError.message).toBe(SkdErrorText.SDK_CODE_2(ConfigNode.name, undefined));
     });
   });
 });

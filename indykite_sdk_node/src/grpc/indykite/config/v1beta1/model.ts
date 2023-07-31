@@ -2,7 +2,7 @@
 // @generated from protobuf file "indykite/config/v1beta1/model.proto" (package "indykite.config.v1beta1", syntax proto3)
 // tslint:disable
 //
-// Copyright (c) 2020 IndyKite
+// Copyright (c) 2023 IndyKite
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -132,6 +132,29 @@ export interface Customer {
     etag: string;
 }
 /**
+ * CustomerConfig defines the default configuration for the Customer.
+ *
+ * @generated from protobuf message indykite.config.v1beta1.CustomerConfig
+ */
+export interface CustomerConfig {
+    /**
+     * DefaultAuthFlowID is GID of the AuthFlow in appSpace which is active when authentication requested.
+     *
+     * To unset any flow from being default send an empty value.
+     *
+     * @generated from protobuf field: string default_auth_flow_id = 2;
+     */
+    defaultAuthFlowId: string;
+    /**
+     * DefaultEmailServiceID is GID of the EmailService in customer which is used to send email notification.
+     *
+     * To unset any flow from being default send an empty value.
+     *
+     * @generated from protobuf field: string default_email_service_id = 3;
+     */
+    defaultEmailServiceId: string;
+}
+/**
  * ApplicationSpace representing the Application Space Node.
  *
  * @generated from protobuf message indykite.config.v1beta1.ApplicationSpace
@@ -221,6 +244,50 @@ export interface ApplicationSpace {
      * @generated from protobuf field: string issuer_id = 11;
      */
     issuerId: string;
+}
+/**
+ * ApplicationSpaceConfig defines the default configuration for the ApplicationSpace.
+ *
+ * @generated from protobuf message indykite.config.v1beta1.ApplicationSpaceConfig
+ */
+export interface ApplicationSpaceConfig {
+    /**
+     * DefaultTenantID is GID of tenant to fall-back if TenantID for any reason is not specified in any context when one
+     * is mandatory.
+     *
+     * @generated from protobuf field: string default_tenant_id = 2;
+     */
+    defaultTenantId: string;
+    /**
+     * DefaultAuthFlowID is GID of the AuthFlow in appSpace which is active when authentication requested.
+     *
+     * To unset any flow from being default send an empty value.
+     *
+     * @generated from protobuf field: string default_auth_flow_id = 3;
+     */
+    defaultAuthFlowId: string;
+    /**
+     * DefaultEmailServiceID is GID of the EmailService in appSpace which is used to send email notification.
+     *
+     * To unset any flow from being default send an empty value.
+     *
+     * @generated from protobuf field: string default_email_service_id = 4;
+     */
+    defaultEmailServiceId: string;
+    /**
+     * The Unique Property Constraints define the list of identity property names for which
+     * the system enforce the unique constraint before storing them.
+     *  key: The pre-defined property name or any new default property which must be unique Example: 'email'.
+     *
+     * @generated from protobuf field: map<string, indykite.config.v1beta1.UniquePropertyConstraint> unique_property_constraints = 5;
+     */
+    uniquePropertyConstraints: {
+        [key: string]: UniquePropertyConstraint;
+    };
+    /**
+     * @generated from protobuf field: indykite.config.v1beta1.UsernamePolicy username_policy = 6;
+     */
+    usernamePolicy?: UsernamePolicy;
 }
 /**
  * Tenant is a representation of an organization.
@@ -320,6 +387,42 @@ export interface Tenant {
      * @generated from protobuf field: string issuer_id = 12;
      */
     issuerId: string;
+    /**
+     * Default is read only value indicating this instance is used by default.
+     *
+     * @generated from protobuf field: bool default = 13;
+     */
+    default: boolean;
+}
+/**
+ * TenantConfig defines the default configuration for the Tenant.
+ *
+ * @generated from protobuf message indykite.config.v1beta1.TenantConfig
+ */
+export interface TenantConfig {
+    /**
+     * DefaultAuthFlowID is GID of the AuthFlow in tenant which is active when AuthFlow at parent ApplicationSpace seeks
+     * for Sub-Flow to execute as part of authentication process.
+     *
+     * To unset any flow from being default send an empty value.
+     *
+     * @generated from protobuf field: string default_auth_flow_id = 1;
+     */
+    defaultAuthFlowId: string;
+    /**
+     * DefaultEmailServiceID is GID of the EmailService in tenant which is used to send email notification.
+     *
+     * To unset any flow from being default send an empty value.
+     *
+     * @generated from protobuf field: string default_email_service_id = 2;
+     */
+    defaultEmailServiceId: string;
+    /**
+     * UsernamePolicy inherited by default from AppSpace but it can be over written for the tenant by setting it here.
+     *
+     * @generated from protobuf field: indykite.config.v1beta1.UsernamePolicy username_policy = 3;
+     */
+    usernamePolicy?: UsernamePolicy;
 }
 /**
  * Application represents the customer application.
@@ -1292,6 +1395,10 @@ export interface OAuth2ApplicationConfig {
      * @generated from protobuf field: string userinfo_signed_response_alg = 22;
      */
     userinfoSignedResponseAlg: string;
+    /**
+     * @generated from protobuf field: bool trusted = 23;
+     */
+    trusted: boolean;
 }
 /**
  * @generated from protobuf message indykite.config.v1beta1.OAuth2Provider
@@ -1455,6 +1562,10 @@ export interface OAuth2ProviderConfig {
     frontChannelConsentUri: {
         [key: string]: string;
     };
+    /**
+     * @generated from protobuf field: bool trusted = 10;
+     */
+    trusted: boolean;
 }
 /**
  * @generated from protobuf message indykite.config.v1beta1.WebAuthnProviderConfig
@@ -1537,9 +1648,16 @@ export interface AuthFlowConfig {
      */
     source: Uint8Array;
     /**
-     * @generated from protobuf field: google.protobuf.BoolValue default = 3;
+     * @deprecated
+     * @generated from protobuf field: google.protobuf.BoolValue set_default = 3 [deprecated = true];
      */
-    default?: BoolValue;
+    setDefault?: BoolValue; // use the container config to modify!
+    /**
+     * Default is read only value indicating this instance is used by default.
+     *
+     * @generated from protobuf field: bool default = 4;
+     */
+    default: boolean;
 }
 /**
  * @generated from protobuf enum indykite.config.v1beta1.AuthFlowConfig.Format
@@ -1676,9 +1794,16 @@ export interface EmailServiceConfig {
      */
     defaultFromAddress?: Email;
     /**
-     * @generated from protobuf field: google.protobuf.BoolValue default = 3;
+     * @deprecated
+     * @generated from protobuf field: google.protobuf.BoolValue set_default = 3 [deprecated = true];
      */
-    default?: BoolValue;
+    setDefault?: BoolValue; // use the container config to modify!
+    /**
+     * Default is read only value indicating this instance is used by default.
+     *
+     * @generated from protobuf field: bool default = 8;
+     */
+    default: boolean;
     /**
      * @generated from protobuf oneof: provider
      */
@@ -2113,6 +2238,12 @@ export interface PasswordProviderConfig {
  */
 export interface UsernamePolicy {
     /**
+     * AllowedUsernameFormats activates the validator to accept various formats as user identifier for humans.
+     *
+     * @generated from protobuf field: repeated string allowed_username_formats = 5;
+     */
+    allowedUsernameFormats: string[];
+    /**
      * Must be valid email with MX record
      *
      * @generated from protobuf field: bool valid_email = 1;
@@ -2125,6 +2256,10 @@ export interface UsernamePolicy {
      */
     verifyEmail: boolean;
     /**
+     * @generated from protobuf field: google.protobuf.Duration verify_email_grace_period = 7;
+     */
+    verifyEmailGracePeriod?: Duration;
+    /**
      * Allowed email domains to register. Can be shared among tenants.
      *
      * @generated from protobuf field: repeated string allowed_email_domains = 3;
@@ -2136,6 +2271,31 @@ export interface UsernamePolicy {
      * @generated from protobuf field: repeated string exclusive_email_domains = 4;
      */
     exclusiveEmailDomains: string[];
+}
+/**
+ * UniquePropertyConstraintDefinition defines the given Identity property as unique among other.
+ *
+ * This defines a constraint on Identity Property storage to enforce the value to be unique.
+ * The
+ *
+ * @generated from protobuf message indykite.config.v1beta1.UniquePropertyConstraint
+ */
+export interface UniquePropertyConstraint {
+    /**
+     * If tenantUnique is true the value will be unique only in Tenant and not across multiple tenants.
+     *
+     * @generated from protobuf field: bool tenant_unique = 1;
+     */
+    tenantUnique: boolean;
+    /**
+     * Canonicalization takes the supported methods in order and find the first applicable to given value to apply it
+     * before checking unique value.
+     * Example ‘K’ ("\u004B") and ‘K’ (Kelvin sign “\u212A”) are different but
+     * rune ("\u00e9") or an ’e' followed by an acute accent (“e\u0301”) are the same.
+     *
+     * @generated from protobuf field: repeated string canonicalization = 2;
+     */
+    canonicalization: string[];
 }
 /**
  * @generated from protobuf message indykite.config.v1beta1.PasswordPolicy
@@ -2794,6 +2954,60 @@ class Customer$Type extends MessageType<Customer> {
  */
 export const Customer = new Customer$Type();
 // @generated message type with reflection information, may provide speed optimized methods
+class CustomerConfig$Type extends MessageType<CustomerConfig> {
+    constructor() {
+        super("indykite.config.v1beta1.CustomerConfig", [
+            { no: 2, name: "default_auth_flow_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$", ignoreEmpty: true } } } },
+            { no: 3, name: "default_email_service_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$", ignoreEmpty: true } } } }
+        ]);
+    }
+    create(value?: PartialMessage<CustomerConfig>): CustomerConfig {
+        const message = { defaultAuthFlowId: "", defaultEmailServiceId: "" };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<CustomerConfig>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: CustomerConfig): CustomerConfig {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string default_auth_flow_id */ 2:
+                    message.defaultAuthFlowId = reader.string();
+                    break;
+                case /* string default_email_service_id */ 3:
+                    message.defaultEmailServiceId = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: CustomerConfig, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string default_auth_flow_id = 2; */
+        if (message.defaultAuthFlowId !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.defaultAuthFlowId);
+        /* string default_email_service_id = 3; */
+        if (message.defaultEmailServiceId !== "")
+            writer.tag(3, WireType.LengthDelimited).string(message.defaultEmailServiceId);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message indykite.config.v1beta1.CustomerConfig
+ */
+export const CustomerConfig = new CustomerConfig$Type();
+// @generated message type with reflection information, may provide speed optimized methods
 class ApplicationSpace$Type extends MessageType<ApplicationSpace> {
     constructor() {
         super("indykite.config.v1beta1.ApplicationSpace", [
@@ -2925,6 +3139,101 @@ class ApplicationSpace$Type extends MessageType<ApplicationSpace> {
  */
 export const ApplicationSpace = new ApplicationSpace$Type();
 // @generated message type with reflection information, may provide speed optimized methods
+class ApplicationSpaceConfig$Type extends MessageType<ApplicationSpaceConfig> {
+    constructor() {
+        super("indykite.config.v1beta1.ApplicationSpaceConfig", [
+            { no: 2, name: "default_tenant_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$", ignoreEmpty: true } } } },
+            { no: 3, name: "default_auth_flow_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$", ignoreEmpty: true } } } },
+            { no: 4, name: "default_email_service_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$", ignoreEmpty: true } } } },
+            { no: 5, name: "unique_property_constraints", kind: "map", K: 9 /*ScalarType.STRING*/, V: { kind: "message", T: () => UniquePropertyConstraint }, options: { "validate.rules": { map: { keys: { string: { minLen: "1", maxLen: "254", pattern: "^[A-Za-z][A-Za-z0-9_]{0,253}$" } }, values: { message: { required: true } } } } } },
+            { no: 6, name: "username_policy", kind: "message", T: () => UsernamePolicy, options: { "validate.rules": { message: { required: false } } } }
+        ]);
+    }
+    create(value?: PartialMessage<ApplicationSpaceConfig>): ApplicationSpaceConfig {
+        const message = { defaultTenantId: "", defaultAuthFlowId: "", defaultEmailServiceId: "", uniquePropertyConstraints: {} };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<ApplicationSpaceConfig>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ApplicationSpaceConfig): ApplicationSpaceConfig {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string default_tenant_id */ 2:
+                    message.defaultTenantId = reader.string();
+                    break;
+                case /* string default_auth_flow_id */ 3:
+                    message.defaultAuthFlowId = reader.string();
+                    break;
+                case /* string default_email_service_id */ 4:
+                    message.defaultEmailServiceId = reader.string();
+                    break;
+                case /* map<string, indykite.config.v1beta1.UniquePropertyConstraint> unique_property_constraints */ 5:
+                    this.binaryReadMap5(message.uniquePropertyConstraints, reader, options);
+                    break;
+                case /* indykite.config.v1beta1.UsernamePolicy username_policy */ 6:
+                    message.usernamePolicy = UsernamePolicy.internalBinaryRead(reader, reader.uint32(), options, message.usernamePolicy);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    private binaryReadMap5(map: ApplicationSpaceConfig["uniquePropertyConstraints"], reader: IBinaryReader, options: BinaryReadOptions): void {
+        let len = reader.uint32(), end = reader.pos + len, key: keyof ApplicationSpaceConfig["uniquePropertyConstraints"] | undefined, val: ApplicationSpaceConfig["uniquePropertyConstraints"][any] | undefined;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case 1:
+                    key = reader.string();
+                    break;
+                case 2:
+                    val = UniquePropertyConstraint.internalBinaryRead(reader, reader.uint32(), options);
+                    break;
+                default: throw new globalThis.Error("unknown map entry field for field indykite.config.v1beta1.ApplicationSpaceConfig.unique_property_constraints");
+            }
+        }
+        map[key ?? ""] = val ?? UniquePropertyConstraint.create();
+    }
+    internalBinaryWrite(message: ApplicationSpaceConfig, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string default_tenant_id = 2; */
+        if (message.defaultTenantId !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.defaultTenantId);
+        /* string default_auth_flow_id = 3; */
+        if (message.defaultAuthFlowId !== "")
+            writer.tag(3, WireType.LengthDelimited).string(message.defaultAuthFlowId);
+        /* string default_email_service_id = 4; */
+        if (message.defaultEmailServiceId !== "")
+            writer.tag(4, WireType.LengthDelimited).string(message.defaultEmailServiceId);
+        /* map<string, indykite.config.v1beta1.UniquePropertyConstraint> unique_property_constraints = 5; */
+        for (let k of Object.keys(message.uniquePropertyConstraints)) {
+            writer.tag(5, WireType.LengthDelimited).fork().tag(1, WireType.LengthDelimited).string(k);
+            writer.tag(2, WireType.LengthDelimited).fork();
+            UniquePropertyConstraint.internalBinaryWrite(message.uniquePropertyConstraints[k], writer, options);
+            writer.join().join();
+        }
+        /* indykite.config.v1beta1.UsernamePolicy username_policy = 6; */
+        if (message.usernamePolicy)
+            UsernamePolicy.internalBinaryWrite(message.usernamePolicy, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message indykite.config.v1beta1.ApplicationSpaceConfig
+ */
+export const ApplicationSpaceConfig = new ApplicationSpaceConfig$Type();
+// @generated message type with reflection information, may provide speed optimized methods
 class Tenant$Type extends MessageType<Tenant> {
     constructor() {
         super("indykite.config.v1beta1.Tenant", [
@@ -2941,11 +3250,12 @@ class Tenant$Type extends MessageType<Tenant> {
             { no: 9, name: "etag", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 10, name: "customer_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
             { no: 11, name: "app_space_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
-            { no: 12, name: "issuer_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } }
+            { no: 12, name: "issuer_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
+            { no: 13, name: "default", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
     create(value?: PartialMessage<Tenant>): Tenant {
-        const message = { id: "", name: "", displayName: "", createdBy: "", updatedBy: "", etag: "", customerId: "", appSpaceId: "", issuerId: "" };
+        const message = { id: "", name: "", displayName: "", createdBy: "", updatedBy: "", etag: "", customerId: "", appSpaceId: "", issuerId: "", default: false };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<Tenant>(this, message, value);
@@ -2997,6 +3307,9 @@ class Tenant$Type extends MessageType<Tenant> {
                     break;
                 case /* string issuer_id */ 12:
                     message.issuerId = reader.string();
+                    break;
+                case /* bool default */ 13:
+                    message.default = reader.bool();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -3052,6 +3365,9 @@ class Tenant$Type extends MessageType<Tenant> {
         /* string issuer_id = 12; */
         if (message.issuerId !== "")
             writer.tag(12, WireType.LengthDelimited).string(message.issuerId);
+        /* bool default = 13; */
+        if (message.default !== false)
+            writer.tag(13, WireType.Varint).bool(message.default);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -3062,6 +3378,67 @@ class Tenant$Type extends MessageType<Tenant> {
  * @generated MessageType for protobuf message indykite.config.v1beta1.Tenant
  */
 export const Tenant = new Tenant$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class TenantConfig$Type extends MessageType<TenantConfig> {
+    constructor() {
+        super("indykite.config.v1beta1.TenantConfig", [
+            { no: 1, name: "default_auth_flow_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$", ignoreEmpty: true } } } },
+            { no: 2, name: "default_email_service_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$", ignoreEmpty: true } } } },
+            { no: 3, name: "username_policy", kind: "message", T: () => UsernamePolicy, options: { "validate.rules": { message: { required: false } } } }
+        ]);
+    }
+    create(value?: PartialMessage<TenantConfig>): TenantConfig {
+        const message = { defaultAuthFlowId: "", defaultEmailServiceId: "" };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<TenantConfig>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: TenantConfig): TenantConfig {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string default_auth_flow_id */ 1:
+                    message.defaultAuthFlowId = reader.string();
+                    break;
+                case /* string default_email_service_id */ 2:
+                    message.defaultEmailServiceId = reader.string();
+                    break;
+                case /* indykite.config.v1beta1.UsernamePolicy username_policy */ 3:
+                    message.usernamePolicy = UsernamePolicy.internalBinaryRead(reader, reader.uint32(), options, message.usernamePolicy);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: TenantConfig, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string default_auth_flow_id = 1; */
+        if (message.defaultAuthFlowId !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.defaultAuthFlowId);
+        /* string default_email_service_id = 2; */
+        if (message.defaultEmailServiceId !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.defaultEmailServiceId);
+        /* indykite.config.v1beta1.UsernamePolicy username_policy = 3; */
+        if (message.usernamePolicy)
+            UsernamePolicy.internalBinaryWrite(message.usernamePolicy, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message indykite.config.v1beta1.TenantConfig
+ */
+export const TenantConfig = new TenantConfig$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class Application$Type extends MessageType<Application> {
     constructor() {
@@ -4276,11 +4653,12 @@ class OAuth2ApplicationConfig$Type extends MessageType<OAuth2ApplicationConfig> 
             { no: 19, name: "audiences", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { unique: true, items: { string: { uuid: true } } } } } },
             { no: 20, name: "token_endpoint_auth_method", kind: "enum", T: () => ["indykite.config.v1beta1.TokenEndpointAuthMethod", TokenEndpointAuthMethod, "TOKEN_ENDPOINT_AUTH_METHOD_"], options: { "validate.rules": { enum: { definedOnly: true, notIn: [0] } } } },
             { no: 21, name: "token_endpoint_auth_signing_alg", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { in: ["RS256", "RS384", "RS512", "PS256", "PS384", "PS512", "ES256", "ES384", "ES512", "ES256K", "HS256", "HS384", "HS512", "EdDSA"] } } } },
-            { no: 22, name: "userinfo_signed_response_alg", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { in: ["RS256"], ignoreEmpty: true } } } }
+            { no: 22, name: "userinfo_signed_response_alg", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { in: ["RS256"], ignoreEmpty: true } } } },
+            { no: 23, name: "trusted", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
     create(value?: PartialMessage<OAuth2ApplicationConfig>): OAuth2ApplicationConfig {
-        const message = { clientId: "", displayName: "", description: "", redirectUris: [], owner: "", policyUri: "", allowedCorsOrigins: [], termsOfServiceUri: "", clientUri: "", logoUri: "", userSupportEmailAddress: "", additionalContacts: [], subjectType: 0, sectorIdentifierUri: "", grantTypes: [], responseTypes: [], scopes: [], audiences: [], tokenEndpointAuthMethod: 0, tokenEndpointAuthSigningAlg: "", userinfoSignedResponseAlg: "" };
+        const message = { clientId: "", displayName: "", description: "", redirectUris: [], owner: "", policyUri: "", allowedCorsOrigins: [], termsOfServiceUri: "", clientUri: "", logoUri: "", userSupportEmailAddress: "", additionalContacts: [], subjectType: 0, sectorIdentifierUri: "", grantTypes: [], responseTypes: [], scopes: [], audiences: [], tokenEndpointAuthMethod: 0, tokenEndpointAuthSigningAlg: "", userinfoSignedResponseAlg: "", trusted: false };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<OAuth2ApplicationConfig>(this, message, value);
@@ -4361,6 +4739,9 @@ class OAuth2ApplicationConfig$Type extends MessageType<OAuth2ApplicationConfig> 
                     break;
                 case /* string userinfo_signed_response_alg */ 22:
                     message.userinfoSignedResponseAlg = reader.string();
+                    break;
+                case /* bool trusted */ 23:
+                    message.trusted = reader.bool();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -4445,6 +4826,9 @@ class OAuth2ApplicationConfig$Type extends MessageType<OAuth2ApplicationConfig> 
         /* string userinfo_signed_response_alg = 22; */
         if (message.userinfoSignedResponseAlg !== "")
             writer.tag(22, WireType.LengthDelimited).string(message.userinfoSignedResponseAlg);
+        /* bool trusted = 23; */
+        if (message.trusted !== false)
+            writer.tag(23, WireType.Varint).bool(message.trusted);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -4605,11 +4989,12 @@ class OAuth2ProviderConfig$Type extends MessageType<OAuth2ProviderConfig> {
             { no: 6, name: "request_uris", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { items: { string: { uri: true } } } } } },
             { no: 7, name: "request_object_signing_alg", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { in: ["RS256", "RS384", "RS512", "PS256", "PS384", "PS512", "ES256", "ES384", "ES512", "ES256K", "HS256", "HS384", "HS512", "EdDSA"], ignoreEmpty: true } } } },
             { no: 8, name: "front_channel_login_uri", kind: "map", K: 9 /*ScalarType.STRING*/, V: { kind: "scalar", T: 9 /*ScalarType.STRING*/ }, options: { "validate.rules": { map: { minPairs: "1", keys: { string: { maxLen: "32" } }, values: { string: { uri: true } } } } } },
-            { no: 9, name: "front_channel_consent_uri", kind: "map", K: 9 /*ScalarType.STRING*/, V: { kind: "scalar", T: 9 /*ScalarType.STRING*/ }, options: { "validate.rules": { map: { minPairs: "1", keys: { string: { maxLen: "32" } }, values: { string: { uri: true } } } } } }
+            { no: 9, name: "front_channel_consent_uri", kind: "map", K: 9 /*ScalarType.STRING*/, V: { kind: "scalar", T: 9 /*ScalarType.STRING*/ }, options: { "validate.rules": { map: { minPairs: "1", keys: { string: { maxLen: "32" } }, values: { string: { uri: true } } } } } },
+            { no: 10, name: "trusted", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
     create(value?: PartialMessage<OAuth2ProviderConfig>): OAuth2ProviderConfig {
-        const message = { grantTypes: [], responseTypes: [], scopes: [], tokenEndpointAuthMethod: [], tokenEndpointAuthSigningAlg: [], requestUris: [], requestObjectSigningAlg: "", frontChannelLoginUri: {}, frontChannelConsentUri: {} };
+        const message = { grantTypes: [], responseTypes: [], scopes: [], tokenEndpointAuthMethod: [], tokenEndpointAuthSigningAlg: [], requestUris: [], requestObjectSigningAlg: "", frontChannelLoginUri: {}, frontChannelConsentUri: {}, trusted: false };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<OAuth2ProviderConfig>(this, message, value);
@@ -4658,6 +5043,9 @@ class OAuth2ProviderConfig$Type extends MessageType<OAuth2ProviderConfig> {
                     break;
                 case /* map<string, string> front_channel_consent_uri */ 9:
                     this.binaryReadMap9(message.frontChannelConsentUri, reader, options);
+                    break;
+                case /* bool trusted */ 10:
+                    message.trusted = reader.bool();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -4742,6 +5130,9 @@ class OAuth2ProviderConfig$Type extends MessageType<OAuth2ProviderConfig> {
         /* map<string, string> front_channel_consent_uri = 9; */
         for (let k of Object.keys(message.frontChannelConsentUri))
             writer.tag(9, WireType.LengthDelimited).fork().tag(1, WireType.LengthDelimited).string(k).tag(2, WireType.LengthDelimited).string(message.frontChannelConsentUri[k]).join();
+        /* bool trusted = 10; */
+        if (message.trusted !== false)
+            writer.tag(10, WireType.Varint).bool(message.trusted);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -4931,11 +5322,12 @@ class AuthFlowConfig$Type extends MessageType<AuthFlowConfig> {
         super("indykite.config.v1beta1.AuthFlowConfig", [
             { no: 1, name: "source_format", kind: "enum", T: () => ["indykite.config.v1beta1.AuthFlowConfig.Format", AuthFlowConfig_Format, "FORMAT_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
             { no: 2, name: "source", kind: "scalar", T: 12 /*ScalarType.BYTES*/, options: { "validate.rules": { bytes: { maxLen: "1048576" } } } },
-            { no: 3, name: "default", kind: "message", T: () => BoolValue }
+            { no: 3, name: "set_default", kind: "message", T: () => BoolValue },
+            { no: 4, name: "default", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
     create(value?: PartialMessage<AuthFlowConfig>): AuthFlowConfig {
-        const message = { sourceFormat: 0, source: new Uint8Array(0) };
+        const message = { sourceFormat: 0, source: new Uint8Array(0), default: false };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<AuthFlowConfig>(this, message, value);
@@ -4952,8 +5344,11 @@ class AuthFlowConfig$Type extends MessageType<AuthFlowConfig> {
                 case /* bytes source */ 2:
                     message.source = reader.bytes();
                     break;
-                case /* google.protobuf.BoolValue default */ 3:
-                    message.default = BoolValue.internalBinaryRead(reader, reader.uint32(), options, message.default);
+                case /* google.protobuf.BoolValue set_default = 3 [deprecated = true];*/ 3:
+                    message.setDefault = BoolValue.internalBinaryRead(reader, reader.uint32(), options, message.setDefault);
+                    break;
+                case /* bool default */ 4:
+                    message.default = reader.bool();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -4973,9 +5368,12 @@ class AuthFlowConfig$Type extends MessageType<AuthFlowConfig> {
         /* bytes source = 2; */
         if (message.source.length)
             writer.tag(2, WireType.LengthDelimited).bytes(message.source);
-        /* google.protobuf.BoolValue default = 3; */
-        if (message.default)
-            BoolValue.internalBinaryWrite(message.default, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        /* google.protobuf.BoolValue set_default = 3 [deprecated = true]; */
+        if (message.setDefault)
+            BoolValue.internalBinaryWrite(message.setDefault, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        /* bool default = 4; */
+        if (message.default !== false)
+            writer.tag(4, WireType.Varint).bool(message.default);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -5302,7 +5700,8 @@ class EmailServiceConfig$Type extends MessageType<EmailServiceConfig> {
     constructor() {
         super("indykite.config.v1beta1.EmailServiceConfig", [
             { no: 1, name: "default_from_address", kind: "message", T: () => Email },
-            { no: 3, name: "default", kind: "message", T: () => BoolValue },
+            { no: 3, name: "set_default", kind: "message", T: () => BoolValue },
+            { no: 8, name: "default", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 4, name: "sendgrid", kind: "message", oneof: "provider", T: () => SendGridProviderConfig, options: { "validate.rules": { message: { required: true } } } },
             { no: 5, name: "mailjet", kind: "message", oneof: "provider", T: () => MailJetProviderConfig, options: { "validate.rules": { message: { required: true } } } },
             { no: 6, name: "mailgun", kind: "message", oneof: "provider", T: () => MailgunProviderConfig, options: { "validate.rules": { message: { required: true } } } },
@@ -5314,7 +5713,7 @@ class EmailServiceConfig$Type extends MessageType<EmailServiceConfig> {
         ]);
     }
     create(value?: PartialMessage<EmailServiceConfig>): EmailServiceConfig {
-        const message = { provider: { oneofKind: undefined } };
+        const message = { default: false, provider: { oneofKind: undefined } };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<EmailServiceConfig>(this, message, value);
@@ -5328,8 +5727,11 @@ class EmailServiceConfig$Type extends MessageType<EmailServiceConfig> {
                 case /* indykite.config.v1beta1.Email default_from_address */ 1:
                     message.defaultFromAddress = Email.internalBinaryRead(reader, reader.uint32(), options, message.defaultFromAddress);
                     break;
-                case /* google.protobuf.BoolValue default */ 3:
-                    message.default = BoolValue.internalBinaryRead(reader, reader.uint32(), options, message.default);
+                case /* google.protobuf.BoolValue set_default = 3 [deprecated = true];*/ 3:
+                    message.setDefault = BoolValue.internalBinaryRead(reader, reader.uint32(), options, message.setDefault);
+                    break;
+                case /* bool default */ 8:
+                    message.default = reader.bool();
                     break;
                 case /* indykite.config.v1beta1.SendGridProviderConfig sendgrid */ 4:
                     message.provider = {
@@ -5382,9 +5784,12 @@ class EmailServiceConfig$Type extends MessageType<EmailServiceConfig> {
         /* indykite.config.v1beta1.Email default_from_address = 1; */
         if (message.defaultFromAddress)
             Email.internalBinaryWrite(message.defaultFromAddress, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* google.protobuf.BoolValue default = 3; */
-        if (message.default)
-            BoolValue.internalBinaryWrite(message.default, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        /* google.protobuf.BoolValue set_default = 3 [deprecated = true]; */
+        if (message.setDefault)
+            BoolValue.internalBinaryWrite(message.setDefault, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        /* bool default = 8; */
+        if (message.default !== false)
+            writer.tag(8, WireType.Varint).bool(message.default);
         /* indykite.config.v1beta1.SendGridProviderConfig sendgrid = 4; */
         if (message.provider.oneofKind === "sendgrid")
             SendGridProviderConfig.internalBinaryWrite(message.provider.sendgrid, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
@@ -6390,14 +6795,16 @@ export const PasswordProviderConfig = new PasswordProviderConfig$Type();
 class UsernamePolicy$Type extends MessageType<UsernamePolicy> {
     constructor() {
         super("indykite.config.v1beta1.UsernamePolicy", [
+            { no: 5, name: "allowed_username_formats", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { maxItems: "3", unique: true, items: { string: { in: ["email", "mobile", "username"] } } } } } },
             { no: 1, name: "valid_email", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 2, name: "verify_email", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 7, name: "verify_email_grace_period", kind: "message", T: () => Duration, options: { "validate.rules": { duration: { lte: { seconds: "900" }, gte: { seconds: "5" } } } } },
             { no: 3, name: "allowed_email_domains", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/ },
             { no: 4, name: "exclusive_email_domains", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/ }
         ]);
     }
     create(value?: PartialMessage<UsernamePolicy>): UsernamePolicy {
-        const message = { validEmail: false, verifyEmail: false, allowedEmailDomains: [], exclusiveEmailDomains: [] };
+        const message = { allowedUsernameFormats: [], validEmail: false, verifyEmail: false, allowedEmailDomains: [], exclusiveEmailDomains: [] };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<UsernamePolicy>(this, message, value);
@@ -6408,11 +6815,17 @@ class UsernamePolicy$Type extends MessageType<UsernamePolicy> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
+                case /* repeated string allowed_username_formats */ 5:
+                    message.allowedUsernameFormats.push(reader.string());
+                    break;
                 case /* bool valid_email */ 1:
                     message.validEmail = reader.bool();
                     break;
                 case /* bool verify_email */ 2:
                     message.verifyEmail = reader.bool();
+                    break;
+                case /* google.protobuf.Duration verify_email_grace_period */ 7:
+                    message.verifyEmailGracePeriod = Duration.internalBinaryRead(reader, reader.uint32(), options, message.verifyEmailGracePeriod);
                     break;
                 case /* repeated string allowed_email_domains */ 3:
                     message.allowedEmailDomains.push(reader.string());
@@ -6432,12 +6845,18 @@ class UsernamePolicy$Type extends MessageType<UsernamePolicy> {
         return message;
     }
     internalBinaryWrite(message: UsernamePolicy, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* repeated string allowed_username_formats = 5; */
+        for (let i = 0; i < message.allowedUsernameFormats.length; i++)
+            writer.tag(5, WireType.LengthDelimited).string(message.allowedUsernameFormats[i]);
         /* bool valid_email = 1; */
         if (message.validEmail !== false)
             writer.tag(1, WireType.Varint).bool(message.validEmail);
         /* bool verify_email = 2; */
         if (message.verifyEmail !== false)
             writer.tag(2, WireType.Varint).bool(message.verifyEmail);
+        /* google.protobuf.Duration verify_email_grace_period = 7; */
+        if (message.verifyEmailGracePeriod)
+            Duration.internalBinaryWrite(message.verifyEmailGracePeriod, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
         /* repeated string allowed_email_domains = 3; */
         for (let i = 0; i < message.allowedEmailDomains.length; i++)
             writer.tag(3, WireType.LengthDelimited).string(message.allowedEmailDomains[i]);
@@ -6454,6 +6873,60 @@ class UsernamePolicy$Type extends MessageType<UsernamePolicy> {
  * @generated MessageType for protobuf message indykite.config.v1beta1.UsernamePolicy
  */
 export const UsernamePolicy = new UsernamePolicy$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class UniquePropertyConstraint$Type extends MessageType<UniquePropertyConstraint> {
+    constructor() {
+        super("indykite.config.v1beta1.UniquePropertyConstraint", [
+            { no: 1, name: "tenant_unique", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 2, name: "canonicalization", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { unique: true, items: { string: { in: ["unicode", "case-insensitive"] } }, ignoreEmpty: true } } } }
+        ]);
+    }
+    create(value?: PartialMessage<UniquePropertyConstraint>): UniquePropertyConstraint {
+        const message = { tenantUnique: false, canonicalization: [] };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<UniquePropertyConstraint>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: UniquePropertyConstraint): UniquePropertyConstraint {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* bool tenant_unique */ 1:
+                    message.tenantUnique = reader.bool();
+                    break;
+                case /* repeated string canonicalization */ 2:
+                    message.canonicalization.push(reader.string());
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: UniquePropertyConstraint, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* bool tenant_unique = 1; */
+        if (message.tenantUnique !== false)
+            writer.tag(1, WireType.Varint).bool(message.tenantUnique);
+        /* repeated string canonicalization = 2; */
+        for (let i = 0; i < message.canonicalization.length; i++)
+            writer.tag(2, WireType.LengthDelimited).string(message.canonicalization[i]);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message indykite.config.v1beta1.UniquePropertyConstraint
+ */
+export const UniquePropertyConstraint = new UniquePropertyConstraint$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class PasswordPolicy$Type extends MessageType<PasswordPolicy> {
     constructor() {

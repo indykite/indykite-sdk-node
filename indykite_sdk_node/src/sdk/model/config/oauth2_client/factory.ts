@@ -1,6 +1,9 @@
 import { OAuth2ClientConfig } from '../../../../grpc/indykite/config/v1beta1/model';
 import { OAuth2Client } from './oauth2_client';
 
+//
+export const OAUTH2_CLIENT_CONFIG = 'oauth2ClientConfig';
+
 export class OAuth2ClientFactory {
   static createInstance(name: string, config: OAuth2ClientConfig): OAuth2Client {
     const client = new OAuth2Client({

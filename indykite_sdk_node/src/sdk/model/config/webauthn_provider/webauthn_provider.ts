@@ -1,3 +1,4 @@
+import { StringValue } from '../../../../grpc/google/protobuf/wrappers';
 import {
   AuthenticatorAttachment,
   ConveyancePreference,
@@ -5,7 +6,7 @@ import {
   WebAuthnProviderConfig,
 } from '../../../../grpc/indykite/config/v1beta1/model';
 import { Utils } from '../../../utils/utils';
-import { NodeConfiguration } from '../configuration';
+import { ConfigNode } from '../config_node';
 
 type IOptions = {
   relyingParties: Record<string, string>;
@@ -17,10 +18,10 @@ type IOptions = {
   authenticationTimeout?: number;
   name: string;
   displayName?: string;
-  description?: string;
+  description?: StringValue;
 };
 
-export class WebAuthnProvider extends NodeConfiguration {
+export class WebAuthnProvider extends ConfigNode {
   public relyingParties: Record<string, string>;
   public requireResidentKey: boolean;
   public attestationPreference: ConveyancePreference;

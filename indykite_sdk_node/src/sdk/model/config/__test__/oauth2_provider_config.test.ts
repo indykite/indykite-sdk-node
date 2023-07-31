@@ -22,6 +22,7 @@ describe('deserialize', () => {
         requestObjectSigningAlg: 'ES256',
         frontChannelLoginUri: { default: 'https://example.com/login/oauth2' },
         frontChannelConsentUri: { default: 'https://example.com/consent' },
+        trusted: false,
       });
     });
 
@@ -59,6 +60,7 @@ describe('deserialize', () => {
           requestObjectSigningAlg: 'ES256',
           frontChannelLoginUri: { default: 'https://example.com/login/oauth2' },
           frontChannelConsentUri: { default: 'https://example.com/consent' },
+          trusted: false,
         });
       } catch (err) {
         thrownError = err as SdkError;
@@ -87,6 +89,7 @@ describe('construct with the object argument', () => {
         requestObjectSigningAlg: 'ES256',
         frontChannelLoginUri: { default: 'https://example.com/login/oauth2' },
         frontChannelConsentUri: { default: 'https://example.com/consent' },
+        trusted: false,
       });
     });
 
@@ -126,6 +129,7 @@ describe('construct with the object argument', () => {
           requestObjectSigningAlg: 'ES256',
           frontChannelLoginUri: { default: 'https://example.com/login/oauth2' },
           frontChannelConsentUri: { default: 'https://example.com/consent' },
+          trusted: false,
         });
       });
     });
@@ -143,6 +147,7 @@ describe('construct with the object argument', () => {
         tokenEndpointAuthSigningAlg: ['ES256', 'RS256'],
         frontChannelLoginUri: { default: 'https://example.com/login/oauth2' },
         frontChannelConsentUri: { default: 'https://example.com/consent' },
+        trusted: false,
       });
     });
 
@@ -182,6 +187,7 @@ describe('construct with the object argument', () => {
           requestObjectSigningAlg: '',
           frontChannelLoginUri: { default: 'https://example.com/login/oauth2' },
           frontChannelConsentUri: { default: 'https://example.com/consent' },
+          trusted: false,
         });
       });
     });

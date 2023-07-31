@@ -1,5 +1,17 @@
 export enum SdkErrorCode {
   SDK_CODE_1 = 1,
+  SDK_CODE_2 = 2,
+  SDK_CODE_3 = 3,
+  SDK_CODE_4 = 4,
+}
+
+export class SkdErrorText {
+  static SDK_CODE_1 = (s: string) => `Can't deserialize ${s}.`;
+  static SDK_CODE_2 = (classname: string, param?: string) =>
+    `Can't unmarshal ${classname}: ${param}.`;
+  static SDK_CODE_3 = (s: string) => `No ${s} response.`;
+  static SDK_CODE_4 = (id1: string, id2: string | undefined) =>
+    `Update returned with different id: request.id=${id1}, response.id=${id2 ?? 'undefined'}.`;
 }
 
 export class SdkError extends Error {

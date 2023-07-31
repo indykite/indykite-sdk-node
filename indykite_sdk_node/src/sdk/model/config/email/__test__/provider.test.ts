@@ -4,7 +4,7 @@ import {
   AmazonSESProviderConfig,
   MailgunProviderConfig,
   Email,
-} from '../provider';
+} from '../service';
 import {
   SendGridProviderConfig as OriginalSendGridProviderConfig,
   MailJetProviderConfig as OriginalMailJetProviderConfig,

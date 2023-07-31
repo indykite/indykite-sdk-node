@@ -2,12 +2,13 @@ import { CallOptions, Metadata } from '@grpc/grpc-js';
 import { ServiceError, SurfaceCall } from '@grpc/grpc-js/build/src/call';
 import { Status } from '@grpc/grpc-js/build/src/constants';
 import {
+  CreateOAuth2ApplicationRequest,
   CreateOAuth2ApplicationResponse,
   DeleteOAuth2ApplicationResponse,
   ReadOAuth2ApplicationResponse,
   UpdateOAuth2ApplicationResponse,
 } from '../../../grpc/indykite/config/v1beta1/config_management_api';
-import { ConfigClient } from '../../config';
+import { ConfigClientV2 } from '../../config_v2';
 import { SdkError, SdkErrorCode } from '../../error';
 import { Utils } from '../../utils/utils';
 import { OAuth2Application } from '../../model/config/oauth2_application';
@@ -42,14 +43,81 @@ afterEach(() => {
   jest.restoreAllMocks();
 });
 
+describe('OAuth2Application', () => {
+  let response: CreateOAuth2ApplicationRequest;
+  let newCreateOAuth2ApplicationRequestSpy: jest.SpyInstance;
+  beforeEach(() => {
+    newCreateOAuth2ApplicationRequestSpy = jest
+      .spyOn(ConfigClientV2, 'newCreateOAuth2ApplicationRequest')
+      .mockImplementation(() => {
+        return {
+          oauth2ProviderId: 'app-space-id',
+          name: 'oauth2-provider-name',
+          bookmarks: [],
+          config: {
+            clientId: '',
+            displayName: '',
+            redirectUris: [],
+            owner: '',
+            policyUri: '',
+            termsOfServiceUri: '',
+            clientUri: '',
+            logoUri: '',
+            userSupportEmailAddress: '',
+            subjectType: ClientSubjectType.INVALID,
+            scopes: [],
+            tokenEndpointAuthMethod: TokenEndpointAuthMethod.CLIENT_SECRET_BASIC,
+            tokenEndpointAuthSigningAlg: '',
+
+            audiences: [],
+            description: '',
+            allowedCorsOrigins: [],
+            additionalContacts: [],
+            sectorIdentifierUri: '',
+            grantTypes: [],
+            responseTypes: [],
+            userinfoSignedResponseAlg: '',
+            trusted: false,
+          },
+          displayName: undefined,
+          description: undefined,
+        } as CreateOAuth2ApplicationRequest;
+      });
+    response = ConfigClientV2.newCreateOAuth2ApplicationRequest(
+      'app-space-id',
+      'oauth2-provider-name',
+      {} as OAuth2ApplicationConfig,
+    );
+  });
+  it('sends correct request', () => {
+    expect(newCreateOAuth2ApplicationRequestSpy).toBeCalledWith(
+      'app-space-id',
+      'oauth2-provider-name',
+      {} as OAuth2ApplicationConfig,
+    );
+  });
+
+  it('newCreateOAuth2ApplicationRequest with empty config is returned', () => {
+    expect(response).toHaveProperty('config');
+    expect(response.config?.audiences.toString()).toBe([].toString());
+    expect(response.config?.description).toBe('');
+    expect(response.config?.allowedCorsOrigins.toString()).toBe([].toString());
+    expect(response.config?.additionalContacts.toString()).toBe([].toString());
+    expect(response.config?.sectorIdentifierUri.toString()).toBe('');
+    expect(response.config?.grantTypes.toString()).toBe([].toString());
+    expect(response.config?.responseTypes.toString()).toBe([].toString());
+    expect(response.config?.userinfoSignedResponseAlg.toString()).toBe('');
+  });
+});
+
 describe('createOAuth2Application', () => {
   describe('when no error is returned', () => {
     let oauth2Application: OAuth2Application;
     let createOAuth2ApplicationSpy: jest.SpyInstance;
-    let sdk: ConfigClient;
+    let sdk: ConfigClientV2;
 
     beforeEach(async () => {
-      sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
+      sdk = await ConfigClientV2.createInstance(JSON.stringify(serviceAccountTokenMock));
       createOAuth2ApplicationSpy = jest
         .spyOn(sdk['client'], 'createOAuth2Application')
         .mockImplementation(
@@ -78,8 +146,14 @@ describe('createOAuth2Application', () => {
 
     describe('when necessary values are sent only', () => {
       beforeEach(async () => {
-        oauth2Application = await sdk.createOAuth2Application(
-          'oauth2-provider-id',
+        oauth2Application = OAuth2Application.deserialize(
+          await sdk.createOAuth2Application(
+            ConfigClientV2.newCreateOAuth2ApplicationRequest(
+              'oauth2-provider-id',
+              'oauth2-app-name',
+              configExample,
+            ),
+          ),
           'oauth2-app-name',
           configExample,
         );
@@ -131,8 +205,16 @@ describe('createOAuth2Application', () => {
 
     describe('when all possible values are sent', () => {
       beforeEach(async () => {
-        oauth2Application = await sdk.createOAuth2Application(
-          'oauth2-provider-id',
+        oauth2Application = OAuth2Application.deserialize(
+          await sdk.createOAuth2Application(
+            ConfigClientV2.newCreateOAuth2ApplicationRequest(
+              'oauth2-provider-id',
+              'oauth2-app-name',
+              configExample,
+              'Display Name',
+              'Description',
+            ),
+          ),
           'oauth2-app-name',
           configExample,
           'Display Name',
@@ -196,7 +278,7 @@ describe('createOAuth2Application', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
+      const sdk = await ConfigClientV2.createInstance(JSON.stringify(serviceAccountTokenMock));
       jest
         .spyOn(sdk['client'], 'createOAuth2Application')
         .mockImplementation(
@@ -214,7 +296,13 @@ describe('createOAuth2Application', () => {
           },
         );
       sdk
-        .createOAuth2Application('oauth2-provider-id', 'oauth2-app-name', configExample)
+        .createOAuth2Application(
+          ConfigClientV2.newCreateOAuth2ApplicationRequest(
+            'oauth2-provider-id',
+            'oauth2-app-name',
+            {} as OAuth2ApplicationConfig, // configExample,
+          ),
+        )
         .catch((err) => {
           thrownError = err;
         });
@@ -229,7 +317,7 @@ describe('createOAuth2Application', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
+      const sdk = await ConfigClientV2.createInstance(JSON.stringify(serviceAccountTokenMock));
       jest
         .spyOn(sdk['client'], 'createOAuth2Application')
         .mockImplementation(
@@ -247,14 +335,20 @@ describe('createOAuth2Application', () => {
           },
         );
       sdk
-        .createOAuth2Application('oauth2-provider-id', 'oauth2-app-name', configExample)
+        .createOAuth2Application(
+          ConfigClientV2.newCreateOAuth2ApplicationRequest(
+            'oauth2-provider-id',
+            'oauth2-app-name',
+            configExample,
+          ),
+        )
         .catch((err) => {
           thrownError = err;
         });
     });
 
     it('throws an error', () => {
-      expect(thrownError.message).toBe('No OAuth2 client response');
+      expect(thrownError.message).toBe('No OAuth2Application response.');
     });
   });
 });
@@ -265,7 +359,7 @@ describe('readOAuth2Application', () => {
     let readOAuth2ApplicationSpy: jest.SpyInstance;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
+      const sdk = await ConfigClientV2.createInstance(JSON.stringify(serviceAccountTokenMock));
       readOAuth2ApplicationSpy = jest
         .spyOn(sdk['client'], 'readOAuth2Application')
         .mockImplementation(
@@ -285,10 +379,10 @@ describe('readOAuth2Application', () => {
                   displayName: 'OAuth2 Application Name',
                   createdBy: 'Lorem ipsum - creator',
                   updatedBy: 'Lorem ipsum - updater',
-                  createTime: Utils.dateToTimestamp(new Date(2022, 5, 28, 11, 54)),
-                  updateTime: Utils.dateToTimestamp(new Date(2022, 5, 28, 11, 55)),
-                  deleteTime: Utils.dateToTimestamp(new Date(2022, 5, 28, 11, 56)),
-                  destroyTime: Utils.dateToTimestamp(new Date(2022, 5, 28, 11, 57)),
+                  createTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 5, 28, 11, 54))),
+                  updateTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 5, 28, 11, 55))),
+                  deleteTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 5, 28, 11, 56))),
+                  destroyTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 5, 28, 11, 57))),
                   customerId: 'customer-id',
                   appSpaceId: 'app-space-id',
                   oauth2ProviderId: 'oauth2-provider-id',
@@ -299,7 +393,11 @@ describe('readOAuth2Application', () => {
             return {} as SurfaceCall;
           },
         );
-      oauth2Application = await sdk.readOAuth2Application('oauth2-app-id-request');
+      oauth2Application = OAuth2Application.deserialize(
+        await sdk.readOAuth2Application(
+          ConfigClientV2.newReadOAuth2ApplicationRequest('oauth2-app-id-request'),
+        ),
+      );
     });
 
     it('sends correct request', () => {
@@ -318,10 +416,10 @@ describe('readOAuth2Application', () => {
         name: 'oauth2-application-name',
         etag: 'etag-token',
         displayName: 'OAuth2 Application Name',
-        createTime: new Date(2022, 5, 28, 11, 54),
-        updateTime: new Date(2022, 5, 28, 11, 55),
-        deleteTime: new Date(2022, 5, 28, 11, 56),
-        destroyTime: new Date(2022, 5, 28, 11, 57),
+        createTime: new Date(Date.UTC(2022, 5, 28, 11, 54)),
+        updateTime: new Date(Date.UTC(2022, 5, 28, 11, 55)),
+        deleteTime: new Date(Date.UTC(2022, 5, 28, 11, 56)),
+        destroyTime: new Date(Date.UTC(2022, 5, 28, 11, 57)),
         customerId: 'customer-id',
         appSpaceId: 'app-space-id',
         oauth2ProviderId: 'oauth2-provider-id',
@@ -351,7 +449,6 @@ describe('readOAuth2Application', () => {
         audiences: [],
         userinfoSignedResponseAlg: '',
         trusted: false,
-        clientSecret: undefined,
       });
     });
   });
@@ -365,7 +462,7 @@ describe('readOAuth2Application', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
+      const sdk = await ConfigClientV2.createInstance(JSON.stringify(serviceAccountTokenMock));
       jest
         .spyOn(sdk['client'], 'readOAuth2Application')
         .mockImplementation(
@@ -382,9 +479,13 @@ describe('readOAuth2Application', () => {
             return {} as SurfaceCall;
           },
         );
-      sdk.readOAuth2Application('oauth2-app-id-request').catch((err) => {
-        thrownError = err;
-      });
+      sdk
+        .readOAuth2Application(
+          ConfigClientV2.newReadOAuth2ApplicationRequest('oauth2-app-id-request'),
+        )
+        .catch((err) => {
+          thrownError = err;
+        });
     });
 
     it('throws an error', () => {
@@ -396,7 +497,7 @@ describe('readOAuth2Application', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
+      const sdk = await ConfigClientV2.createInstance(JSON.stringify(serviceAccountTokenMock));
       jest
         .spyOn(sdk['client'], 'readOAuth2Application')
         .mockImplementation(
@@ -413,25 +514,29 @@ describe('readOAuth2Application', () => {
             return {} as SurfaceCall;
           },
         );
-      sdk.readOAuth2Application('oauth2-app-id-request').catch((err) => {
-        thrownError = err;
-      });
+      sdk
+        .readOAuth2Application(
+          ConfigClientV2.newReadOAuth2ApplicationRequest('oauth2-app-id-request'),
+        )
+        .catch((err) => {
+          thrownError = err;
+        });
     });
 
     it('throws an error', () => {
-      expect(thrownError.message).toBe('No OAuth2 client response');
+      expect(thrownError.message).toBe('No OAuth2Application response.');
     });
   });
 });
 
 describe('updateOAuth2Application', () => {
   describe('when no error is returned', () => {
-    let updatedOAuth2Application: OAuth2Application;
+    let updatedOAuth2Application: UpdateOAuth2ApplicationResponse;
     let updateOAuth2ApplicationSpy: jest.SpyInstance;
-    let sdk: ConfigClient;
+    let sdk: ConfigClientV2;
 
     beforeEach(async () => {
-      sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
+      sdk = await ConfigClientV2.createInstance(JSON.stringify(serviceAccountTokenMock));
       updateOAuth2ApplicationSpy = jest
         .spyOn(sdk['client'], 'updateOAuth2Application')
         .mockImplementation(
@@ -446,7 +551,7 @@ describe('updateOAuth2Application', () => {
               res(null, {
                 etag: 'new-etag-id',
                 id: 'oauth2-app-id',
-                updateTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 16)),
+                updateTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 2, 15, 13, 16))),
                 bookmark: 'bookmark-token',
                 createdBy: 'Lorem ipsum - creator',
                 updatedBy: 'Lorem ipsum - updater',
@@ -460,7 +565,9 @@ describe('updateOAuth2Application', () => {
     describe('when necessary values are sent only', () => {
       beforeEach(async () => {
         const oauth2Application = new OAuth2Application('oauth2-app-id', 'oauth2-app-name');
-        updatedOAuth2Application = await sdk.updateOAuth2Application(oauth2Application);
+        updatedOAuth2Application = await sdk.updateOAuth2Application(
+          ConfigClientV2.newUpdateOAuth2ApplicationRequest(oauth2Application),
+        );
       });
 
       it('sends correct request', () => {
@@ -475,10 +582,12 @@ describe('updateOAuth2Application', () => {
 
       it('returns a correct instance', () => {
         expect(updatedOAuth2Application).toEqual({
-          id: 'oauth2-app-id',
-          name: 'oauth2-app-name',
+          bookmark: 'bookmark-token',
+          createdBy: 'Lorem ipsum - creator',
+          updatedBy: 'Lorem ipsum - updater',
           etag: 'new-etag-id',
-          updateTime: new Date(2022, 2, 15, 13, 16),
+          id: 'oauth2-app-id',
+          updateTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 2, 15, 13, 16))),
         });
       });
     });
@@ -491,16 +600,18 @@ describe('updateOAuth2Application', () => {
           'etag-token',
           'OAuth2 Application Name',
           'Description',
-          new Date(2022, 5, 28, 11, 54),
-          new Date(2022, 5, 28, 11, 55),
-          new Date(2022, 5, 28, 11, 56),
-          new Date(2022, 5, 28, 11, 57),
+          new Date(Date.UTC(2022, 5, 28, 11, 54)),
+          new Date(Date.UTC(2022, 5, 28, 11, 55)),
+          new Date(Date.UTC(2022, 5, 28, 11, 56)),
+          new Date(Date.UTC(2022, 5, 28, 11, 57)),
           'customer-id',
           'app-space-id',
           'oauth2-provider-id',
           configExample,
         );
-        updatedOAuth2Application = await sdk.updateOAuth2Application(oauth2Application);
+        updatedOAuth2Application = await sdk.updateOAuth2Application(
+          ConfigClientV2.newUpdateOAuth2ApplicationRequest(oauth2Application),
+        );
       });
 
       it('sends correct request', () => {
@@ -519,19 +630,12 @@ describe('updateOAuth2Application', () => {
 
       it('returns a correct instance', () => {
         expect(updatedOAuth2Application).toEqual({
-          id: 'oauth2-app-id',
-          name: 'oauth2-app-name',
+          bookmark: 'bookmark-token',
+          createdBy: 'Lorem ipsum - creator',
+          updatedBy: 'Lorem ipsum - updater',
           etag: 'new-etag-id',
-          displayName: 'OAuth2 Application Name',
-          description: 'Description',
-          createTime: new Date(2022, 5, 28, 11, 54),
-          updateTime: new Date(2022, 2, 15, 13, 16),
-          deleteTime: new Date(2022, 5, 28, 11, 56),
-          destroyTime: new Date(2022, 5, 28, 11, 57),
-          customerId: 'customer-id',
-          appSpaceId: 'app-space-id',
-          oauth2ProviderId: 'oauth2-provider-id',
-          config: expect.any(OAuth2ApplicationConfig),
+          id: 'oauth2-app-id',
+          updateTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 2, 15, 13, 16))),
         });
       });
     });
@@ -541,7 +645,7 @@ describe('updateOAuth2Application', () => {
     let thrownError: SdkError;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
+      const sdk = await ConfigClientV2.createInstance(JSON.stringify(serviceAccountTokenMock));
       jest
         .spyOn(sdk['client'], 'updateOAuth2Application')
         .mockImplementation(
@@ -556,7 +660,7 @@ describe('updateOAuth2Application', () => {
               res(null, {
                 etag: '777',
                 id: 'different-oauth2-app-id',
-                updateTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 16)),
+                updateTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 2, 15, 13, 16))),
                 bookmark: 'bookmark-token',
                 createdBy: 'Lorem ipsum - creator',
                 updatedBy: 'Lorem ipsum - updater',
@@ -566,13 +670,17 @@ describe('updateOAuth2Application', () => {
           },
         );
       const oauth2Application = new OAuth2Application('oauth2-app-id', 'oauth2-app-name');
-      return sdk.updateOAuth2Application(oauth2Application).catch((err) => (thrownError = err));
+      return sdk
+        .updateOAuth2Application(
+          ConfigClientV2.newUpdateOAuth2ApplicationRequest(oauth2Application),
+        )
+        .catch((err) => (thrownError = err));
     });
 
     it('throws an error', () => {
-      expect(thrownError.code).toEqual(SdkErrorCode.SDK_CODE_1);
+      expect(thrownError.code).toEqual(SdkErrorCode.SDK_CODE_4);
       expect(thrownError.description).toBe(
-        'Update returned with different id: req.iq=oauth2-app-id, res.id=different-oauth2-app-id',
+        'Update returned with different id: request.id=oauth2-app-id, response.id=different-oauth2-app-id.',
       );
     });
   });
@@ -586,7 +694,7 @@ describe('updateOAuth2Application', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
+      const sdk = await ConfigClientV2.createInstance(JSON.stringify(serviceAccountTokenMock));
       jest
         .spyOn(sdk['client'], 'updateOAuth2Application')
         .mockImplementation(
@@ -604,9 +712,13 @@ describe('updateOAuth2Application', () => {
           },
         );
       const oauth2Application = new OAuth2Application('oauth2-app-id', 'oauth2-app-name');
-      sdk.updateOAuth2Application(oauth2Application).catch((err) => {
-        thrownError = err;
-      });
+      sdk
+        .updateOAuth2Application(
+          ConfigClientV2.newUpdateOAuth2ApplicationRequest(oauth2Application),
+        )
+        .catch((err) => {
+          thrownError = err;
+        });
     });
 
     it('throws an error', () => {
@@ -618,7 +730,7 @@ describe('updateOAuth2Application', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
+      const sdk = await ConfigClientV2.createInstance(JSON.stringify(serviceAccountTokenMock));
       jest
         .spyOn(sdk['client'], 'updateOAuth2Application')
         .mockImplementation(
@@ -636,14 +748,18 @@ describe('updateOAuth2Application', () => {
           },
         );
       const oauth2Application = new OAuth2Application('oauth2-app-id', 'oauth2-app-name');
-      sdk.updateOAuth2Application(oauth2Application).catch((err) => {
-        thrownError = err;
-      });
+      sdk
+        .updateOAuth2Application(
+          ConfigClientV2.newUpdateOAuth2ApplicationRequest(oauth2Application),
+        )
+        .catch((err) => {
+          thrownError = err;
+        });
     });
 
     it('throws an error', () => {
       expect(thrownError.message).toBe(
-        'Update returned with different id: req.iq=oauth2-app-id, res.id=undefined',
+        'Update returned with different id: request.id=oauth2-app-id, response.id=undefined.',
       );
     });
   });
@@ -652,10 +768,10 @@ describe('updateOAuth2Application', () => {
 describe('deleteOAuth2Application', () => {
   describe('when no error is returned', () => {
     let deleteOAuth2ApplicationSpy: jest.SpyInstance;
-    let sdk: ConfigClient;
+    let sdk: ConfigClientV2;
 
     beforeEach(async () => {
-      sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
+      sdk = await ConfigClientV2.createInstance(JSON.stringify(serviceAccountTokenMock));
       deleteOAuth2ApplicationSpy = jest
         .spyOn(sdk['client'], 'deleteOAuth2Application')
         .mockImplementation(
@@ -674,7 +790,9 @@ describe('deleteOAuth2Application', () => {
             return {} as SurfaceCall;
           },
         );
-      return sdk.deleteOAuth2Application('oauth2-app-id');
+      return sdk.deleteOAuth2Application(
+        ConfigClientV2.newDeleteOAuth2ApplicationRequest('oauth2-app-id'),
+      );
     });
 
     it('sends correct request', () => {
@@ -697,7 +815,7 @@ describe('deleteOAuth2Application', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
+      const sdk = await ConfigClientV2.createInstance(JSON.stringify(serviceAccountTokenMock));
       jest
         .spyOn(sdk['client'], 'deleteOAuth2Application')
         .mockImplementation(
@@ -714,9 +832,11 @@ describe('deleteOAuth2Application', () => {
             return {} as SurfaceCall;
           },
         );
-      sdk.deleteOAuth2Application('oauth2-app-id').catch((err) => {
-        thrownError = err;
-      });
+      sdk
+        .deleteOAuth2Application(ConfigClientV2.newDeleteOAuth2ApplicationRequest('oauth2-app-id'))
+        .catch((err) => {
+          thrownError = err;
+        });
     });
 
     it('throws an error', () => {
@@ -728,7 +848,7 @@ describe('deleteOAuth2Application', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
+      const sdk = await ConfigClientV2.createInstance(JSON.stringify(serviceAccountTokenMock));
       jest
         .spyOn(sdk['client'], 'deleteOAuth2Application')
         .mockImplementation(
@@ -745,13 +865,15 @@ describe('deleteOAuth2Application', () => {
             return {} as SurfaceCall;
           },
         );
-      sdk.deleteOAuth2Application('oauth2-app-id').catch((err) => {
-        thrownError = err;
-      });
+      sdk
+        .deleteOAuth2Application(ConfigClientV2.newDeleteOAuth2ApplicationRequest('oauth2-app-id'))
+        .catch((err) => {
+          thrownError = err;
+        });
     });
 
     it('throws an error', () => {
-      expect(thrownError.message).toBe('No OAuth2 application response');
+      expect(thrownError.message).toBe('No OAuth2Application response.');
     });
   });
 });

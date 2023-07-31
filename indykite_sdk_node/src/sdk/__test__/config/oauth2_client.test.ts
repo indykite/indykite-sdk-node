@@ -70,7 +70,8 @@ describe('createOAuth2Client', () => {
                 updateTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 6, 21, 13, 6))),
                 bookmark: 'bookmark-token',
                 createdBy: 'Lorem ipsum - creator',
-                updatedBy: 'Lorem ipsum - updater'
+                updatedBy: 'Lorem ipsum - updater',
+                locationId: 'location-id',
               });
             }
             return {} as SurfaceCall;
@@ -131,7 +132,7 @@ describe('createOAuth2Client', () => {
     describe('when all possible values are sent', () => {
       beforeEach(async () => {
         configExample.displayName = 'OAuth2 Client Name';
-        configExample.description = 'OAuth2 Client description';
+        configExample.description = StringValue.fromJson('OAuth2 Client description');
         oauth2Client = await sdk.createOAuth2Client('location-id', configExample);
       });
 
@@ -178,7 +179,7 @@ describe('createOAuth2Client', () => {
         expect(oauth2Client.etag).toBe('etag-token');
         expect(oauth2Client.name).toBe('oauth2-client-name');
         expect(oauth2Client.displayName).toBe('OAuth2 Client Name');
-        expect(oauth2Client.description).toBe('OAuth2 Client description');
+        expect(oauth2Client.description?.value).toBe('OAuth2 Client description');
       });
     });
   });
@@ -347,7 +348,7 @@ describe('readOAuth2Client', () => {
         hostedDomain: 'https://example.com',
         authStyle: AuthStyle.AUTO_DETECT,
         displayName: 'OAuth2 Client Name',
-        description: 'OAuth2 Client description',
+        description: { value: 'OAuth2 Client description' },
         etag: 'etag-token',
         id: 'oauth2-client-id',
         createTime: new Date(Date.UTC(2022, 6, 21, 11, 13)),
@@ -359,6 +360,8 @@ describe('readOAuth2Client', () => {
         privateKeyId: '',
         privateKeyPem: Buffer.from(''),
         teamId: '',
+        createdBy: 'Lorem ipsum - creator',
+        updatedBy: 'Lorem ipsum - updater',
       });
     });
   });
@@ -456,7 +459,8 @@ describe('updateOAuth2Client', () => {
                 updateTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 6, 21, 14, 56))),
                 bookmark: 'bookmark-token',
                 createdBy: 'Lorem ipsum - creator',
-                updatedBy: 'Lorem ipsum - updater'
+                updatedBy: 'Lorem ipsum - updater',
+                locationId: 'location-id',
               });
             }
             return {} as SurfaceCall;
@@ -528,6 +532,9 @@ describe('updateOAuth2Client', () => {
           tenant: 'tenant',
           hostedDomain: 'https://example.com',
           authStyle: AuthStyle.AUTO_DETECT,
+          teamId: undefined,
+          privateKeyId: undefined,
+          privateKeyPem: undefined,
         });
       });
     });
@@ -535,7 +542,7 @@ describe('updateOAuth2Client', () => {
     describe('when all possible values are sent', () => {
       beforeEach(async () => {
         configExample.displayName = 'OAuth2 Client Name';
-        configExample.description = 'OAuth2 Client description';
+        configExample.description = StringValue.fromJson('OAuth2 Client description');
         configExample.id = 'oauth2-client-id';
         configExample.etag = 'etag-token';
         updatedOAuth2Client = await sdk.updateOAuth2Client(configExample);
@@ -599,7 +606,7 @@ describe('updateOAuth2Client', () => {
           hostedDomain: 'https://example.com',
           authStyle: AuthStyle.AUTO_DETECT,
           displayName: 'OAuth2 Client Name',
-          description: 'OAuth2 Client description',
+          description: StringValue.fromJson('OAuth2 Client description'),
           etag: 'new-etag-token',
           id: 'oauth2-client-id',
           name: 'oauth2-client-name',
@@ -631,7 +638,8 @@ describe('updateOAuth2Client', () => {
                 updateTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 16)),
                 bookmark: 'bookmark-token',
                 createdBy: 'Lorem ipsum - creator',
-                updatedBy: 'Lorem ipsum - updater'
+                updatedBy: 'Lorem ipsum - updater',
+                locationId: 'location-id',
               });
             }
             return {} as SurfaceCall;

@@ -45,7 +45,8 @@ describe('Utils', () => {
     });
   });
   it('Transform UUID', () => {
-    const arrayId = parse(v4()) as Uint8Array;
+    const v4str = v4();
+    const arrayId = parse(v4str) as Uint8Array;
     const uuid = stringify(arrayId);
     const uuid32 = uuid.replace(/-/g, '');
     const bufferId = Buffer.from(arrayId);
@@ -68,6 +69,11 @@ describe('Utils', () => {
     expect(Utils.uuidToBase64(uuid32).valueOf()).toEqual(base64Id);
     expect(Utils.uuidToBase64(bufferId).valueOf()).toEqual(base64Id);
     expect(Utils.uuidToBase64(base64Id).valueOf()).toEqual(base64Id);
+    expect(Utils.uuidToUint8Array(v4str).valueOf()).toEqual(arrayId.valueOf());
+    expect(Utils.uuidToUint8Array(uuid).valueOf()).toEqual(arrayId.valueOf());
+    expect(Utils.uuidToUint8Array(uuid32).valueOf()).toEqual(arrayId.valueOf());
+    expect(Utils.uuidToUint8Array(bufferId).valueOf()).toEqual(Buffer.from(arrayId).valueOf());
+    expect(Utils.uuidToUint8Array(base64Id).valueOf()).toEqual(arrayId.valueOf());
 
     let thrownError;
     try {

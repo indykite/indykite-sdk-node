@@ -9,7 +9,7 @@ import {
   ReadTenantResponse,
   UpdateTenantResponse,
 } from '../../../grpc/indykite/config/v1beta1/config_management_api';
-import { ConfigClient } from '../../config';
+import { ConfigClientV2 } from '../../config_v2';
 import { SdkError, SdkErrorCode } from '../../error';
 import { StringValue } from '../../../grpc/google/protobuf/wrappers';
 import { Utils } from '../../utils/utils';
@@ -24,10 +24,10 @@ describe('createTenant', () => {
   describe('when no error is returned', () => {
     let tenant: Tenant;
     let createTenantSpy: jest.SpyInstance;
-    let sdk: ConfigClient;
+    let sdk: ConfigClientV2;
 
     beforeEach(async () => {
-      sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
+      sdk = await ConfigClientV2.createInstance(JSON.stringify(serviceAccountTokenMock));
       createTenantSpy = jest
         .spyOn(sdk['client'], 'createTenant')
         .mockImplementation(
@@ -42,8 +42,8 @@ describe('createTenant', () => {
               res(null, {
                 id: 'new-tenant-id',
                 etag: '111',
-                createTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 12)),
-                updateTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 13)),
+                createTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 2, 15, 13, 12))),
+                updateTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 2, 15, 13, 13))),
                 bookmark: 'bookmark-token',
                 createdBy: 'Lorem ipsum - creator',
                 updatedBy: 'Lorem ipsum - updater',
@@ -56,7 +56,11 @@ describe('createTenant', () => {
 
     describe('when necessary values are sent only', () => {
       beforeEach(async () => {
-        tenant = await sdk.createTenant('issuer-id', 'new-tenant');
+        tenant = Tenant.deserialize(
+          await sdk.createTenant(ConfigClientV2.newCreateTenantRequest('issuer-id', 'new-tenant')),
+          'issuer-id',
+          'new-tenant',
+        );
       });
 
       it('sends correct request', () => {
@@ -77,14 +81,26 @@ describe('createTenant', () => {
         expect(tenant.etag).toBe('111');
         expect(tenant.displayName).toBeUndefined();
         expect(tenant.description).toBeUndefined();
-        expect(tenant.createTime?.toString()).toBe(new Date(2022, 2, 15, 13, 12).toString());
-        expect(tenant.updateTime?.toString()).toBe(new Date(2022, 2, 15, 13, 13).toString());
+        expect(tenant.createTime?.toString()).toBe(
+          new Date(Date.UTC(2022, 2, 15, 13, 12)).toString(),
+        );
+        expect(tenant.updateTime?.toString()).toBe(
+          new Date(Date.UTC(2022, 2, 15, 13, 13)).toString(),
+        );
       });
     });
 
     describe('when all possible values are sent', () => {
       beforeEach(async () => {
-        tenant = await sdk.createTenant(
+        tenant = Tenant.deserialize(
+          await sdk.createTenant(
+            ConfigClientV2.newCreateTenantRequest(
+              'issuer-id',
+              'new-tenant',
+              'New Tenant',
+              'Tenant description',
+            ),
+          ),
           'issuer-id',
           'new-tenant',
           'New Tenant',
@@ -112,8 +128,12 @@ describe('createTenant', () => {
         expect(tenant.etag).toBe('111');
         expect(tenant.displayName).toBe('New Tenant');
         expect(tenant.description).toBe('Tenant description');
-        expect(tenant.createTime?.toString()).toBe(new Date(2022, 2, 15, 13, 12).toString());
-        expect(tenant.updateTime?.toString()).toBe(new Date(2022, 2, 15, 13, 13).toString());
+        expect(tenant.createTime?.toString()).toBe(
+          new Date(Date.UTC(2022, 2, 15, 13, 12)).toString(),
+        );
+        expect(tenant.updateTime?.toString()).toBe(
+          new Date(Date.UTC(2022, 2, 15, 13, 13)).toString(),
+        );
       });
     });
   });
@@ -127,7 +147,7 @@ describe('createTenant', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
+      const sdk = await ConfigClientV2.createInstance(JSON.stringify(serviceAccountTokenMock));
       jest
         .spyOn(sdk['client'], 'createTenant')
         .mockImplementation(
@@ -145,7 +165,14 @@ describe('createTenant', () => {
           },
         );
       sdk
-        .createTenant('issuer-id', 'new-tenant', 'New Tenant', 'Tenant description')
+        .createTenant(
+          ConfigClientV2.newCreateTenantRequest(
+            'issuer-id',
+            'new-tenant',
+            'New Tenant',
+            'Tenant description',
+          ),
+        )
         .catch((err) => {
           thrownError = err;
         });
@@ -160,7 +187,7 @@ describe('createTenant', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
+      const sdk = await ConfigClientV2.createInstance(JSON.stringify(serviceAccountTokenMock));
       jest
         .spyOn(sdk['client'], 'createTenant')
         .mockImplementation(
@@ -178,14 +205,21 @@ describe('createTenant', () => {
           },
         );
       sdk
-        .createTenant('issuer-id', 'new-tenant', 'New Tenant', 'Tenant description')
+        .createTenant(
+          ConfigClientV2.newCreateTenantRequest(
+            'issuer-id',
+            'new-tenant',
+            'New Tenant',
+            'Tenant description',
+          ),
+        )
         .catch((err) => {
           thrownError = err;
         });
     });
 
     it('throws an error', () => {
-      expect(thrownError.message).toBe('No tenant response');
+      expect(thrownError.message).toBe('No Tenant response.');
     });
   });
 });
@@ -196,7 +230,7 @@ describe('readTenantById', () => {
     let readTenantSpy: jest.SpyInstance;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
+      const sdk = await ConfigClientV2.createInstance(JSON.stringify(serviceAccountTokenMock));
       readTenantSpy = jest
         .spyOn(sdk['client'], 'readTenant')
         .mockImplementation(
@@ -220,10 +254,10 @@ describe('readTenantById', () => {
                   issuerId: 'issuer-id',
                   createdBy: 'Lorem ipsum - creator',
                   updatedBy: 'Lorem ipsum - updater',
-                  createTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 12)),
-                  updateTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 13)),
-                  deleteTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 14)),
-                  destroyTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 15)),
+                  createTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 2, 15, 13, 12))),
+                  updateTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 2, 15, 13, 13))),
+                  deleteTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 2, 15, 13, 14))),
+                  destroyTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 2, 15, 13, 15))),
                   default: false,
                 },
               });
@@ -231,7 +265,9 @@ describe('readTenantById', () => {
             return {} as SurfaceCall;
           },
         );
-      tenant = await sdk.readTenantById('tenant-id-request');
+      tenant = Tenant.deserialize(
+        await sdk.readTenant(ConfigClientV2.newReadTenantRequest('id', 'tenant-id-request')),
+      );
     });
 
     it('sends correct request', () => {
@@ -256,10 +292,18 @@ describe('readTenantById', () => {
       expect(tenant.displayName).toBe('Tenant Name');
       expect(tenant.etag).toBe('5432');
       expect(tenant.issuerId).toBe('issuer-id');
-      expect(tenant.createTime?.toString()).toBe(new Date(2022, 2, 15, 13, 12).toString());
-      expect(tenant.updateTime?.toString()).toBe(new Date(2022, 2, 15, 13, 13).toString());
-      expect(tenant.deleteTime?.toString()).toBe(new Date(2022, 2, 15, 13, 14).toString());
-      expect(tenant.destroyTime?.toString()).toBe(new Date(2022, 2, 15, 13, 15).toString());
+      expect(tenant.createTime?.toString()).toBe(
+        new Date(Date.UTC(2022, 2, 15, 13, 12)).toString(),
+      );
+      expect(tenant.updateTime?.toString()).toBe(
+        new Date(Date.UTC(2022, 2, 15, 13, 13)).toString(),
+      );
+      expect(tenant.deleteTime?.toString()).toBe(
+        new Date(Date.UTC(2022, 2, 15, 13, 14)).toString(),
+      );
+      expect(tenant.destroyTime?.toString()).toBe(
+        new Date(Date.UTC(2022, 2, 15, 13, 15)).toString(),
+      );
     });
   });
 
@@ -272,7 +316,7 @@ describe('readTenantById', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
+      const sdk = await ConfigClientV2.createInstance(JSON.stringify(serviceAccountTokenMock));
       jest
         .spyOn(sdk['client'], 'readTenant')
         .mockImplementation(
@@ -289,9 +333,11 @@ describe('readTenantById', () => {
             return {} as SurfaceCall;
           },
         );
-      sdk.readTenantById('tenant-id-request').catch((err) => {
-        thrownError = err;
-      });
+      sdk
+        .readTenant(ConfigClientV2.newReadTenantRequest('id', 'tenant-id-request'))
+        .catch((err) => {
+          thrownError = err;
+        });
     });
 
     it('throws an error', () => {
@@ -303,7 +349,7 @@ describe('readTenantById', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
+      const sdk = await ConfigClientV2.createInstance(JSON.stringify(serviceAccountTokenMock));
       jest
         .spyOn(sdk['client'], 'readTenant')
         .mockImplementation(
@@ -320,13 +366,15 @@ describe('readTenantById', () => {
             return {} as SurfaceCall;
           },
         );
-      sdk.readTenantById('tenant-id-request').catch((err) => {
-        thrownError = err;
-      });
+      sdk
+        .readTenant(ConfigClientV2.newReadTenantRequest('id', 'tenant-id-request'))
+        .catch((err) => {
+          thrownError = err;
+        });
     });
 
     it('throws an error', () => {
-      expect(thrownError.message).toBe('No tenant response');
+      expect(thrownError.message).toBe('No Tenant response.');
     });
   });
 });
@@ -337,7 +385,7 @@ describe('readTenantByName', () => {
     let readTenantSpy: jest.SpyInstance;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
+      const sdk = await ConfigClientV2.createInstance(JSON.stringify(serviceAccountTokenMock));
       readTenantSpy = jest
         .spyOn(sdk['client'], 'readTenant')
         .mockImplementation(
@@ -360,10 +408,10 @@ describe('readTenantByName', () => {
                   issuerId: 'issuer-id',
                   createdBy: 'Lorem ipsum - creator',
                   updatedBy: 'Lorem ipsum - updater',
-                  createTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 12)),
-                  updateTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 13)),
-                  deleteTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 14)),
-                  destroyTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 15)),
+                  createTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 2, 15, 13, 12))),
+                  updateTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 2, 15, 13, 13))),
+                  deleteTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 2, 15, 13, 14))),
+                  destroyTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 2, 15, 13, 15))),
                   default: false,
                 },
               });
@@ -371,7 +419,15 @@ describe('readTenantByName', () => {
             return {} as SurfaceCall;
           },
         );
-      tenant = await sdk.readTenantByName('app-space-id-request', 'tenant-name-request');
+      tenant = Tenant.deserialize(
+        await sdk.readTenant(
+          ConfigClientV2.newReadTenantRequest(
+            'name',
+            'app-space-id-request',
+            'tenant-name-request',
+          ),
+        ),
+      );
     });
 
     it('sends correct request', () => {
@@ -399,10 +455,18 @@ describe('readTenantByName', () => {
       expect(tenant.displayName).toBe('Tenant Name');
       expect(tenant.etag).toBe('5432');
       expect(tenant.issuerId).toBe('issuer-id');
-      expect(tenant.createTime?.toString()).toBe(new Date(2022, 2, 15, 13, 12).toString());
-      expect(tenant.updateTime?.toString()).toBe(new Date(2022, 2, 15, 13, 13).toString());
-      expect(tenant.deleteTime?.toString()).toBe(new Date(2022, 2, 15, 13, 14).toString());
-      expect(tenant.destroyTime?.toString()).toBe(new Date(2022, 2, 15, 13, 15).toString());
+      expect(tenant.createTime?.toString()).toBe(
+        new Date(Date.UTC(2022, 2, 15, 13, 12)).toString(),
+      );
+      expect(tenant.updateTime?.toString()).toBe(
+        new Date(Date.UTC(2022, 2, 15, 13, 13)).toString(),
+      );
+      expect(tenant.deleteTime?.toString()).toBe(
+        new Date(Date.UTC(2022, 2, 15, 13, 14)).toString(),
+      );
+      expect(tenant.destroyTime?.toString()).toBe(
+        new Date(Date.UTC(2022, 2, 15, 13, 15)).toString(),
+      );
     });
   });
 
@@ -415,7 +479,7 @@ describe('readTenantByName', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
+      const sdk = await ConfigClientV2.createInstance(JSON.stringify(serviceAccountTokenMock));
       jest
         .spyOn(sdk['client'], 'readTenant')
         .mockImplementation(
@@ -432,9 +496,17 @@ describe('readTenantByName', () => {
             return {} as SurfaceCall;
           },
         );
-      sdk.readTenantByName('app-space-id-request', 'tenant-name-request').catch((err) => {
-        thrownError = err;
-      });
+      sdk
+        .readTenant(
+          ConfigClientV2.newReadTenantRequest(
+            'name',
+            'app-space-id-request',
+            'tenant-name-request',
+          ),
+        )
+        .catch((err) => {
+          thrownError = err;
+        });
     });
 
     it('throws an error', () => {
@@ -446,7 +518,7 @@ describe('readTenantByName', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
+      const sdk = await ConfigClientV2.createInstance(JSON.stringify(serviceAccountTokenMock));
       jest
         .spyOn(sdk['client'], 'readTenant')
         .mockImplementation(
@@ -463,54 +535,86 @@ describe('readTenantByName', () => {
             return {} as SurfaceCall;
           },
         );
-      sdk.readTenantByName('app-space-id-request', 'tenant-name-request').catch((err) => {
-        thrownError = err;
-      });
+      sdk
+        .readTenant(
+          ConfigClientV2.newReadTenantRequest(
+            'name',
+            'app-space-id-request',
+            'tenant-name-request',
+          ),
+        )
+        .catch((err) => {
+          thrownError = err;
+        });
     });
 
     it('throws an error', () => {
-      expect(thrownError.message).toBe('No tenant response');
+      expect(thrownError.message).toBe('No Tenant response.');
     });
   });
 });
 
-describe('readTenantList', () => {
-  describe('when no error is returned', () => {
-    let tenants: Tenant[];
-    let listTenantsSpy: jest.SpyInstance;
+describe('listTenants', () => {
+  let tenants: Tenant[] = [];
+  let listTenantsSpy: jest.SpyInstance;
 
+  describe('when no error is returned', () => {
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
-      const eventEmitter = Object.assign(new EventEmitter(), {});
+      const sdk = await ConfigClientV2.createInstance(JSON.stringify(serviceAccountTokenMock));
+      const eventEmitter = Object.assign(new EventEmitter(), {
+        read: () => {
+          return {
+            tenant: {
+              id: 'tenant-id',
+              appSpaceId: 'app-space-id',
+              customerId: 'customer-id',
+              name: 'tenant-name',
+              description: StringValue.create({ value: 'Tenant description' }),
+              displayName: 'Tenant Name',
+              etag: '5432',
+              issuerId: 'issuer-id',
+              createTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 2, 15, 13, 12))),
+              updateTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 2, 15, 13, 13))),
+              deleteTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 2, 15, 13, 14))),
+              destroyTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 2, 15, 13, 15))),
+            },
+          };
+        },
+      });
+
       listTenantsSpy = jest.spyOn(sdk['client'], 'listTenants').mockImplementation(() => {
-        setTimeout(
-          () =>
-            eventEmitter.emit('data', {
-              tenant: {
-                id: 'tenant-id',
-                appSpaceId: 'app-space-id',
-                customerId: 'customer-id',
-                name: 'tenant-name',
-                description: StringValue.create({ value: 'Tenant description' }),
-                displayName: 'Tenant Name',
-                etag: '5432',
-                issuerId: 'issuer-id',
-                createTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 12)),
-                updateTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 13)),
-                deleteTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 14)),
-                destroyTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 15)),
-              },
-            }),
-          0,
-        );
-        setTimeout(() => eventEmitter.emit('end'), 0);
+        setTimeout(() => eventEmitter.emit('readable'), 0);
+        setTimeout(() => eventEmitter.emit('data'), 0);
+        setTimeout(() => eventEmitter.emit('readable'), 0);
+        setTimeout(() => eventEmitter.emit('end'), 1);
+        setTimeout(() => eventEmitter.emit('close'), 1);
         return eventEmitter as unknown as ClientReadableStream<ListTenantsResponse>;
       });
 
-      tenants = await sdk.readTenantList('app-space-id-request', ['tenant-name']);
+      tenants = await new Promise((resolve, reject) => {
+        const tmp: Tenant[] = [];
+        sdk
+          .listTenants(
+            ConfigClientV2.newListTenantsRequest('app-space-id-request', ['tenant-name']),
+          )
+          .on('error', (err) => {
+            // Nothing to do here.
+            reject(err);
+          })
+          .on('data', (data) => {
+            if (data && data.tenant) {
+              tmp.push(Tenant.deserialize(data));
+            }
+          })
+          .on('close', () => {
+            // Nothing to do here.
+          })
+          .on('end', () => {
+            resolve(tmp);
+          });
+      });
     });
-
-    it('sends correct request', () => {
+    it('check expect call', async () => {
       expect(listTenantsSpy).toBeCalledWith({
         appSpaceId: 'app-space-id-request',
         match: ['tenant-name'],
@@ -518,8 +622,8 @@ describe('readTenantList', () => {
       });
     });
 
-    it('returns a correct instance', () => {
-      expect(tenants.length).toBe(1);
+    it('returns correct data', async () => {
+      expect(tenants.length).toBe(2);
       expect(tenants[0].id).toBe('tenant-id');
       expect(tenants[0].appSpaceId).toBe('app-space-id');
       expect(tenants[0].customerId).toBe('customer-id');
@@ -528,48 +632,101 @@ describe('readTenantList', () => {
       expect(tenants[0].displayName).toBe('Tenant Name');
       expect(tenants[0].etag).toBe('5432');
       expect(tenants[0].issuerId).toBe('issuer-id');
-      expect(tenants[0].createTime?.toString()).toBe(new Date(2022, 2, 15, 13, 12).toString());
-      expect(tenants[0].updateTime?.toString()).toBe(new Date(2022, 2, 15, 13, 13).toString());
-      expect(tenants[0].deleteTime?.toString()).toBe(new Date(2022, 2, 15, 13, 14).toString());
-      expect(tenants[0].destroyTime?.toString()).toBe(new Date(2022, 2, 15, 13, 15).toString());
+      expect(tenants[0].createTime?.toString()).toBe(
+        new Date(Date.UTC(2022, 2, 15, 13, 12)).toString(),
+      );
+      expect(tenants[0].updateTime?.toString()).toBe(
+        new Date(Date.UTC(2022, 2, 15, 13, 13)).toString(),
+      );
+      expect(tenants[0].deleteTime?.toString()).toBe(
+        new Date(Date.UTC(2022, 2, 15, 13, 14)).toString(),
+      );
+      expect(tenants[0].destroyTime?.toString()).toBe(
+        new Date(Date.UTC(2022, 2, 15, 13, 15)).toString(),
+      );
     });
   });
 
   describe('when an error is returned', () => {
+    let result: ServiceError | string;
     const error = {
       code: Status.NOT_FOUND,
       details: 'DETAILS',
       metadata: {},
     } as ServiceError;
-    let thrownError: Error;
+    let sdk: ConfigClientV2;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
+      sdk = await ConfigClientV2.createInstance(JSON.stringify(serviceAccountTokenMock));
       const eventEmitter = Object.assign(new EventEmitter(), { read: jest.fn() });
       jest.spyOn(sdk['client'], 'listTenants').mockImplementation(() => {
         setTimeout(() => eventEmitter.emit('error', error), 0);
+        setTimeout(() => eventEmitter.emit('end'), 1);
+        setTimeout(() => eventEmitter.emit('close'), 1);
         return eventEmitter as unknown as ClientReadableStream<ListTenantsResponse>;
       });
-
-      return sdk
-        .readTenantList('app-space-id-request', ['tenant-name'])
-        .catch((err) => (thrownError = err));
+      result = await new Promise((resolve, reject) => {
+        sdk
+          .listTenants(
+            ConfigClientV2.newListTenantsRequest('app-space-id-request', ['tenant-name']),
+          )
+          .on('error', (err) => {
+            reject(err);
+          })
+          .on('data', () => {
+            // Nothing to do here.
+          })
+          .on('end', () => {
+            resolve('');
+          });
+      })
+        .then((x) => x as string)
+        .catch((errs) => {
+          return errs as ServiceError;
+        });
     });
 
     it('throws an error', () => {
-      expect(thrownError).toBe(error);
+      expect(result).toBe(error);
+    });
+  });
+
+  describe('when a close event is triggered', () => {
+    let sdk: ConfigClientV2;
+
+    beforeEach(async () => {
+      sdk = await ConfigClientV2.createInstance(JSON.stringify(serviceAccountTokenMock));
+      const eventEmitter = Object.assign(new EventEmitter(), { read: jest.fn() });
+      jest.spyOn(sdk['client'], 'listTenants').mockImplementation(() => {
+        setTimeout(() => eventEmitter.emit('close'), 0);
+        return eventEmitter as unknown as ClientReadableStream<ListTenantsResponse>;
+      });
+    });
+
+    it('close has been triggered', () => {
+      sdk
+        .listTenants(ConfigClientV2.newListTenantsRequest('app-space-id-request', ['tenant-name']))
+        .on('close', () => {
+          expect(true).toBe(true);
+        })
+        .on('data', () => {
+          // Nothing to do here.
+        })
+        .on('end', () => {
+          // Nothing to do here.
+        });
     });
   });
 });
 
 describe('updateTenant', () => {
   describe('when no error is returned', () => {
-    let updatedTenant: Tenant;
+    let updatedTenant: UpdateTenantResponse;
     let updateTenantSpy: jest.SpyInstance;
-    let sdk: ConfigClient;
+    let sdk: ConfigClientV2;
 
     beforeEach(async () => {
-      sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
+      sdk = await ConfigClientV2.createInstance(JSON.stringify(serviceAccountTokenMock));
       updateTenantSpy = jest
         .spyOn(sdk['client'], 'updateTenant')
         .mockImplementation(
@@ -584,7 +741,7 @@ describe('updateTenant', () => {
               res(null, {
                 etag: '777',
                 id: 'tenant-id',
-                updateTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 16)),
+                updateTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 2, 15, 13, 16))),
                 bookmark: 'bookmark-token',
                 createdBy: 'Lorem ipsum - creator',
                 updatedBy: 'Lorem ipsum - updater',
@@ -598,7 +755,7 @@ describe('updateTenant', () => {
     describe('when necessary values are sent only', () => {
       beforeEach(async () => {
         const tenant = new Tenant('tenant-id', 'tenant', 'customer-id', 'app-space-id');
-        updatedTenant = await sdk.updateTenant(tenant);
+        updatedTenant = await sdk.updateTenant(ConfigClientV2.newUpdateTenantRequest(tenant));
       });
 
       it('sends correct request', () => {
@@ -613,17 +770,14 @@ describe('updateTenant', () => {
 
       it('returns a correct instance', () => {
         expect(updatedTenant.id).toBe('tenant-id');
-        expect(updatedTenant.appSpaceId).toBe('app-space-id');
-        expect(updatedTenant.customerId).toBe('customer-id');
-        expect(updatedTenant.name).toBe('tenant');
-        expect(updatedTenant.description).toBeUndefined();
-        expect(updatedTenant.displayName).toBeUndefined();
-        expect(updatedTenant.etag).toBe('777');
-        expect(updatedTenant.issuerId).toBeUndefined();
         expect(updatedTenant.createTime).toBeUndefined();
-        expect(updatedTenant.updateTime?.toString()).toBe(new Date(2022, 2, 15, 13, 16).toString());
-        expect(updatedTenant.deleteTime).toBeUndefined();
-        expect(updatedTenant.destroyTime).toBeUndefined();
+        expect(updatedTenant.createdBy).toBe('Lorem ipsum - creator');
+        expect(updatedTenant.updateTime?.toString()).toBe(
+          Utils.dateToTimestamp(new Date(Date.UTC(2022, 2, 15, 13, 16))).toString(),
+        );
+        expect(updatedTenant.updatedBy).toBe('Lorem ipsum - updater');
+        expect(updatedTenant.etag).toBe('777');
+        expect(updatedTenant.bookmark).toBe('bookmark-token');
       });
     });
 
@@ -639,7 +793,7 @@ describe('updateTenant', () => {
           '555',
           'Description',
         );
-        updatedTenant = await sdk.updateTenant(tenant);
+        updatedTenant = await sdk.updateTenant(ConfigClientV2.newUpdateTenantRequest(tenant));
       });
 
       it('sends correct request', () => {
@@ -657,17 +811,14 @@ describe('updateTenant', () => {
 
       it('returns a correct instance', () => {
         expect(updatedTenant.id).toBe('tenant-id');
-        expect(updatedTenant.appSpaceId).toBe('app-space-id');
-        expect(updatedTenant.customerId).toBe('customer-id');
-        expect(updatedTenant.name).toBe('tenant');
-        expect(updatedTenant.description).toBe('Description');
-        expect(updatedTenant.displayName).toBe('Tenant Name');
-        expect(updatedTenant.etag).toBe('777');
-        expect(updatedTenant.issuerId).toBe('11');
         expect(updatedTenant.createTime).toBeUndefined();
-        expect(updatedTenant.updateTime?.toString()).toBe(new Date(2022, 2, 15, 13, 16).toString());
-        expect(updatedTenant.deleteTime).toBeUndefined();
-        expect(updatedTenant.destroyTime).toBeUndefined();
+        expect(updatedTenant.createdBy).toBe('Lorem ipsum - creator');
+        expect(updatedTenant.updateTime?.toString()).toBe(
+          Utils.dateToTimestamp(new Date(Date.UTC(2022, 2, 15, 13, 16))).toString(),
+        );
+        expect(updatedTenant.updatedBy).toBe('Lorem ipsum - updater');
+        expect(updatedTenant.etag).toBe('777');
+        expect(updatedTenant.bookmark).toBe('bookmark-token');
       });
     });
   });
@@ -676,7 +827,7 @@ describe('updateTenant', () => {
     let thrownError: SdkError;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
+      const sdk = await ConfigClientV2.createInstance(JSON.stringify(serviceAccountTokenMock));
       jest
         .spyOn(sdk['client'], 'updateTenant')
         .mockImplementation(
@@ -691,7 +842,7 @@ describe('updateTenant', () => {
               res(null, {
                 etag: '777',
                 id: 'different-tenant-id',
-                updateTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 16)),
+                updateTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 2, 15, 13, 16))),
                 bookmark: 'bookmark-token',
                 createdBy: 'Lorem ipsum - creator',
                 updatedBy: 'Lorem ipsum - updater',
@@ -710,13 +861,15 @@ describe('updateTenant', () => {
         '555',
         'Description',
       );
-      return sdk.updateTenant(tenant).catch((err) => (thrownError = err));
+      return sdk
+        .updateTenant(ConfigClientV2.newUpdateTenantRequest(tenant))
+        .catch((err) => (thrownError = err));
     });
 
     it('throws an error', () => {
-      expect(thrownError.code).toEqual(SdkErrorCode.SDK_CODE_1);
+      expect(thrownError.code).toEqual(SdkErrorCode.SDK_CODE_4);
       expect(thrownError.description).toBe(
-        'Update returned with different id: req.iq=tenant-id, res.id=different-tenant-id',
+        'Update returned with different id: request.id=tenant-id, response.id=different-tenant-id.',
       );
     });
   });
@@ -730,7 +883,7 @@ describe('updateTenant', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
+      const sdk = await ConfigClientV2.createInstance(JSON.stringify(serviceAccountTokenMock));
       jest
         .spyOn(sdk['client'], 'updateTenant')
         .mockImplementation(
@@ -757,7 +910,7 @@ describe('updateTenant', () => {
         '555',
         'Description',
       );
-      sdk.updateTenant(tenant).catch((err) => {
+      sdk.updateTenant(ConfigClientV2.newUpdateTenantRequest(tenant)).catch((err) => {
         thrownError = err;
       });
     });
@@ -771,7 +924,7 @@ describe('updateTenant', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
+      const sdk = await ConfigClientV2.createInstance(JSON.stringify(serviceAccountTokenMock));
       jest
         .spyOn(sdk['client'], 'updateTenant')
         .mockImplementation(
@@ -798,14 +951,14 @@ describe('updateTenant', () => {
         '555',
         'Description',
       );
-      sdk.updateTenant(tenant).catch((err) => {
+      sdk.updateTenant(ConfigClientV2.newUpdateTenantRequest(tenant)).catch((err) => {
         thrownError = err;
       });
     });
 
     it('throws an error', () => {
       expect(thrownError.message).toBe(
-        'Update returned with different id: req.iq=tenant-id, res.id=undefined',
+        'Update returned with different id: request.id=tenant-id, response.id=undefined.',
       );
     });
   });
@@ -813,11 +966,11 @@ describe('updateTenant', () => {
 
 describe('deleteTenant', () => {
   describe('when no error is returned', () => {
-    let returnedValue: boolean;
+    let returnedValue: DeleteTenantResponse;
     let deleteTenantSpy: jest.SpyInstance;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
+      const sdk = await ConfigClientV2.createInstance(JSON.stringify(serviceAccountTokenMock));
       deleteTenantSpy = jest
         .spyOn(sdk['client'], 'deleteTenant')
         .mockImplementation(
@@ -843,7 +996,7 @@ describe('deleteTenant', () => {
         'issuer-id',
         'etag-token',
       );
-      returnedValue = await sdk.deleteTenant(tenant);
+      returnedValue = await sdk.deleteTenant(ConfigClientV2.newDeleteTenantRequest(tenant));
     });
 
     it('sends correct request', () => {
@@ -858,7 +1011,7 @@ describe('deleteTenant', () => {
     });
 
     it('returns true', () => {
-      expect(returnedValue).toBe(true);
+      expect(returnedValue).not.toBeUndefined();
     });
   });
 
@@ -871,7 +1024,7 @@ describe('deleteTenant', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
+      const sdk = await ConfigClientV2.createInstance(JSON.stringify(serviceAccountTokenMock));
       jest
         .spyOn(sdk['client'], 'deleteTenant')
         .mockImplementation(
@@ -891,13 +1044,48 @@ describe('deleteTenant', () => {
         'issuer-id',
         'etag-token',
       );
-      sdk.deleteTenant(tenant).catch((err) => {
+      sdk.deleteTenant(ConfigClientV2.newDeleteTenantRequest(tenant)).catch((err) => {
         thrownError = err;
       });
     });
 
     it('throws an error', () => {
       expect(thrownError).toBe(error);
+    });
+  });
+
+  describe('when response is not set an error is returned', () => {
+    let thrownError: SdkError;
+
+    beforeEach(async () => {
+      const sdk = await ConfigClientV2.createInstance(JSON.stringify(serviceAccountTokenMock));
+      jest
+        .spyOn(sdk['client'], 'deleteTenant')
+        .mockImplementation(
+          (req, res: Metadata | CallOptions | ((err: ServiceError | null) => void)) => {
+            if (typeof res === 'function') {
+              res(null);
+            }
+            return {} as SurfaceCall;
+          },
+        );
+      const tenant = new Tenant(
+        'tenant-id',
+        'tenant-name',
+        'customer-id',
+        'app-space-id',
+        'Tenant',
+        'issuer-id',
+        'etag-token',
+      );
+      sdk.deleteTenant(ConfigClientV2.newDeleteTenantRequest(tenant)).catch((err) => {
+        thrownError = err;
+      });
+    });
+
+    it('throws an error', () => {
+      expect(thrownError.code).toEqual(SdkErrorCode.SDK_CODE_3);
+      expect(thrownError.description).toBe('No Tenant response.');
     });
   });
 });

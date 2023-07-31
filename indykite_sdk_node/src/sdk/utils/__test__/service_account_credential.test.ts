@@ -40,4 +40,19 @@ describe('Crednetial', () => {
       expect(error).toEqual(err);
     }
   });
+  it('build token - get expiration time fail', async () => {
+    const err = new SdkError(SdkErrorCode.SDK_CODE_1, 'Must run buildToken() function first');
+    try {
+      const newCred = ServiceAccountCredential.fromObject(serviceAccountTokenMock);
+      newCred.getExpirationTime();
+      expect(true).toEqual(false);
+    } catch (error) {
+      expect(error).toEqual(err);
+    }
+  });
+  it('build token - get expiration time fail', async () => {
+    const newCred = ServiceAccountCredential.fromObject(serviceAccountTokenMock);
+    const token = await newCred.buildToken();
+    expect(token.getExpirationTime()).not.toBeUndefined();
+  });
 });

@@ -1,7 +1,10 @@
 import * as grpc from '../../../../grpc/indykite/config/v1beta1/model';
 import * as grpcStruct from '../../../../grpc/indykite/objects/v1beta1/struct';
-import { Email } from './provider';
+import { Email } from './service';
 
+/**
+ * https://buf.build/indykite/indykiteapis/docs/main:indykite.config.v1beta1#indykite.config.v1beta1.EmailMessage
+ */
 export class EmailMessage {
   from: Email | undefined;
   replyTo: Email | undefined;
@@ -16,6 +19,7 @@ export class EmailMessage {
   dynamicTemplateValues: { [key: string]: grpcStruct.Value } | undefined;
   categories: string[] | undefined;
   attachments: grpc.EmailAttachment[] | undefined;
+  eventPayload: string | undefined;
 
   constructor(public to: Email[], public subject: string) {}
 

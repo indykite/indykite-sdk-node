@@ -257,7 +257,7 @@ describe('listConsents', () => {
       });
 
       response = await sdk.listConsents(piiPrincipalId);
-      console.log(response);
+      // console.log(response);
     });
 
     it('sends correct request', async () => {

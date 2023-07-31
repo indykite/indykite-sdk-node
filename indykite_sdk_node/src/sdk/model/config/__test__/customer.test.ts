@@ -1,5 +1,5 @@
 import { StringValue } from '../../../../grpc/google/protobuf/wrappers';
-import { SdkError, SdkErrorCode } from '../../../error';
+import { SdkError, SkdErrorText, SdkErrorCode } from '../../../error';
 import { Utils } from '../../../utils/utils';
 import { Customer } from '../customer';
 
@@ -35,6 +35,8 @@ describe('deserialize', () => {
       expect(customer.updateTime?.toString()).toBe(new Date(2022, 2, 17, 12, 18).toString());
       expect(customer.deleteTime?.toString()).toBe(new Date(2022, 2, 17, 12, 19).toString());
       expect(customer.destroyTime?.toString()).toBe(new Date(2022, 2, 17, 12, 20).toString());
+      expect(customer.createdBy).toBe('Lorem ipsum - creator');
+      expect(customer.updatedBy).toBe('Lorem ipsum - updater');
     });
   });
 
@@ -51,7 +53,7 @@ describe('deserialize', () => {
 
     it('throws an error', () => {
       expect(thrownError.code).toBe(SdkErrorCode.SDK_CODE_1);
-      expect(thrownError.description).toBe("Can't deserialize customer");
+      expect(thrownError.description).toBe(SkdErrorText.SDK_CODE_1(Customer.name));
     });
   });
 });
