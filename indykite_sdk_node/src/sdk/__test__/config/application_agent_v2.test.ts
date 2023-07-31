@@ -829,8 +829,10 @@ describe('updateApplicationAgent', () => {
 });
 
 describe('readApplicationAgentList', () => {
+  let applicationAgents: ApplicationAgent[] = [];
+  let listApplicationAgentsSpy: jest.SpyInstance;
   describe('when no error is returned', () => {
-    it('returns correct data', async () => {
+    beforeEach(async () => {
       const sdk = await ConfigClientV2.createInstance(JSON.stringify(serviceAccountTokenMock));
       const eventEmitter = Object.assign(new EventEmitter(), {
         read: () => {
@@ -852,8 +854,7 @@ describe('readApplicationAgentList', () => {
           };
         },
       });
-      const applicationAgents: ApplicationAgent[] = [];
-      const listApplicationAgentsSpy: jest.SpyInstance = jest
+      listApplicationAgentsSpy = jest
         .spyOn(sdk['client'], 'listApplicationAgents')
         .mockImplementation(() => {
           setTimeout(() => eventEmitter.emit('readable'), 0);
@@ -862,54 +863,61 @@ describe('readApplicationAgentList', () => {
           setTimeout(() => eventEmitter.emit('close'), 1);
           return eventEmitter as unknown as ClientReadableStream<ListApplicationAgentsResponse>;
         });
-
-      await sdk
-        .listApplicationAgents(
-          ConfigClientV2.newListApplicationAgentsRequest('app-space-id-request', [
-            'app-agent-name',
-          ]),
-        )
-        .on('error', () => {
-          // Nothing to do here.
-        })
-        .on('data', (data) => {
-          if (data && data.applicationAgent) {
-            applicationAgents.push(ApplicationAgent.deserialize(data));
-          }
-        })
-        .on('end', () => {
-          // Nothing to do here.
-          expect(applicationAgents.length).toBe(2);
-          expect(applicationAgents[0].id).toBe('app-agent-id');
-          expect(applicationAgents[0].appSpaceId).toBe('app-space-id');
-          expect(applicationAgents[0].applicationId).toBe('application-id');
-          expect(applicationAgents[0].customerId).toBe('customer-id');
-          expect(applicationAgents[0].name).toBe('app-agent-name');
-          expect(applicationAgents[0].description).toBe('Application Agent description');
-          expect(applicationAgents[0].displayName).toBe('Application Agent Name');
-          expect(applicationAgents[0].etag).toBe('etag-id');
-          expect(applicationAgents[0].createTime?.toString()).toBe(
-            new Date(Date.UTC(2022, 2, 15, 13, 12)).toString(),
-          );
-          expect(applicationAgents[0].updateTime?.toString()).toBe(
-            new Date(Date.UTC(2022, 2, 15, 13, 13)).toString(),
-          );
-          expect(applicationAgents[0].deleteTime?.toString()).toBe(
-            new Date(Date.UTC(2022, 2, 15, 13, 14)).toString(),
-          );
-          expect(applicationAgents[0].destroyTime?.toString()).toBe(
-            new Date(Date.UTC(2022, 2, 15, 13, 15)).toString(),
-          );
-        });
+      applicationAgents = await new Promise((resolve, reject) => {
+        const tmp: ApplicationAgent[] = [];
+        sdk
+          .listApplicationAgents(
+            ConfigClientV2.newListApplicationAgentsRequest('app-space-id-request', [
+              'app-agent-name',
+            ]),
+          )
+          .on('error', (err) => {
+            reject(err);
+          })
+          .on('data', (data) => {
+            if (data && data.applicationAgent) {
+              tmp.push(ApplicationAgent.deserialize(data));
+            }
+          })
+          .on('end', () => {
+            resolve(tmp);
+          });
+      });
+    });
+    it('check expect call', async () => {
       expect(listApplicationAgentsSpy).toBeCalledWith({
         appSpaceId: 'app-space-id-request',
         match: ['app-agent-name'],
         bookmarks: [],
       });
     });
+    it('returns correct data', async () => {
+      expect(applicationAgents.length).toBe(2);
+      expect(applicationAgents[0].id).toBe('app-agent-id');
+      expect(applicationAgents[0].appSpaceId).toBe('app-space-id');
+      expect(applicationAgents[0].applicationId).toBe('application-id');
+      expect(applicationAgents[0].customerId).toBe('customer-id');
+      expect(applicationAgents[0].name).toBe('app-agent-name');
+      expect(applicationAgents[0].description).toBe('Application Agent description');
+      expect(applicationAgents[0].displayName).toBe('Application Agent Name');
+      expect(applicationAgents[0].etag).toBe('etag-id');
+      expect(applicationAgents[0].createTime?.toString()).toBe(
+        new Date(Date.UTC(2022, 2, 15, 13, 12)).toString(),
+      );
+      expect(applicationAgents[0].updateTime?.toString()).toBe(
+        new Date(Date.UTC(2022, 2, 15, 13, 13)).toString(),
+      );
+      expect(applicationAgents[0].deleteTime?.toString()).toBe(
+        new Date(Date.UTC(2022, 2, 15, 13, 14)).toString(),
+      );
+      expect(applicationAgents[0].destroyTime?.toString()).toBe(
+        new Date(Date.UTC(2022, 2, 15, 13, 15)).toString(),
+      );
+    });
   });
 
   describe('when an error is returned', () => {
+    let result: ServiceError | string;
     const error = {
       code: Status.NOT_FOUND,
       details: 'DETAILS',
@@ -924,24 +932,31 @@ describe('readApplicationAgentList', () => {
         setTimeout(() => eventEmitter.emit('error', error), 0);
         return eventEmitter as unknown as ClientReadableStream<ListApplicationAgentsResponse>;
       });
+      result = await new Promise((resolve, reject) => {
+        sdk
+          .listApplicationAgents(
+            ConfigClientV2.newListApplicationAgentsRequest('app-space-id-request', [
+              'app-agent-name',
+            ]),
+          )
+          .on('error', (err) => {
+            reject(err);
+          })
+          .on('data', () => {
+            // Nothing to do here.
+          })
+          .on('end', () => {
+            resolve('');
+          });
+      })
+        .then((x) => x as string)
+        .catch((errs) => {
+          return errs as ServiceError;
+        });
     });
 
     it('throws an error', () => {
-      sdk
-        .listApplicationAgents(
-          ConfigClientV2.newListApplicationAgentsRequest('app-space-id-request', [
-            'app-agent-name',
-          ]),
-        )
-        .on('error', (err) => {
-          expect(err).toBe(error);
-        })
-        .on('data', () => {
-          // Nothing to do here.
-        })
-        .on('end', () => {
-          // Nothing to do here.
-        });
+      expect(result).toBe(error);
     });
   });
 

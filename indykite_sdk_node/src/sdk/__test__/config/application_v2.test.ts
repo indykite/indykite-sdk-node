@@ -531,8 +531,11 @@ describe('readApplicationByName', () => {
 });
 
 describe('listApplications', () => {
+  let applications: Application[] = [];
+  let listApplicationsSpy: jest.SpyInstance;
+
   describe('when no error is returned', () => {
-    it('returns correct data', async () => {
+    beforeEach(async () => {
       const sdk = await ConfigClientV2.createInstance(JSON.stringify(serviceAccountTokenMock));
       const eventEmitter = Object.assign(new EventEmitter(), {
         read: () => {
@@ -553,62 +556,68 @@ describe('listApplications', () => {
           };
         },
       });
-      const listApplicationsSpy: jest.SpyInstance = jest
-        .spyOn(sdk['client'], 'listApplications')
-        .mockImplementation(() => {
-          setTimeout(() => eventEmitter.emit('readable'), 0);
-          setTimeout(() => eventEmitter.emit('readable'), 0);
-          setTimeout(() => eventEmitter.emit('end'), 1);
-          setTimeout(() => eventEmitter.emit('close'), 1);
-          return eventEmitter as unknown as ClientReadableStream<ListApplicationsResponse>;
-        });
-      const applications: Application[] = [];
-      await sdk
-        .listApplications(
-          ConfigClientV2.newListApplicationsRequest('app-space-id-request', ['application-name']),
-        )
-        .on('error', () => {
-          // Nothing to do here.
-        })
-        .on('data', (data) => {
-          if (data && data.application) {
-            applications.push(Application.deserialize(data));
-          }
-        })
-        .on('close', () => {
-          // Nothing to do here.
-        })
-        .on('end', () => {
-          expect(applications.length).toBe(2);
-          expect(applications[0].id).toBe('application-id');
-          expect(applications[0].appSpaceId).toBe('app-space-id');
-          expect(applications[0].customerId).toBe('customer-id');
-          expect(applications[0].name).toBe('application-name');
-          expect(applications[0].description).toBe('Application description');
-          expect(applications[0].displayName).toBe('Application Name');
-          expect(applications[0].etag).toBe('5432');
-          expect(applications[0].createTime?.toString()).toBe(
-            new Date(Date.UTC(2022, 2, 15, 13, 12)).toString(),
-          );
-          expect(applications[0].updateTime?.toString()).toBe(
-            new Date(Date.UTC(2022, 2, 15, 13, 13)).toString(),
-          );
-          expect(applications[0].deleteTime?.toString()).toBe(
-            new Date(Date.UTC(2022, 2, 15, 13, 14)).toString(),
-          );
-          expect(applications[0].destroyTime?.toString()).toBe(
-            new Date(Date.UTC(2022, 2, 15, 13, 15)).toString(),
-          );
-        });
+      listApplicationsSpy = jest.spyOn(sdk['client'], 'listApplications').mockImplementation(() => {
+        setTimeout(() => eventEmitter.emit('readable'), 0);
+        setTimeout(() => eventEmitter.emit('readable'), 0);
+        setTimeout(() => eventEmitter.emit('end'), 1);
+        setTimeout(() => eventEmitter.emit('close'), 1);
+        return eventEmitter as unknown as ClientReadableStream<ListApplicationsResponse>;
+      });
+      applications = await new Promise((resolve, reject) => {
+        const tmp: Application[] = [];
+        sdk
+          .listApplications(
+            ConfigClientV2.newListApplicationsRequest('app-space-id-request', ['application-name']),
+          )
+          .on('error', (err) => {
+            reject(err);
+          })
+          .on('data', (data) => {
+            if (data && data.application) {
+              tmp.push(Application.deserialize(data));
+            }
+          })
+          .on('close', () => {
+            // Nothing to do here.
+          })
+          .on('end', () => {
+            resolve(tmp);
+          });
+      });
+    });
+    it('check expect call', async () => {
       expect(listApplicationsSpy).toBeCalledWith({
         appSpaceId: 'app-space-id-request',
         match: ['application-name'],
         bookmarks: [],
       });
     });
+    it('returns correct data', async () => {
+      expect(applications.length).toBe(2);
+      expect(applications[0].id).toBe('application-id');
+      expect(applications[0].appSpaceId).toBe('app-space-id');
+      expect(applications[0].customerId).toBe('customer-id');
+      expect(applications[0].name).toBe('application-name');
+      expect(applications[0].description).toBe('Application description');
+      expect(applications[0].displayName).toBe('Application Name');
+      expect(applications[0].etag).toBe('5432');
+      expect(applications[0].createTime?.toString()).toBe(
+        new Date(Date.UTC(2022, 2, 15, 13, 12)).toString(),
+      );
+      expect(applications[0].updateTime?.toString()).toBe(
+        new Date(Date.UTC(2022, 2, 15, 13, 13)).toString(),
+      );
+      expect(applications[0].deleteTime?.toString()).toBe(
+        new Date(Date.UTC(2022, 2, 15, 13, 14)).toString(),
+      );
+      expect(applications[0].destroyTime?.toString()).toBe(
+        new Date(Date.UTC(2022, 2, 15, 13, 15)).toString(),
+      );
+    });
   });
 
   describe('when an error is returned', () => {
+    let result: ServiceError | string;
     const error = {
       code: Status.NOT_FOUND,
       details: 'DETAILS',
@@ -623,22 +632,29 @@ describe('listApplications', () => {
         setTimeout(() => eventEmitter.emit('error', error), 0);
         return eventEmitter as unknown as ClientReadableStream<ListApplicationsResponse>;
       });
+      result = await new Promise((resolve, reject) => {
+        sdk
+          .listApplications(
+            ConfigClientV2.newListApplicationsRequest('app-space-id-request', ['application-name']),
+          )
+          .on('error', (err) => {
+            reject(err);
+          })
+          .on('data', () => {
+            // Nothing to do here.
+          })
+          .on('end', () => {
+            resolve('');
+          });
+      })
+        .then((x) => x as string)
+        .catch((errs) => {
+          return errs as ServiceError;
+        });
     });
 
     it('throws an error', () => {
-      sdk
-        .listApplications(
-          ConfigClientV2.newListApplicationsRequest('app-space-id-request', ['application-name']),
-        )
-        .on('error', (err) => {
-          expect(err).toBe(error);
-        })
-        .on('data', () => {
-          // Nothing to do here.
-        })
-        .on('end', () => {
-          // Nothing to do here.
-        });
+      expect(result).toBe(error);
     });
   });
 

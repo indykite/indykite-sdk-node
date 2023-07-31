@@ -556,8 +556,11 @@ describe('readApplicationSpaceByName', () => {
 });
 
 describe('listApplicationSpaces', () => {
+  let appSpaces: ApplicationSpace[] = [];
+  let listApplicationSpacesSpy: jest.SpyInstance;
+
   describe('when no error is returned', () => {
-    it('returns correct data', async () => {
+    beforeEach(async () => {
       const sdk = await ConfigClientV2.createInstance(JSON.stringify(serviceAccountTokenMock));
       const eventEmitter = Object.assign(new EventEmitter(), {
         read: () => {
@@ -578,8 +581,7 @@ describe('listApplicationSpaces', () => {
           };
         },
       });
-      const appSpaces: ApplicationSpace[] = [];
-      const listApplicationSpacesSpy: jest.SpyInstance = jest
+      listApplicationSpacesSpy = jest
         .spyOn(sdk['client'], 'listApplicationSpaces')
         .mockImplementation(() => {
           setTimeout(() => eventEmitter.emit('readable'), 0);
@@ -588,53 +590,65 @@ describe('listApplicationSpaces', () => {
           setTimeout(() => eventEmitter.emit('close'), 1);
           return eventEmitter as unknown as ClientReadableStream<ListApplicationSpacesResponse>;
         });
-      await sdk
-        .listApplicationSpaces(
-          ConfigClientV2.newListApplicationSpacesRequest('customer-id-request', ['app-space-name']),
-        )
-        .on('error', () => {
-          // Nothing to do here.
-        })
-        .on('data', (data) => {
-          if (data && data.appSpace) {
-            appSpaces.push(ApplicationSpace.deserialize(data));
-          }
-        })
-        .on('close', () => {
-          // Nothing to do here.
-        })
-        .on('end', () => {
-          // Nothing to do here.
-          expect(appSpaces.length).toBe(2);
-          expect(appSpaces[0].id).toBe('app-space-id');
-          expect(appSpaces[0].customerId).toBe('customer-id');
-          expect(appSpaces[0].name).toBe('app-space-name');
-          expect(appSpaces[0].description).toBe('App space description');
-          expect(appSpaces[0].displayName).toBe('App Space Name');
-          expect(appSpaces[0].etag).toBe('5432');
-          expect(appSpaces[0].issuerId).toBe('issuer-id');
-          expect(appSpaces[0].createTime?.toString()).toBe(
-            new Date(Date.UTC(2022, 2, 15, 13, 12)).toString(),
-          );
-          expect(appSpaces[0].updateTime?.toString()).toBe(
-            new Date(Date.UTC(2022, 2, 15, 13, 13)).toString(),
-          );
-          expect(appSpaces[0].deleteTime?.toString()).toBe(
-            new Date(Date.UTC(2022, 2, 15, 13, 14)).toString(),
-          );
-          expect(appSpaces[0].destroyTime?.toString()).toBe(
-            new Date(Date.UTC(2022, 2, 15, 13, 15)).toString(),
-          );
-        });
+      appSpaces = await new Promise((resolve, reject) => {
+        const tmp: ApplicationSpace[] = [];
+        sdk
+          .listApplicationSpaces(
+            ConfigClientV2.newListApplicationSpacesRequest('customer-id-request', [
+              'app-space-name',
+            ]),
+          )
+          .on('error', (err) => {
+            reject(err);
+          })
+          .on('data', (data) => {
+            if (data && data.appSpace) {
+              tmp.push(ApplicationSpace.deserialize(data));
+            }
+          })
+          .on('close', () => {
+            // Nothing to do here.
+          })
+          .on('end', () => {
+            resolve(tmp);
+          });
+      });
+    });
+
+    it('check expect call', async () => {
       expect(listApplicationSpacesSpy).toBeCalledWith({
         customerId: 'customer-id-request',
         match: ['app-space-name'],
         bookmarks: [],
       });
     });
+
+    it('returns correct data', async () => {
+      expect(appSpaces.length).toBe(2);
+      expect(appSpaces[0].id).toBe('app-space-id');
+      expect(appSpaces[0].customerId).toBe('customer-id');
+      expect(appSpaces[0].name).toBe('app-space-name');
+      expect(appSpaces[0].description).toBe('App space description');
+      expect(appSpaces[0].displayName).toBe('App Space Name');
+      expect(appSpaces[0].etag).toBe('5432');
+      expect(appSpaces[0].issuerId).toBe('issuer-id');
+      expect(appSpaces[0].createTime?.toString()).toBe(
+        new Date(Date.UTC(2022, 2, 15, 13, 12)).toString(),
+      );
+      expect(appSpaces[0].updateTime?.toString()).toBe(
+        new Date(Date.UTC(2022, 2, 15, 13, 13)).toString(),
+      );
+      expect(appSpaces[0].deleteTime?.toString()).toBe(
+        new Date(Date.UTC(2022, 2, 15, 13, 14)).toString(),
+      );
+      expect(appSpaces[0].destroyTime?.toString()).toBe(
+        new Date(Date.UTC(2022, 2, 15, 13, 15)).toString(),
+      );
+    });
   });
 
   describe('when an error is returned', () => {
+    let result: ServiceError | string;
     const error = {
       code: Status.NOT_FOUND,
       details: 'DETAILS',
@@ -649,22 +663,31 @@ describe('listApplicationSpaces', () => {
         setTimeout(() => eventEmitter.emit('error', error), 0);
         return eventEmitter as unknown as ClientReadableStream<ListApplicationSpacesResponse>;
       });
+      result = await new Promise((resolve, reject) => {
+        sdk
+          .listApplicationSpaces(
+            ConfigClientV2.newListApplicationSpacesRequest('customer-id-request', [
+              'app-space-name',
+            ]),
+          )
+          .on('error', (err) => {
+            reject(err);
+          })
+          .on('data', () => {
+            // Nothing to do here.
+          })
+          .on('end', () => {
+            resolve('');
+          });
+      })
+        .then((x) => x as string)
+        .catch((errs) => {
+          return errs as ServiceError;
+        });
     });
 
     it('throws an error', () => {
-      sdk
-        .listApplicationSpaces(
-          ConfigClientV2.newListApplicationSpacesRequest('customer-id-request', ['app-space-name']),
-        )
-        .on('error', (err) => {
-          expect(err).toBe(error);
-        })
-        .on('data', () => {
-          // Nothing to do here.
-        })
-        .on('end', () => {
-          // Nothing to do here.
-        });
+      expect(result).toBe(error);
     });
   });
 
