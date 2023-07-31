@@ -9,7 +9,7 @@ import {
   ReadApplicationResponse,
   UpdateApplicationResponse,
 } from '../../../grpc/indykite/config/v1beta1/config_management_api';
-import { ConfigClient } from '../../config';
+import { ConfigClientV2 } from '../../config_v2';
 import { SdkError, SdkErrorCode } from '../../error';
 import { StringValue } from '../../../grpc/google/protobuf/wrappers';
 import { Utils } from '../../utils/utils';
@@ -22,12 +22,12 @@ afterEach(() => {
 
 describe('createApplication', () => {
   describe('when no error is returned', () => {
-    let application: Application;
+    let application: CreateApplicationResponse;
     let createApplicationSpy: jest.SpyInstance;
-    let sdk: ConfigClient;
+    let sdk: ConfigClientV2;
 
     beforeEach(async () => {
-      sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
+      sdk = await ConfigClientV2.createInstance(JSON.stringify(serviceAccountTokenMock));
       createApplicationSpy = jest
         .spyOn(sdk['client'], 'createApplication')
         .mockImplementation(
@@ -54,7 +54,9 @@ describe('createApplication', () => {
 
     describe('when necessary values are sent only', () => {
       beforeEach(async () => {
-        application = await sdk.createApplication('app-space-id', 'application-name');
+        application = await sdk.createApplication(
+          ConfigClientV2.newCreateApplicationRequest('app-space-id', 'application-name'),
+        );
       });
 
       it('sends correct request', () => {
@@ -70,21 +72,24 @@ describe('createApplication', () => {
 
       it('returns a correct instance', () => {
         expect(application.id).toBe('new-application-id');
+        expect(application.createTime).toBeUndefined();
+        expect(application.createdBy).toBe('Lorem ipsum - creator');
+        expect(application.updateTime).toBeUndefined();
+        expect(application.updatedBy).toBe('Lorem ipsum - updater');
         expect(application.etag).toBe('111');
-        expect(application.appSpaceId).toBe('app-space-id');
-        expect(application.name).toBe('application-name');
-        expect(application.displayName).toBeUndefined();
-        expect(application.description).toBeUndefined();
+        expect(application.bookmark).toBe('bookmark-token');
       });
     });
 
     describe('when all possible values are sent', () => {
       beforeEach(async () => {
         application = await sdk.createApplication(
-          'app-space-id',
-          'application-name',
-          'My Application',
-          'Application description',
+          ConfigClientV2.newCreateApplicationRequest(
+            'app-space-id',
+            'application-name',
+            'My Application',
+            'Application description',
+          ),
         );
       });
 
@@ -103,11 +108,12 @@ describe('createApplication', () => {
 
       it('returns a correct instance', () => {
         expect(application.id).toBe('new-application-id');
+        expect(application.createTime).toBeUndefined();
+        expect(application.createdBy).toBe('Lorem ipsum - creator');
+        expect(application.updateTime).toBeUndefined();
+        expect(application.updatedBy).toBe('Lorem ipsum - updater');
         expect(application.etag).toBe('111');
-        expect(application.appSpaceId).toBe('app-space-id');
-        expect(application.name).toBe('application-name');
-        expect(application.displayName).toBe('My Application');
-        expect(application.description).toBe('Application description');
+        expect(application.bookmark).toBe('bookmark-token');
       });
     });
   });
@@ -121,7 +127,7 @@ describe('createApplication', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
+      const sdk = await ConfigClientV2.createInstance(JSON.stringify(serviceAccountTokenMock));
       jest
         .spyOn(sdk['client'], 'createApplication')
         .mockImplementation(
@@ -140,10 +146,12 @@ describe('createApplication', () => {
         );
       sdk
         .createApplication(
-          'app-space-id',
-          'application-name',
-          'My Application',
-          'Application description',
+          ConfigClientV2.newCreateApplicationRequest(
+            'app-space-id',
+            'application-name',
+            'My Application',
+            'Application description',
+          ),
         )
         .catch((err) => {
           thrownError = err;
@@ -159,7 +167,7 @@ describe('createApplication', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
+      const sdk = await ConfigClientV2.createInstance(JSON.stringify(serviceAccountTokenMock));
       jest
         .spyOn(sdk['client'], 'createApplication')
         .mockImplementation(
@@ -178,10 +186,12 @@ describe('createApplication', () => {
         );
       sdk
         .createApplication(
-          'app-space-id',
-          'application-name',
-          'My Application',
-          'Application description',
+          ConfigClientV2.newCreateApplicationRequest(
+            'app-space-id',
+            'application-name',
+            'My Application',
+            'Application description',
+          ),
         )
         .catch((err) => {
           thrownError = err;
@@ -189,7 +199,7 @@ describe('createApplication', () => {
     });
 
     it('throws an error', () => {
-      expect(thrownError.message).toBe('No application response');
+      expect(thrownError.message).toBe('No Application response.');
     });
   });
 });
@@ -200,7 +210,7 @@ describe('readApplicationById', () => {
     let readApplicationSpy: jest.SpyInstance;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
+      const sdk = await ConfigClientV2.createInstance(JSON.stringify(serviceAccountTokenMock));
       readApplicationSpy = jest
         .spyOn(sdk['client'], 'readApplication')
         .mockImplementation(
@@ -223,17 +233,21 @@ describe('readApplicationById', () => {
                   etag: '5432',
                   createdBy: 'Lorem ipsum - creator',
                   updatedBy: 'Lorem ipsum - updater',
-                  createTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 12)),
-                  updateTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 13)),
-                  deleteTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 14)),
-                  destroyTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 15)),
+                  createTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 2, 15, 13, 12))),
+                  updateTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 2, 15, 13, 13))),
+                  deleteTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 2, 15, 13, 14))),
+                  destroyTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 2, 15, 13, 15))),
                 },
               });
             }
             return {} as SurfaceCall;
           },
         );
-      application = await sdk.readApplicationById('application-id-request');
+      application = Application.deserialize(
+        await sdk.readApplication(
+          ConfigClientV2.newReadApplicationRequest('id', 'application-id-request'),
+        ),
+      );
     });
 
     it('sends correct request', () => {
@@ -257,10 +271,18 @@ describe('readApplicationById', () => {
       expect(application.description).toBe('Application description');
       expect(application.displayName).toBe('Application Name');
       expect(application.etag).toBe('5432');
-      expect(application.createTime?.toString()).toBe(new Date(2022, 2, 15, 13, 12).toString());
-      expect(application.updateTime?.toString()).toBe(new Date(2022, 2, 15, 13, 13).toString());
-      expect(application.deleteTime?.toString()).toBe(new Date(2022, 2, 15, 13, 14).toString());
-      expect(application.destroyTime?.toString()).toBe(new Date(2022, 2, 15, 13, 15).toString());
+      expect(application.createTime?.toString()).toBe(
+        new Date(Date.UTC(2022, 2, 15, 13, 12)).toString(),
+      );
+      expect(application.updateTime?.toString()).toBe(
+        new Date(Date.UTC(2022, 2, 15, 13, 13)).toString(),
+      );
+      expect(application.deleteTime?.toString()).toBe(
+        new Date(Date.UTC(2022, 2, 15, 13, 14)).toString(),
+      );
+      expect(application.destroyTime?.toString()).toBe(
+        new Date(Date.UTC(2022, 2, 15, 13, 15)).toString(),
+      );
     });
   });
 
@@ -273,7 +295,7 @@ describe('readApplicationById', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
+      const sdk = await ConfigClientV2.createInstance(JSON.stringify(serviceAccountTokenMock));
       jest
         .spyOn(sdk['client'], 'readApplication')
         .mockImplementation(
@@ -290,9 +312,11 @@ describe('readApplicationById', () => {
             return {} as SurfaceCall;
           },
         );
-      sdk.readApplicationById('application-id-request').catch((err) => {
-        thrownError = err;
-      });
+      sdk
+        .readApplication(ConfigClientV2.newReadApplicationRequest('id', 'application-id-request'))
+        .catch((err) => {
+          thrownError = err;
+        });
     });
 
     it('throws an error', () => {
@@ -304,7 +328,7 @@ describe('readApplicationById', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
+      const sdk = await ConfigClientV2.createInstance(JSON.stringify(serviceAccountTokenMock));
       jest
         .spyOn(sdk['client'], 'readApplication')
         .mockImplementation(
@@ -321,13 +345,15 @@ describe('readApplicationById', () => {
             return {} as SurfaceCall;
           },
         );
-      sdk.readApplicationById('application-id-request').catch((err) => {
-        thrownError = err;
-      });
+      sdk
+        .readApplication(ConfigClientV2.newReadApplicationRequest('id', 'application-id-request'))
+        .catch((err) => {
+          thrownError = err;
+        });
     });
 
     it('throws an error', () => {
-      expect(thrownError.message).toBe('No application response');
+      expect(thrownError.message).toBe('No Application response.');
     });
   });
 });
@@ -338,7 +364,7 @@ describe('readApplicationByName', () => {
     let readApplicationSpy: jest.SpyInstance;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
+      const sdk = await ConfigClientV2.createInstance(JSON.stringify(serviceAccountTokenMock));
       readApplicationSpy = jest
         .spyOn(sdk['client'], 'readApplication')
         .mockImplementation(
@@ -360,19 +386,24 @@ describe('readApplicationByName', () => {
                   etag: '5432',
                   createdBy: 'Lorem ipsum - creator',
                   updatedBy: 'Lorem ipsum - updater',
-                  createTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 12)),
-                  updateTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 13)),
-                  deleteTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 14)),
-                  destroyTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 15)),
+                  createTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 2, 15, 13, 12))),
+                  updateTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 2, 15, 13, 13))),
+                  deleteTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 2, 15, 13, 14))),
+                  destroyTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 2, 15, 13, 15))),
                 },
               });
             }
             return {} as SurfaceCall;
           },
         );
-      application = await sdk.readApplicationByName(
-        'app-space-id-request',
-        'application-name-request',
+      application = Application.deserialize(
+        await sdk.readApplication(
+          ConfigClientV2.newReadApplicationRequest(
+            'name',
+            'app-space-id-request',
+            'application-name-request',
+          ),
+        ),
       );
     });
 
@@ -400,10 +431,18 @@ describe('readApplicationByName', () => {
       expect(application.description).toBeUndefined();
       expect(application.displayName).toBe('Application Name');
       expect(application.etag).toBe('5432');
-      expect(application.createTime?.toString()).toBe(new Date(2022, 2, 15, 13, 12).toString());
-      expect(application.updateTime?.toString()).toBe(new Date(2022, 2, 15, 13, 13).toString());
-      expect(application.deleteTime?.toString()).toBe(new Date(2022, 2, 15, 13, 14).toString());
-      expect(application.destroyTime?.toString()).toBe(new Date(2022, 2, 15, 13, 15).toString());
+      expect(application.createTime?.toString()).toBe(
+        new Date(Date.UTC(2022, 2, 15, 13, 12)).toString(),
+      );
+      expect(application.updateTime?.toString()).toBe(
+        new Date(Date.UTC(2022, 2, 15, 13, 13)).toString(),
+      );
+      expect(application.deleteTime?.toString()).toBe(
+        new Date(Date.UTC(2022, 2, 15, 13, 14)).toString(),
+      );
+      expect(application.destroyTime?.toString()).toBe(
+        new Date(Date.UTC(2022, 2, 15, 13, 15)).toString(),
+      );
     });
   });
 
@@ -416,7 +455,7 @@ describe('readApplicationByName', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
+      const sdk = await ConfigClientV2.createInstance(JSON.stringify(serviceAccountTokenMock));
       jest
         .spyOn(sdk['client'], 'readApplication')
         .mockImplementation(
@@ -433,9 +472,17 @@ describe('readApplicationByName', () => {
             return {} as SurfaceCall;
           },
         );
-      sdk.readApplicationByName('app-space-id-request', 'application-name-request').catch((err) => {
-        thrownError = err;
-      });
+      sdk
+        .readApplication(
+          ConfigClientV2.newReadApplicationRequest(
+            'name',
+            'app-space-id-request',
+            'application-name-request',
+          ),
+        )
+        .catch((err) => {
+          thrownError = err;
+        });
     });
 
     it('throws an error', () => {
@@ -447,7 +494,7 @@ describe('readApplicationByName', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
+      const sdk = await ConfigClientV2.createInstance(JSON.stringify(serviceAccountTokenMock));
       jest
         .spyOn(sdk['client'], 'readApplication')
         .mockImplementation(
@@ -464,62 +511,89 @@ describe('readApplicationByName', () => {
             return {} as SurfaceCall;
           },
         );
-      sdk.readApplicationByName('app-space-id-request', 'application-name-request').catch((err) => {
-        thrownError = err;
-      });
+      sdk
+        .readApplication(
+          ConfigClientV2.newReadApplicationRequest(
+            'name',
+            'app-space-id-request',
+            'application-name-request',
+          ),
+        )
+        .catch((err) => {
+          thrownError = err;
+        });
     });
 
     it('throws an error', () => {
-      expect(thrownError.message).toBe('No application response');
+      expect(thrownError.message).toBe('No Application response.');
     });
   });
 });
 
-describe('readApplicationList', () => {
-  describe('when no error is returned', () => {
-    let applications: Application[];
-    let listApplicationsSpy: jest.SpyInstance;
+describe('listApplications', () => {
+  let applications: Application[] = [];
+  let listApplicationsSpy: jest.SpyInstance;
 
+  describe('when no error is returned', () => {
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
-      const eventEmitter = Object.assign(new EventEmitter(), {});
+      const sdk = await ConfigClientV2.createInstance(JSON.stringify(serviceAccountTokenMock));
+      const eventEmitter = Object.assign(new EventEmitter(), {
+        read: () => {
+          return {
+            application: {
+              id: 'application-id',
+              appSpaceId: 'app-space-id',
+              customerId: 'customer-id',
+              name: 'application-name',
+              description: StringValue.create({ value: 'Application description' }),
+              displayName: 'Application Name',
+              etag: '5432',
+              createTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 2, 15, 13, 12))),
+              updateTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 2, 15, 13, 13))),
+              deleteTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 2, 15, 13, 14))),
+              destroyTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 2, 15, 13, 15))),
+            },
+          };
+        },
+      });
       listApplicationsSpy = jest.spyOn(sdk['client'], 'listApplications').mockImplementation(() => {
-        setTimeout(
-          () =>
-            eventEmitter.emit('data', {
-              application: {
-                id: 'application-id',
-                appSpaceId: 'app-space-id',
-                customerId: 'customer-id',
-                name: 'application-name',
-                description: StringValue.create({ value: 'Application description' }),
-                displayName: 'Application Name',
-                etag: '5432',
-                createTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 12)),
-                updateTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 13)),
-                deleteTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 14)),
-                destroyTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 15)),
-              },
-            }),
-          0,
-        );
-        setTimeout(() => eventEmitter.emit('end'), 0);
+        setTimeout(() => eventEmitter.emit('readable'), 0);
+        setTimeout(() => eventEmitter.emit('readable'), 0);
+        setTimeout(() => eventEmitter.emit('end'), 1);
+        setTimeout(() => eventEmitter.emit('close'), 1);
         return eventEmitter as unknown as ClientReadableStream<ListApplicationsResponse>;
       });
-
-      applications = await sdk.readApplicationList('app-space-id-request', ['application-name']);
+      applications = await new Promise((resolve, reject) => {
+        const tmp: Application[] = [];
+        sdk
+          .listApplications(
+            ConfigClientV2.newListApplicationsRequest('app-space-id-request', ['application-name']),
+          )
+          .on('error', (err) => {
+            reject(err);
+          })
+          .on('data', (data) => {
+            if (data && data.application) {
+              tmp.push(Application.deserialize(data));
+            }
+          })
+          .on('close', () => {
+            // Nothing to do here.
+          })
+          .on('end', () => {
+            resolve(tmp);
+          });
+      });
     });
-
-    it('sends correct request', () => {
+    it('check expect call', async () => {
       expect(listApplicationsSpy).toBeCalledWith({
         appSpaceId: 'app-space-id-request',
         match: ['application-name'],
         bookmarks: [],
       });
     });
-
-    it('returns a correct instance', () => {
-      expect(applications.length).toBe(1);
+    it('returns correct data', async () => {
+      expect(applications.length).toBe(2);
       expect(applications[0].id).toBe('application-id');
       expect(applications[0].appSpaceId).toBe('app-space-id');
       expect(applications[0].customerId).toBe('customer-id');
@@ -527,50 +601,101 @@ describe('readApplicationList', () => {
       expect(applications[0].description).toBe('Application description');
       expect(applications[0].displayName).toBe('Application Name');
       expect(applications[0].etag).toBe('5432');
-      expect(applications[0].createTime?.toString()).toBe(new Date(2022, 2, 15, 13, 12).toString());
-      expect(applications[0].updateTime?.toString()).toBe(new Date(2022, 2, 15, 13, 13).toString());
-      expect(applications[0].deleteTime?.toString()).toBe(new Date(2022, 2, 15, 13, 14).toString());
+      expect(applications[0].createTime?.toString()).toBe(
+        new Date(Date.UTC(2022, 2, 15, 13, 12)).toString(),
+      );
+      expect(applications[0].updateTime?.toString()).toBe(
+        new Date(Date.UTC(2022, 2, 15, 13, 13)).toString(),
+      );
+      expect(applications[0].deleteTime?.toString()).toBe(
+        new Date(Date.UTC(2022, 2, 15, 13, 14)).toString(),
+      );
       expect(applications[0].destroyTime?.toString()).toBe(
-        new Date(2022, 2, 15, 13, 15).toString(),
+        new Date(Date.UTC(2022, 2, 15, 13, 15)).toString(),
       );
     });
   });
 
   describe('when an error is returned', () => {
+    let result: ServiceError | string;
     const error = {
       code: Status.NOT_FOUND,
       details: 'DETAILS',
       metadata: {},
     } as ServiceError;
-    let thrownError: Error;
+    let sdk: ConfigClientV2;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
+      sdk = await ConfigClientV2.createInstance(JSON.stringify(serviceAccountTokenMock));
       const eventEmitter = Object.assign(new EventEmitter(), { read: jest.fn() });
       jest.spyOn(sdk['client'], 'listApplications').mockImplementation(() => {
         setTimeout(() => eventEmitter.emit('error', error), 0);
         return eventEmitter as unknown as ClientReadableStream<ListApplicationsResponse>;
       });
-
-      return sdk
-        .readApplicationList('app-space-id-request', ['application-name'])
-        .catch((err) => (thrownError = err));
+      result = await new Promise((resolve, reject) => {
+        sdk
+          .listApplications(
+            ConfigClientV2.newListApplicationsRequest('app-space-id-request', ['application-name']),
+          )
+          .on('error', (err) => {
+            reject(err);
+          })
+          .on('data', () => {
+            // Nothing to do here.
+          })
+          .on('end', () => {
+            resolve('');
+          });
+      })
+        .then((x) => x as string)
+        .catch((errs) => {
+          return errs as ServiceError;
+        });
     });
 
     it('throws an error', () => {
-      expect(thrownError).toBe(error);
+      expect(result).toBe(error);
+    });
+  });
+
+  describe('when a close event is triggered', () => {
+    let sdk: ConfigClientV2;
+
+    beforeEach(async () => {
+      sdk = await ConfigClientV2.createInstance(JSON.stringify(serviceAccountTokenMock));
+      const eventEmitter = Object.assign(new EventEmitter(), { read: jest.fn() });
+      jest.spyOn(sdk['client'], 'listApplications').mockImplementation(() => {
+        setTimeout(() => eventEmitter.emit('close'), 0);
+        return eventEmitter as unknown as ClientReadableStream<ListApplicationsResponse>;
+      });
+    });
+
+    it('close has been triggered', () => {
+      sdk
+        .listApplications(
+          ConfigClientV2.newListApplicationsRequest('app-space-id-request', ['application-name']),
+        )
+        .on('close', () => {
+          expect(true).toBe(true);
+        })
+        .on('data', () => {
+          // Nothing to do here.
+        })
+        .on('end', () => {
+          // Nothing to do here.
+        });
     });
   });
 });
 
 describe('updateApplication', () => {
   describe('when no error is returned', () => {
-    let updatedApplication: Application;
+    let updatedApplication: UpdateApplicationResponse;
     let updateApplicationSpy: jest.SpyInstance;
-    let sdk: ConfigClient;
+    let sdk: ConfigClientV2;
 
     beforeEach(async () => {
-      sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
+      sdk = await ConfigClientV2.createInstance(JSON.stringify(serviceAccountTokenMock));
       updateApplicationSpy = jest
         .spyOn(sdk['client'], 'updateApplication')
         .mockImplementation(
@@ -585,7 +710,7 @@ describe('updateApplication', () => {
               res(null, {
                 etag: '777',
                 id: 'application-id',
-                updateTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 16)),
+                updateTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 2, 15, 13, 16))),
                 bookmark: 'bookmark-token',
                 createdBy: 'Lorem ipsum - creator',
                 updatedBy: 'Lorem ipsum - updater',
@@ -604,7 +729,9 @@ describe('updateApplication', () => {
           'app-space-id',
           'customer-id',
         );
-        updatedApplication = await sdk.updateApplication(application);
+        updatedApplication = await sdk.updateApplication(
+          ConfigClientV2.newUpdateApplicationRequest(application),
+        );
       });
 
       it('sends correct request', () => {
@@ -619,18 +746,14 @@ describe('updateApplication', () => {
 
       it('returns a correct instance', () => {
         expect(updatedApplication.id).toBe('application-id');
-        expect(updatedApplication.appSpaceId).toBe('app-space-id');
-        expect(updatedApplication.customerId).toBe('customer-id');
-        expect(updatedApplication.name).toBe('application');
-        expect(updatedApplication.description).toBeUndefined();
-        expect(updatedApplication.displayName).toBeUndefined();
-        expect(updatedApplication.etag).toBe('777');
         expect(updatedApplication.createTime).toBeUndefined();
+        expect(updatedApplication.createdBy).toBe('Lorem ipsum - creator');
         expect(updatedApplication.updateTime?.toString()).toBe(
-          new Date(2022, 2, 15, 13, 16).toString(),
+          Utils.dateToTimestamp(new Date(Date.UTC(2022, 2, 15, 13, 16))).toString(),
         );
-        expect(updatedApplication.deleteTime).toBeUndefined();
-        expect(updatedApplication.destroyTime).toBeUndefined();
+        expect(updatedApplication.updatedBy).toBe('Lorem ipsum - updater');
+        expect(updatedApplication.etag).toBe('777');
+        expect(updatedApplication.bookmark).toBe('bookmark-token');
       });
     });
 
@@ -645,7 +768,9 @@ describe('updateApplication', () => {
           '555',
           'Description',
         );
-        updatedApplication = await sdk.updateApplication(application);
+        updatedApplication = await sdk.updateApplication(
+          ConfigClientV2.newUpdateApplicationRequest(application),
+        );
       });
 
       it('sends correct request', () => {
@@ -663,18 +788,14 @@ describe('updateApplication', () => {
 
       it('returns a correct instance', () => {
         expect(updatedApplication.id).toBe('application-id');
-        expect(updatedApplication.appSpaceId).toBe('app-space-id');
-        expect(updatedApplication.customerId).toBe('customer-id');
-        expect(updatedApplication.name).toBe('application');
-        expect(updatedApplication.description).toBe('Description');
-        expect(updatedApplication.displayName).toBe('Application Name');
-        expect(updatedApplication.etag).toBe('777');
         expect(updatedApplication.createTime).toBeUndefined();
+        expect(updatedApplication.createdBy).toBe('Lorem ipsum - creator');
         expect(updatedApplication.updateTime?.toString()).toBe(
-          new Date(2022, 2, 15, 13, 16).toString(),
+          Utils.dateToTimestamp(new Date(Date.UTC(2022, 2, 15, 13, 16))).toString(),
         );
-        expect(updatedApplication.deleteTime).toBeUndefined();
-        expect(updatedApplication.destroyTime).toBeUndefined();
+        expect(updatedApplication.updatedBy).toBe('Lorem ipsum - updater');
+        expect(updatedApplication.etag).toBe('777');
+        expect(updatedApplication.bookmark).toBe('bookmark-token');
       });
     });
   });
@@ -683,7 +804,7 @@ describe('updateApplication', () => {
     let thrownError: SdkError;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
+      const sdk = await ConfigClientV2.createInstance(JSON.stringify(serviceAccountTokenMock));
       jest
         .spyOn(sdk['client'], 'updateApplication')
         .mockImplementation(
@@ -698,7 +819,7 @@ describe('updateApplication', () => {
               res(null, {
                 etag: '777',
                 id: 'different-application-id',
-                updateTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 16)),
+                updateTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 2, 15, 13, 16))),
                 bookmark: 'bookmark-token',
                 createdBy: 'Lorem ipsum - creator',
                 updatedBy: 'Lorem ipsum - updater',
@@ -716,13 +837,15 @@ describe('updateApplication', () => {
         '11',
         'Description',
       );
-      return sdk.updateApplication(application).catch((err) => (thrownError = err));
+      return sdk
+        .updateApplication(ConfigClientV2.newUpdateApplicationRequest(application))
+        .catch((err) => (thrownError = err));
     });
 
     it('throws an error', () => {
-      expect(thrownError.code).toEqual(SdkErrorCode.SDK_CODE_1);
+      expect(thrownError.code).toEqual(SdkErrorCode.SDK_CODE_4);
       expect(thrownError.description).toBe(
-        'Update returned with different id: req.iq=application-id, res.id=different-application-id',
+        'Update returned with different id: request.id=application-id, response.id=different-application-id.',
       );
     });
   });
@@ -736,7 +859,7 @@ describe('updateApplication', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
+      const sdk = await ConfigClientV2.createInstance(JSON.stringify(serviceAccountTokenMock));
       jest
         .spyOn(sdk['client'], 'updateApplication')
         .mockImplementation(
@@ -762,9 +885,11 @@ describe('updateApplication', () => {
         '11',
         'Description',
       );
-      sdk.updateApplication(application).catch((err) => {
-        thrownError = err;
-      });
+      sdk
+        .updateApplication(ConfigClientV2.newUpdateApplicationRequest(application))
+        .catch((err) => {
+          thrownError = err;
+        });
     });
 
     it('throws an error', () => {
@@ -776,7 +901,7 @@ describe('updateApplication', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
+      const sdk = await ConfigClientV2.createInstance(JSON.stringify(serviceAccountTokenMock));
       jest
         .spyOn(sdk['client'], 'updateApplication')
         .mockImplementation(
@@ -802,14 +927,16 @@ describe('updateApplication', () => {
         '11',
         'Description',
       );
-      sdk.updateApplication(application).catch((err) => {
-        thrownError = err;
-      });
+      sdk
+        .updateApplication(ConfigClientV2.newUpdateApplicationRequest(application))
+        .catch((err) => {
+          thrownError = err;
+        });
     });
 
     it('throws an error', () => {
       expect(thrownError.message).toBe(
-        'Update returned with different id: req.iq=application-id, res.id=undefined',
+        'Update returned with different id: request.id=application-id, response.id=undefined.',
       );
     });
   });
@@ -817,11 +944,11 @@ describe('updateApplication', () => {
 
 describe('deleteApplication', () => {
   describe('when no error is returned', () => {
-    let returnedValue: boolean;
+    let returnedValue: DeleteApplicationResponse;
     let deleteApplicationSpy: jest.SpyInstance;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
+      const sdk = await ConfigClientV2.createInstance(JSON.stringify(serviceAccountTokenMock));
       deleteApplicationSpy = jest
         .spyOn(sdk['client'], 'deleteApplication')
         .mockImplementation(
@@ -846,7 +973,9 @@ describe('deleteApplication', () => {
         'Application',
         'etag-token',
       );
-      returnedValue = await sdk.deleteApplication(application);
+      returnedValue = await sdk.deleteApplication(
+        ConfigClientV2.newDeleteApplicationRequest(application),
+      );
     });
 
     it('sends correct request', () => {
@@ -861,7 +990,7 @@ describe('deleteApplication', () => {
     });
 
     it('returns true', () => {
-      expect(returnedValue).toBe(true);
+      expect(returnedValue).not.toBeUndefined();
     });
   });
 
@@ -874,7 +1003,7 @@ describe('deleteApplication', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
+      const sdk = await ConfigClientV2.createInstance(JSON.stringify(serviceAccountTokenMock));
       jest
         .spyOn(sdk['client'], 'deleteApplication')
         .mockImplementation(
@@ -893,13 +1022,51 @@ describe('deleteApplication', () => {
         'Application',
         'etag-token',
       );
-      sdk.deleteApplication(application).catch((err) => {
-        thrownError = err;
-      });
+      sdk
+        .deleteApplication(ConfigClientV2.newDeleteApplicationRequest(application))
+        .catch((err) => {
+          thrownError = err;
+        });
     });
 
     it('throws an error', () => {
       expect(thrownError).toBe(error);
+    });
+  });
+
+  describe('when response is not set an error is returned', () => {
+    let thrownError: SdkError;
+
+    beforeEach(async () => {
+      const sdk = await ConfigClientV2.createInstance(JSON.stringify(serviceAccountTokenMock));
+      jest
+        .spyOn(sdk['client'], 'deleteApplication')
+        .mockImplementation(
+          (req, res: Metadata | CallOptions | ((err: ServiceError | null) => void)) => {
+            if (typeof res === 'function') {
+              res(null);
+            }
+            return {} as SurfaceCall;
+          },
+        );
+      const application = new Application(
+        'application-id',
+        'application-name',
+        'app-space-id',
+        'customer-id',
+        'Application',
+        'etag-token',
+      );
+      sdk
+        .deleteApplication(ConfigClientV2.newDeleteApplicationRequest(application))
+        .catch((err) => {
+          thrownError = err;
+        });
+    });
+
+    it('throws an error', () => {
+      expect(thrownError.code).toEqual(SdkErrorCode.SDK_CODE_3);
+      expect(thrownError.description).toBe('No Application response.');
     });
   });
 });

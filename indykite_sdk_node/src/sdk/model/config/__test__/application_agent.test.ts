@@ -1,5 +1,5 @@
 import { StringValue } from '../../../../grpc/google/protobuf/wrappers';
-import { SdkError, SdkErrorCode } from '../../../error';
+import { SdkError, SkdErrorText, SdkErrorCode } from '../../../error';
 import { Utils } from '../../../utils/utils';
 import { ApplicationAgent } from '../application_agent';
 
@@ -80,6 +80,8 @@ describe('deserialize', () => {
       expect(appAgent.updateTime?.toString()).toBe(new Date(2022, 2, 17, 12, 18).toString());
       expect(appAgent.deleteTime?.toString()).toBe(new Date(2022, 2, 17, 12, 19).toString());
       expect(appAgent.destroyTime?.toString()).toBe(new Date(2022, 2, 17, 12, 20).toString());
+      expect(appAgent.createdBy).toBe('Lorem ipsum - creator');
+      expect(appAgent.updatedBy).toBe('Lorem ipsum - updater');
     });
   });
 
@@ -113,6 +115,8 @@ describe('deserialize', () => {
       expect(appAgent.updateTime).toBeUndefined();
       expect(appAgent.deleteTime).toBeUndefined();
       expect(appAgent.destroyTime).toBeUndefined();
+      expect(appAgent.createdBy).toBe('Lorem ipsum - creator');
+      expect(appAgent.updatedBy).toBe('Lorem ipsum - updater');
     });
   });
 
@@ -129,7 +133,7 @@ describe('deserialize', () => {
 
     it('throws an error', () => {
       expect(thrownError.code).toBe(SdkErrorCode.SDK_CODE_1);
-      expect(thrownError.description).toBe("Can't deserialize application agent");
+      expect(thrownError.description).toBe(SkdErrorText.SDK_CODE_1(ApplicationAgent.name));
     });
   });
 });

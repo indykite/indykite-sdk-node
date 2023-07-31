@@ -3,9 +3,9 @@ import {
   EmailServiceConfig,
   SendGridProviderConfig,
 } from '../../../../../grpc/indykite/config/v1beta1/model';
-import { EmailProvider } from '../provider';
+import { EmailService } from '../service';
 
-export class SendgridEmailProvider extends EmailProvider implements SendGridProviderConfig {
+export class SendgridEmailService extends EmailService implements SendGridProviderConfig {
   apiKey: string;
   sandboxMode: boolean;
   ipPoolName?: StringValue | undefined;
@@ -33,6 +33,7 @@ export class SendgridEmailProvider extends EmailProvider implements SendGridProv
     return {
       ...emailService,
       provider,
+      default: false,
     };
   }
 }

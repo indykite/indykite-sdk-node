@@ -67,6 +67,7 @@ describe('createWebAuthnProviderConfiguration', () => {
                 createTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 6, 21, 13, 5))),
                 updateTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 6, 21, 13, 6))),
                 bookmark: 'bookmark-token',
+                locationId: 'location-id-1',
               });
             }
             return {} as SurfaceCall;
@@ -125,7 +126,7 @@ describe('createWebAuthnProviderConfiguration', () => {
     describe('when all possible values are sent', () => {
       beforeEach(async () => {
         configExample.displayName = 'Webauthn Provider Name';
-        configExample.description = 'Webauthn Provider description';
+        configExample.description = StringValue.fromJson('Webauthn Provider description');
         webauthnProvider = await sdk.createWebAuthnProviderConfiguration(
           'location-id',
           configExample,
@@ -174,7 +175,7 @@ describe('createWebAuthnProviderConfiguration', () => {
         expect(webauthnProvider.etag).toBe('etag-token');
         expect(webauthnProvider.name).toBe('webauthn-provider');
         expect(webauthnProvider.displayName).toBe('Webauthn Provider Name');
-        expect(webauthnProvider.description).toBe('Webauthn Provider description');
+        expect(webauthnProvider.description?.value).toBe('Webauthn Provider description');
       });
     });
   });
@@ -331,7 +332,7 @@ describe('readWebAuthnProviderConfiguration', () => {
           }),
           {
             displayName: 'Instance Name',
-            description: 'Instance description',
+            description: { value: 'Instance description' },
             etag: 'etag-token',
             id: 'webauthn-provider-id',
             createTime: new Date(Date.UTC(2022, 6, 21, 11, 13)),
@@ -339,6 +340,8 @@ describe('readWebAuthnProviderConfiguration', () => {
             customerId: 'customer-id',
             appSpaceId: 'app-space-id',
             tenantId: 'tenant-id',
+            createdBy: 'Lorem ipsum - creator',
+            updatedBy: 'Lorem ipsum - updater',
           },
         ),
       );
@@ -439,6 +442,7 @@ describe('updateWebAuthnProviderConfiguration', () => {
                 bookmark: 'bookmark-token',
                 createdBy: 'Lorem ipsum - creator',
                 updatedBy: 'Lorem ipsum - updater',
+                locationId: 'location-id',
               });
             }
             return {} as SurfaceCall;
@@ -504,7 +508,7 @@ describe('updateWebAuthnProviderConfiguration', () => {
     describe('when all possible values are sent', () => {
       beforeEach(async () => {
         configExample.displayName = 'WebAuthn Provider name';
-        configExample.description = 'WebAuthn Provider description';
+        configExample.description = StringValue.fromJson('WebAuthn Provider description');
         configExample.etag = 'etag-token';
         configExample.id = 'webauthn-provider-id';
         webauthnProvider = await sdk.updateWebAuthnProviderConfiguration(configExample);
@@ -559,8 +563,8 @@ describe('updateWebAuthnProviderConfiguration', () => {
               registrationTimeout: 120,
             }),
             {
-              description: 'WebAuthn Provider description',
               displayName: 'WebAuthn Provider name',
+              description: StringValue.fromJson('WebAuthn Provider description'),
               etag: 'new-etag-token',
               id: 'webauthn-provider-id',
               updateTime: new Date(Date.UTC(2022, 6, 21, 14, 56)),
@@ -594,6 +598,7 @@ describe('updateWebAuthnProviderConfiguration', () => {
                 bookmark: 'bookmark-token',
                 createdBy: 'Lorem ipsum - creator',
                 updatedBy: 'Lorem ipsum - updater',
+                locationId: 'location-id',
               });
             }
             return {} as SurfaceCall;

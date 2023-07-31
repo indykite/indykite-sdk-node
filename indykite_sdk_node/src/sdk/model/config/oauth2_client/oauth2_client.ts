@@ -1,10 +1,11 @@
+import { StringValue } from '../../../../grpc/google/protobuf/wrappers';
 import {
   AuthStyle as OAuth2AuthStyle,
   ProviderType as OAuth2ProviderType,
   OAuth2ClientConfig as OAuth2ClientConfigModel,
   AuthStyle,
 } from '../../../../grpc/indykite/config/v1beta1/model';
-import { NodeConfiguration } from '../configuration';
+import { ConfigNode } from '../config_node';
 
 export { OAuth2AuthStyle, OAuth2ProviderType };
 
@@ -34,7 +35,7 @@ export type IOAuth2ClientConfigOptions = {
   teamId?: string;
 };
 
-export class OAuth2Client extends NodeConfiguration {
+export class OAuth2Client extends ConfigNode {
   public providerType: OAuth2ProviderType;
   public clientId: string;
   public clientSecret: string;
@@ -77,7 +78,7 @@ export class OAuth2Client extends NodeConfiguration {
     this.hostedDomain = options.hostedDomain;
     this.authStyle = options.authStyle;
     this.displayName = options.displayName;
-    this.description = options.description;
+    this.description = options.description ? StringValue.fromJson(options.description) : undefined;
     this.privateKeyId = options.privateKeyId;
     this.privateKeyPem = options.privateKeyPem;
     this.teamId = options.teamId;

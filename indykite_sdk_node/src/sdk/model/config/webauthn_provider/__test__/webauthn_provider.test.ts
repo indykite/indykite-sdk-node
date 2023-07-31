@@ -12,7 +12,7 @@ describe('when the instance is created', () => {
     client = new WebAuthnProvider({
       name: 'instance-name',
       displayName: 'Instance Name',
-      description: 'Instance description',
+      description: { value: 'Instance description' },
       attestationPreference: ConveyancePreference.NONE,
       authenticatorAttachment: AuthenticatorAttachment.DEFAULT,
       relyingParties: { 'http://localhost:3000': 'default' },
@@ -24,7 +24,7 @@ describe('when the instance is created', () => {
   it('creates a correct instance', () => {
     expect(client.name).toBe('instance-name');
     expect(client.displayName).toBe('Instance Name');
-    expect(client.description).toBe('Instance description');
+    expect(client.description?.value).toBe('Instance description');
     expect(client.attestationPreference).toBe(ConveyancePreference.NONE);
     expect(client.authenticatorAttachment).toBe(AuthenticatorAttachment.DEFAULT);
     expect(client.relyingParties).toEqual({ 'http://localhost:3000': 'default' });

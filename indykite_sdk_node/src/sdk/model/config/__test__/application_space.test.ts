@@ -1,5 +1,5 @@
 import { StringValue } from '../../../../grpc/google/protobuf/wrappers';
-import { SdkError, SdkErrorCode } from '../../../error';
+import { SdkError, SkdErrorText, SdkErrorCode } from '../../../error';
 import { Utils } from '../../../utils/utils';
 import { ApplicationSpace } from '../application_space';
 
@@ -39,6 +39,8 @@ describe('deserialize', () => {
       expect(appSpace.updateTime?.toString()).toBe(new Date(2022, 2, 17, 12, 18).toString());
       expect(appSpace.deleteTime?.toString()).toBe(new Date(2022, 2, 17, 12, 19).toString());
       expect(appSpace.destroyTime?.toString()).toBe(new Date(2022, 2, 17, 12, 20).toString());
+      expect(appSpace.createdBy).toBe('Lorem ipsum - creator');
+      expect(appSpace.updatedBy).toBe('Lorem ipsum - updater');
     });
   });
 
@@ -76,6 +78,8 @@ describe('deserialize', () => {
       expect(appSpace.updateTime?.toString()).toBe(new Date(2022, 2, 17, 12, 18).toString());
       expect(appSpace.deleteTime?.toString()).toBe(new Date(2022, 2, 17, 12, 19).toString());
       expect(appSpace.destroyTime?.toString()).toBe(new Date(2022, 2, 17, 12, 20).toString());
+      expect(appSpace.createdBy).toBe('Lorem ipsum - creator');
+      expect(appSpace.updatedBy).toBe('Lorem ipsum - updater');
     });
   });
 
@@ -92,7 +96,7 @@ describe('deserialize', () => {
 
     it('throws an error', () => {
       expect(thrownError.code).toBe(SdkErrorCode.SDK_CODE_1);
-      expect(thrownError.description).toBe("Can't deserialize application space");
+      expect(thrownError.description).toBe(SkdErrorText.SDK_CODE_1(ApplicationSpace.name));
     });
   });
 });

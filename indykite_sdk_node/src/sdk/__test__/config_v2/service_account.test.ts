@@ -7,20 +7,20 @@ import {
   ReadServiceAccountResponse,
   UpdateServiceAccountResponse,
 } from '../../../grpc/indykite/config/v1beta1/config_management_api';
-import { ConfigClient } from '../../config';
+import { ConfigClientV2 } from '../../config_v2';
 import { SdkError, SdkErrorCode } from '../../error';
 import { Utils } from '../../utils/utils';
-import { ServiceAccount } from '../../model/config/service_account';
+import { ServiceAccount, ServiceAccountRole } from '../../model/config/service_account';
 import { serviceAccountTokenMock } from '../../utils/test_utils';
 
 describe('createserviceAccount', () => {
   describe('when no error is returned', () => {
     let serviceAccount: ServiceAccount;
     let createServiceAccountSpy: jest.SpyInstance;
-    let sdk: ConfigClient;
+    let sdk: ConfigClientV2;
 
     beforeEach(async () => {
-      sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
+      sdk = await ConfigClientV2.createInstance(JSON.stringify(serviceAccountTokenMock));
       createServiceAccountSpy = jest
         .spyOn(sdk['client'], 'createServiceAccount')
         .mockImplementation(
@@ -47,10 +47,15 @@ describe('createserviceAccount', () => {
 
     describe('when necessary values are sent only', () => {
       beforeEach(async () => {
-        serviceAccount = await sdk.createServiceAccount(
-          'customer-id',
+        serviceAccount = ServiceAccount.deserialize(
+          await sdk.createServiceAccount(
+            ConfigClientV2.newCreateServiceAccountRequest(
+              'customer-id',
+              'service-account-name',
+              ServiceAccountRole.ALL_EDITOR,
+            ),
+          ),
           'service-account-name',
-          'all_editor',
         );
       });
 
@@ -79,10 +84,17 @@ describe('createserviceAccount', () => {
 
     describe('when all possible values are sent', () => {
       beforeEach(async () => {
-        serviceAccount = await sdk.createServiceAccount(
-          'customer-id',
+        serviceAccount = ServiceAccount.deserialize(
+          await sdk.createServiceAccount(
+            ConfigClientV2.newCreateServiceAccountRequest(
+              'customer-id',
+              'service-account-name',
+              ServiceAccountRole.ALL_EDITOR,
+              'Display Name',
+              'Description',
+            ),
+          ),
           'service-account-name',
-          'all_editor',
           'Display Name',
           'Description',
         );
@@ -123,7 +135,7 @@ describe('createserviceAccount', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
+      const sdk = await ConfigClientV2.createInstance(JSON.stringify(serviceAccountTokenMock));
       jest
         .spyOn(sdk['client'], 'createServiceAccount')
         .mockImplementation(
@@ -140,9 +152,17 @@ describe('createserviceAccount', () => {
             return {} as SurfaceCall;
           },
         );
-      sdk.createServiceAccount('customer-id', 'service-account-name', 'all_editor').catch((err) => {
-        thrownError = err;
-      });
+      sdk
+        .createServiceAccount(
+          ConfigClientV2.newCreateServiceAccountRequest(
+            'customer-id',
+            'service-account-name',
+            ServiceAccountRole.ALL_EDITOR,
+          ),
+        )
+        .catch((err) => {
+          thrownError = err;
+        });
     });
 
     it('throws an error', () => {
@@ -154,7 +174,7 @@ describe('createserviceAccount', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
+      const sdk = await ConfigClientV2.createInstance(JSON.stringify(serviceAccountTokenMock));
       jest
         .spyOn(sdk['client'], 'createServiceAccount')
         .mockImplementation(
@@ -171,13 +191,21 @@ describe('createserviceAccount', () => {
             return {} as SurfaceCall;
           },
         );
-      sdk.createServiceAccount('customer-id', 'service-account-name', 'all_editor').catch((err) => {
-        thrownError = err;
-      });
+      sdk
+        .createServiceAccount(
+          ConfigClientV2.newCreateServiceAccountRequest(
+            'customer-id',
+            'service-account-name',
+            ServiceAccountRole.ALL_EDITOR,
+          ),
+        )
+        .catch((err) => {
+          thrownError = err;
+        });
     });
 
     it('throws an error', () => {
-      expect(thrownError.message).toBe('No service account response');
+      expect(thrownError.message).toBe('No ServiceAccount response.');
     });
   });
 });
@@ -188,7 +216,7 @@ describe('readServiceAccountById', () => {
     let readserviceAccountSpy: jest.SpyInstance;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
+      const sdk = await ConfigClientV2.createInstance(JSON.stringify(serviceAccountTokenMock));
       readserviceAccountSpy = jest
         .spyOn(sdk['client'], 'readServiceAccount')
         .mockImplementation(
@@ -208,10 +236,10 @@ describe('readServiceAccountById', () => {
                   displayName: 'Service Account Name',
                   createdBy: 'Lorem ipsum - creator',
                   updatedBy: 'Lorem ipsum - updater',
-                  createTime: Utils.dateToTimestamp(new Date(2022, 5, 28, 11, 54)),
-                  updateTime: Utils.dateToTimestamp(new Date(2022, 5, 28, 11, 55)),
-                  deleteTime: Utils.dateToTimestamp(new Date(2022, 5, 28, 11, 56)),
-                  destroyTime: Utils.dateToTimestamp(new Date(2022, 5, 28, 11, 57)),
+                  createTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 5, 28, 11, 54))),
+                  updateTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 5, 28, 11, 55))),
+                  deleteTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 5, 28, 11, 56))),
+                  destroyTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 5, 28, 11, 57))),
                   customerId: 'customer-id',
                   appSpaceId: 'app-space-id',
                 },
@@ -220,7 +248,11 @@ describe('readServiceAccountById', () => {
             return {} as SurfaceCall;
           },
         );
-      serviceAccount = await sdk.readServiceAccountById('service-account-id-request');
+      serviceAccount = ServiceAccount.deserialize(
+        await sdk.readServiceAccount(
+          ConfigClientV2.newReadServiceAccountRequest('id', 'service-account-id-request'),
+        ),
+      );
     });
 
     it('sends correct request', () => {
@@ -242,10 +274,10 @@ describe('readServiceAccountById', () => {
         name: 'service-account-name',
         etag: 'etag-token',
         displayName: 'Service Account Name',
-        createTime: new Date(2022, 5, 28, 11, 54),
-        updateTime: new Date(2022, 5, 28, 11, 55),
-        deleteTime: new Date(2022, 5, 28, 11, 56),
-        destroyTime: new Date(2022, 5, 28, 11, 57),
+        createTime: new Date(Date.UTC(2022, 5, 28, 11, 54)),
+        updateTime: new Date(Date.UTC(2022, 5, 28, 11, 55)),
+        deleteTime: new Date(Date.UTC(2022, 5, 28, 11, 56)),
+        destroyTime: new Date(Date.UTC(2022, 5, 28, 11, 57)),
         customerId: 'customer-id',
         appSpaceId: 'app-space-id',
       });
@@ -261,7 +293,7 @@ describe('readServiceAccountById', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
+      const sdk = await ConfigClientV2.createInstance(JSON.stringify(serviceAccountTokenMock));
       jest
         .spyOn(sdk['client'], 'readServiceAccount')
         .mockImplementation(
@@ -278,9 +310,13 @@ describe('readServiceAccountById', () => {
             return {} as SurfaceCall;
           },
         );
-      sdk.readServiceAccountById('service-account-id-request').catch((err) => {
-        thrownError = err;
-      });
+      sdk
+        .readServiceAccount(
+          ConfigClientV2.newReadServiceAccountRequest('id', 'service-account-id-request'),
+        )
+        .catch((err) => {
+          thrownError = err;
+        });
     });
 
     it('throws an error', () => {
@@ -292,7 +328,7 @@ describe('readServiceAccountById', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
+      const sdk = await ConfigClientV2.createInstance(JSON.stringify(serviceAccountTokenMock));
       jest
         .spyOn(sdk['client'], 'readServiceAccount')
         .mockImplementation(
@@ -309,13 +345,17 @@ describe('readServiceAccountById', () => {
             return {} as SurfaceCall;
           },
         );
-      sdk.readServiceAccountById('service-account-id-request').catch((err) => {
-        thrownError = err;
-      });
+      sdk
+        .readServiceAccount(
+          ConfigClientV2.newReadServiceAccountRequest('id', 'service-account-id-request'),
+        )
+        .catch((err) => {
+          thrownError = err;
+        });
     });
 
     it('throws an error', () => {
-      expect(thrownError.message).toBe('No service account response');
+      expect(thrownError.message).toBe('No ServiceAccount response.');
     });
   });
 });
@@ -326,7 +366,7 @@ describe('readServiceAccountByName', () => {
     let readServiceAccountSpy: jest.SpyInstance;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
+      const sdk = await ConfigClientV2.createInstance(JSON.stringify(serviceAccountTokenMock));
       readServiceAccountSpy = jest
         .spyOn(sdk['client'], 'readServiceAccount')
         .mockImplementation(
@@ -346,10 +386,10 @@ describe('readServiceAccountByName', () => {
                   displayName: 'Service Account Name',
                   createdBy: 'Lorem ipsum - creator',
                   updatedBy: 'Lorem ipsum - updater',
-                  createTime: Utils.dateToTimestamp(new Date(2022, 5, 28, 11, 54)),
-                  updateTime: Utils.dateToTimestamp(new Date(2022, 5, 28, 11, 55)),
-                  deleteTime: Utils.dateToTimestamp(new Date(2022, 5, 28, 11, 56)),
-                  destroyTime: Utils.dateToTimestamp(new Date(2022, 5, 28, 11, 57)),
+                  createTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 5, 28, 11, 54))),
+                  updateTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 5, 28, 11, 55))),
+                  deleteTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 5, 28, 11, 56))),
+                  destroyTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 5, 28, 11, 57))),
                   customerId: 'customer-id',
                   appSpaceId: 'app-space-id',
                 },
@@ -358,7 +398,15 @@ describe('readServiceAccountByName', () => {
             return {} as SurfaceCall;
           },
         );
-      serviceAccount = await sdk.readServiceAccountByName('customer-id', 'service-account-name');
+      serviceAccount = ServiceAccount.deserialize(
+        await sdk.readServiceAccount(
+          ConfigClientV2.newReadServiceAccountRequest(
+            'name',
+            'customer-id',
+            'service-account-name',
+          ),
+        ),
+      );
     });
 
     it('sends correct request', () => {
@@ -383,10 +431,10 @@ describe('readServiceAccountByName', () => {
         name: 'service-account-name',
         etag: 'etag-token',
         displayName: 'Service Account Name',
-        createTime: new Date(2022, 5, 28, 11, 54),
-        updateTime: new Date(2022, 5, 28, 11, 55),
-        deleteTime: new Date(2022, 5, 28, 11, 56),
-        destroyTime: new Date(2022, 5, 28, 11, 57),
+        createTime: new Date(Date.UTC(2022, 5, 28, 11, 54)),
+        updateTime: new Date(Date.UTC(2022, 5, 28, 11, 55)),
+        deleteTime: new Date(Date.UTC(2022, 5, 28, 11, 56)),
+        destroyTime: new Date(Date.UTC(2022, 5, 28, 11, 57)),
         customerId: 'customer-id',
         appSpaceId: 'app-space-id',
       });
@@ -402,7 +450,7 @@ describe('readServiceAccountByName', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
+      const sdk = await ConfigClientV2.createInstance(JSON.stringify(serviceAccountTokenMock));
       jest
         .spyOn(sdk['client'], 'readServiceAccount')
         .mockImplementation(
@@ -419,9 +467,17 @@ describe('readServiceAccountByName', () => {
             return {} as SurfaceCall;
           },
         );
-      sdk.readServiceAccountByName('customer-id', 'service-account-name').catch((err) => {
-        thrownError = err;
-      });
+      sdk
+        .readServiceAccount(
+          ConfigClientV2.newReadServiceAccountRequest(
+            'name',
+            'customer-id',
+            'service-account-name',
+          ),
+        )
+        .catch((err) => {
+          thrownError = err;
+        });
     });
 
     it('throws an error', () => {
@@ -433,7 +489,7 @@ describe('readServiceAccountByName', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
+      const sdk = await ConfigClientV2.createInstance(JSON.stringify(serviceAccountTokenMock));
       jest
         .spyOn(sdk['client'], 'readServiceAccount')
         .mockImplementation(
@@ -450,25 +506,33 @@ describe('readServiceAccountByName', () => {
             return {} as SurfaceCall;
           },
         );
-      sdk.readServiceAccountByName('customer-id', 'service-account-name').catch((err) => {
-        thrownError = err;
-      });
+      sdk
+        .readServiceAccount(
+          ConfigClientV2.newReadServiceAccountRequest(
+            'name',
+            'customer-id',
+            'service-account-name',
+          ),
+        )
+        .catch((err) => {
+          thrownError = err;
+        });
     });
 
     it('throws an error', () => {
-      expect(thrownError.message).toBe('No service account response');
+      expect(thrownError.message).toBe('No ServiceAccount response.');
     });
   });
 });
 
 describe('updateServiceAccount', () => {
   describe('when no error is returned', () => {
-    let updatedServiceAccount: ServiceAccount;
+    let updatedServiceAccount: UpdateServiceAccountResponse;
     let updateServiceAccountSpy: jest.SpyInstance;
-    let sdk: ConfigClient;
+    let sdk: ConfigClientV2;
 
     beforeEach(async () => {
-      sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
+      sdk = await ConfigClientV2.createInstance(JSON.stringify(serviceAccountTokenMock));
       updateServiceAccountSpy = jest
         .spyOn(sdk['client'], 'updateServiceAccount')
         .mockImplementation(
@@ -483,7 +547,7 @@ describe('updateServiceAccount', () => {
               res(null, {
                 etag: 'new-etag-id',
                 id: 'service-account-id',
-                updateTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 16)),
+                updateTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 2, 15, 13, 16))),
                 bookmark: 'bookmark-token',
                 createdBy: 'Lorem ipsum - creator',
                 updatedBy: 'Lorem ipsum - updater',
@@ -497,7 +561,9 @@ describe('updateServiceAccount', () => {
     describe('when necessary values are sent only', () => {
       beforeEach(async () => {
         const serviceAccount = new ServiceAccount('service-account-id', 'service-account-name');
-        updatedServiceAccount = await sdk.updateServiceAccount(serviceAccount);
+        updatedServiceAccount = await sdk.updateServiceAccount(
+          ConfigClientV2.newUpdateServiceAccountRequest(serviceAccount),
+        );
       });
 
       it('sends correct request', () => {
@@ -512,10 +578,12 @@ describe('updateServiceAccount', () => {
 
       it('returns a correct instance', () => {
         expect(updatedServiceAccount).toEqual({
-          id: 'service-account-id',
-          name: 'service-account-name',
+          bookmark: 'bookmark-token',
+          createdBy: 'Lorem ipsum - creator',
+          updatedBy: 'Lorem ipsum - updater',
           etag: 'new-etag-id',
-          updateTime: new Date(2022, 2, 15, 13, 16),
+          id: 'service-account-id',
+          updateTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 2, 15, 13, 16))),
         });
       });
     });
@@ -528,14 +596,16 @@ describe('updateServiceAccount', () => {
           'etag-token',
           'customer-id',
           'app-space-id',
-          new Date(2022, 5, 28, 11, 54),
-          new Date(2022, 5, 28, 11, 55),
-          new Date(2022, 5, 28, 11, 56),
-          new Date(2022, 5, 28, 11, 57),
+          new Date(Date.UTC(2022, 5, 28, 11, 54)),
+          new Date(Date.UTC(2022, 5, 28, 11, 55)),
+          new Date(Date.UTC(2022, 5, 28, 11, 56)),
+          new Date(Date.UTC(2022, 5, 28, 11, 57)),
           'Service Account Name',
           'Description',
         );
-        updatedServiceAccount = await sdk.updateServiceAccount(serviceAccount);
+        updatedServiceAccount = await sdk.updateServiceAccount(
+          ConfigClientV2.newUpdateServiceAccountRequest(serviceAccount),
+        );
       });
 
       it('sends correct request', () => {
@@ -553,17 +623,12 @@ describe('updateServiceAccount', () => {
 
       it('returns a correct instance', () => {
         expect(updatedServiceAccount).toEqual({
-          id: 'service-account-id',
-          name: 'service-account-name',
+          bookmark: 'bookmark-token',
+          createdBy: 'Lorem ipsum - creator',
+          updatedBy: 'Lorem ipsum - updater',
           etag: 'new-etag-id',
-          displayName: 'Service Account Name',
-          description: 'Description',
-          createTime: new Date(2022, 5, 28, 11, 54),
-          updateTime: new Date(2022, 2, 15, 13, 16),
-          deleteTime: new Date(2022, 5, 28, 11, 56),
-          destroyTime: new Date(2022, 5, 28, 11, 57),
-          customerId: 'customer-id',
-          appSpaceId: 'app-space-id',
+          id: 'service-account-id',
+          updateTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 2, 15, 13, 16))),
         });
       });
     });
@@ -573,7 +638,7 @@ describe('updateServiceAccount', () => {
     let thrownError: SdkError;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
+      const sdk = await ConfigClientV2.createInstance(JSON.stringify(serviceAccountTokenMock));
       jest
         .spyOn(sdk['client'], 'updateServiceAccount')
         .mockImplementation(
@@ -588,7 +653,7 @@ describe('updateServiceAccount', () => {
               res(null, {
                 etag: '777',
                 id: 'different-service-account-id',
-                updateTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 16)),
+                updateTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 2, 15, 13, 16))),
                 bookmark: 'bookmark-token',
                 createdBy: 'Lorem ipsum - creator',
                 updatedBy: 'Lorem ipsum - updater',
@@ -598,13 +663,15 @@ describe('updateServiceAccount', () => {
           },
         );
       const serviceAccount = new ServiceAccount('service-account-id', 'service-account-name');
-      return sdk.updateServiceAccount(serviceAccount).catch((err) => (thrownError = err));
+      return sdk
+        .updateServiceAccount(ConfigClientV2.newUpdateServiceAccountRequest(serviceAccount))
+        .catch((err) => (thrownError = err));
     });
 
     it('throws an error', () => {
-      expect(thrownError.code).toEqual(SdkErrorCode.SDK_CODE_1);
+      expect(thrownError.code).toEqual(SdkErrorCode.SDK_CODE_4);
       expect(thrownError.description).toBe(
-        'Update returned with different id: req.iq=service-account-id, res.id=different-service-account-id',
+        'Update returned with different id: request.id=service-account-id, response.id=different-service-account-id.',
       );
     });
   });
@@ -618,7 +685,7 @@ describe('updateServiceAccount', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
+      const sdk = await ConfigClientV2.createInstance(JSON.stringify(serviceAccountTokenMock));
       jest
         .spyOn(sdk['client'], 'updateServiceAccount')
         .mockImplementation(
@@ -636,9 +703,11 @@ describe('updateServiceAccount', () => {
           },
         );
       const serviceAccount = new ServiceAccount('service-account-id', 'service-account-name');
-      sdk.updateServiceAccount(serviceAccount).catch((err) => {
-        thrownError = err;
-      });
+      sdk
+        .updateServiceAccount(ConfigClientV2.newUpdateServiceAccountRequest(serviceAccount))
+        .catch((err) => {
+          thrownError = err;
+        });
     });
 
     it('throws an error', () => {
@@ -650,7 +719,7 @@ describe('updateServiceAccount', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
+      const sdk = await ConfigClientV2.createInstance(JSON.stringify(serviceAccountTokenMock));
       jest
         .spyOn(sdk['client'], 'updateServiceAccount')
         .mockImplementation(
@@ -668,14 +737,16 @@ describe('updateServiceAccount', () => {
           },
         );
       const serviceAccount = new ServiceAccount('service-account-id', 'service-account-name');
-      sdk.updateServiceAccount(serviceAccount).catch((err) => {
-        thrownError = err;
-      });
+      sdk
+        .updateServiceAccount(ConfigClientV2.newUpdateServiceAccountRequest(serviceAccount))
+        .catch((err) => {
+          thrownError = err;
+        });
     });
 
     it('throws an error', () => {
       expect(thrownError.message).toBe(
-        'Update returned with different id: req.iq=service-account-id, res.id=undefined',
+        'Update returned with different id: request.id=service-account-id, response.id=undefined.',
       );
     });
   });
@@ -685,10 +756,10 @@ describe('deleteServiceAccount', () => {
   describe('when id is used', () => {
     describe('when no error is returned', () => {
       let deleteServiceAccountSpy: jest.SpyInstance;
-      let sdk: ConfigClient;
+      let sdk: ConfigClientV2;
 
       beforeEach(async () => {
-        sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
+        sdk = await ConfigClientV2.createInstance(JSON.stringify(serviceAccountTokenMock));
         deleteServiceAccountSpy = jest
           .spyOn(sdk['client'], 'deleteServiceAccount')
           .mockImplementation(
@@ -707,7 +778,9 @@ describe('deleteServiceAccount', () => {
               return {} as SurfaceCall;
             },
           );
-        return sdk.deleteServiceAccount('service-account-id');
+        return sdk.deleteServiceAccount(
+          ConfigClientV2.newDeleteServiceAccountRequest('service-account-id'),
+        );
       });
 
       it('sends correct request', () => {
@@ -730,7 +803,7 @@ describe('deleteServiceAccount', () => {
       let thrownError: Error;
 
       beforeEach(async () => {
-        const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
+        const sdk = await ConfigClientV2.createInstance(JSON.stringify(serviceAccountTokenMock));
         jest
           .spyOn(sdk['client'], 'deleteServiceAccount')
           .mockImplementation(
@@ -747,9 +820,11 @@ describe('deleteServiceAccount', () => {
               return {} as SurfaceCall;
             },
           );
-        sdk.deleteServiceAccount('service-account-id').catch((err) => {
-          thrownError = err;
-        });
+        sdk
+          .deleteServiceAccount(ConfigClientV2.newDeleteServiceAccountRequest('service-account-id'))
+          .catch((err) => {
+            thrownError = err;
+          });
       });
 
       it('throws an error', () => {
@@ -761,7 +836,7 @@ describe('deleteServiceAccount', () => {
       let thrownError: Error;
 
       beforeEach(async () => {
-        const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
+        const sdk = await ConfigClientV2.createInstance(JSON.stringify(serviceAccountTokenMock));
         jest
           .spyOn(sdk['client'], 'deleteServiceAccount')
           .mockImplementation(
@@ -778,13 +853,15 @@ describe('deleteServiceAccount', () => {
               return {} as SurfaceCall;
             },
           );
-        sdk.deleteServiceAccount('service-account-id').catch((err) => {
-          thrownError = err;
-        });
+        sdk
+          .deleteServiceAccount(ConfigClientV2.newDeleteServiceAccountRequest('service-account-id'))
+          .catch((err) => {
+            thrownError = err;
+          });
       });
 
       it('throws an error', () => {
-        expect(thrownError.message).toBe('No service account response');
+        expect(thrownError.message).toBe('No ServiceAccount response.');
       });
     });
   });
@@ -792,7 +869,7 @@ describe('deleteServiceAccount', () => {
   describe('when an instance is used', () => {
     describe('when no error is returned', () => {
       let deleteServiceAccountSpy: jest.SpyInstance;
-      let sdk: ConfigClient;
+      let sdk: ConfigClientV2;
       let serviceAccountInstance: ServiceAccount;
 
       beforeEach(async () => {
@@ -801,7 +878,7 @@ describe('deleteServiceAccount', () => {
           'service-account-name',
           'etag-token',
         );
-        sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
+        sdk = await ConfigClientV2.createInstance(JSON.stringify(serviceAccountTokenMock));
         deleteServiceAccountSpy = jest
           .spyOn(sdk['client'], 'deleteServiceAccount')
           .mockImplementation(
@@ -820,7 +897,9 @@ describe('deleteServiceAccount', () => {
               return {} as SurfaceCall;
             },
           );
-        return sdk.deleteServiceAccount(serviceAccountInstance);
+        return sdk.deleteServiceAccount(
+          ConfigClientV2.newDeleteServiceAccountRequest(serviceAccountInstance),
+        );
       });
 
       it('sends correct request', () => {

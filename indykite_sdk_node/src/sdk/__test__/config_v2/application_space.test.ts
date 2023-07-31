@@ -9,7 +9,7 @@ import {
   ReadApplicationSpaceResponse,
   UpdateApplicationSpaceResponse,
 } from '../../../grpc/indykite/config/v1beta1/config_management_api';
-import { ConfigClient } from '../../config';
+import { ConfigClientV2 } from '../../config_v2';
 import { ApplicationSpace } from '../../model/config/application_space';
 import { SdkError, SdkErrorCode } from '../../error';
 import { StringValue } from '../../../grpc/google/protobuf/wrappers';
@@ -24,10 +24,10 @@ describe('createApplicationSpace', () => {
   describe('when no error is returned', () => {
     let appSpace: ApplicationSpace;
     let createApplicationSpaceSpy: jest.SpyInstance;
-    let sdk: ConfigClient;
+    let sdk: ConfigClientV2;
 
     beforeEach(async () => {
-      sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
+      sdk = await ConfigClientV2.createInstance(JSON.stringify(serviceAccountTokenMock));
       createApplicationSpaceSpy = jest
         .spyOn(sdk['client'], 'createApplicationSpace')
         .mockImplementation(
@@ -42,8 +42,8 @@ describe('createApplicationSpace', () => {
               res(null, {
                 id: 'new-app-space-id',
                 etag: '111',
-                createTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 12)),
-                updateTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 13)),
+                createTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 2, 15, 13, 12))),
+                updateTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 2, 15, 13, 13))),
                 bookmark: 'bookmark-token',
                 createdBy: 'Lorem ipsum - creator',
                 updatedBy: 'Lorem ipsum - updater',
@@ -56,7 +56,13 @@ describe('createApplicationSpace', () => {
 
     describe('when necessary values are sent only', () => {
       beforeEach(async () => {
-        appSpace = await sdk.createApplicationSpace('customer-id', 'new-app-space');
+        appSpace = ApplicationSpace.deserialize(
+          await sdk.createApplicationSpace(
+            ConfigClientV2.newCreateApplicationSpaceRequest('customer-id', 'new-app-space'),
+          ),
+          'customer-id',
+          'new-app-space',
+        );
       });
 
       it('sends correct request', () => {
@@ -76,14 +82,26 @@ describe('createApplicationSpace', () => {
         expect(appSpace.displayName).toBeUndefined();
         expect(appSpace.description).toBeUndefined();
         expect(appSpace.etag).toBe('111');
-        expect(appSpace.createTime?.toString()).toBe(new Date(2022, 2, 15, 13, 12).toString());
-        expect(appSpace.updateTime?.toString()).toBe(new Date(2022, 2, 15, 13, 13).toString());
+        expect(appSpace.createTime?.toString()).toBe(
+          new Date(Date.UTC(2022, 2, 15, 13, 12)).toString(),
+        );
+        expect(appSpace.updateTime?.toString()).toBe(
+          new Date(Date.UTC(2022, 2, 15, 13, 13)).toString(),
+        );
       });
     });
 
     describe('when all possible values are sent', () => {
       beforeEach(async () => {
-        appSpace = await sdk.createApplicationSpace(
+        appSpace = ApplicationSpace.deserialize(
+          await sdk.createApplicationSpace(
+            ConfigClientV2.newCreateApplicationSpaceRequest(
+              'customer-id',
+              'new-app-space',
+              'New App Space',
+              'App space description',
+            ),
+          ),
           'customer-id',
           'new-app-space',
           'New App Space',
@@ -110,8 +128,12 @@ describe('createApplicationSpace', () => {
         expect(appSpace.displayName).toBe('New App Space');
         expect(appSpace.description).toBe('App space description');
         expect(appSpace.etag).toBe('111');
-        expect(appSpace.createTime?.toString()).toBe(new Date(2022, 2, 15, 13, 12).toString());
-        expect(appSpace.updateTime?.toString()).toBe(new Date(2022, 2, 15, 13, 13).toString());
+        expect(appSpace.createTime?.toString()).toBe(
+          new Date(Date.UTC(2022, 2, 15, 13, 12)).toString(),
+        );
+        expect(appSpace.updateTime?.toString()).toBe(
+          new Date(Date.UTC(2022, 2, 15, 13, 13)).toString(),
+        );
       });
     });
   });
@@ -125,7 +147,7 @@ describe('createApplicationSpace', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
+      const sdk = await ConfigClientV2.createInstance(JSON.stringify(serviceAccountTokenMock));
       jest
         .spyOn(sdk['client'], 'createApplicationSpace')
         .mockImplementation(
@@ -144,10 +166,12 @@ describe('createApplicationSpace', () => {
         );
       sdk
         .createApplicationSpace(
-          'customer-id',
-          'new-app-space',
-          'New App Space',
-          'App space description',
+          ConfigClientV2.newCreateApplicationSpaceRequest(
+            'customer-id',
+            'new-app-space',
+            'New App Space',
+            'App space description',
+          ),
         )
         .catch((err) => {
           thrownError = err;
@@ -163,7 +187,7 @@ describe('createApplicationSpace', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
+      const sdk = await ConfigClientV2.createInstance(JSON.stringify(serviceAccountTokenMock));
       jest
         .spyOn(sdk['client'], 'createApplicationSpace')
         .mockImplementation(
@@ -182,10 +206,12 @@ describe('createApplicationSpace', () => {
         );
       sdk
         .createApplicationSpace(
-          'customer-id',
-          'new-app-space',
-          'New App Space',
-          'App space description',
+          ConfigClientV2.newCreateApplicationSpaceRequest(
+            'customer-id',
+            'new-app-space',
+            'New App Space',
+            'App space description',
+          ),
         )
         .catch((err) => {
           thrownError = err;
@@ -193,7 +219,7 @@ describe('createApplicationSpace', () => {
     });
 
     it('throws an error', () => {
-      expect(thrownError.message).toBe('No application space response');
+      expect(thrownError.message).toBe('No ApplicationSpace response.');
     });
   });
 });
@@ -204,7 +230,7 @@ describe('readApplicationSpaceById', () => {
     let readApplicationSpaceSpy: jest.SpyInstance;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
+      const sdk = await ConfigClientV2.createInstance(JSON.stringify(serviceAccountTokenMock));
       readApplicationSpaceSpy = jest
         .spyOn(sdk['client'], 'readApplicationSpace')
         .mockImplementation(
@@ -227,17 +253,21 @@ describe('readApplicationSpaceById', () => {
                   issuerId: 'issuer-id',
                   createdBy: 'Lorem ipsum - creator',
                   updatedBy: 'Lorem ipsum - updater',
-                  createTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 12)),
-                  updateTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 13)),
-                  deleteTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 14)),
-                  destroyTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 15)),
+                  createTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 2, 15, 13, 12))),
+                  updateTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 2, 15, 13, 13))),
+                  deleteTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 2, 15, 13, 14))),
+                  destroyTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 2, 15, 13, 15))),
                 },
               });
             }
             return {} as SurfaceCall;
           },
         );
-      appSpace = await sdk.readApplicationSpaceById('app-space-id-request');
+      appSpace = ApplicationSpace.deserialize(
+        await sdk.readApplicationSpace(
+          ConfigClientV2.newReadApplicationSpaceRequest('id', 'app-space-id-request'),
+        ),
+      );
     });
 
     it('sends correct request', () => {
@@ -261,10 +291,18 @@ describe('readApplicationSpaceById', () => {
       expect(appSpace.displayName).toBe('App Space Name');
       expect(appSpace.etag).toBe('5432');
       expect(appSpace.issuerId).toBe('issuer-id');
-      expect(appSpace.createTime?.toString()).toBe(new Date(2022, 2, 15, 13, 12).toString());
-      expect(appSpace.updateTime?.toString()).toBe(new Date(2022, 2, 15, 13, 13).toString());
-      expect(appSpace.deleteTime?.toString()).toBe(new Date(2022, 2, 15, 13, 14).toString());
-      expect(appSpace.destroyTime?.toString()).toBe(new Date(2022, 2, 15, 13, 15).toString());
+      expect(appSpace.createTime?.toString()).toBe(
+        new Date(Date.UTC(2022, 2, 15, 13, 12)).toString(),
+      );
+      expect(appSpace.updateTime?.toString()).toBe(
+        new Date(Date.UTC(2022, 2, 15, 13, 13)).toString(),
+      );
+      expect(appSpace.deleteTime?.toString()).toBe(
+        new Date(Date.UTC(2022, 2, 15, 13, 14)).toString(),
+      );
+      expect(appSpace.destroyTime?.toString()).toBe(
+        new Date(Date.UTC(2022, 2, 15, 13, 15)).toString(),
+      );
     });
   });
 
@@ -277,7 +315,7 @@ describe('readApplicationSpaceById', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
+      const sdk = await ConfigClientV2.createInstance(JSON.stringify(serviceAccountTokenMock));
       jest
         .spyOn(sdk['client'], 'readApplicationSpace')
         .mockImplementation(
@@ -294,9 +332,13 @@ describe('readApplicationSpaceById', () => {
             return {} as SurfaceCall;
           },
         );
-      sdk.readApplicationSpaceById('app-space-id-request').catch((err) => {
-        thrownError = err;
-      });
+      sdk
+        .readApplicationSpace(
+          ConfigClientV2.newReadApplicationSpaceRequest('id', 'app-space-id-request'),
+        )
+        .catch((err) => {
+          thrownError = err;
+        });
     });
 
     it('throws an error', () => {
@@ -308,7 +350,7 @@ describe('readApplicationSpaceById', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
+      const sdk = await ConfigClientV2.createInstance(JSON.stringify(serviceAccountTokenMock));
       jest
         .spyOn(sdk['client'], 'readApplicationSpace')
         .mockImplementation(
@@ -325,13 +367,17 @@ describe('readApplicationSpaceById', () => {
             return {} as SurfaceCall;
           },
         );
-      sdk.readApplicationSpaceById('app-space-id-request').catch((err) => {
-        thrownError = err;
-      });
+      sdk
+        .readApplicationSpace(
+          ConfigClientV2.newReadApplicationSpaceRequest('name', 'app-space-id-request'),
+        )
+        .catch((err) => {
+          thrownError = err;
+        });
     });
 
     it('throws an error', () => {
-      expect(thrownError.message).toBe('No application space response');
+      expect(thrownError.message).toBe('No ApplicationSpace response.');
     });
   });
 });
@@ -342,7 +388,7 @@ describe('readApplicationSpaceByName', () => {
     let readApplicationSpaceSpy: jest.SpyInstance;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
+      const sdk = await ConfigClientV2.createInstance(JSON.stringify(serviceAccountTokenMock));
       readApplicationSpaceSpy = jest
         .spyOn(sdk['client'], 'readApplicationSpace')
         .mockImplementation(
@@ -365,19 +411,24 @@ describe('readApplicationSpaceByName', () => {
                   issuerId: 'issuer-id',
                   createdBy: 'Lorem ipsum - creator',
                   updatedBy: 'Lorem ipsum - updater',
-                  createTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 12)),
-                  updateTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 13)),
-                  deleteTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 14)),
-                  destroyTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 15)),
+                  createTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 2, 15, 13, 12))),
+                  updateTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 2, 15, 13, 13))),
+                  deleteTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 2, 15, 13, 14))),
+                  destroyTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 2, 15, 13, 15))),
                 },
               });
             }
             return {} as SurfaceCall;
           },
         );
-      appSpace = await sdk.readApplicationSpaceByName(
-        'customer-id-request',
-        'app-space-name-request',
+      appSpace = ApplicationSpace.deserialize(
+        await sdk.readApplicationSpace(
+          ConfigClientV2.newReadApplicationRequest(
+            'name',
+            'customer-id-request',
+            'app-space-name-request',
+          ),
+        ),
       );
     });
 
@@ -405,10 +456,18 @@ describe('readApplicationSpaceByName', () => {
       expect(appSpace.displayName).toBe('App Space Name');
       expect(appSpace.etag).toBe('5432');
       expect(appSpace.issuerId).toBe('issuer-id');
-      expect(appSpace.createTime?.toString()).toBe(new Date(2022, 2, 15, 13, 12).toString());
-      expect(appSpace.updateTime?.toString()).toBe(new Date(2022, 2, 15, 13, 13).toString());
-      expect(appSpace.deleteTime?.toString()).toBe(new Date(2022, 2, 15, 13, 14).toString());
-      expect(appSpace.destroyTime?.toString()).toBe(new Date(2022, 2, 15, 13, 15).toString());
+      expect(appSpace.createTime?.toString()).toBe(
+        new Date(Date.UTC(2022, 2, 15, 13, 12)).toString(),
+      );
+      expect(appSpace.updateTime?.toString()).toBe(
+        new Date(Date.UTC(2022, 2, 15, 13, 13)).toString(),
+      );
+      expect(appSpace.deleteTime?.toString()).toBe(
+        new Date(Date.UTC(2022, 2, 15, 13, 14)).toString(),
+      );
+      expect(appSpace.destroyTime?.toString()).toBe(
+        new Date(Date.UTC(2022, 2, 15, 13, 15)).toString(),
+      );
     });
   });
 
@@ -421,7 +480,7 @@ describe('readApplicationSpaceByName', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
+      const sdk = await ConfigClientV2.createInstance(JSON.stringify(serviceAccountTokenMock));
       jest
         .spyOn(sdk['client'], 'readApplicationSpace')
         .mockImplementation(
@@ -439,7 +498,13 @@ describe('readApplicationSpaceByName', () => {
           },
         );
       sdk
-        .readApplicationSpaceByName('customer-id-request', 'app-space-name-request')
+        .readApplicationSpace(
+          ConfigClientV2.newReadApplicationRequest(
+            'name',
+            'customer-id-request',
+            'app-space-name-request',
+          ),
+        )
         .catch((err) => {
           thrownError = err;
         });
@@ -454,7 +519,7 @@ describe('readApplicationSpaceByName', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
+      const sdk = await ConfigClientV2.createInstance(JSON.stringify(serviceAccountTokenMock));
       jest
         .spyOn(sdk['client'], 'readApplicationSpace')
         .mockImplementation(
@@ -472,57 +537,85 @@ describe('readApplicationSpaceByName', () => {
           },
         );
       sdk
-        .readApplicationSpaceByName('customer-id-request', 'app-space-name-request')
+        .readApplicationSpace(
+          ConfigClientV2.newReadApplicationRequest(
+            'name',
+            'customer-id-request',
+            'app-space-name-request',
+          ),
+        )
         .catch((err) => {
           thrownError = err;
         });
     });
 
     it('throws an error', () => {
-      expect(thrownError.message).toBe('No application space response');
+      expect(thrownError.message).toBe('No ApplicationSpace response.');
     });
   });
 });
 
-describe('readApplicationSpaceList', () => {
-  describe('when no error is returned', () => {
-    let appSpaces: ApplicationSpace[];
-    let listApplicationSpacesSpy: jest.SpyInstance;
+describe('listApplicationSpaces', () => {
+  let appSpaces: ApplicationSpace[] = [];
+  let listApplicationSpacesSpy: jest.SpyInstance;
 
+  describe('when no error is returned', () => {
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
-      const readMock = jest
-        .fn()
-        .mockImplementationOnce(() => ({
-          appSpace: {
-            id: 'app-space-id',
-            customerId: 'customer-id',
-            name: 'app-space-name',
-            description: StringValue.create({ value: 'App space description' }),
-            displayName: 'App Space Name',
-            etag: '5432',
-            issuerId: 'issuer-id',
-            createTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 12)),
-            updateTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 13)),
-            deleteTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 14)),
-            destroyTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 15)),
-          },
-        }))
-        .mockImplementationOnce(() => null);
-      const eventEmitter = Object.assign(new EventEmitter(), { read: readMock });
+      const sdk = await ConfigClientV2.createInstance(JSON.stringify(serviceAccountTokenMock));
+      const eventEmitter = Object.assign(new EventEmitter(), {
+        read: () => {
+          return {
+            appSpace: {
+              id: 'app-space-id',
+              customerId: 'customer-id',
+              name: 'app-space-name',
+              description: StringValue.create({ value: 'App space description' }),
+              displayName: 'App Space Name',
+              etag: '5432',
+              issuerId: 'issuer-id',
+              createTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 2, 15, 13, 12))),
+              updateTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 2, 15, 13, 13))),
+              deleteTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 2, 15, 13, 14))),
+              destroyTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 2, 15, 13, 15))),
+            },
+          };
+        },
+      });
       listApplicationSpacesSpy = jest
         .spyOn(sdk['client'], 'listApplicationSpaces')
         .mockImplementation(() => {
           setTimeout(() => eventEmitter.emit('readable'), 0);
           setTimeout(() => eventEmitter.emit('readable'), 0);
-          setTimeout(() => eventEmitter.emit('close'), 0);
+          setTimeout(() => eventEmitter.emit('end'), 0);
+          setTimeout(() => eventEmitter.emit('close'), 1);
           return eventEmitter as unknown as ClientReadableStream<ListApplicationSpacesResponse>;
         });
-
-      appSpaces = await sdk.readApplicationSpaceList('customer-id-request', ['app-space-name']);
+      appSpaces = await new Promise((resolve, reject) => {
+        const tmp: ApplicationSpace[] = [];
+        sdk
+          .listApplicationSpaces(
+            ConfigClientV2.newListApplicationSpacesRequest('customer-id-request', [
+              'app-space-name',
+            ]),
+          )
+          .on('error', (err) => {
+            reject(err);
+          })
+          .on('data', (data) => {
+            if (data && data.appSpace) {
+              tmp.push(ApplicationSpace.deserialize(data));
+            }
+          })
+          .on('close', () => {
+            // Nothing to do here.
+          })
+          .on('end', () => {
+            resolve(tmp);
+          });
+      });
     });
 
-    it('sends correct request', () => {
+    it('check expect call', async () => {
       expect(listApplicationSpacesSpy).toBeCalledWith({
         customerId: 'customer-id-request',
         match: ['app-space-name'],
@@ -530,8 +623,8 @@ describe('readApplicationSpaceList', () => {
       });
     });
 
-    it('returns a correct instance', () => {
-      expect(appSpaces.length).toBe(1);
+    it('returns correct data', async () => {
+      expect(appSpaces.length).toBe(2);
       expect(appSpaces[0].id).toBe('app-space-id');
       expect(appSpaces[0].customerId).toBe('customer-id');
       expect(appSpaces[0].name).toBe('app-space-name');
@@ -539,48 +632,103 @@ describe('readApplicationSpaceList', () => {
       expect(appSpaces[0].displayName).toBe('App Space Name');
       expect(appSpaces[0].etag).toBe('5432');
       expect(appSpaces[0].issuerId).toBe('issuer-id');
-      expect(appSpaces[0].createTime?.toString()).toBe(new Date(2022, 2, 15, 13, 12).toString());
-      expect(appSpaces[0].updateTime?.toString()).toBe(new Date(2022, 2, 15, 13, 13).toString());
-      expect(appSpaces[0].deleteTime?.toString()).toBe(new Date(2022, 2, 15, 13, 14).toString());
-      expect(appSpaces[0].destroyTime?.toString()).toBe(new Date(2022, 2, 15, 13, 15).toString());
+      expect(appSpaces[0].createTime?.toString()).toBe(
+        new Date(Date.UTC(2022, 2, 15, 13, 12)).toString(),
+      );
+      expect(appSpaces[0].updateTime?.toString()).toBe(
+        new Date(Date.UTC(2022, 2, 15, 13, 13)).toString(),
+      );
+      expect(appSpaces[0].deleteTime?.toString()).toBe(
+        new Date(Date.UTC(2022, 2, 15, 13, 14)).toString(),
+      );
+      expect(appSpaces[0].destroyTime?.toString()).toBe(
+        new Date(Date.UTC(2022, 2, 15, 13, 15)).toString(),
+      );
     });
   });
 
   describe('when an error is returned', () => {
+    let result: ServiceError | string;
     const error = {
       code: Status.NOT_FOUND,
       details: 'DETAILS',
       metadata: {},
     } as ServiceError;
-    let thrownError: Error;
+    let sdk: ConfigClientV2;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
+      sdk = await ConfigClientV2.createInstance(JSON.stringify(serviceAccountTokenMock));
       const eventEmitter = Object.assign(new EventEmitter(), { read: jest.fn() });
       jest.spyOn(sdk['client'], 'listApplicationSpaces').mockImplementation(() => {
         setTimeout(() => eventEmitter.emit('error', error), 0);
         return eventEmitter as unknown as ClientReadableStream<ListApplicationSpacesResponse>;
       });
-
-      return sdk
-        .readApplicationSpaceList('customer-id-request', ['app-space-name'])
-        .catch((err) => (thrownError = err));
+      result = await new Promise((resolve, reject) => {
+        sdk
+          .listApplicationSpaces(
+            ConfigClientV2.newListApplicationSpacesRequest('customer-id-request', [
+              'app-space-name',
+            ]),
+          )
+          .on('error', (err) => {
+            reject(err);
+          })
+          .on('data', () => {
+            // Nothing to do here.
+          })
+          .on('end', () => {
+            resolve('');
+          });
+      })
+        .then((x) => x as string)
+        .catch((errs) => {
+          return errs as ServiceError;
+        });
     });
 
     it('throws an error', () => {
-      expect(thrownError).toBe(error);
+      expect(result).toBe(error);
+    });
+  });
+
+  describe('when a close event is triggered', () => {
+    let sdk: ConfigClientV2;
+
+    beforeEach(async () => {
+      sdk = await ConfigClientV2.createInstance(JSON.stringify(serviceAccountTokenMock));
+      const eventEmitter = Object.assign(new EventEmitter(), { read: jest.fn() });
+      jest.spyOn(sdk['client'], 'listApplicationSpaces').mockImplementation(() => {
+        setTimeout(() => eventEmitter.emit('close'), 0);
+        return eventEmitter as unknown as ClientReadableStream<ListApplicationSpacesResponse>;
+      });
+    });
+
+    it('close has been triggered', () => {
+      sdk
+        .listApplicationSpaces(
+          ConfigClientV2.newListApplicationSpacesRequest('customer-id-request', ['app-space-name']),
+        )
+        .on('close', () => {
+          expect(true).toBe(true);
+        })
+        .on('data', () => {
+          // Nothing to do here.
+        })
+        .on('end', () => {
+          // Nothing to do here.
+        });
     });
   });
 });
 
 describe('updateApplicationSpace', () => {
   describe('when no error is returned', () => {
-    let updatedAppSpace: ApplicationSpace;
+    let updatedAppSpace: UpdateApplicationSpaceResponse;
     let updateApplicationSpaceSpy: jest.SpyInstance;
-    let sdk: ConfigClient;
+    let sdk: ConfigClientV2;
 
     beforeEach(async () => {
-      sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
+      sdk = await ConfigClientV2.createInstance(JSON.stringify(serviceAccountTokenMock));
       updateApplicationSpaceSpy = jest
         .spyOn(sdk['client'], 'updateApplicationSpace')
         .mockImplementation(
@@ -595,7 +743,7 @@ describe('updateApplicationSpace', () => {
               res(null, {
                 etag: '777',
                 id: 'app-space-id',
-                updateTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 16)),
+                updateTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 2, 15, 13, 16))),
                 bookmark: 'bookmark-token',
                 createdBy: 'Lorem ipsum - creator',
                 updatedBy: 'Lorem ipsum - updater',
@@ -609,7 +757,9 @@ describe('updateApplicationSpace', () => {
     describe('when necessary values are sent only', () => {
       beforeEach(async () => {
         const appSpace = new ApplicationSpace('app-space-id', 'app-space', 'customer-id');
-        updatedAppSpace = await sdk.updateApplicationSpace(appSpace);
+        updatedAppSpace = await sdk.updateApplicationSpace(
+          ConfigClientV2.newUpdateApplicationSpaceRequest(appSpace),
+        );
       });
 
       it('sends correct request', () => {
@@ -624,18 +774,14 @@ describe('updateApplicationSpace', () => {
 
       it('returns a correct instance', () => {
         expect(updatedAppSpace.id).toBe('app-space-id');
-        expect(updatedAppSpace.customerId).toBe('customer-id');
-        expect(updatedAppSpace.name).toBe('app-space');
-        expect(updatedAppSpace.description).toBeUndefined();
-        expect(updatedAppSpace.displayName).toBeUndefined();
-        expect(updatedAppSpace.etag).toBe('777');
-        expect(updatedAppSpace.issuerId).toBeUndefined();
         expect(updatedAppSpace.createTime).toBeUndefined();
+        expect(updatedAppSpace.createdBy).toBe('Lorem ipsum - creator');
         expect(updatedAppSpace.updateTime?.toString()).toBe(
-          new Date(2022, 2, 15, 13, 16).toString(),
+          Utils.dateToTimestamp(new Date(Date.UTC(2022, 2, 15, 13, 16))).toString(),
         );
-        expect(updatedAppSpace.deleteTime).toBeUndefined();
-        expect(updatedAppSpace.destroyTime).toBeUndefined();
+        expect(updatedAppSpace.updatedBy).toBe('Lorem ipsum - updater');
+        expect(updatedAppSpace.etag).toBe('777');
+        expect(updatedAppSpace.bookmark).toBe('bookmark-token');
       });
     });
 
@@ -650,7 +796,9 @@ describe('updateApplicationSpace', () => {
           '11',
           'Description',
         );
-        updatedAppSpace = await sdk.updateApplicationSpace(appSpace);
+        updatedAppSpace = await sdk.updateApplicationSpace(
+          ConfigClientV2.newUpdateApplicationSpaceRequest(appSpace),
+        );
       });
 
       it('sends correct request', () => {
@@ -668,18 +816,14 @@ describe('updateApplicationSpace', () => {
 
       it('returns a correct instance', () => {
         expect(updatedAppSpace.id).toBe('app-space-id');
-        expect(updatedAppSpace.customerId).toBe('customer-id');
-        expect(updatedAppSpace.name).toBe('app-space');
-        expect(updatedAppSpace.description).toBe('Description');
-        expect(updatedAppSpace.displayName).toBe('App Space');
-        expect(updatedAppSpace.etag).toBe('777');
-        expect(updatedAppSpace.issuerId).toBe('11');
         expect(updatedAppSpace.createTime).toBeUndefined();
+        expect(updatedAppSpace.createdBy).toBe('Lorem ipsum - creator');
         expect(updatedAppSpace.updateTime?.toString()).toBe(
-          new Date(2022, 2, 15, 13, 16).toString(),
+          Utils.dateToTimestamp(new Date(Date.UTC(2022, 2, 15, 13, 16))).toString(),
         );
-        expect(updatedAppSpace.deleteTime).toBeUndefined();
-        expect(updatedAppSpace.destroyTime).toBeUndefined();
+        expect(updatedAppSpace.updatedBy).toBe('Lorem ipsum - updater');
+        expect(updatedAppSpace.etag).toBe('777');
+        expect(updatedAppSpace.bookmark).toBe('bookmark-token');
       });
     });
   });
@@ -688,7 +832,7 @@ describe('updateApplicationSpace', () => {
     let thrownError: SdkError;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
+      const sdk = await ConfigClientV2.createInstance(JSON.stringify(serviceAccountTokenMock));
       jest
         .spyOn(sdk['client'], 'updateApplicationSpace')
         .mockImplementation(
@@ -703,7 +847,7 @@ describe('updateApplicationSpace', () => {
               res(null, {
                 etag: '777',
                 id: 'different-app-space-id',
-                updateTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 16)),
+                updateTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 2, 15, 13, 16))),
                 bookmark: 'bookmark-token',
                 createdBy: 'Lorem ipsum - creator',
                 updatedBy: 'Lorem ipsum - updater',
@@ -721,13 +865,15 @@ describe('updateApplicationSpace', () => {
         '11',
         'Description',
       );
-      return sdk.updateApplicationSpace(appSpace).catch((err) => (thrownError = err));
+      return sdk
+        .updateApplicationSpace(ConfigClientV2.newUpdateApplicationSpaceRequest(appSpace))
+        .catch((err) => (thrownError = err));
     });
 
     it('throws an error', () => {
-      expect(thrownError.code).toEqual(SdkErrorCode.SDK_CODE_1);
+      expect(thrownError.code).toEqual(SdkErrorCode.SDK_CODE_4);
       expect(thrownError.description).toBe(
-        'Update returned with different id: req.iq=app-space-id, res.id=different-app-space-id',
+        'Update returned with different id: request.id=app-space-id, response.id=different-app-space-id.',
       );
     });
   });
@@ -741,7 +887,7 @@ describe('updateApplicationSpace', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
+      const sdk = await ConfigClientV2.createInstance(JSON.stringify(serviceAccountTokenMock));
       jest
         .spyOn(sdk['client'], 'updateApplicationSpace')
         .mockImplementation(
@@ -767,9 +913,11 @@ describe('updateApplicationSpace', () => {
         '11',
         'Description',
       );
-      sdk.updateApplicationSpace(appSpace).catch((err) => {
-        thrownError = err;
-      });
+      sdk
+        .updateApplicationSpace(ConfigClientV2.newUpdateApplicationSpaceRequest(appSpace))
+        .catch((err) => {
+          thrownError = err;
+        });
     });
 
     it('throws an error', () => {
@@ -781,7 +929,7 @@ describe('updateApplicationSpace', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
+      const sdk = await ConfigClientV2.createInstance(JSON.stringify(serviceAccountTokenMock));
       jest
         .spyOn(sdk['client'], 'updateApplicationSpace')
         .mockImplementation(
@@ -807,14 +955,16 @@ describe('updateApplicationSpace', () => {
         '11',
         'Description',
       );
-      sdk.updateApplicationSpace(appSpace).catch((err) => {
-        thrownError = err;
-      });
+      sdk
+        .updateApplicationSpace(ConfigClientV2.newUpdateApplicationSpaceRequest(appSpace))
+        .catch((err) => {
+          thrownError = err;
+        });
     });
 
     it('throws an error', () => {
       expect(thrownError.message).toBe(
-        'Update returned with different id: req.iq=app-space-id, res.id=undefined',
+        'Update returned with different id: request.id=app-space-id, response.id=undefined.',
       );
     });
   });
@@ -822,11 +972,11 @@ describe('updateApplicationSpace', () => {
 
 describe('deleteApplicationSpace', () => {
   describe('when no error is returned', () => {
-    let returnedValue: boolean;
+    let returnedValue: DeleteApplicationSpaceResponse;
     let deleteApplicationSpaceSpy: jest.SpyInstance;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
+      const sdk = await ConfigClientV2.createInstance(JSON.stringify(serviceAccountTokenMock));
       deleteApplicationSpaceSpy = jest
         .spyOn(sdk['client'], 'deleteApplicationSpace')
         .mockImplementation(
@@ -852,7 +1002,9 @@ describe('deleteApplicationSpace', () => {
         '11',
         'Description',
       );
-      returnedValue = await sdk.deleteApplicationSpace(appSpace);
+      returnedValue = await sdk.deleteApplicationSpace(
+        ConfigClientV2.newDeleteApplicationSpaceRequest(appSpace),
+      );
     });
 
     it('sends correct request', () => {
@@ -867,7 +1019,7 @@ describe('deleteApplicationSpace', () => {
     });
 
     it('returns true', () => {
-      expect(returnedValue).toBe(true);
+      expect(returnedValue).not.toBeUndefined();
     });
   });
 
@@ -880,7 +1032,7 @@ describe('deleteApplicationSpace', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
+      const sdk = await ConfigClientV2.createInstance(JSON.stringify(serviceAccountTokenMock));
       jest
         .spyOn(sdk['client'], 'deleteApplicationSpace')
         .mockImplementation(
@@ -900,13 +1052,52 @@ describe('deleteApplicationSpace', () => {
         '11',
         'Description',
       );
-      sdk.deleteApplicationSpace(appSpace).catch((err) => {
-        thrownError = err;
-      });
+      sdk
+        .deleteApplicationSpace(ConfigClientV2.newDeleteApplicationSpaceRequest(appSpace))
+        .catch((err) => {
+          thrownError = err;
+        });
     });
 
     it('throws an error', () => {
       expect(thrownError).toBe(error);
+    });
+  });
+
+  describe('when response is not set an error is returned', () => {
+    let thrownError: SdkError;
+
+    beforeEach(async () => {
+      const sdk = await ConfigClientV2.createInstance(JSON.stringify(serviceAccountTokenMock));
+      jest
+        .spyOn(sdk['client'], 'deleteApplicationSpace')
+        .mockImplementation(
+          (req, res: Metadata | CallOptions | ((err: ServiceError | null) => void)) => {
+            if (typeof res === 'function') {
+              res(null);
+            }
+            return {} as SurfaceCall;
+          },
+        );
+      const appSpace = new ApplicationSpace(
+        'app-space-id',
+        'app-space',
+        'customer-id',
+        '555',
+        'App Space',
+        '11',
+        'Description',
+      );
+      sdk
+        .deleteApplicationSpace(ConfigClientV2.newDeleteApplicationSpaceRequest(appSpace))
+        .catch((err) => {
+          thrownError = err;
+        });
+    });
+
+    it('throws an error', () => {
+      expect(thrownError.code).toEqual(SdkErrorCode.SDK_CODE_3);
+      expect(thrownError.description).toBe('No ApplicationSpace response.');
     });
   });
 });

@@ -1,11 +1,11 @@
 import { ConfigClient } from '../sdk/config';
 import { EmailMessage } from '../sdk/model/config/email/message';
-import { SendgridEmailProvider } from '../sdk/model/config/email/providers/sendgrid';
+import { SendgridEmailService } from '../sdk/model/config/email/providers/sendgrid';
 
 ConfigClient.createInstance()
   .then(async (sdk) => {
     /** CREATE new Email Configuration **/
-    const sendgrid = new SendgridEmailProvider(
+    const sendgrid = new SendgridEmailService(
       'nodejs-ec-1',
       '263343b5-983e-4d73-b666-069a98f1ef55',
       true,

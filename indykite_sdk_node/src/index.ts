@@ -2,6 +2,7 @@ export { DigitalTwinKind, DigitalTwinState } from './grpc/indykite/identity/v1be
 export * from './sdk/authorization';
 export { IdentityClient } from './sdk/identity';
 export { ConfigClient } from './sdk/config';
+export { ConfigClientV2 } from './sdk/config_v2';
 export { HTTPClient, HTTPResponse } from './sdk/http';
 export * from './sdk/ingest';
 export * from './sdk/model';

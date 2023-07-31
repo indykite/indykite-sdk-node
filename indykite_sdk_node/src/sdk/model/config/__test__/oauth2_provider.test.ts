@@ -16,6 +16,7 @@ const configExample = new OAuth2ProviderConfig({
   tokenEndpointAuthSigningAlg: ['ES256', 'RS256'],
   frontChannelLoginUri: { default: 'https://example.com/login/oauth2' },
   frontChannelConsentUri: { default: 'https://example.com/consent' },
+  trusted: false,
 });
 
 describe('deserialize', () => {

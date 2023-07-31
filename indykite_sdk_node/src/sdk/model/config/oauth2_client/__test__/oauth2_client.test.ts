@@ -32,7 +32,7 @@ describe('when the config contains required properties only', () => {
   it('creates a correct instance', () => {
     expect(client.name).toBe('instance-name');
     expect(client.displayName).toBe('Instance Name');
-    expect(client.description).toBe('Instance description');
+    expect(client.description?.value).toBe('Instance description');
     expect(client.providerType).toBe(ProviderType.LINKEDIN_COM);
     expect(client.clientId).toBe('client-id');
     expect(client.clientSecret).toBe('client-secret');
@@ -112,7 +112,7 @@ describe('when the config contains all properties', () => {
   it('creates a correct instance', () => {
     expect(client.name).toBe('instance-name');
     expect(client.displayName).toBe('Instance Name');
-    expect(client.description).toBe('Instance description');
+    expect(client.description?.value).toBe('Instance description');
     expect(client.providerType).toBe(ProviderType.LINKEDIN_COM);
     expect(client.clientId).toBe('client-id');
     expect(client.clientSecret).toBe('client-secret');

@@ -2,19 +2,74 @@ import { CallOptions, Metadata } from '@grpc/grpc-js';
 import { ServiceError, SurfaceCall } from '@grpc/grpc-js/build/src/call';
 import { Status } from '@grpc/grpc-js/build/src/constants';
 import {
+  CreateConfigNodeRequest,
   CreateConfigNodeResponse,
+  DeleteConfigNodeRequest,
   DeleteConfigNodeResponse,
   ReadConfigNodeResponse,
+  UpdateConfigNodeRequest,
   UpdateConfigNodeResponse,
 } from '../../../grpc/indykite/config/v1beta1/config_management_api';
-import { ConfigClient } from '../../config';
+import { ConfigClientV2 } from '../../config_v2';
 import { SdkError, SdkErrorCode } from '../../error';
 import { Utils } from '../../utils/utils';
 import { StringValue } from '../../../grpc/google/protobuf/wrappers';
 import { serviceAccountTokenMock } from '../../utils/test_utils';
-import { AuthorizationPolicy, AuthorizationPolicyConfig_Status } from '../../model';
+import {
+  AuthFlowConfig_Format,
+  AuthStyle,
+  AuthenticatorAttachment,
+  AuthorizationPolicyConfig_Status,
+  ConveyancePreference,
+  ProviderType,
+  UserVerificationRequirement,
+} from '../../../grpc/indykite/config/v1beta1/model';
+import {
+  AuthFlow,
+  AuthorizationPolicy,
+  EmailServiceConfigType,
+  OAuth2Client,
+  WebAuthnProvider,
+} from '../../model';
 
-const policy = `
+let createConfigExample: CreateConfigNodeRequest;
+let updateConfigExample: UpdateConfigNodeRequest;
+let deleteConfigExample: DeleteConfigNodeRequest;
+
+beforeEach(() => {
+  createConfigExample = CreateConfigNodeRequest.fromJson({
+    location: 'location-id',
+    name: 'authFlowConfig',
+    bookmarks: [],
+    displayName: 'Webauthn Provider Name',
+    description: 'Webauthn Provider description',
+  });
+  createConfigExample.config = {
+    oneofKind: undefined,
+  };
+  updateConfigExample = {
+    id: 'configNode-id',
+    bookmarks: [],
+    etag: StringValue.fromJson('etag-token'),
+    displayName: StringValue.fromJson('WebAuthn Provider name'),
+    description: StringValue.fromJson('WebAuthn Provider description'),
+    config: {
+      oneofKind: undefined,
+    },
+  } as UpdateConfigNodeRequest;
+  updateConfigExample.config = {
+    oneofKind: undefined,
+  };
+  const configAuthFlowExample = new AuthFlow(
+    'authFlowConfig',
+    AuthFlowConfig_Format.BARE_JSON,
+    Buffer.from('{}'),
+    false,
+  );
+  configAuthFlowExample.id = 'configNode-id';
+  configAuthFlowExample.etag = 'etag-token';
+  deleteConfigExample = ConfigClientV2.newDeleteConfigNodeRequest(configAuthFlowExample);
+  const policy = `
   {
     "path": {
       "subjectId": "66444564",
@@ -52,28 +107,68 @@ const policy = `
     "active": true
   }
 `;
-let configExample: AuthorizationPolicy;
-
-beforeEach(() => {
-  configExample = new AuthorizationPolicy({
+  const configAuthorizationPolicyExample: AuthorizationPolicy = new AuthorizationPolicy({
     name: 'authorization-policy',
     policy,
     status: AuthorizationPolicyConfig_Status.ACTIVE,
   });
+  const configEmailServiceConfigTypeExample: EmailServiceConfigType = new EmailServiceConfigType(
+    'emailServiceConfig',
+    'sdfsdfsdf', // apiKey:
+    false, //sandboxMode:
+  );
+  configEmailServiceConfigTypeExample.host = StringValue.fromJson('https://example.com/mail');
+  const configWebAuthnProviderExample = new WebAuthnProvider({
+    name: 'webauthn-provider',
+    attestationPreference: ConveyancePreference.DIRECT,
+    authenticatorAttachment: AuthenticatorAttachment.CROSS_PLATFORM,
+    relyingParties: {
+      'http://localhost:3000': 'default',
+    },
+    requireResidentKey: true,
+    userVerification: UserVerificationRequirement.REQUIRED,
+    authenticationTimeout: 60,
+    registrationTimeout: 120,
+  });
+  const configOAuth2ClientExample = new OAuth2Client({
+    providerType: ProviderType.LINKEDIN_COM,
+    clientId: 'client-id',
+    clientSecret: 'client-secret',
+    redirectUri: ['https://example.com/page'],
+    defaultScopes: ['openid'],
+    allowedScopes: ['openid', 'email'],
+    allowSignup: true,
+    issuer: 'issuer',
+    authorizationEndpoint: 'https://example.com/authorization',
+    tokenEndpoint: 'https://example.com/token',
+    discoveryUrl: 'https://example.com/discovery',
+    userinfoEndpoint: 'https://example.com/info',
+    jwksUri: 'https://example.com/jwks',
+    imageUrl: 'https://example.com/image.png',
+    tenant: 'tenant',
+    hostedDomain: 'https://example.com',
+    authStyle: AuthStyle.AUTO_DETECT,
+    name: 'oauth2-client-name',
+  });
+  ConfigClientV2.newUpdateConfigNodeRequest(configAuthFlowExample);
+  ConfigClientV2.newUpdateConfigNodeRequest(configAuthorizationPolicyExample);
+  ConfigClientV2.newUpdateConfigNodeRequest(configEmailServiceConfigTypeExample);
+  ConfigClientV2.newUpdateConfigNodeRequest(configWebAuthnProviderExample);
+  ConfigClientV2.newUpdateConfigNodeRequest(configOAuth2ClientExample);
 });
 
 afterEach(() => {
   jest.restoreAllMocks();
 });
 
-describe('createAuthorizationPolicyConfiguration', () => {
+describe('createConfigNode', () => {
   describe('when no error is returned', () => {
-    let authorizationProvider: AuthorizationPolicy;
+    let configNodeResponse: CreateConfigNodeResponse;
     let createConfigNodeSpy: jest.SpyInstance;
-    let sdk: ConfigClient;
+    let sdk: ConfigClientV2;
 
     beforeEach(async () => {
-      sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
+      sdk = await ConfigClientV2.createInstance(JSON.stringify(serviceAccountTokenMock));
       createConfigNodeSpy = jest
         .spyOn(sdk['client'], 'createConfigNode')
         .mockImplementation(
@@ -86,7 +181,7 @@ describe('createAuthorizationPolicyConfiguration', () => {
           ) => {
             if (typeof res === 'function') {
               res(null, {
-                id: 'new-authorization-policy-id',
+                id: 'new-configNode-id',
                 etag: 'etag-token',
                 createdBy: 'Lorem ipsum - creator',
                 updatedBy: 'Lorem ipsum - updater',
@@ -103,25 +198,21 @@ describe('createAuthorizationPolicyConfiguration', () => {
 
     describe('when necessary values are sent only', () => {
       beforeEach(async () => {
-        authorizationProvider = await sdk.createAuthorizationPolicyConfiguration(
-          'location-id',
-          configExample,
-        );
+        configNodeResponse = await sdk.createConfigNode(createConfigExample);
       });
 
       it('sends correct request', () => {
         expect(createConfigNodeSpy).toBeCalledWith(
           {
-            name: 'authorization-policy',
+            name: 'authFlowConfig',
             location: 'location-id',
+            description: {
+              value: 'Webauthn Provider description',
+            },
+            displayName: { value: 'Webauthn Provider Name' },
             bookmarks: [],
             config: {
-              oneofKind: 'authorizationPolicyConfig',
-              authorizationPolicyConfig: {
-                policy,
-                status: AuthorizationPolicyConfig_Status.ACTIVE,
-                tags: [],
-              },
+              oneofKind: undefined,
             },
           },
           expect.any(Function),
@@ -129,43 +220,37 @@ describe('createAuthorizationPolicyConfiguration', () => {
       });
 
       it('returns a correct instance', () => {
-        expect(authorizationProvider.id).toBe('new-authorization-policy-id');
-        expect(authorizationProvider.etag).toBe('etag-token');
-        expect(authorizationProvider.name).toBe('authorization-policy');
-        expect(authorizationProvider.displayName).toBeUndefined();
-        expect(authorizationProvider.description).toBeUndefined();
+        expect(configNodeResponse.id).toBe('new-configNode-id');
+        expect(configNodeResponse.locationId).toBe('location-id-1');
+        expect(configNodeResponse.createTime?.toString()).toBe(
+          Utils.dateToTimestamp(new Date(Date.UTC(2022, 6, 21, 13, 5))).toString(),
+        );
+        expect(configNodeResponse.createdBy).toBe('Lorem ipsum - creator');
+        expect(configNodeResponse.updateTime?.toString()).toBe(
+          Utils.dateToTimestamp(new Date(Date.UTC(2022, 6, 21, 13, 6))).toString(),
+        );
+        expect(configNodeResponse.updatedBy).toBe('Lorem ipsum - updater');
+        expect(configNodeResponse.etag).toBe('etag-token');
       });
     });
 
     describe('when all possible values are sent', () => {
       beforeEach(async () => {
-        configExample.displayName = 'Authorization Policy Name';
-        configExample.description = StringValue.fromJson('Authorization Policy description');
-        authorizationProvider = await sdk.createAuthorizationPolicyConfiguration(
-          'location-id',
-          configExample,
-        );
+        configNodeResponse = await sdk.createConfigNode(createConfigExample);
       });
 
       it('sends correct request', () => {
         expect(createConfigNodeSpy).toBeCalledWith(
           {
-            name: 'authorization-policy',
+            name: 'authFlowConfig',
             location: 'location-id',
             bookmarks: [],
-            config: {
-              oneofKind: 'authorizationPolicyConfig',
-              authorizationPolicyConfig: {
-                policy,
-                status: AuthorizationPolicyConfig_Status.ACTIVE,
-                tags: [],
-              },
-            },
             description: {
-              value: 'Authorization Policy description',
+              value: 'Webauthn Provider description',
             },
-            displayName: {
-              value: 'Authorization Policy Name',
+            displayName: { value: 'Webauthn Provider Name' },
+            config: {
+              oneofKind: undefined,
             },
           },
           expect.any(Function),
@@ -173,11 +258,17 @@ describe('createAuthorizationPolicyConfiguration', () => {
       });
 
       it('returns a correct instance', () => {
-        expect(authorizationProvider.id).toBe('new-authorization-policy-id');
-        expect(authorizationProvider.etag).toBe('etag-token');
-        expect(authorizationProvider.name).toBe('authorization-policy');
-        expect(authorizationProvider.displayName).toBe('Authorization Policy Name');
-        expect(authorizationProvider.description?.value).toBe('Authorization Policy description');
+        expect(configNodeResponse.id).toBe('new-configNode-id');
+        expect(configNodeResponse.locationId).toBe('location-id-1');
+        expect(configNodeResponse.createTime?.toString()).toBe(
+          Utils.dateToTimestamp(new Date(Date.UTC(2022, 6, 21, 13, 5))).toString(),
+        );
+        expect(configNodeResponse.createdBy).toBe('Lorem ipsum - creator');
+        expect(configNodeResponse.updateTime?.toString()).toBe(
+          Utils.dateToTimestamp(new Date(Date.UTC(2022, 6, 21, 13, 6))).toString(),
+        );
+        expect(configNodeResponse.updatedBy).toBe('Lorem ipsum - updater');
+        expect(configNodeResponse.etag).toBe('etag-token');
       });
     });
   });
@@ -191,7 +282,7 @@ describe('createAuthorizationPolicyConfiguration', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
+      const sdk = await ConfigClientV2.createInstance(JSON.stringify(serviceAccountTokenMock));
       jest
         .spyOn(sdk['client'], 'createConfigNode')
         .mockImplementation(
@@ -208,11 +299,9 @@ describe('createAuthorizationPolicyConfiguration', () => {
             return {} as SurfaceCall;
           },
         );
-      return sdk
-        .createAuthorizationPolicyConfiguration('location-id', configExample)
-        .catch((err) => {
-          thrownError = err;
-        });
+      return sdk.createConfigNode(createConfigExample).catch((err) => {
+        thrownError = err;
+      });
     });
 
     it('throws an error', () => {
@@ -224,7 +313,7 @@ describe('createAuthorizationPolicyConfiguration', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
+      const sdk = await ConfigClientV2.createInstance(JSON.stringify(serviceAccountTokenMock));
       jest
         .spyOn(sdk['client'], 'createConfigNode')
         .mockImplementation(
@@ -241,26 +330,24 @@ describe('createAuthorizationPolicyConfiguration', () => {
             return {} as SurfaceCall;
           },
         );
-      return sdk
-        .createAuthorizationPolicyConfiguration('location-id', configExample)
-        .catch((err) => {
-          thrownError = err;
-        });
+      return sdk.createConfigNode(createConfigExample).catch((err) => {
+        thrownError = err;
+      });
     });
 
     it('throws an error', () => {
-      expect(thrownError.message).toBe('No authorization policy response');
+      expect(thrownError.message).toBe('No ConfigNode response.');
     });
   });
 });
 
-describe('readAuthorizationPolicyConfiguration', () => {
+describe('readConfigNode', () => {
   describe('when no error is returned', () => {
-    let authorizationPolicy: AuthorizationPolicy;
+    let readConfigNodeResponse: ReadConfigNodeResponse;
     let readConfigNodeSpy: jest.SpyInstance;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
+      const sdk = await ConfigClientV2.createInstance(JSON.stringify(serviceAccountTokenMock));
       readConfigNodeSpy = jest
         .spyOn(sdk['client'], 'readConfigNode')
         .mockImplementation(
@@ -277,7 +364,7 @@ describe('readAuthorizationPolicyConfiguration', () => {
                   displayName: 'Instance Name',
                   description: StringValue.fromJson('Instance description'),
                   etag: 'etag-token',
-                  id: 'authorization-policy-id',
+                  id: 'configNode-id',
                   createdBy: 'Lorem ipsum - creator',
                   updatedBy: 'Lorem ipsum - updater',
                   createTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 6, 21, 11, 13))),
@@ -287,12 +374,7 @@ describe('readAuthorizationPolicyConfiguration', () => {
                   tenantId: 'tenant-id',
                   name: 'instance-name',
                   config: {
-                    oneofKind: 'authorizationPolicyConfig',
-                    authorizationPolicyConfig: {
-                      policy,
-                      status: AuthorizationPolicyConfig_Status.ACTIVE,
-                      tags: [],
-                    },
+                    oneofKind: undefined,
                   },
                 },
               });
@@ -300,15 +382,16 @@ describe('readAuthorizationPolicyConfiguration', () => {
             return {} as SurfaceCall;
           },
         );
-      authorizationPolicy = await sdk.readAuthorizationPolicyConfiguration(
-        'authorization-policy-id-request',
+      readConfigNodeResponse = await sdk.readConfigNode(
+        ConfigClientV2.newReadConfigNodeRequest('configNode-id-request'),
       );
+      // configNodeResponse = ConfigNodeFactory.createInstance(readConfigNodeResponse.configNode);
     });
 
     it('sends correct request', () => {
       expect(readConfigNodeSpy).toBeCalledWith(
         {
-          id: 'authorization-policy-id-request',
+          id: 'configNode-id-request',
           bookmarks: [],
         },
         expect.any(Function),
@@ -316,29 +399,25 @@ describe('readAuthorizationPolicyConfiguration', () => {
     });
 
     it('returns a correct instance', () => {
-      expect(authorizationPolicy).toEqual(
-        Object.assign(
-          new AuthorizationPolicy({
-            name: 'instance-name',
-            policy,
-            tags: [],
-            status: AuthorizationPolicyConfig_Status.ACTIVE,
-          }),
-          {
-            displayName: 'Instance Name',
-            description: { value: 'Instance description' },
-            etag: 'etag-token',
-            id: 'authorization-policy-id',
-            createTime: new Date(Date.UTC(2022, 6, 21, 11, 13)),
-            updateTime: new Date(Date.UTC(2022, 6, 21, 11, 14)),
-            customerId: 'customer-id',
-            appSpaceId: 'app-space-id',
-            tenantId: 'tenant-id',
-            createdBy: 'Lorem ipsum - creator',
-            updatedBy: 'Lorem ipsum - updater',
+      expect(readConfigNodeResponse).toEqual({
+        configNode: {
+          config: {
+            oneofKind: undefined,
           },
-        ),
-      );
+          name: 'instance-name',
+          displayName: 'Instance Name',
+          description: { value: 'Instance description' },
+          etag: 'etag-token',
+          id: 'configNode-id',
+          createTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 6, 21, 11, 13))),
+          updateTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 6, 21, 11, 14))),
+          customerId: 'customer-id',
+          appSpaceId: 'app-space-id',
+          tenantId: 'tenant-id',
+          createdBy: 'Lorem ipsum - creator',
+          updatedBy: 'Lorem ipsum - updater',
+        },
+      });
     });
   });
 
@@ -351,7 +430,7 @@ describe('readAuthorizationPolicyConfiguration', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
+      const sdk = await ConfigClientV2.createInstance(JSON.stringify(serviceAccountTokenMock));
       jest
         .spyOn(sdk['client'], 'readConfigNode')
         .mockImplementation(
@@ -369,7 +448,7 @@ describe('readAuthorizationPolicyConfiguration', () => {
           },
         );
       return sdk
-        .readAuthorizationPolicyConfiguration('authorization-policy-id-request')
+        .readConfigNode(ConfigClientV2.newReadConfigNodeRequest('configNode-id-request'))
         .catch((err) => {
           thrownError = err;
         });
@@ -384,7 +463,7 @@ describe('readAuthorizationPolicyConfiguration', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
+      const sdk = await ConfigClientV2.createInstance(JSON.stringify(serviceAccountTokenMock));
       jest
         .spyOn(sdk['client'], 'readConfigNode')
         .mockImplementation(
@@ -402,26 +481,26 @@ describe('readAuthorizationPolicyConfiguration', () => {
           },
         );
       return sdk
-        .readAuthorizationPolicyConfiguration('authorization-policy-id-request')
+        .readConfigNode(ConfigClientV2.newReadConfigNodeRequest('configNode-id-request'))
         .catch((err) => {
           thrownError = err;
         });
     });
 
     it('throws an error', () => {
-      expect(thrownError.message).toBe('config_error_read_authorizationpolicyconfiguration');
+      expect(thrownError.message).toBe('No ConfigNode response.');
     });
   });
 });
 
-describe('updateAuthorizationPolicyConfiguration', () => {
+describe('updateConfigNode', () => {
   describe('when no error is returned', () => {
-    let authorizationPolicy: AuthorizationPolicy;
+    let configNode: UpdateConfigNodeResponse;
     let updateConfigNodeSpy: jest.SpyInstance;
-    let sdk: ConfigClient;
+    let sdk: ConfigClientV2;
 
     beforeEach(async () => {
-      sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
+      sdk = await ConfigClientV2.createInstance(JSON.stringify(serviceAccountTokenMock));
       updateConfigNodeSpy = jest
         .spyOn(sdk['client'], 'updateConfigNode')
         .mockImplementation(
@@ -435,12 +514,12 @@ describe('updateAuthorizationPolicyConfiguration', () => {
             if (typeof res === 'function') {
               res(null, {
                 etag: 'new-etag-token',
-                id: 'authorization-policy-id',
+                id: 'configNode-id',
                 updateTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 6, 21, 14, 56))),
                 bookmark: 'bookmark-token',
                 createdBy: 'Lorem ipsum - creator',
                 updatedBy: 'Lorem ipsum - updater',
-                locationId: 'location-id',
+                locationId: 'location-id-1',
               });
             }
             return {} as SurfaceCall;
@@ -450,110 +529,90 @@ describe('updateAuthorizationPolicyConfiguration', () => {
 
     describe('when necessary values are sent only', () => {
       beforeEach(async () => {
-        configExample.id = 'authorization-policy-id';
-        authorizationPolicy = await sdk.updateAuthorizationPolicyConfiguration(configExample);
+        configNode = await sdk.updateConfigNode(updateConfigExample);
       });
 
       it('sends correct request', () => {
         expect(updateConfigNodeSpy).toBeCalledWith(
           {
-            id: 'authorization-policy-id',
-            config: {
-              oneofKind: 'authorizationPolicyConfig',
-              authorizationPolicyConfig: {
-                policy,
-                tags: [],
-                status: AuthorizationPolicyConfig_Status.ACTIVE,
-              },
-            },
+            id: 'configNode-id',
             bookmarks: [],
+            config: {
+              oneofKind: undefined,
+            },
+            description: {
+              value: 'WebAuthn Provider description',
+            },
+            displayName: {
+              value: 'WebAuthn Provider name',
+            },
+            etag: {
+              value: 'etag-token',
+            },
           },
           expect.any(Function),
         );
       });
 
       it('returns a correct instance', () => {
-        expect(authorizationPolicy).toEqual(
-          Object.assign(
-            new AuthorizationPolicy({
-              name: 'authorization-policy',
-              policy,
-              tags: [],
-              status: AuthorizationPolicyConfig_Status.ACTIVE,
-            }),
-            {
-              etag: 'new-etag-token',
-              id: 'authorization-policy-id',
-              updateTime: new Date(Date.UTC(2022, 6, 21, 14, 56)),
-            },
-          ),
+        expect(configNode.id).toBe('configNode-id');
+        expect(configNode.createTime).toBeUndefined();
+        expect(configNode.createdBy).toBe('Lorem ipsum - creator');
+        expect(configNode.updateTime?.toString()).toBe(
+          Utils.dateToTimestamp(new Date(Date.UTC(2022, 6, 21, 14, 56))).toString(),
         );
+        expect(configNode.updatedBy).toBe('Lorem ipsum - updater');
+        expect(configNode.etag).toBe('new-etag-token');
+        expect(configNode.bookmark).toBe('bookmark-token');
       });
     });
 
     describe('when all possible values are sent', () => {
       beforeEach(async () => {
-        configExample.displayName = 'Authorization Policy name';
-        configExample.description = StringValue.fromJson('Authorization Policy description');
-        configExample.etag = 'etag-token';
-        configExample.id = 'authorization-policy-id';
-        authorizationPolicy = await sdk.updateAuthorizationPolicyConfiguration(configExample);
+        configNode = await sdk.updateConfigNode(updateConfigExample);
       });
 
       it('sends correct request', () => {
         expect(updateConfigNodeSpy).toBeCalledWith(
           {
-            id: 'authorization-policy-id',
-            config: {
-              oneofKind: 'authorizationPolicyConfig',
-              authorizationPolicyConfig: {
-                policy,
-                tags: [],
-                status: AuthorizationPolicyConfig_Status.ACTIVE,
-              },
-            },
+            id: 'configNode-id',
             description: {
-              value: 'Authorization Policy description',
+              value: 'WebAuthn Provider description',
             },
             displayName: {
-              value: 'Authorization Policy name',
+              value: 'WebAuthn Provider name',
             },
             etag: {
               value: 'etag-token',
             },
             bookmarks: [],
+            config: {
+              oneofKind: undefined,
+            },
           },
           expect.any(Function),
         );
       });
 
       it('returns a correct instance', () => {
-        expect(authorizationPolicy).toEqual(
-          Object.assign(
-            new AuthorizationPolicy({
-              name: 'authorization-policy',
-              policy,
-              tags: [],
-              status: AuthorizationPolicyConfig_Status.ACTIVE,
-            }),
-            {
-              description: StringValue.fromJson('Authorization Policy description'),
-              displayName: 'Authorization Policy name',
-              etag: 'new-etag-token',
-              id: 'authorization-policy-id',
-              updateTime: new Date(Date.UTC(2022, 6, 21, 14, 56)),
-            },
-          ),
+        expect(configNode.id).toBe('configNode-id');
+        expect(configNode.createTime).toBeUndefined();
+        expect(configNode.createdBy).toBe('Lorem ipsum - creator');
+        expect(configNode.updateTime?.toString()).toBe(
+          Utils.dateToTimestamp(new Date(Date.UTC(2022, 6, 21, 14, 56))).toString(),
         );
+        expect(configNode.updatedBy).toBe('Lorem ipsum - updater');
+        expect(configNode.etag).toBe('new-etag-token');
+        expect(configNode.bookmark).toBe('bookmark-token');
       });
     });
   });
 
-  describe('when a different Authorization Policy is returned', () => {
+  describe('when a different webauthn provider is returned', () => {
     let thrownError: SdkError;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
+      const sdk = await ConfigClientV2.createInstance(JSON.stringify(serviceAccountTokenMock));
       jest
         .spyOn(sdk['client'], 'updateConfigNode')
         .mockImplementation(
@@ -567,27 +626,24 @@ describe('updateAuthorizationPolicyConfiguration', () => {
             if (typeof res === 'function') {
               res(null, {
                 etag: 'new-etag-token',
-                id: 'different-authorization-policy-id',
+                id: 'different-configNode-id',
                 updateTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 6, 21, 14, 56))),
                 bookmark: 'bookmark-token',
                 createdBy: 'Lorem ipsum - creator',
                 updatedBy: 'Lorem ipsum - updater',
-                locationId: 'location-id',
+                locationId: 'location-id-1',
               });
             }
             return {} as SurfaceCall;
           },
         );
-      configExample.id = 'authorization-policy-id';
-      return sdk
-        .updateAuthorizationPolicyConfiguration(configExample)
-        .catch((err) => (thrownError = err));
+      return sdk.updateConfigNode(updateConfigExample).catch((err) => (thrownError = err));
     });
 
     it('throws an error', () => {
-      expect(thrownError.code).toEqual(SdkErrorCode.SDK_CODE_1);
+      expect(thrownError.code).toEqual(SdkErrorCode.SDK_CODE_4);
       expect(thrownError.description).toBe(
-        'Update returned with different id: req.iq=authorization-policy-id, res.id=different-authorization-policy-id',
+        'Update returned with different id: request.id=configNode-id, response.id=different-configNode-id.',
       );
     });
   });
@@ -601,7 +657,7 @@ describe('updateAuthorizationPolicyConfiguration', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
+      const sdk = await ConfigClientV2.createInstance(JSON.stringify(serviceAccountTokenMock));
       jest
         .spyOn(sdk['client'], 'updateConfigNode')
         .mockImplementation(
@@ -618,8 +674,7 @@ describe('updateAuthorizationPolicyConfiguration', () => {
             return {} as SurfaceCall;
           },
         );
-      configExample.id = 'authorization-policy-id';
-      return sdk.updateAuthorizationPolicyConfiguration(configExample).catch((err) => {
+      return sdk.updateConfigNode(updateConfigExample).catch((err) => {
         thrownError = err;
       });
     });
@@ -633,7 +688,7 @@ describe('updateAuthorizationPolicyConfiguration', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
+      const sdk = await ConfigClientV2.createInstance(JSON.stringify(serviceAccountTokenMock));
       jest
         .spyOn(sdk['client'], 'updateConfigNode')
         .mockImplementation(
@@ -650,29 +705,28 @@ describe('updateAuthorizationPolicyConfiguration', () => {
             return {} as SurfaceCall;
           },
         );
-      configExample.id = 'authorization-policy-id';
-      return sdk.updateAuthorizationPolicyConfiguration(configExample).catch((err) => {
+      return sdk.updateConfigNode(updateConfigExample).catch((err) => {
         thrownError = err;
       });
     });
 
     it('throws an error', () => {
       expect(thrownError.message).toBe(
-        'Update returned with different id: req.iq=authorization-policy-id, res.id=undefined',
+        'Update returned with different id: request.id=configNode-id, response.id=undefined.',
       );
     });
   });
 });
 
-describe('deleteAuthorizationPolicyConfiguration', () => {
+describe('deleteConfigNode', () => {
   describe('when no error is returned', () => {
     let deleteConfigNodeSpy: jest.SpyInstance;
-    let sdk: ConfigClient;
-    let returnedValue: boolean;
+    let sdk: ConfigClientV2;
+    let returnedValue: DeleteConfigNodeResponse;
 
     describe('when necessary values are sent only', () => {
       beforeEach(async () => {
-        sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
+        sdk = await ConfigClientV2.createInstance(JSON.stringify(serviceAccountTokenMock));
         deleteConfigNodeSpy = jest
           .spyOn(sdk['client'], 'deleteConfigNode')
           .mockImplementation(
@@ -691,28 +745,30 @@ describe('deleteAuthorizationPolicyConfiguration', () => {
               return {} as SurfaceCall;
             },
           );
-        configExample.id = 'authorization-policy-id';
-        returnedValue = await sdk.deleteAuthorizationPolicyConfiguration(configExample);
+        returnedValue = await sdk.deleteConfigNode(deleteConfigExample);
       });
 
       it('sends correct request', () => {
         expect(deleteConfigNodeSpy).toBeCalledWith(
           {
-            id: 'authorization-policy-id',
+            id: 'configNode-id',
             bookmarks: [],
+            etag: {
+              value: 'etag-token',
+            },
           },
           expect.any(Function),
         );
       });
 
       it('returns a correct value', () => {
-        expect(returnedValue).toBe(true);
+        expect(returnedValue).not.toBeUndefined();
       });
     });
 
     describe('when all possible values are sent', () => {
       beforeEach(async () => {
-        sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
+        sdk = await ConfigClientV2.createInstance(JSON.stringify(serviceAccountTokenMock));
         deleteConfigNodeSpy = jest
           .spyOn(sdk['client'], 'deleteConfigNode')
           .mockImplementation(
@@ -731,15 +787,13 @@ describe('deleteAuthorizationPolicyConfiguration', () => {
               return {} as SurfaceCall;
             },
           );
-        configExample.id = 'authorization-policy-id';
-        configExample.etag = 'etag-token';
-        returnedValue = await sdk.deleteAuthorizationPolicyConfiguration(configExample);
+        returnedValue = await sdk.deleteConfigNode(deleteConfigExample);
       });
 
       it('sends correct request', () => {
         expect(deleteConfigNodeSpy).toBeCalledWith(
           {
-            id: 'authorization-policy-id',
+            id: 'configNode-id',
             etag: StringValue.fromJson('etag-token'),
             bookmarks: [],
           },
@@ -748,7 +802,7 @@ describe('deleteAuthorizationPolicyConfiguration', () => {
       });
 
       it('returns a correct value', () => {
-        expect(returnedValue).toBe(true);
+        expect(returnedValue).not.toBeUndefined();
       });
     });
   });
@@ -762,7 +816,7 @@ describe('deleteAuthorizationPolicyConfiguration', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
+      const sdk = await ConfigClientV2.createInstance(JSON.stringify(serviceAccountTokenMock));
       jest
         .spyOn(sdk['client'], 'deleteConfigNode')
         .mockImplementation(
@@ -779,14 +833,45 @@ describe('deleteAuthorizationPolicyConfiguration', () => {
             return {} as SurfaceCall;
           },
         );
-      configExample.id = 'authorization-policy-id';
-      return sdk.deleteAuthorizationPolicyConfiguration(configExample).catch((err) => {
+      return sdk.deleteConfigNode(deleteConfigExample).catch((err) => {
         thrownError = err;
       });
     });
 
     it('throws an error', () => {
       expect(thrownError).toBe(error);
+    });
+  });
+
+  describe('when response is not set an error is returned', () => {
+    let thrownError: SdkError;
+
+    beforeEach(async () => {
+      const sdk = await ConfigClientV2.createInstance(JSON.stringify(serviceAccountTokenMock));
+      jest
+        .spyOn(sdk['client'], 'deleteConfigNode')
+        .mockImplementation(
+          (
+            req,
+            res:
+              | Metadata
+              | CallOptions
+              | ((err: ServiceError | null, response?: DeleteConfigNodeResponse) => void),
+          ) => {
+            if (typeof res === 'function') {
+              res(null);
+            }
+            return {} as SurfaceCall;
+          },
+        );
+      return sdk.deleteConfigNode(deleteConfigExample).catch((err) => {
+        thrownError = err;
+      });
+    });
+
+    it('throws an error', () => {
+      expect(thrownError.code).toEqual(SdkErrorCode.SDK_CODE_3);
+      expect(thrownError.description).toBe('No ConfigNode response.');
     });
   });
 });
