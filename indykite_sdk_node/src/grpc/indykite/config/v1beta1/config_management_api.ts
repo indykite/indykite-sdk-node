@@ -54,8 +54,8 @@ import { Application } from "./model";
 import { ApplicationSpaceConfig } from "./model";
 import { ApplicationSpace } from "./model";
 import { UniqueNameIdentifier } from "./model";
-import { Timestamp } from "../../../google/protobuf/timestamp";
 import { StringValue } from "../../../google/protobuf/wrappers";
+import { Timestamp } from "../../../google/protobuf/timestamp";
 import { CustomerConfig } from "./model";
 import { Customer } from "./model";
 /**
@@ -140,6 +140,32 @@ export interface ReadCustomerConfigResponse {
      * @generated from protobuf field: indykite.config.v1beta1.CustomerConfig config = 3;
      */
     config?: CustomerConfig;
+    /**
+     * Output only. The time at which the configuration was created.
+     *
+     * @generated from protobuf field: google.protobuf.Timestamp create_time = 5;
+     */
+    createTime?: Timestamp;
+    /**
+     * Output only. The user/service id who created the configuration.
+     *
+     * @generated from protobuf field: string created_by = 6;
+     */
+    createdBy: string;
+    /**
+     * Output only. The time at which the configuration was last changed.
+     *
+     * This value is initially set to the `create_time` then increases monotonically with each change.
+     *
+     * @generated from protobuf field: google.protobuf.Timestamp update_time = 4;
+     */
+    updateTime?: Timestamp;
+    /**
+     * Output only. The user/service id who last changed the configuration.
+     *
+     * @generated from protobuf field: string updated_by = 7;
+     */
+    updatedBy: string;
 }
 /**
  * @generated from protobuf message indykite.config.v1beta1.UpdateCustomerConfigRequest
@@ -531,6 +557,32 @@ export interface ReadApplicationSpaceConfigResponse {
      * @generated from protobuf field: indykite.config.v1beta1.ApplicationSpaceConfig config = 3;
      */
     config?: ApplicationSpaceConfig;
+    /**
+     * Output only. The time at which the configuration was created.
+     *
+     * @generated from protobuf field: google.protobuf.Timestamp create_time = 5;
+     */
+    createTime?: Timestamp;
+    /**
+     * Output only. The user/service id who created the configuration.
+     *
+     * @generated from protobuf field: string created_by = 6;
+     */
+    createdBy: string;
+    /**
+     * Output only. The time at which the configuration was last changed.
+     *
+     * This value is initially set to the `create_time` then increases monotonically with each change.
+     *
+     * @generated from protobuf field: google.protobuf.Timestamp update_time = 4;
+     */
+    updateTime?: Timestamp;
+    /**
+     * Output only. The user/service id who last changed the configuration.
+     *
+     * @generated from protobuf field: string updated_by = 7;
+     */
+    updatedBy: string;
 }
 /**
  * @generated from protobuf message indykite.config.v1beta1.UpdateApplicationSpaceConfigRequest
@@ -1166,10 +1218,16 @@ export interface DeleteApplicationAgentResponse {
  */
 export interface RegisterApplicationAgentCredentialRequest {
     /**
+     * The application agent to create the credential for.
+     *
      * @generated from protobuf field: string application_agent_id = 1;
      */
     applicationAgentId: string;
     /**
+     * The human readable name for this credential. The name will be SHA256 Thumbprint of the public key to identify this
+     * credential and it can't be changed. That value is hard to recognise so better identification you can set a
+     * display name.
+     *
      * @generated from protobuf field: string display_name = 2;
      */
     displayName: string;
@@ -1179,12 +1237,20 @@ export interface RegisterApplicationAgentCredentialRequest {
     publicKey: {
         oneofKind: "jwk";
         /**
+         * RSA, EC or Ed25519 key encoded in JWK format. Both secret and public key formats are supported but for security
+         * reason we recommend to use only the public key to upload and keep the secret key locally so it does not goes
+         * over internet.
+         *
          * @generated from protobuf field: bytes jwk = 3;
          */
         jwk: Uint8Array;
     } | {
         oneofKind: "pem";
         /**
+         * RSA, EC or Ed25519 key encoded in PEM format. Both secret and public key formats are supported but for security
+         * reason we recommend to use only the public key to upload and keep the secret key locally so it does not goes
+         * over internet.
+         *
          * @generated from protobuf field: bytes pem = 4;
          */
         pem: Uint8Array;
@@ -1192,10 +1258,17 @@ export interface RegisterApplicationAgentCredentialRequest {
         oneofKind: undefined;
     };
     /**
+     * The expiration time sets the last time when client connecting with this credential is accepted.
+     * If this time is withing 2 years the server automatically generates a token with the same lifetime else the
+     * client SDK must generate JWT token to connect to API.
+     *
      * @generated from protobuf field: google.protobuf.Timestamp expire_time = 5;
      */
     expireTime?: Timestamp;
     /**
+     * The default tenant id is inserted into the final configuration. It's an optional field and not stored on server.
+     * The value can be modified any time in the configuration file.
+     *
      * @generated from protobuf field: string default_tenant_id = 6;
      */
     defaultTenantId: string;
@@ -1224,6 +1297,9 @@ export interface RegisterApplicationAgentCredentialResponse {
      */
     kid: string;
     /**
+     * The JSON configuration that contains the required and optional parameters for SDK to connect. If you uploaded
+     * only the public key you must insert the JWK secret key into the file before providing it to the SDK.
+     *
      * @generated from protobuf field: bytes agent_config = 4;
      */
     agentConfig: Uint8Array;
@@ -2010,6 +2086,32 @@ export interface ReadTenantConfigResponse {
      * @generated from protobuf field: indykite.config.v1beta1.TenantConfig config = 3;
      */
     config?: TenantConfig;
+    /**
+     * Output only. The time at which the configuration was created.
+     *
+     * @generated from protobuf field: google.protobuf.Timestamp create_time = 5;
+     */
+    createTime?: Timestamp;
+    /**
+     * Output only. The user/service id who created the configuration.
+     *
+     * @generated from protobuf field: string created_by = 6;
+     */
+    createdBy: string;
+    /**
+     * Output only. The time at which the configuration was last changed.
+     *
+     * This value is initially set to the `create_time` then increases monotonically with each change.
+     *
+     * @generated from protobuf field: google.protobuf.Timestamp update_time = 4;
+     */
+    updateTime?: Timestamp;
+    /**
+     * Output only. The user/service id who last changed the configuration.
+     *
+     * @generated from protobuf field: string updated_by = 7;
+     */
+    updatedBy: string;
 }
 /**
  * @generated from protobuf message indykite.config.v1beta1.UpdateTenantConfigRequest
@@ -3377,11 +3479,15 @@ class ReadCustomerConfigResponse$Type extends MessageType<ReadCustomerConfigResp
         super("indykite.config.v1beta1.ReadCustomerConfigResponse", [
             { no: 1, name: "id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
             { no: 2, name: "etag", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 3, name: "config", kind: "message", T: () => CustomerConfig, options: { "validate.rules": { message: { required: true } } } }
+            { no: 3, name: "config", kind: "message", T: () => CustomerConfig, options: { "validate.rules": { message: { required: true } } } },
+            { no: 5, name: "create_time", kind: "message", T: () => Timestamp },
+            { no: 6, name: "created_by", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 4, name: "update_time", kind: "message", T: () => Timestamp },
+            { no: 7, name: "updated_by", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
         ]);
     }
     create(value?: PartialMessage<ReadCustomerConfigResponse>): ReadCustomerConfigResponse {
-        const message = { id: "", etag: "" };
+        const message = { id: "", etag: "", createdBy: "", updatedBy: "" };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<ReadCustomerConfigResponse>(this, message, value);
@@ -3400,6 +3506,18 @@ class ReadCustomerConfigResponse$Type extends MessageType<ReadCustomerConfigResp
                     break;
                 case /* indykite.config.v1beta1.CustomerConfig config */ 3:
                     message.config = CustomerConfig.internalBinaryRead(reader, reader.uint32(), options, message.config);
+                    break;
+                case /* google.protobuf.Timestamp create_time */ 5:
+                    message.createTime = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createTime);
+                    break;
+                case /* string created_by */ 6:
+                    message.createdBy = reader.string();
+                    break;
+                case /* google.protobuf.Timestamp update_time */ 4:
+                    message.updateTime = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.updateTime);
+                    break;
+                case /* string updated_by */ 7:
+                    message.updatedBy = reader.string();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -3422,6 +3540,18 @@ class ReadCustomerConfigResponse$Type extends MessageType<ReadCustomerConfigResp
         /* indykite.config.v1beta1.CustomerConfig config = 3; */
         if (message.config)
             CustomerConfig.internalBinaryWrite(message.config, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        /* google.protobuf.Timestamp create_time = 5; */
+        if (message.createTime)
+            Timestamp.internalBinaryWrite(message.createTime, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
+        /* string created_by = 6; */
+        if (message.createdBy !== "")
+            writer.tag(6, WireType.LengthDelimited).string(message.createdBy);
+        /* google.protobuf.Timestamp update_time = 4; */
+        if (message.updateTime)
+            Timestamp.internalBinaryWrite(message.updateTime, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+        /* string updated_by = 7; */
+        if (message.updatedBy !== "")
+            writer.tag(7, WireType.LengthDelimited).string(message.updatedBy);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -4307,11 +4437,15 @@ class ReadApplicationSpaceConfigResponse$Type extends MessageType<ReadApplicatio
         super("indykite.config.v1beta1.ReadApplicationSpaceConfigResponse", [
             { no: 1, name: "id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
             { no: 2, name: "etag", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 3, name: "config", kind: "message", T: () => ApplicationSpaceConfig, options: { "validate.rules": { message: { required: true } } } }
+            { no: 3, name: "config", kind: "message", T: () => ApplicationSpaceConfig, options: { "validate.rules": { message: { required: true } } } },
+            { no: 5, name: "create_time", kind: "message", T: () => Timestamp },
+            { no: 6, name: "created_by", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 4, name: "update_time", kind: "message", T: () => Timestamp },
+            { no: 7, name: "updated_by", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
         ]);
     }
     create(value?: PartialMessage<ReadApplicationSpaceConfigResponse>): ReadApplicationSpaceConfigResponse {
-        const message = { id: "", etag: "" };
+        const message = { id: "", etag: "", createdBy: "", updatedBy: "" };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<ReadApplicationSpaceConfigResponse>(this, message, value);
@@ -4330,6 +4464,18 @@ class ReadApplicationSpaceConfigResponse$Type extends MessageType<ReadApplicatio
                     break;
                 case /* indykite.config.v1beta1.ApplicationSpaceConfig config */ 3:
                     message.config = ApplicationSpaceConfig.internalBinaryRead(reader, reader.uint32(), options, message.config);
+                    break;
+                case /* google.protobuf.Timestamp create_time */ 5:
+                    message.createTime = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createTime);
+                    break;
+                case /* string created_by */ 6:
+                    message.createdBy = reader.string();
+                    break;
+                case /* google.protobuf.Timestamp update_time */ 4:
+                    message.updateTime = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.updateTime);
+                    break;
+                case /* string updated_by */ 7:
+                    message.updatedBy = reader.string();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -4352,6 +4498,18 @@ class ReadApplicationSpaceConfigResponse$Type extends MessageType<ReadApplicatio
         /* indykite.config.v1beta1.ApplicationSpaceConfig config = 3; */
         if (message.config)
             ApplicationSpaceConfig.internalBinaryWrite(message.config, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        /* google.protobuf.Timestamp create_time = 5; */
+        if (message.createTime)
+            Timestamp.internalBinaryWrite(message.createTime, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
+        /* string created_by = 6; */
+        if (message.createdBy !== "")
+            writer.tag(6, WireType.LengthDelimited).string(message.createdBy);
+        /* google.protobuf.Timestamp update_time = 4; */
+        if (message.updateTime)
+            Timestamp.internalBinaryWrite(message.updateTime, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+        /* string updated_by = 7; */
+        if (message.updatedBy !== "")
+            writer.tag(7, WireType.LengthDelimited).string(message.updatedBy);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -5842,7 +6000,7 @@ class RegisterApplicationAgentCredentialRequest$Type extends MessageType<Registe
             { no: 1, name: "application_agent_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
             { no: 2, name: "display_name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "2", maxLen: "254", ignoreEmpty: true } } } },
             { no: 3, name: "jwk", kind: "scalar", oneof: "publicKey", T: 12 /*ScalarType.BYTES*/, options: { "validate.rules": { bytes: { minLen: "96", maxLen: "8192", prefix: "ew==", suffix: "fQ==" } } } },
-            { no: 4, name: "pem", kind: "scalar", oneof: "publicKey", T: 12 /*ScalarType.BYTES*/, options: { "validate.rules": { bytes: { minLen: "256", maxLen: "8192", prefix: "LS0tLS1CRUdJTiBQVUJMSUMgS0VZLS0tLS0=", suffix: "LS0tLS1FTkQgUFVCTElDIEtFWS0tLS0t" } } } },
+            { no: 4, name: "pem", kind: "scalar", oneof: "publicKey", T: 12 /*ScalarType.BYTES*/, options: { "validate.rules": { bytes: { minLen: "96", maxLen: "8192" } } } },
             { no: 5, name: "expire_time", kind: "message", T: () => Timestamp, options: { "validate.rules": { timestamp: { required: false, gtNow: true } } } },
             { no: 6, name: "default_tenant_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^gid:[A-Za-z0-9-_:]{22,254}$", ignoreEmpty: true } } } },
             { no: 7, name: "bookmarks", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { items: { string: { minLen: "40", pattern: "^[a-zA-Z0-9_-]{40,}$" } } } } } }
@@ -7896,11 +8054,15 @@ class ReadTenantConfigResponse$Type extends MessageType<ReadTenantConfigResponse
         super("indykite.config.v1beta1.ReadTenantConfigResponse", [
             { no: 1, name: "id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
             { no: 2, name: "etag", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 3, name: "config", kind: "message", T: () => TenantConfig, options: { "validate.rules": { message: { required: true } } } }
+            { no: 3, name: "config", kind: "message", T: () => TenantConfig, options: { "validate.rules": { message: { required: true } } } },
+            { no: 5, name: "create_time", kind: "message", T: () => Timestamp },
+            { no: 6, name: "created_by", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 4, name: "update_time", kind: "message", T: () => Timestamp },
+            { no: 7, name: "updated_by", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
         ]);
     }
     create(value?: PartialMessage<ReadTenantConfigResponse>): ReadTenantConfigResponse {
-        const message = { id: "", etag: "" };
+        const message = { id: "", etag: "", createdBy: "", updatedBy: "" };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<ReadTenantConfigResponse>(this, message, value);
@@ -7919,6 +8081,18 @@ class ReadTenantConfigResponse$Type extends MessageType<ReadTenantConfigResponse
                     break;
                 case /* indykite.config.v1beta1.TenantConfig config */ 3:
                     message.config = TenantConfig.internalBinaryRead(reader, reader.uint32(), options, message.config);
+                    break;
+                case /* google.protobuf.Timestamp create_time */ 5:
+                    message.createTime = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createTime);
+                    break;
+                case /* string created_by */ 6:
+                    message.createdBy = reader.string();
+                    break;
+                case /* google.protobuf.Timestamp update_time */ 4:
+                    message.updateTime = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.updateTime);
+                    break;
+                case /* string updated_by */ 7:
+                    message.updatedBy = reader.string();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -7941,6 +8115,18 @@ class ReadTenantConfigResponse$Type extends MessageType<ReadTenantConfigResponse
         /* indykite.config.v1beta1.TenantConfig config = 3; */
         if (message.config)
             TenantConfig.internalBinaryWrite(message.config, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        /* google.protobuf.Timestamp create_time = 5; */
+        if (message.createTime)
+            Timestamp.internalBinaryWrite(message.createTime, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
+        /* string created_by = 6; */
+        if (message.createdBy !== "")
+            writer.tag(6, WireType.LengthDelimited).string(message.createdBy);
+        /* google.protobuf.Timestamp update_time = 4; */
+        if (message.updateTime)
+            Timestamp.internalBinaryWrite(message.updateTime, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+        /* string updated_by = 7; */
+        if (message.updatedBy !== "")
+            writer.tag(7, WireType.LengthDelimited).string(message.updatedBy);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
