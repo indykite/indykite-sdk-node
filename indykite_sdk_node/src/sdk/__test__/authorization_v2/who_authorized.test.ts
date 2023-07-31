@@ -161,7 +161,7 @@ describe('whoAuthorized', () => {
           return {} as SurfaceCall;
         },
       );
-
+      mockFunc.mockName('whoAuthorized');
       jest.spyOn(sdk['client'], 'whoAuthorized').mockImplementation(mockFunc);
 
       try {

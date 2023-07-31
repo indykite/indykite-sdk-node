@@ -75,7 +75,7 @@ describe('whatAuthorized', () => {
           return {} as SurfaceCall;
         },
       );
-
+      mockFunc.mockName('whatAuthorized');
       jest.spyOn(sdk['client'], 'whatAuthorized').mockImplementation(mockFunc);
 
       result = await sdk.whatAuthorized(subject, resources);
@@ -163,7 +163,7 @@ describe('whatAuthorized', () => {
           return {} as SurfaceCall;
         },
       );
-
+      mockFunc.mockName('whatAuthorized');
       jest.spyOn(sdk['client'], 'whatAuthorized').mockImplementation(mockFunc);
 
       try {
@@ -206,7 +206,7 @@ describe('whatAuthorized', () => {
           return {} as SurfaceCall;
         },
       );
-
+      mockFunc.mockName('whatAuthorized');
       jest.spyOn(sdk['client'], 'whatAuthorized').mockImplementation(mockFunc);
 
       try {
@@ -267,7 +267,7 @@ describe('isAuthorizedByToken', () => {
           return {} as SurfaceCall;
         },
       );
-
+      mockFunc.mockName('whatAuthorized');
       jest.spyOn(sdk['client'], 'whatAuthorized').mockImplementation(mockFunc);
 
       result = await sdk.whatAuthorizedByToken(
@@ -363,7 +363,7 @@ describe('isAuthorizedByToken', () => {
           return {} as SurfaceCall;
         },
       );
-
+      mockFunc.mockName('whatAuthorized');
       jest.spyOn(sdk['client'], 'whatAuthorized').mockImplementation(mockFunc);
 
       try {
@@ -406,7 +406,7 @@ describe('isAuthorizedByToken', () => {
           return {} as SurfaceCall;
         },
       );
-
+      mockFunc.mockName('whatAuthorized');
       jest.spyOn(sdk['client'], 'whatAuthorized').mockImplementation(mockFunc);
 
       try {
@@ -471,7 +471,7 @@ describe('isAuthorizedByProperty', () => {
           return {} as SurfaceCall;
         },
       );
-
+      mockFunc.mockName('whatAuthorized');
       jest.spyOn(sdk['client'], 'whatAuthorized').mockImplementation(mockFunc);
 
       result = await sdk.whatAuthorizedByProperty(subject, resources);
@@ -562,7 +562,7 @@ describe('isAuthorizedByProperty', () => {
           return {} as SurfaceCall;
         },
       );
-
+      mockFunc.mockName('whatAuthorized');
       jest.spyOn(sdk['client'], 'whatAuthorized').mockImplementation(mockFunc);
 
       try {
@@ -605,7 +605,7 @@ describe('isAuthorizedByProperty', () => {
           return {} as SurfaceCall;
         },
       );
-
+      mockFunc.mockName('whatAuthorized');
       jest.spyOn(sdk['client'], 'whatAuthorized').mockImplementation(mockFunc);
 
       try {

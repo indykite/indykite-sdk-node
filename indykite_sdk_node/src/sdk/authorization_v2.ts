@@ -14,7 +14,7 @@ import { AuthorizationAPIClient } from '../grpc/indykite/authorization/v1beta1/a
 import { DigitalTwin } from '../grpc/indykite/identity/v1beta2/model';
 import { InputParam } from '../grpc/indykite/authorization/v1beta1/model';
 import { PropertyFilter } from '../grpc/indykite/identity/v1beta2/attributes';
-import { SdkError, SdkErrorCode } from './error';
+import { SdkError, SdkErrorCode, SkdErrorText } from './error';
 import { Utils } from './utils/utils';
 
 export type InputParameters = string | boolean | number;
@@ -254,8 +254,10 @@ export class AuthorizationClientV2 {
           reject(err);
         } else {
           if (!response) {
-            // TODO: use constants
-            throw new SdkError(SdkErrorCode.SDK_CODE_1, 'No data in isAuthorized response');
+            throw new SdkError(
+              SdkErrorCode.SDK_CODE_5,
+              SkdErrorText.SDK_CODE_5(AuthorizationClientV2.prototype.isAuthorized.name),
+            );
           } else {
             resolve(response);
           }
@@ -442,8 +444,10 @@ export class AuthorizationClientV2 {
       this.client.whatAuthorized(request, (err, response) => {
         if (err) reject(err);
         else if (!response) {
-          // TODO: use constants
-          throw new SdkError(SdkErrorCode.SDK_CODE_1, 'No data in whatAuthorized response');
+          throw new SdkError(
+            SdkErrorCode.SDK_CODE_5,
+            SkdErrorText.SDK_CODE_5(AuthorizationClientV2.prototype.whatAuthorized.name),
+          );
         } else {
           resolve(response);
         }
@@ -510,8 +514,10 @@ export class AuthorizationClientV2 {
           reject(err);
         } else {
           if (!response) {
-            // TODO: use constants
-            throw new SdkError(SdkErrorCode.SDK_CODE_1, 'No data in whoAuthorized response');
+            throw new SdkError(
+              SdkErrorCode.SDK_CODE_5,
+              SkdErrorText.SDK_CODE_5(AuthorizationClientV2.prototype.whoAuthorized.name),
+            );
           } else {
             resolve(response);
           }

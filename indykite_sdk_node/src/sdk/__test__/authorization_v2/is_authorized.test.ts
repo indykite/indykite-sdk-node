@@ -11,11 +11,9 @@ import { Utils } from '../../utils/utils';
 import { applicationTokenMock } from '../../utils/test_utils';
 import { DigitalTwinCore } from '../../model';
 import { DigitalTwinKind, DigitalTwinState } from '../../../grpc/indykite/identity/v1beta2/model';
-// import { PropertyFilter } from '../../authorization';
 import { InputParam } from '../../../grpc/indykite/authorization/v1beta1/model';
 import { PropertyFilter } from '../../../grpc/indykite/identity/v1beta2/attributes';
 import { Value } from '../../../grpc/indykite/objects/v1beta1/struct';
-// import { StringValue } from '../../../grpc/google/protobuf/wrappers';
 
 let sdk: AuthorizationClientV2;
 
@@ -629,7 +627,7 @@ describe('isAuthorizedByProperty', () => {
           return {} as SurfaceCall;
         },
       );
-
+      mockFunc.mockName('isAuthorized');
       jest.spyOn(sdk['client'], 'isAuthorized').mockImplementation(mockFunc);
 
       try {
