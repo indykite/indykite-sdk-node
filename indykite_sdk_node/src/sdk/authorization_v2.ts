@@ -81,12 +81,12 @@ export class AuthorizationClientV2 {
    *   AuthorizationClientV2.createInstance()
    *     .then(async (sdk) => {
    *       const resp = await sdk.isAuthorized(
-   *         new DigitalTwinCore(
-   *           'digitaltwin-id',
-   *           'tenant-id',
-   *           DigitalTwinKind.PERSON,
-   *           DigitalTwinState.ACTIVE,
-   *         ),
+   *          DigitalTwin.fromJson({
+   *            id: 'digitaltwin-id',
+   *            tenantId: 'tenant-id',
+   *            kind: DigitalTwinKind.PERSON,
+   *            state: DigitalTwinState.ACTIVE,
+   *          }),
    *         [
    *           {
    *             id: 'lotA',
@@ -279,12 +279,12 @@ export class AuthorizationClientV2 {
    *   AuthorizationClientV2.createInstance()
    *     .then(async (sdk) => {
    *       const resp = await sdk.whatAuthorized(
-   *         new DigitalTwinCore(
-   *           'digitaltwin-id',
-   *           'tenant-id',
-   *           DigitalTwinKind.PERSON,
-   *           DigitalTwinState.ACTIVE,
-   *         ),
+   *          DigitalTwin.fromJson({
+   *            id: 'digitaltwin-id',
+   *            tenantId: 'tenant-id',
+   *            kind: DigitalTwinKind.PERSON,
+   *            state: DigitalTwinState.ACTIVE,
+   *          }),
    *         [
    *           {
    *             type: 'ParkingLot',
