@@ -1,8 +1,12 @@
 {
-    "app_space_id": "",
-    "app_agent_id": "",
+    "baseUrl": "https://example.indykite.com",
+    "applicationId": "",
+    "defaultTenantId": "",
+    "appSpaceId": "",
+    "appAgentId": "",
     "endpoint": "",
-    "local_endpoint": "",
+    "privateKeyPKCS8Base64": "aW5keWtpdGU=",
+    "privateKeyPKCS8": "-----BEGIN PRIVATE KEY-----\n\n-----END PRIVATE KEY-----\n",
     "private_key_jwk": {
         "kty": "",
         "d": "",
@@ -12,5 +16,6 @@
         "x": "",
         "y": "",
         "alg": "ES256"
-    }
+    },
+    "tokenLifetime": "1h"
 }

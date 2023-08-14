@@ -46,4 +46,15 @@ describe('Crednetial', () => {
       expect(error).toEqual(err);
     }
   });
+  it('build token - get expiration time valid', async () => {
+    const newCred = ApplicationCredential.fromObject(applicationTokenMock);
+    const token = await newCred.buildToken();
+    expect(token.getExpirationTime()).not.toBeUndefined();
+    expect(token.getExpirationTime().getTime()).toBeGreaterThan(new Date().getTime());
+  });
+  it('build token - get expiration time invalid, in the future', async () => {
+    const newCred = ApplicationCredential.fromObject(applicationTokenMock);
+    const token = await newCred.buildToken();
+    expect(token.getExpirationTime().getTime()).not.toBeGreaterThan(new Date().setHours(token.getExpirationTime().getHours() + 2));
+  });
 });
