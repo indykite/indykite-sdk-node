@@ -1,3 +1,4 @@
+// import exp = require('constants');
 import { SdkError, SdkErrorCode } from '../../error';
 import { ApplicationCredential } from '../application_credential';
 import { applicationTokenMock } from '../test_utils';
@@ -55,6 +56,17 @@ describe('Crednetial', () => {
   it('build token - get expiration time invalid, in the future', async () => {
     const newCred = ApplicationCredential.fromObject(applicationTokenMock);
     const token = await newCred.buildToken();
-    expect(token.getExpirationTime().getTime()).not.toBeGreaterThan(new Date().setHours(token.getExpirationTime().getHours() + 2));
+    expect(token.getExpirationTime().getTime()).not.toBeGreaterThan(
+      new Date().setHours(token.getExpirationTime().getHours() + 2),
+    );
+  });
+  it('check credentials tokenLifetime', async () => {
+    const credObj = ApplicationCredential.fromObject(applicationTokenMock);
+    expect(applicationTokenMock).toHaveProperty('tokenLifetime');
+    const tokenLifetimeString: string = credObj.getTokenLifetime(false) as string;
+    const tokenLifetimeDate: Date = credObj.getTokenLifetime(true) as Date;
+    expect(tokenLifetimeString).not.toBeUndefined();
+    expect(tokenLifetimeDate).not.toBeUndefined();
+    // const err = new SdkError(SdkErrorCode.SDK_CODE_1, 'Must run buildToken() function first');
   });
 });

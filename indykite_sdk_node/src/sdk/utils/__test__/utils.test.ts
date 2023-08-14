@@ -3,6 +3,7 @@ import { Any } from '../../../grpc/google/protobuf/any';
 import { NullValue } from '../../../grpc/google/protobuf/struct';
 import { PostalAddress } from '../../../grpc/indykite/identity/v1beta2/model';
 import { Utils } from '../utils';
+import { SdkError } from '../../error';
 
 describe('Utils', () => {
   it('Digital Twins', () => {
@@ -238,5 +239,27 @@ describe('duration and number conversions', () => {
     expect(Utils.numberToDuration(0.5)).toEqual({ seconds: '0', nanos: 500000 });
     expect(Utils.numberToDuration(16)).toEqual({ seconds: '16', nanos: 0 });
     expect(Utils.numberToDuration(71.25)).toEqual({ seconds: '71', nanos: 250000 });
+  });
+});
+
+describe('Duration to Date', () => {
+  it('test parseDuration exception', () => {
+    try {
+      Utils.parseDuration('');
+    } catch (err) {
+      expect((err as SdkError).description).toBe('Invalid Duration format!');
+    }
+  });
+  it('test parseDuration exception', () => {
+    const result: Date = Utils.parseDuration('1h30m45s21ms');
+    expect(result.getHours()).toBe(1);
+    expect(result.getMinutes()).toBe(30);
+  });
+  it('test parseDuration exception more than 24h', () => {
+    try {
+      Utils.parseDuration('25h');
+    } catch (err) {
+      expect((err as SdkError).description).toBe('Invalid Duration value (>= 2m, <= 24h)');
+    }
   });
 });

@@ -11,7 +11,7 @@ export const applicationTokenMock = {
     y: 'eknOKcgBUdaak2ZS2NHCEBWcdoLiZ1u7vCIoWZCs8WI',
     alg: 'ES256',
   },
-  tokenLifetime: "30m",
+  tokenLifetime: '30m',
 };
 
 export const serviceAccountTokenMock = {
@@ -27,7 +27,7 @@ export const serviceAccountTokenMock = {
     y: 'eknOKcgBUdaak2ZS2NHCEBWcdoLiZ1u7vCIoWZCs8WI',
     alg: 'ES256',
   },
-  tokenLifetime: "1h30m",
+  tokenLifetime: '1h30m',
 };
 
 export const generateRandomGID = () => {

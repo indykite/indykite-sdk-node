@@ -277,43 +277,48 @@ export class Utils {
     return `${part1}-${part2}-${part3}-${part4}-${part5}`;
   }
 
-  static parseDuration(duration:string):Date{
-    const pattern = new RegExp(/^(?!$)(\d+(?:\.\d+)?h)?(\d+(?:\.\d+)?m)?(\d+(?:\.\d+)?s)?(\d+(?:\.\d+)?ms)?(\d+(?:\.\d+)?us)?(\d+(?:\.\d+)?ns)?/g);
-    if (!pattern.test(duration)){
+  static parseDuration(duration: string): Date {
+    const pattern = new RegExp(
+      /^(?!$)(\d+(?:\.\d+)?h)?(\d+(?:\.\d+)?m)?(\d+(?:\.\d+)?s)?(\d+(?:\.\d+)?ms)?(\d+(?:\.\d+)?us)?(\d+(?:\.\d+)?ns)?/g,
+    );
+    if (!pattern.test(duration)) {
       throw new SdkError(SdkErrorCode.SDK_CODE_1, 'Invalid Duration format!');
     }
     const SIXTY = 60;
-    let result = new Date(0,0,0,0,0,0,0);
+    const result = new Date(0, 0, 0, 0, 0, 0, 0);
     const values = duration.split(pattern);
-    if (values && !values.reduce((acc, value, idx)=>{
-      if (!idx) return acc; 
-      return acc || !!!value;
-    }, false)){
+    if (
+      values &&
+      !values.reduce((acc, value, idx) => {
+        if (!idx) return acc;
+        return acc || !value;
+      }, false)
+    ) {
       throw new SdkError(SdkErrorCode.SDK_CODE_1, 'Invalid Duration format!');
     }
     // hours
-    if (values && values[1]){
-      const hours = parseFloat(values[1].replace("h","")) * SIXTY;
-      result.setHours(hours / SIXTY >> 0, hours % SIXTY); // force integers
+    if (values && values[1]) {
+      const hours = parseFloat(values[1].replace('h', '')) * SIXTY;
+      result.setHours((hours / SIXTY) >> 0, hours % SIXTY); // force integers
     }
     // minutes
-    if (values && values[2]){
-      const minutes = parseFloat(values[2].replace("m","")) * SIXTY;
-      result.setMinutes(minutes / SIXTY >> 0, minutes % SIXTY); // force integers
+    if (values && values[2]) {
+      const minutes = parseFloat(values[2].replace('m', '')) * SIXTY;
+      result.setMinutes((minutes / SIXTY) >> 0, minutes % SIXTY); // force integers
     }
     // seconds
-    if (values && values[3]){
-      const seconds = parseFloat(values[3].replace("s","")) * SIXTY;
-      result.setSeconds(seconds / SIXTY >> 0, seconds % SIXTY); // force integers
+    if (values && values[3]) {
+      const seconds = parseFloat(values[3].replace('s', '')) * SIXTY;
+      result.setSeconds((seconds / SIXTY) >> 0, seconds % SIXTY); // force integers
     }
     // miliseconds
-    if (values && values[4]){
-      const mseconds = parseFloat(values[4].replace("s",""));
+    if (values && values[4]) {
+      const mseconds = parseFloat(values[4].replace('ms', ''));
       result.setMilliseconds(mseconds >> 0); // force integers
     }
     // ignore us (micro - idx 5),ns (nano - idx 6)
     const tmpTime = result.getTime();
-    if (tmpTime < 2 * 60 * 1000 && tmpTime > 24 * 60 * 60 * 1000){
+    if (tmpTime < 2 * 60 * 1000 && tmpTime > 24 * 60 * 60 * 1000) {
       throw new SdkError(SdkErrorCode.SDK_CODE_1, 'Invalid Duration value (>= 2m, <= 24h)');
     }
     return result;
