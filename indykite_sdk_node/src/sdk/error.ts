@@ -14,8 +14,8 @@ export class SkdErrorText {
   static SDK_CODE_3 = (s: string) => `No ${s} response.`;
   static SDK_CODE_4 = (id1: string, id2: string | undefined) =>
     `Update returned with different id: request.id=${id1}, response.id=${id2 ?? 'undefined'}.`;
-  static SDK_CODE_5 = (s: string) => `No ${s} record response`;
-  static SDK_CODE_6 = (s: string) => `No data in ${s} response`;
+  static SDK_CODE_5 = (s: string) => `No data in ${s} response`;
+  static SDK_CODE_6 = (s: string) => `No ${s} record response`;
 }
 
 export class SdkError extends Error {
