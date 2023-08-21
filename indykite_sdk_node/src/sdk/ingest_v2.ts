@@ -58,7 +58,7 @@ export class IngestV2Client {
         if (err) reject(err);
         else if (!response)
           reject(
-            new SdkError(SdkErrorCode.SDK_CODE_5, SkdErrorText.SDK_CODE_5(IngestV2Client.name)),
+            new SdkError(SdkErrorCode.SDK_CODE_6, SkdErrorText.SDK_CODE_6(IngestV2Client.name)),
           );
         else {
           resolve(response);
