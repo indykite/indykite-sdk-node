@@ -8,6 +8,7 @@ import {
 import { SdkError, SdkErrorCode } from './error';
 import { Readable } from 'stream';
 import { IndexFixer, streamKeeper } from './utils/stream';
+import { Record as RecordModel } from '../grpc/indykite/ingest/v1beta2/model';
 
 export interface IngestResourceRecord {
   externalId: string;
@@ -62,6 +63,10 @@ export class IngestRecord {
 
   marshal(): IngestRecordRequest {
     return this.request;
+  }
+
+  getRecord(): RecordModel {
+    return this.request.record as RecordModel;
   }
 }
 
