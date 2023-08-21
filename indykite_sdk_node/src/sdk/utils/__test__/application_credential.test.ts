@@ -67,6 +67,5 @@ describe('Crednetial', () => {
     const tokenLifetimeDate: Date = credObj.getTokenLifetime(true) as Date;
     expect(tokenLifetimeString).not.toBeUndefined();
     expect(tokenLifetimeDate).not.toBeUndefined();
-    // const err = new SdkError(SdkErrorCode.SDK_CODE_1, 'Must run buildToken() function first');
   });
 });

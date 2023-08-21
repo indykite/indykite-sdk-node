@@ -284,7 +284,6 @@ export class Utils {
     if (!pattern.test(duration)) {
       throw new SdkError(SdkErrorCode.SDK_CODE_1, 'Invalid Duration format!');
     }
-    const SIXTY = 60;
     const result = new Date(0, 0, 0, 0, 0, 0, 0);
     const values = duration.split(pattern);
     if (
@@ -298,18 +297,18 @@ export class Utils {
     }
     // hours
     if (values && values[1]) {
-      const hours = parseFloat(values[1].replace('h', '')) * SIXTY;
-      result.setHours((hours / SIXTY) >> 0, hours % SIXTY); // force integers
+      const hours = parseFloat(values[1].replace('h', '')) * 60;
+      result.setHours((hours / 60) >> 0, hours % 60); // force integers
     }
     // minutes
     if (values && values[2]) {
-      const minutes = parseFloat(values[2].replace('m', '')) * SIXTY;
-      result.setMinutes((minutes / SIXTY) >> 0, minutes % SIXTY); // force integers
+      const minutes = parseFloat(values[2].replace('m', '')) * 60;
+      result.setMinutes((minutes / 60) >> 0, minutes % 60); // force integers
     }
     // seconds
     if (values && values[3]) {
-      const seconds = parseFloat(values[3].replace('s', '')) * SIXTY;
-      result.setSeconds((seconds / SIXTY) >> 0, seconds % SIXTY); // force integers
+      const seconds = parseFloat(values[3].replace('s', '')) * 60;
+      result.setSeconds((seconds / 60) >> 0, seconds % 60); // force integers
     }
     // miliseconds
     if (values && values[4]) {
