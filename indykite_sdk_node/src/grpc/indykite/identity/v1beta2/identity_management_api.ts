@@ -489,7 +489,7 @@ export interface CreateInvitationRequest {
     tenantId: string;
     /**
      * ReferenceId is unique external reference identifier to correlate the lifecycle events with.
-     * Must be unique withing the whole application
+     * Must be unique within the whole application
      *
      * @generated from protobuf field: string reference_id = 2;
      */

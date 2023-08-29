@@ -50,6 +50,7 @@ describe('registerServiceAccountCredential', () => {
                 expireTime: req.expireTime,
                 serviceAccountId: 'service-account-id',
                 bookmark: 'bookmark-token',
+                displayName: 'Service Account Credentials'
               });
             }
             return {} as SurfaceCall;

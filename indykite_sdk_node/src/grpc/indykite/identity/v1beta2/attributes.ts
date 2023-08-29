@@ -76,7 +76,7 @@ export interface Schema {
  *  "xsd": "http://www.w3.org/2001/XMLSchema#",
  *  "xsd1": "hhttp://www.w3.org/2001/XMLSchema#"
  *
- * 2. Type definition withing the names space.
+ * 2. Type definition within the names space.
  * 3. Exact property name, it may be unambiguous if there is one definition but ambiguous without
  * knowing exactly which Object Type defines this property.
  *

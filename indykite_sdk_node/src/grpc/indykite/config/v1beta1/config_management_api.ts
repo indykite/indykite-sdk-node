@@ -41,6 +41,7 @@ import { AuthenteqProviderConfig } from "./model";
 import { WebAuthnProviderConfig } from "./model";
 import { PasswordProviderConfig } from "./model";
 import { OAuth2ClientConfig } from "./model";
+import { AuditSinkConfig } from "./model";
 import { SMSServiceConfig } from "./model";
 import { EmailServiceConfig } from "./model";
 import { AuthFlowConfig } from "./model";
@@ -1259,7 +1260,7 @@ export interface RegisterApplicationAgentCredentialRequest {
     };
     /**
      * The expiration time sets the last time when client connecting with this credential is accepted.
-     * If this time is withing 2 years the server automatically generates a token with the same lifetime else the
+     * If this time is within 2 years the server automatically generates a token with the same lifetime else the
      * client SDK must generate JWT token to connect to API.
      *
      * @generated from protobuf field: google.protobuf.Timestamp expire_time = 5;
@@ -1710,6 +1711,10 @@ export interface RegisterServiceAccountCredentialResponse {
      * @generated from protobuf field: string bookmark = 7;
      */
     bookmark: string;
+    /**
+     * @generated from protobuf field: string display_name = 8;
+     */
+    displayName: string;
 }
 /**
  * @generated from protobuf message indykite.config.v1beta1.ReadServiceAccountCredentialRequest
@@ -2238,6 +2243,12 @@ export interface CreateConfigNodeRequest {
          */
         smsServiceConfig: SMSServiceConfig;
     } | {
+        oneofKind: "auditSinkConfig";
+        /**
+         * @generated from protobuf field: indykite.config.v1beta1.AuditSinkConfig audit_sink_config = 28;
+         */
+        auditSinkConfig: AuditSinkConfig;
+    } | {
         oneofKind: "oauth2ClientConfig";
         /**
          * OAuth2ClientConfig for third party OIDC clients.
@@ -2371,6 +2382,10 @@ export interface ReadConfigNodeRequest {
      * @generated from protobuf field: repeated string bookmarks = 2;
      */
     bookmarks: string[];
+    /**
+     * @generated from protobuf field: int64 version = 28;
+     */
+    version: string;
 }
 /**
  * ReadConfigNodeResponse represents a result of operation request.
@@ -2432,6 +2447,12 @@ export interface UpdateConfigNodeRequest {
          * @generated from protobuf field: indykite.config.v1beta1.SMSServiceConfig sms_service_config = 17;
          */
         smsServiceConfig: SMSServiceConfig;
+    } | {
+        oneofKind: "auditSinkConfig";
+        /**
+         * @generated from protobuf field: indykite.config.v1beta1.AuditSinkConfig audit_sink_config = 28;
+         */
+        auditSinkConfig: AuditSinkConfig;
     } | {
         oneofKind: "oauth2ClientConfig";
         /**
@@ -7048,11 +7069,12 @@ class RegisterServiceAccountCredentialResponse$Type extends MessageType<Register
             { no: 4, name: "service_account_config", kind: "scalar", T: 12 /*ScalarType.BYTES*/ },
             { no: 5, name: "create_time", kind: "message", T: () => Timestamp },
             { no: 6, name: "expire_time", kind: "message", T: () => Timestamp },
-            { no: 7, name: "bookmark", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+            { no: 7, name: "bookmark", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 8, name: "display_name", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
         ]);
     }
     create(value?: PartialMessage<RegisterServiceAccountCredentialResponse>): RegisterServiceAccountCredentialResponse {
-        const message = { id: "", serviceAccountId: "", kid: "", serviceAccountConfig: new Uint8Array(0), bookmark: "" };
+        const message = { id: "", serviceAccountId: "", kid: "", serviceAccountConfig: new Uint8Array(0), bookmark: "", displayName: "" };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<RegisterServiceAccountCredentialResponse>(this, message, value);
@@ -7083,6 +7105,9 @@ class RegisterServiceAccountCredentialResponse$Type extends MessageType<Register
                     break;
                 case /* string bookmark */ 7:
                     message.bookmark = reader.string();
+                    break;
+                case /* string display_name */ 8:
+                    message.displayName = reader.string();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -7117,6 +7142,9 @@ class RegisterServiceAccountCredentialResponse$Type extends MessageType<Register
         /* string bookmark = 7; */
         if (message.bookmark !== "")
             writer.tag(7, WireType.LengthDelimited).string(message.bookmark);
+        /* string display_name = 8; */
+        if (message.displayName !== "")
+            writer.tag(8, WireType.LengthDelimited).string(message.displayName);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -8302,17 +8330,18 @@ class CreateConfigNodeRequest$Type extends MessageType<CreateConfigNodeRequest> 
             { no: 4, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "2", maxLen: "63", pattern: "^[a-z](?:[-a-z0-9]{0,61}[a-z0-9])$" } } } },
             { no: 5, name: "display_name", kind: "message", T: () => StringValue, options: { "validate.rules": { string: { minLen: "2", maxLen: "254", ignoreEmpty: true } } } },
             { no: 6, name: "description", kind: "message", T: () => StringValue, options: { "validate.rules": { string: { minLen: "2", maxLen: "254", ignoreEmpty: true } } } },
-            { no: 15, name: "auth_flow_config", kind: "message", oneof: "config", T: () => AuthFlowConfig },
-            { no: 16, name: "email_service_config", kind: "message", oneof: "config", T: () => EmailServiceConfig },
-            { no: 17, name: "sms_service_config", kind: "message", oneof: "config", T: () => SMSServiceConfig },
-            { no: 18, name: "oauth2_client_config", kind: "message", oneof: "config", T: () => OAuth2ClientConfig },
-            { no: 20, name: "password_provider_config", kind: "message", oneof: "config", T: () => PasswordProviderConfig },
-            { no: 21, name: "webauthn_provider_config", kind: "message", oneof: "config", T: () => WebAuthnProviderConfig },
-            { no: 22, name: "authenteq_provider_config", kind: "message", oneof: "config", T: () => AuthenteqProviderConfig },
-            { no: 23, name: "safr_provider_config", kind: "message", oneof: "config", T: () => SAFRProviderConfig },
-            { no: 25, name: "authorization_policy_config", kind: "message", oneof: "config", T: () => AuthorizationPolicyConfig },
-            { no: 26, name: "knowledge_graph_schema_config", kind: "message", oneof: "config", T: () => KnowledgeGraphSchemaConfig },
-            { no: 27, name: "readid_provider_config", kind: "message", oneof: "config", T: () => ReadIDProviderConfig },
+            { no: 15, name: "auth_flow_config", kind: "message", oneof: "config", T: () => AuthFlowConfig, options: { "validate.rules": { message: { required: true } } } },
+            { no: 16, name: "email_service_config", kind: "message", oneof: "config", T: () => EmailServiceConfig, options: { "validate.rules": { message: { required: true } } } },
+            { no: 17, name: "sms_service_config", kind: "message", oneof: "config", T: () => SMSServiceConfig, options: { "validate.rules": { message: { required: true } } } },
+            { no: 28, name: "audit_sink_config", kind: "message", oneof: "config", T: () => AuditSinkConfig, options: { "validate.rules": { message: { required: true } } } },
+            { no: 18, name: "oauth2_client_config", kind: "message", oneof: "config", T: () => OAuth2ClientConfig, options: { "validate.rules": { message: { required: true } } } },
+            { no: 20, name: "password_provider_config", kind: "message", oneof: "config", T: () => PasswordProviderConfig, options: { "validate.rules": { message: { required: true } } } },
+            { no: 21, name: "webauthn_provider_config", kind: "message", oneof: "config", T: () => WebAuthnProviderConfig, options: { "validate.rules": { message: { required: true } } } },
+            { no: 22, name: "authenteq_provider_config", kind: "message", oneof: "config", T: () => AuthenteqProviderConfig, options: { "validate.rules": { message: { required: true } } } },
+            { no: 23, name: "safr_provider_config", kind: "message", oneof: "config", T: () => SAFRProviderConfig, options: { "validate.rules": { message: { required: true } } } },
+            { no: 25, name: "authorization_policy_config", kind: "message", oneof: "config", T: () => AuthorizationPolicyConfig, options: { "validate.rules": { message: { required: true } } } },
+            { no: 26, name: "knowledge_graph_schema_config", kind: "message", oneof: "config", T: () => KnowledgeGraphSchemaConfig, options: { "validate.rules": { message: { required: true } } } },
+            { no: 27, name: "readid_provider_config", kind: "message", oneof: "config", T: () => ReadIDProviderConfig, options: { "validate.rules": { message: { required: true } } } },
             { no: 7, name: "bookmarks", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { items: { string: { minLen: "40", pattern: "^[a-zA-Z0-9_-]{40,}$" } } } } } }
         ]);
     }
@@ -8356,6 +8385,12 @@ class CreateConfigNodeRequest$Type extends MessageType<CreateConfigNodeRequest> 
                     message.config = {
                         oneofKind: "smsServiceConfig",
                         smsServiceConfig: SMSServiceConfig.internalBinaryRead(reader, reader.uint32(), options, (message.config as any).smsServiceConfig)
+                    };
+                    break;
+                case /* indykite.config.v1beta1.AuditSinkConfig audit_sink_config */ 28:
+                    message.config = {
+                        oneofKind: "auditSinkConfig",
+                        auditSinkConfig: AuditSinkConfig.internalBinaryRead(reader, reader.uint32(), options, (message.config as any).auditSinkConfig)
                     };
                     break;
                 case /* indykite.config.v1beta1.OAuth2ClientConfig oauth2_client_config */ 18:
@@ -8442,6 +8477,9 @@ class CreateConfigNodeRequest$Type extends MessageType<CreateConfigNodeRequest> 
         /* indykite.config.v1beta1.SMSServiceConfig sms_service_config = 17; */
         if (message.config.oneofKind === "smsServiceConfig")
             SMSServiceConfig.internalBinaryWrite(message.config.smsServiceConfig, writer.tag(17, WireType.LengthDelimited).fork(), options).join();
+        /* indykite.config.v1beta1.AuditSinkConfig audit_sink_config = 28; */
+        if (message.config.oneofKind === "auditSinkConfig")
+            AuditSinkConfig.internalBinaryWrite(message.config.auditSinkConfig, writer.tag(28, WireType.LengthDelimited).fork(), options).join();
         /* indykite.config.v1beta1.OAuth2ClientConfig oauth2_client_config = 18; */
         if (message.config.oneofKind === "oauth2ClientConfig")
             OAuth2ClientConfig.internalBinaryWrite(message.config.oauth2ClientConfig, writer.tag(18, WireType.LengthDelimited).fork(), options).join();
@@ -8580,11 +8618,12 @@ class ReadConfigNodeRequest$Type extends MessageType<ReadConfigNodeRequest> {
     constructor() {
         super("indykite.config.v1beta1.ReadConfigNodeRequest", [
             { no: 1, name: "id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
-            { no: 2, name: "bookmarks", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { items: { string: { minLen: "40", pattern: "^[a-zA-Z0-9_-]{40,}$" } } } } } }
+            { no: 2, name: "bookmarks", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { items: { string: { minLen: "40", pattern: "^[a-zA-Z0-9_-]{40,}$" } } } } } },
+            { no: 28, name: "version", kind: "scalar", T: 3 /*ScalarType.INT64*/ }
         ]);
     }
     create(value?: PartialMessage<ReadConfigNodeRequest>): ReadConfigNodeRequest {
-        const message = { id: "", bookmarks: [] };
+        const message = { id: "", bookmarks: [], version: "0" };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<ReadConfigNodeRequest>(this, message, value);
@@ -8600,6 +8639,9 @@ class ReadConfigNodeRequest$Type extends MessageType<ReadConfigNodeRequest> {
                     break;
                 case /* repeated string bookmarks */ 2:
                     message.bookmarks.push(reader.string());
+                    break;
+                case /* int64 version */ 28:
+                    message.version = reader.int64().toString();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -8619,6 +8661,9 @@ class ReadConfigNodeRequest$Type extends MessageType<ReadConfigNodeRequest> {
         /* repeated string bookmarks = 2; */
         for (let i = 0; i < message.bookmarks.length; i++)
             writer.tag(2, WireType.LengthDelimited).string(message.bookmarks[i]);
+        /* int64 version = 28; */
+        if (message.version !== "0")
+            writer.tag(28, WireType.Varint).int64(message.version);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -8684,17 +8729,18 @@ class UpdateConfigNodeRequest$Type extends MessageType<UpdateConfigNodeRequest> 
             { no: 2, name: "etag", kind: "message", T: () => StringValue },
             { no: 3, name: "display_name", kind: "message", T: () => StringValue, options: { "validate.rules": { string: { minLen: "2", maxLen: "254", ignoreEmpty: true } } } },
             { no: 4, name: "description", kind: "message", T: () => StringValue, options: { "validate.rules": { string: { minLen: "2", maxLen: "254", ignoreEmpty: true } } } },
-            { no: 15, name: "auth_flow_config", kind: "message", oneof: "config", T: () => AuthFlowConfig },
-            { no: 16, name: "email_service_config", kind: "message", oneof: "config", T: () => EmailServiceConfig },
-            { no: 17, name: "sms_service_config", kind: "message", oneof: "config", T: () => SMSServiceConfig },
-            { no: 18, name: "oauth2_client_config", kind: "message", oneof: "config", T: () => OAuth2ClientConfig },
-            { no: 20, name: "password_provider_config", kind: "message", oneof: "config", T: () => PasswordProviderConfig },
-            { no: 21, name: "webauthn_provider_config", kind: "message", oneof: "config", T: () => WebAuthnProviderConfig },
-            { no: 22, name: "authenteq_provider_config", kind: "message", oneof: "config", T: () => AuthenteqProviderConfig },
-            { no: 23, name: "safr_provider_config", kind: "message", oneof: "config", T: () => SAFRProviderConfig },
-            { no: 25, name: "authorization_policy_config", kind: "message", oneof: "config", T: () => AuthorizationPolicyConfig },
-            { no: 26, name: "knowledge_graph_schema_config", kind: "message", oneof: "config", T: () => KnowledgeGraphSchemaConfig },
-            { no: 27, name: "readid_provider_config", kind: "message", oneof: "config", T: () => ReadIDProviderConfig },
+            { no: 15, name: "auth_flow_config", kind: "message", oneof: "config", T: () => AuthFlowConfig, options: { "validate.rules": { message: { required: true } } } },
+            { no: 16, name: "email_service_config", kind: "message", oneof: "config", T: () => EmailServiceConfig, options: { "validate.rules": { message: { required: true } } } },
+            { no: 17, name: "sms_service_config", kind: "message", oneof: "config", T: () => SMSServiceConfig, options: { "validate.rules": { message: { required: true } } } },
+            { no: 28, name: "audit_sink_config", kind: "message", oneof: "config", T: () => AuditSinkConfig, options: { "validate.rules": { message: { required: true } } } },
+            { no: 18, name: "oauth2_client_config", kind: "message", oneof: "config", T: () => OAuth2ClientConfig, options: { "validate.rules": { message: { required: true } } } },
+            { no: 20, name: "password_provider_config", kind: "message", oneof: "config", T: () => PasswordProviderConfig, options: { "validate.rules": { message: { required: true } } } },
+            { no: 21, name: "webauthn_provider_config", kind: "message", oneof: "config", T: () => WebAuthnProviderConfig, options: { "validate.rules": { message: { required: true } } } },
+            { no: 22, name: "authenteq_provider_config", kind: "message", oneof: "config", T: () => AuthenteqProviderConfig, options: { "validate.rules": { message: { required: true } } } },
+            { no: 23, name: "safr_provider_config", kind: "message", oneof: "config", T: () => SAFRProviderConfig, options: { "validate.rules": { message: { required: true } } } },
+            { no: 25, name: "authorization_policy_config", kind: "message", oneof: "config", T: () => AuthorizationPolicyConfig, options: { "validate.rules": { message: { required: true } } } },
+            { no: 26, name: "knowledge_graph_schema_config", kind: "message", oneof: "config", T: () => KnowledgeGraphSchemaConfig, options: { "validate.rules": { message: { required: true } } } },
+            { no: 27, name: "readid_provider_config", kind: "message", oneof: "config", T: () => ReadIDProviderConfig, options: { "validate.rules": { message: { required: true } } } },
             { no: 5, name: "bookmarks", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { items: { string: { minLen: "40", pattern: "^[a-zA-Z0-9_-]{40,}$" } } } } } }
         ]);
     }
@@ -8738,6 +8784,12 @@ class UpdateConfigNodeRequest$Type extends MessageType<UpdateConfigNodeRequest> 
                     message.config = {
                         oneofKind: "smsServiceConfig",
                         smsServiceConfig: SMSServiceConfig.internalBinaryRead(reader, reader.uint32(), options, (message.config as any).smsServiceConfig)
+                    };
+                    break;
+                case /* indykite.config.v1beta1.AuditSinkConfig audit_sink_config */ 28:
+                    message.config = {
+                        oneofKind: "auditSinkConfig",
+                        auditSinkConfig: AuditSinkConfig.internalBinaryRead(reader, reader.uint32(), options, (message.config as any).auditSinkConfig)
                     };
                     break;
                 case /* indykite.config.v1beta1.OAuth2ClientConfig oauth2_client_config */ 18:
@@ -8824,6 +8876,9 @@ class UpdateConfigNodeRequest$Type extends MessageType<UpdateConfigNodeRequest> 
         /* indykite.config.v1beta1.SMSServiceConfig sms_service_config = 17; */
         if (message.config.oneofKind === "smsServiceConfig")
             SMSServiceConfig.internalBinaryWrite(message.config.smsServiceConfig, writer.tag(17, WireType.LengthDelimited).fork(), options).join();
+        /* indykite.config.v1beta1.AuditSinkConfig audit_sink_config = 28; */
+        if (message.config.oneofKind === "auditSinkConfig")
+            AuditSinkConfig.internalBinaryWrite(message.config.auditSinkConfig, writer.tag(28, WireType.LengthDelimited).fork(), options).join();
         /* indykite.config.v1beta1.OAuth2ClientConfig oauth2_client_config = 18; */
         if (message.config.oneofKind === "oauth2ClientConfig")
             OAuth2ClientConfig.internalBinaryWrite(message.config.oauth2ClientConfig, writer.tag(18, WireType.LengthDelimited).fork(), options).join();

@@ -669,7 +669,7 @@ class DigitalTwin$Type extends MessageType<DigitalTwin> {
             { no: 1, name: "external_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "1", maxLen: "256" } } } },
             { no: 2, name: "type", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "64", pattern: "^([A-Z][a-z]+)+$" } } } },
             { no: 3, name: "tags", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { maxItems: "32", unique: true, items: { string: { maxLen: "64", pattern: "^([A-Z][a-z]+)+$" } } } } } },
-            { no: 5, name: "tenant_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$", ignoreEmpty: true } } } },
+            { no: 5, name: "tenant_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
             { no: 6, name: "identity_properties", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => IdentityProperty, options: { "validate.rules": { repeated: { maxItems: "10" } } } },
             { no: 7, name: "properties", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Property, options: { "validate.rules": { repeated: { maxItems: "10" } } } }
         ]);

@@ -167,9 +167,10 @@ export class ConfigClient {
   readEmailServiceConfiguration(
     id: string,
     bookmarks: string[] = [],
+    version: string = "",
   ): Promise<EmailServiceConfigType> {
     return new Promise((resolve, reject) => {
-      this.client.readConfigNode({ id, bookmarks }, (err, response) => {
+      this.client.readConfigNode({ id, bookmarks, version }, (err, response) => {
         if (err) reject(err);
         else
           try {
@@ -369,9 +370,9 @@ export class ConfigClient {
    * config.displayName = 'My new name';
    * await sdk.updateAuthflowConfiguration(config);
    */
-  readAuthflowConfiguration(id: string, bookmarks: string[] = []): Promise<AuthFlow> {
+  readAuthflowConfiguration(id: string, bookmarks: string[] = [], version: string = ""): Promise<AuthFlow> {
     return new Promise((resolve, reject) => {
-      this.client.readConfigNode({ id, bookmarks }, (err, response) => {
+      this.client.readConfigNode({ id, bookmarks, version }, (err, response) => {
         if (err) reject(err);
         else
           try {
@@ -553,9 +554,10 @@ export class ConfigClient {
   readWebAuthnProviderConfiguration(
     id: string,
     bookmarks: string[] = [],
+    version: string = ""
   ): Promise<WebAuthnProvider> {
     return new Promise((resolve, reject) => {
-      this.client.readConfigNode({ id, bookmarks }, (err, response) => {
+      this.client.readConfigNode({ id, bookmarks, version }, (err, response) => {
         if (err) reject(err);
         else if (response && response.configNode) {
           const ret = ConfigNodeFactory.createInstance(response.configNode) as WebAuthnProvider;
@@ -758,9 +760,10 @@ export class ConfigClient {
   readAuthorizationPolicyConfiguration(
     id: string,
     bookmarks: string[] = [],
+    version: string = ""
   ): Promise<AuthorizationPolicy> {
     return new Promise((resolve, reject) => {
-      this.client.readConfigNode({ id, bookmarks }, (err, response) => {
+      this.client.readConfigNode({ id, bookmarks, version }, (err, response) => {
         if (err) reject(err);
         else if (response && response.configNode) {
           const ret = ConfigNodeFactory.createInstance(response.configNode) as AuthorizationPolicy;
@@ -2349,9 +2352,9 @@ export class ConfigClient {
    * @example
    * const oauth2Client = await sdk.readOAuth2Client(OAUTH2_CLIENT_ID);
    */
-  readOAuth2Client(id: string, bookmarks: string[] = []): Promise<OAuth2Client> {
+  readOAuth2Client(id: string, bookmarks: string[] = [], version: string = ""): Promise<OAuth2Client> {
     return new Promise((resolve, reject) => {
-      this.client.readConfigNode({ id, bookmarks }, (err, response) => {
+      this.client.readConfigNode({ id, bookmarks, version }, (err, response) => {
         if (err) reject(err);
         else
           try {
