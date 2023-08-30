@@ -157,3 +157,47 @@ describe('when the config contains all properties', () => {
     });
   });
 });
+
+describe('when the config contains some properties', () => {
+  let client: OAuth2Client;
+
+  beforeEach(() => {
+    client = new OAuth2Client({
+      providerType: ProviderType.LINKEDIN_COM,
+      clientId: 'client-id',
+      clientSecret: 'client-secret',
+      redirectUri: ['https://example.com/page'],
+      name: 'instance-name',
+      displayName: 'Instance Name',
+      description: 'Instance description',
+      privateKeyId: 'private-key-id',
+      privateKeyPem: Buffer.from('private-key-pem'),
+      teamId: 'team-id',
+    });
+  });
+
+  it('marshals correctly', () => {
+    expect(client.marshal()).toEqual({
+      providerType: ProviderType.LINKEDIN_COM,
+      clientId: 'client-id',
+      clientSecret: 'client-secret',
+      redirectUri: ['https://example.com/page'],
+      defaultScopes: [],
+      allowedScopes: [],
+      allowSignup: false,
+      issuer: '',
+      authorizationEndpoint: '',
+      tokenEndpoint: '',
+      discoveryUrl: '',
+      userinfoEndpoint: '',
+      jwksUri: '',
+      imageUrl: '',
+      tenant: '',
+      hostedDomain: '',
+      authStyle: AuthStyle.INVALID,
+      privateKeyId: 'private-key-id',
+      privateKeyPem: Uint8Array.from(Buffer.from('private-key-pem')),
+      teamId: 'team-id',
+    });
+  });
+});
