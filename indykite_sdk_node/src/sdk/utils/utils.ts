@@ -296,22 +296,22 @@ export class Utils {
       throw new SdkError(SdkErrorCode.SDK_CODE_1, 'Invalid Duration format!');
     }
     // hours
-    if (values && values[1]) {
+    if (values?.[1]) {
       const hours = parseFloat(values[1].replace('h', '')) * 60;
       result.setHours((hours / 60) >> 0, hours % 60); // force integers
     }
     // minutes
-    if (values && values[2]) {
+    if (values?.[2]) {
       const minutes = parseFloat(values[2].replace('m', '')) * 60;
       result.setMinutes((minutes / 60) >> 0, minutes % 60); // force integers
     }
     // seconds
-    if (values && values[3]) {
+    if (values?.[3]) {
       const seconds = parseFloat(values[3].replace('s', '')) * 60;
       result.setSeconds((seconds / 60) >> 0, seconds % 60); // force integers
     }
     // miliseconds
-    if (values && values[4]) {
+    if (values?.[4]) {
       const mseconds = parseFloat(values[4].replace('ms', ''));
       result.setMilliseconds(mseconds >> 0); // force integers
     }

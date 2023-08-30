@@ -43,7 +43,6 @@ export class ServiceAccountCredential extends Credential {
     if (!this.privateKey.alg) {
       throw new SdkError(SdkErrorCode.SDK_CODE_1, 'Missing private key algorithm');
     }
-    // set expirationTime
     if (!this.expirationTime) {
       this.setExpirationTime();
     }
