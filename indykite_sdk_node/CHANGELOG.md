@@ -1,4 +1,11 @@
 # Changelog
+## [0.4.1](https://github.com/indykite/indykite-sdk-node/compare/v0.4.0...v0.4.1) (2023-08-30)
+
+
+### Features
+
+* new identity client ([f143c44](https://github.com/indykite/indykite-sdk-node/commit/f143c448d77da0d43126f8fa11ff700e8f14f6ea))
+
 ## [0.4.0](https://github.com/indykite/indykite-sdk-node/compare/v0.3.4...v0.4.0) (2023-05-30)
 
 
