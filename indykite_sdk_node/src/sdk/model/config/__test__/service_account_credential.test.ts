@@ -58,6 +58,7 @@ describe('deserialize', () => {
             ),
           ),
           bookmark: 'bookmark-token',
+          displayName: 'Service Account Credential',
         },
         'Service Account Credential',
         'service-account-id',

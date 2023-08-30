@@ -302,6 +302,8 @@ describe('readWebAuthnProviderConfiguration', () => {
         );
       webauthnProvider = await sdk.readWebAuthnProviderConfiguration(
         'webauthn-provider-id-request',
+        [],
+        '',
       );
     });
 
@@ -310,6 +312,7 @@ describe('readWebAuthnProviderConfiguration', () => {
         {
           id: 'webauthn-provider-id-request',
           bookmarks: [],
+          version: '',
         },
         expect.any(Function),
       );

@@ -952,6 +952,12 @@ export interface ConfigNode {
          */
         emailServiceConfig: EmailServiceConfig;
     } | {
+        oneofKind: "auditSinkConfig";
+        /**
+         * @generated from protobuf field: indykite.config.v1beta1.AuditSinkConfig audit_sink_config = 28;
+         */
+        auditSinkConfig: AuditSinkConfig;
+    } | {
         oneofKind: "oauth2ClientConfig";
         /**
          * OAuth2ClientConfig for third party OIDC clients.
@@ -2360,6 +2366,61 @@ export interface KnowledgeGraphSchemaHelpers {
      * @generated from protobuf field: string directives = 2;
      */
     directives: string;
+}
+/**
+ * @generated from protobuf message indykite.config.v1beta1.AuditSinkConfig
+ */
+export interface AuditSinkConfig {
+    /**
+     * @generated from protobuf oneof: provider
+     */
+    provider: {
+        oneofKind: "kafka";
+        /**
+         * @generated from protobuf field: indykite.config.v1beta1.KafkaSinkConfig kafka = 1;
+         */
+        kafka: KafkaSinkConfig;
+    } | {
+        oneofKind: undefined;
+    };
+}
+/**
+ * @generated from protobuf message indykite.config.v1beta1.KafkaSinkConfig
+ */
+export interface KafkaSinkConfig {
+    /**
+     * Brokers specify Kafka destinations to connect to.
+     *
+     * @generated from protobuf field: repeated string brokers = 1;
+     */
+    brokers: string[];
+    /**
+     * Topic name must be valid based on source code:
+     * https://github.com/apache/kafka/blob/0.10.2/core/src/main/scala/kafka/common/Topic.scala#L29-L30
+     *
+     * @generated from protobuf field: string topic = 2;
+     */
+    topic: string;
+    /**
+     * DisableTLS can force using non-secure connection.
+     *
+     * @generated from protobuf field: bool disable_tls = 3;
+     */
+    disableTls: boolean;
+    /**
+     * TLSSkipVerify defines whenever not to verify TLS certificate. Ignored if TLS is disabled.
+     *
+     * @generated from protobuf field: bool tls_skip_verify = 4;
+     */
+    tlsSkipVerify: boolean;
+    /**
+     * @generated from protobuf field: string username = 5;
+     */
+    username: string;
+    /**
+     * @generated from protobuf field: string password = 6;
+     */
+    password: string;
 }
 // 
 // 
@@ -4073,16 +4134,17 @@ class ConfigNode$Type extends MessageType<ConfigNode> {
             { no: 10, name: "customer_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
             { no: 11, name: "app_space_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
             { no: 12, name: "tenant_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
-            { no: 14, name: "auth_flow_config", kind: "message", oneof: "config", T: () => AuthFlowConfig },
-            { no: 15, name: "email_service_config", kind: "message", oneof: "config", T: () => EmailServiceConfig },
-            { no: 16, name: "oauth2_client_config", kind: "message", oneof: "config", T: () => OAuth2ClientConfig },
-            { no: 18, name: "password_provider_config", kind: "message", oneof: "config", T: () => PasswordProviderConfig },
-            { no: 19, name: "webauthn_provider_config", kind: "message", oneof: "config", T: () => WebAuthnProviderConfig },
-            { no: 20, name: "authenteq_provider_config", kind: "message", oneof: "config", T: () => AuthenteqProviderConfig },
-            { no: 21, name: "safr_provider_config", kind: "message", oneof: "config", T: () => SAFRProviderConfig },
-            { no: 23, name: "authorization_policy_config", kind: "message", oneof: "config", T: () => AuthorizationPolicyConfig },
-            { no: 24, name: "knowledge_graph_schema_config", kind: "message", oneof: "config", T: () => KnowledgeGraphSchemaConfig },
-            { no: 25, name: "readid_provider_config", kind: "message", oneof: "config", T: () => ReadIDProviderConfig }
+            { no: 14, name: "auth_flow_config", kind: "message", oneof: "config", T: () => AuthFlowConfig, options: { "validate.rules": { message: { required: true } } } },
+            { no: 15, name: "email_service_config", kind: "message", oneof: "config", T: () => EmailServiceConfig, options: { "validate.rules": { message: { required: true } } } },
+            { no: 28, name: "audit_sink_config", kind: "message", oneof: "config", T: () => AuditSinkConfig, options: { "validate.rules": { message: { required: true } } } },
+            { no: 16, name: "oauth2_client_config", kind: "message", oneof: "config", T: () => OAuth2ClientConfig, options: { "validate.rules": { message: { required: true } } } },
+            { no: 18, name: "password_provider_config", kind: "message", oneof: "config", T: () => PasswordProviderConfig, options: { "validate.rules": { message: { required: true } } } },
+            { no: 19, name: "webauthn_provider_config", kind: "message", oneof: "config", T: () => WebAuthnProviderConfig, options: { "validate.rules": { message: { required: true } } } },
+            { no: 20, name: "authenteq_provider_config", kind: "message", oneof: "config", T: () => AuthenteqProviderConfig, options: { "validate.rules": { message: { required: true } } } },
+            { no: 21, name: "safr_provider_config", kind: "message", oneof: "config", T: () => SAFRProviderConfig, options: { "validate.rules": { message: { required: true } } } },
+            { no: 23, name: "authorization_policy_config", kind: "message", oneof: "config", T: () => AuthorizationPolicyConfig, options: { "validate.rules": { message: { required: true } } } },
+            { no: 24, name: "knowledge_graph_schema_config", kind: "message", oneof: "config", T: () => KnowledgeGraphSchemaConfig, options: { "validate.rules": { message: { required: true } } } },
+            { no: 25, name: "readid_provider_config", kind: "message", oneof: "config", T: () => ReadIDProviderConfig, options: { "validate.rules": { message: { required: true } } } }
         ]);
     }
     create(value?: PartialMessage<ConfigNode>): ConfigNode {
@@ -4149,6 +4211,12 @@ class ConfigNode$Type extends MessageType<ConfigNode> {
                     message.config = {
                         oneofKind: "emailServiceConfig",
                         emailServiceConfig: EmailServiceConfig.internalBinaryRead(reader, reader.uint32(), options, (message.config as any).emailServiceConfig)
+                    };
+                    break;
+                case /* indykite.config.v1beta1.AuditSinkConfig audit_sink_config */ 28:
+                    message.config = {
+                        oneofKind: "auditSinkConfig",
+                        auditSinkConfig: AuditSinkConfig.internalBinaryRead(reader, reader.uint32(), options, (message.config as any).auditSinkConfig)
                     };
                     break;
                 case /* indykite.config.v1beta1.OAuth2ClientConfig oauth2_client_config */ 16:
@@ -4259,6 +4327,9 @@ class ConfigNode$Type extends MessageType<ConfigNode> {
         /* indykite.config.v1beta1.EmailServiceConfig email_service_config = 15; */
         if (message.config.oneofKind === "emailServiceConfig")
             EmailServiceConfig.internalBinaryWrite(message.config.emailServiceConfig, writer.tag(15, WireType.LengthDelimited).fork(), options).join();
+        /* indykite.config.v1beta1.AuditSinkConfig audit_sink_config = 28; */
+        if (message.config.oneofKind === "auditSinkConfig")
+            AuditSinkConfig.internalBinaryWrite(message.config.auditSinkConfig, writer.tag(28, WireType.LengthDelimited).fork(), options).join();
         /* indykite.config.v1beta1.OAuth2ClientConfig oauth2_client_config = 16; */
         if (message.config.oneofKind === "oauth2ClientConfig")
             OAuth2ClientConfig.internalBinaryWrite(message.config.oauth2ClientConfig, writer.tag(16, WireType.LengthDelimited).fork(), options).join();
@@ -7118,3 +7189,135 @@ class KnowledgeGraphSchemaHelpers$Type extends MessageType<KnowledgeGraphSchemaH
  * @generated MessageType for protobuf message indykite.config.v1beta1.KnowledgeGraphSchemaHelpers
  */
 export const KnowledgeGraphSchemaHelpers = new KnowledgeGraphSchemaHelpers$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class AuditSinkConfig$Type extends MessageType<AuditSinkConfig> {
+    constructor() {
+        super("indykite.config.v1beta1.AuditSinkConfig", [
+            { no: 1, name: "kafka", kind: "message", oneof: "provider", T: () => KafkaSinkConfig, options: { "validate.rules": { message: { required: true } } } }
+        ]);
+    }
+    create(value?: PartialMessage<AuditSinkConfig>): AuditSinkConfig {
+        const message = { provider: { oneofKind: undefined } };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<AuditSinkConfig>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: AuditSinkConfig): AuditSinkConfig {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* indykite.config.v1beta1.KafkaSinkConfig kafka */ 1:
+                    message.provider = {
+                        oneofKind: "kafka",
+                        kafka: KafkaSinkConfig.internalBinaryRead(reader, reader.uint32(), options, (message.provider as any).kafka)
+                    };
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: AuditSinkConfig, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* indykite.config.v1beta1.KafkaSinkConfig kafka = 1; */
+        if (message.provider.oneofKind === "kafka")
+            KafkaSinkConfig.internalBinaryWrite(message.provider.kafka, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message indykite.config.v1beta1.AuditSinkConfig
+ */
+export const AuditSinkConfig = new AuditSinkConfig$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class KafkaSinkConfig$Type extends MessageType<KafkaSinkConfig> {
+    constructor() {
+        super("indykite.config.v1beta1.KafkaSinkConfig", [
+            { no: 1, name: "brokers", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { unique: true, items: { string: { minLen: "8", uriRef: true } }, ignoreEmpty: true } } } },
+            { no: 2, name: "topic", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "1", maxLen: "249", pattern: "^[a-zA-Z0-9._-]+$" } } } },
+            { no: 3, name: "disable_tls", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 4, name: "tls_skip_verify", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 5, name: "username", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 6, name: "password", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+        ]);
+    }
+    create(value?: PartialMessage<KafkaSinkConfig>): KafkaSinkConfig {
+        const message = { brokers: [], topic: "", disableTls: false, tlsSkipVerify: false, username: "", password: "" };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<KafkaSinkConfig>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: KafkaSinkConfig): KafkaSinkConfig {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* repeated string brokers */ 1:
+                    message.brokers.push(reader.string());
+                    break;
+                case /* string topic */ 2:
+                    message.topic = reader.string();
+                    break;
+                case /* bool disable_tls */ 3:
+                    message.disableTls = reader.bool();
+                    break;
+                case /* bool tls_skip_verify */ 4:
+                    message.tlsSkipVerify = reader.bool();
+                    break;
+                case /* string username */ 5:
+                    message.username = reader.string();
+                    break;
+                case /* string password */ 6:
+                    message.password = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: KafkaSinkConfig, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* repeated string brokers = 1; */
+        for (let i = 0; i < message.brokers.length; i++)
+            writer.tag(1, WireType.LengthDelimited).string(message.brokers[i]);
+        /* string topic = 2; */
+        if (message.topic !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.topic);
+        /* bool disable_tls = 3; */
+        if (message.disableTls !== false)
+            writer.tag(3, WireType.Varint).bool(message.disableTls);
+        /* bool tls_skip_verify = 4; */
+        if (message.tlsSkipVerify !== false)
+            writer.tag(4, WireType.Varint).bool(message.tlsSkipVerify);
+        /* string username = 5; */
+        if (message.username !== "")
+            writer.tag(5, WireType.LengthDelimited).string(message.username);
+        /* string password = 6; */
+        if (message.password !== "")
+            writer.tag(6, WireType.LengthDelimited).string(message.password);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message indykite.config.v1beta1.KafkaSinkConfig
+ */
+export const KafkaSinkConfig = new KafkaSinkConfig$Type();
