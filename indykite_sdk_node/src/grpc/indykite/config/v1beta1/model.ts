@@ -28,7 +28,6 @@ import { MESSAGE_TYPE } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 import { Int64Value } from "../../../google/protobuf/wrappers";
 import { Value } from "../../objects/v1beta1/struct";
-import { BoolValue } from "../../../google/protobuf/wrappers";
 import { Duration } from "../../../google/protobuf/duration";
 import { Timestamp } from "../../../google/protobuf/timestamp";
 import { StringValue } from "../../../google/protobuf/wrappers";
@@ -1648,11 +1647,6 @@ export interface AuthFlowConfig {
      */
     source: Uint8Array;
     /**
-     * @deprecated
-     * @generated from protobuf field: google.protobuf.BoolValue set_default = 3 [deprecated = true];
-     */
-    setDefault?: BoolValue; // use the container config to modify!
-    /**
      * Default is read only value indicating this instance is used by default.
      *
      * @generated from protobuf field: bool default = 4;
@@ -1793,11 +1787,6 @@ export interface EmailServiceConfig {
      * @generated from protobuf field: indykite.config.v1beta1.Email default_from_address = 1;
      */
     defaultFromAddress?: Email;
-    /**
-     * @deprecated
-     * @generated from protobuf field: google.protobuf.BoolValue set_default = 3 [deprecated = true];
-     */
-    setDefault?: BoolValue; // use the container config to modify!
     /**
      * Default is read only value indicating this instance is used by default.
      *
@@ -5322,7 +5311,6 @@ class AuthFlowConfig$Type extends MessageType<AuthFlowConfig> {
         super("indykite.config.v1beta1.AuthFlowConfig", [
             { no: 1, name: "source_format", kind: "enum", T: () => ["indykite.config.v1beta1.AuthFlowConfig.Format", AuthFlowConfig_Format, "FORMAT_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
             { no: 2, name: "source", kind: "scalar", T: 12 /*ScalarType.BYTES*/, options: { "validate.rules": { bytes: { maxLen: "1048576" } } } },
-            { no: 3, name: "set_default", kind: "message", T: () => BoolValue },
             { no: 4, name: "default", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
@@ -5343,9 +5331,6 @@ class AuthFlowConfig$Type extends MessageType<AuthFlowConfig> {
                     break;
                 case /* bytes source */ 2:
                     message.source = reader.bytes();
-                    break;
-                case /* google.protobuf.BoolValue set_default = 3 [deprecated = true];*/ 3:
-                    message.setDefault = BoolValue.internalBinaryRead(reader, reader.uint32(), options, message.setDefault);
                     break;
                 case /* bool default */ 4:
                     message.default = reader.bool();
@@ -5368,9 +5353,6 @@ class AuthFlowConfig$Type extends MessageType<AuthFlowConfig> {
         /* bytes source = 2; */
         if (message.source.length)
             writer.tag(2, WireType.LengthDelimited).bytes(message.source);
-        /* google.protobuf.BoolValue set_default = 3 [deprecated = true]; */
-        if (message.setDefault)
-            BoolValue.internalBinaryWrite(message.setDefault, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
         /* bool default = 4; */
         if (message.default !== false)
             writer.tag(4, WireType.Varint).bool(message.default);
@@ -5700,7 +5682,6 @@ class EmailServiceConfig$Type extends MessageType<EmailServiceConfig> {
     constructor() {
         super("indykite.config.v1beta1.EmailServiceConfig", [
             { no: 1, name: "default_from_address", kind: "message", T: () => Email },
-            { no: 3, name: "set_default", kind: "message", T: () => BoolValue },
             { no: 8, name: "default", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 4, name: "sendgrid", kind: "message", oneof: "provider", T: () => SendGridProviderConfig, options: { "validate.rules": { message: { required: true } } } },
             { no: 5, name: "mailjet", kind: "message", oneof: "provider", T: () => MailJetProviderConfig, options: { "validate.rules": { message: { required: true } } } },
@@ -5726,9 +5707,6 @@ class EmailServiceConfig$Type extends MessageType<EmailServiceConfig> {
             switch (fieldNo) {
                 case /* indykite.config.v1beta1.Email default_from_address */ 1:
                     message.defaultFromAddress = Email.internalBinaryRead(reader, reader.uint32(), options, message.defaultFromAddress);
-                    break;
-                case /* google.protobuf.BoolValue set_default = 3 [deprecated = true];*/ 3:
-                    message.setDefault = BoolValue.internalBinaryRead(reader, reader.uint32(), options, message.setDefault);
                     break;
                 case /* bool default */ 8:
                     message.default = reader.bool();
@@ -5784,9 +5762,6 @@ class EmailServiceConfig$Type extends MessageType<EmailServiceConfig> {
         /* indykite.config.v1beta1.Email default_from_address = 1; */
         if (message.defaultFromAddress)
             Email.internalBinaryWrite(message.defaultFromAddress, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* google.protobuf.BoolValue set_default = 3 [deprecated = true]; */
-        if (message.setDefault)
-            BoolValue.internalBinaryWrite(message.setDefault, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
         /* bool default = 8; */
         if (message.default !== false)
             writer.tag(8, WireType.Varint).bool(message.default);
