@@ -276,4 +276,50 @@ export class Utils {
     const part5 = id.substring(20, 32);
     return `${part1}-${part2}-${part3}-${part4}-${part5}`;
   }
+
+  static parseDuration(duration: string): Date {
+    const pattern = new RegExp(
+      /^(?!$)(\d+(?:\.\d+)?h)?(\d+(?:\.\d+)?m)?(\d+(?:\.\d+)?s)?(\d+(?:\.\d+)?ms)?(\d+(?:\.\d+)?us)?(\d+(?:\.\d+)?ns)?/g,
+    );
+    if (!pattern.test(duration)) {
+      throw new SdkError(SdkErrorCode.SDK_CODE_1, 'Invalid Duration format!');
+    }
+    const result = new Date(0, 0, 0, 0, 0, 0, 0);
+    const values = duration.split(pattern);
+    if (
+      values &&
+      !values.reduce((acc, value, idx) => {
+        if (!idx) return acc;
+        return acc || !value;
+      }, false)
+    ) {
+      throw new SdkError(SdkErrorCode.SDK_CODE_1, 'Invalid Duration format!');
+    }
+    // hours
+    if (values?.[1]) {
+      const hours = parseFloat(values[1].replace('h', '')) * 60;
+      result.setHours((hours / 60) >> 0, hours % 60); // force integers
+    }
+    // minutes
+    if (values?.[2]) {
+      const minutes = parseFloat(values[2].replace('m', '')) * 60;
+      result.setMinutes((minutes / 60) >> 0, minutes % 60); // force integers
+    }
+    // seconds
+    if (values?.[3]) {
+      const seconds = parseFloat(values[3].replace('s', '')) * 60;
+      result.setSeconds((seconds / 60) >> 0, seconds % 60); // force integers
+    }
+    // miliseconds
+    if (values?.[4]) {
+      const mseconds = parseFloat(values[4].replace('ms', ''));
+      result.setMilliseconds(mseconds >> 0); // force integers
+    }
+    // ignore us (micro - idx 5),ns (nano - idx 6)
+    const tmpTime = result.getTime();
+    if (tmpTime < 2 * 60 * 1000 && tmpTime > 24 * 60 * 60 * 1000) {
+      throw new SdkError(SdkErrorCode.SDK_CODE_1, 'Invalid Duration value (>= 2m, <= 24h)');
+    }
+    return result;
+  }
 }

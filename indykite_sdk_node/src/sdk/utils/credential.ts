@@ -2,12 +2,16 @@ import { JWK } from 'jose';
 import { JARVIS_DEFAULT_ENDPOINT } from '../utils/consts';
 
 import { SdkErrorCode, SdkError } from '../error';
+import { Utils } from '../utils/utils';
 
 export abstract class Credential {
+  static readonly DEFAULT_LIFETIME: string = '1h';
+
   protected endpoint: string = JARVIS_DEFAULT_ENDPOINT;
   privateKey: JWK;
   protected jwt?: string;
   protected expirationTime?: Date;
+  protected tokenLifetime?: string;
 
   protected constructor(privateKey: JWK) {
     this.privateKey = privateKey;
@@ -27,6 +31,33 @@ export abstract class Credential {
       return this.expirationTime;
     }
     throw new SdkError(SdkErrorCode.SDK_CODE_1, 'Must run buildToken() function first');
+  }
+
+  getTokenLifetime(dateFormat = false): string | Date {
+    if (this.tokenLifetime) {
+      // Set default in case one is not set
+      this.setTokenLifetime(Credential.DEFAULT_LIFETIME);
+    }
+    if (dateFormat) {
+      return Utils.parseDuration(this.tokenLifetime ?? Credential.DEFAULT_LIFETIME);
+    }
+    return this.tokenLifetime ?? Credential.DEFAULT_LIFETIME;
+  }
+
+  protected setExpirationTime() {
+    const tkLifetime = Utils.parseDuration(this.tokenLifetime ?? Credential.DEFAULT_LIFETIME);
+    this.expirationTime = new Date();
+    this.expirationTime.setMilliseconds(
+      this.expirationTime.getMilliseconds() + tkLifetime.getMilliseconds(),
+    );
+    this.expirationTime.setSeconds(this.expirationTime.getSeconds() + tkLifetime.getSeconds());
+    this.expirationTime.setMinutes(this.expirationTime.getMinutes() + tkLifetime.getMinutes());
+    this.expirationTime.setHours(this.expirationTime.getHours() + tkLifetime.getHours());
+  }
+
+  setTokenLifetime(tokenLifetime: string) {
+    Utils.parseDuration(tokenLifetime);
+    this.tokenLifetime = tokenLifetime;
   }
 
   getEndpoint(): string {

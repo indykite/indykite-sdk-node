@@ -42,6 +42,7 @@ describe('properties', () => {
     expect(challengeInstance.getApprovedScopeNames()).toEqual([]);
     expect(challengeInstance.isDenied()).toEqual(false);
     expect(challengeInstance.getDenialReason()).toEqual(null);
+    expect(challengeInstance.isDenied()).toEqual(false);
   });
 
   describe('approve scopes', () => {
@@ -51,6 +52,26 @@ describe('properties', () => {
 
     it('adds approved scopes', () => {
       expect(challengeInstance.getApprovedScopeNames()).toEqual(['openid']);
+    });
+  });
+
+  describe('remember scopes', () => {
+    beforeEach(() => {
+      challengeInstance.setRemember(true);
+      challengeInstance.setRememberFor('5');
+      challengeInstance.setSession({
+        accessToken: {
+          fields: { answer: { value: { oneofKind: 'doubleValue', doubleValue: 42 } } },
+        },
+      });
+    });
+
+    it('adds approved scopes', () => {
+      expect(challengeInstance.getRemember()).toEqual(true);
+      expect(challengeInstance.getRememberFor()).toEqual('5');
+      expect(challengeInstance.getSession()?.accessToken?.fields?.answer?.value?.oneofKind).toEqual(
+        'doubleValue',
+      );
     });
   });
 

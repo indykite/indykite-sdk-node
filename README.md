@@ -38,6 +38,25 @@ yarn add @indykiteone/indykite-sdk-node
 ### Config 
 The IndyKite SDK reads config properties from a JSON formatted configuration file. The path to this file is provided to your application via an environment variable  Once you have the config information (After you've registered and set up an application space) then you need to create the json file (you can find an example here: [example_config.json](https://github.com/indykite/indykite-sdk-node/blob/master/indykite_sdk_node/config_example.json)) then create the `INDYKITE_APPLICATION_CREDENTIALS_FILE` environment variable which will contain the path to the json configuration file (see the example below).
 
+ Optional parameters:
+ - baseUrl
+ - defaultTenantId
+ - endpoint
+ - tokenLifetime
+
+#### *tokenLifetime*
+A token lifetime is 1h by default. You can change this time (from 2 minutes to 24h) by adding a tokenLifetime parameter.
+It will have to be human-readable and Golang-like see -> https://pkg.go.dev/time#ParseDuration
+
+Examples: 30m, 1.5h, 2h45m
+```json
+{
+  ...
+  "tokenLifetime": "30m"
+}
+```
+
+
 ```shell
 export INDYKITE_APPLICATION_CREDENTIALS_FILE=<path_to_config_file>/config.json
 ```

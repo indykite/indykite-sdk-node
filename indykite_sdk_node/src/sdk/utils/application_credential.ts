@@ -20,6 +20,8 @@ export class ApplicationCredential extends Credential {
       objectCredential.privateKeyJWK as JWK,
     );
     if (objectCredential.endpoint) appCredential.withEndpoint(objectCredential.endpoint);
+    if (objectCredential.tokenLifetime)
+      appCredential.setTokenLifetime(objectCredential.tokenLifetime);
     return appCredential;
   }
 
@@ -41,13 +43,14 @@ export class ApplicationCredential extends Credential {
     if (!this.privateKey.alg) {
       throw new SdkError(SdkErrorCode.SDK_CODE_1, 'Missing private key algorithm');
     }
-    this.expirationTime = new Date();
-    this.expirationTime.setDate(this.expirationTime.getDate() + 1);
+    if (!this.expirationTime) {
+      this.setExpirationTime();
+    }
     this.jwt = await new SignJWT({})
       .setProtectedHeader({ alg: this.privateKey.alg, kid: this.privateKey.kid })
       .setIssuedAt()
       .setIssuer(this.appAgentId)
-      .setExpirationTime(Utils.dateToSeconds(this.expirationTime))
+      .setExpirationTime(Utils.dateToSeconds(this.getExpirationTime()))
       .setJti(String(v4()))
       .setSubject(this.appAgentId)
       .sign(parsedKey);
