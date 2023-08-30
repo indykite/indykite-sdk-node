@@ -167,7 +167,7 @@ export class ConfigClient {
   readEmailServiceConfiguration(
     id: string,
     bookmarks: string[] = [],
-    version: string = "",
+    version = '',
   ): Promise<EmailServiceConfigType> {
     return new Promise((resolve, reject) => {
       this.client.readConfigNode({ id, bookmarks, version }, (err, response) => {
@@ -370,7 +370,7 @@ export class ConfigClient {
    * config.displayName = 'My new name';
    * await sdk.updateAuthflowConfiguration(config);
    */
-  readAuthflowConfiguration(id: string, bookmarks: string[] = [], version: string = ""): Promise<AuthFlow> {
+  readAuthflowConfiguration(id: string, bookmarks: string[] = [], version = ''): Promise<AuthFlow> {
     return new Promise((resolve, reject) => {
       this.client.readConfigNode({ id, bookmarks, version }, (err, response) => {
         if (err) reject(err);
@@ -554,7 +554,7 @@ export class ConfigClient {
   readWebAuthnProviderConfiguration(
     id: string,
     bookmarks: string[] = [],
-    version: string = ""
+    version = '',
   ): Promise<WebAuthnProvider> {
     return new Promise((resolve, reject) => {
       this.client.readConfigNode({ id, bookmarks, version }, (err, response) => {
@@ -760,7 +760,7 @@ export class ConfigClient {
   readAuthorizationPolicyConfiguration(
     id: string,
     bookmarks: string[] = [],
-    version: string = ""
+    version = '',
   ): Promise<AuthorizationPolicy> {
     return new Promise((resolve, reject) => {
       this.client.readConfigNode({ id, bookmarks, version }, (err, response) => {
@@ -2352,7 +2352,7 @@ export class ConfigClient {
    * @example
    * const oauth2Client = await sdk.readOAuth2Client(OAUTH2_CLIENT_ID);
    */
-  readOAuth2Client(id: string, bookmarks: string[] = [], version: string = ""): Promise<OAuth2Client> {
+  readOAuth2Client(id: string, bookmarks: string[] = [], version = ''): Promise<OAuth2Client> {
     return new Promise((resolve, reject) => {
       this.client.readConfigNode({ id, bookmarks, version }, (err, response) => {
         if (err) reject(err);

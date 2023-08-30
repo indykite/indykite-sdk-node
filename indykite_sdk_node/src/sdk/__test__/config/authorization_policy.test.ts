@@ -310,7 +310,7 @@ describe('readAuthorizationPolicyConfiguration', () => {
         {
           id: 'authorization-policy-id-request',
           bookmarks: [],
-          version: "",
+          version: '',
         },
         expect.any(Function),
       );

@@ -1,8 +1,10 @@
 import { SdkError, SdkErrorCode, SkdErrorText } from './error';
 import { SdkClient } from './client/client';
 import { IdentityKnowledgeAPIClient } from '../grpc/indykite/knowledge/v1beta1/identity_knowledge_api.grpc-client';
-import { IdentityKnowledgeRequest, IdentityKnowledgeResponse } from '../grpc/indykite/knowledge/v1beta1/identity_knowledge_api';
-import { Operation } from '../grpc/indykite/knowledge/v1beta1/model';
+import {
+  IdentityKnowledgeRequest,
+  IdentityKnowledgeResponse,
+} from '../grpc/indykite/knowledge/v1beta1/identity_knowledge_api';
 
 export class IdentityKnowledgeClient {
   private client: IdentityKnowledgeAPIClient;
@@ -24,7 +26,7 @@ export class IdentityKnowledgeClient {
   }
 
   /**
-   * 
+   *
    * @since 0.4.1
    * @example
    *  const dt = await sdk.identityKnowledge(
@@ -43,7 +45,10 @@ export class IdentityKnowledgeClient {
         } else {
           if (!response) {
             reject(
-              new SdkError(SdkErrorCode.SDK_CODE_3, SkdErrorText.SDK_CODE_3(IdentityKnowledgeClient.name)),
+              new SdkError(
+                SdkErrorCode.SDK_CODE_3,
+                SkdErrorText.SDK_CODE_3(IdentityKnowledgeClient.name),
+              ),
             );
           } else {
             resolve(response);
@@ -52,5 +57,4 @@ export class IdentityKnowledgeClient {
       });
     });
   }
-  
 }

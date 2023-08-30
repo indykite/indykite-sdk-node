@@ -1,9 +1,12 @@
-import { IdentityKnowledgeRequest, IdentityKnowledgeResponse } from "../../../grpc/indykite/knowledge/v1beta1/identity_knowledge_api";
+import {
+  IdentityKnowledgeRequest,
+  IdentityKnowledgeResponse,
+} from '../../../grpc/indykite/knowledge/v1beta1/identity_knowledge_api';
 import { CallOptions, Metadata } from '@grpc/grpc-js';
 import { ServiceError, SurfaceCall } from '@grpc/grpc-js/build/src/call';
 import { Value } from '../../../grpc/indykite/objects/v1beta1/struct';
-import { IdentityKnowledgeClient } from "../../knowledge";
-import { Operation } from "../../../grpc/indykite/knowledge/v1beta1/model";
+import { IdentityKnowledgeClient } from '../../knowledge';
+import { Operation } from '../../../grpc/indykite/knowledge/v1beta1/model';
 import { applicationTokenMock } from '../../utils/test_utils';
 import { Utils } from '../../utils/utils';
 
@@ -18,9 +21,7 @@ afterEach(() => {
 });
 
 describe('identityKnowledge', () => {
-
   describe('when the response does not contain an error', () => {
-    
     let result: IdentityKnowledgeResponse;
 
     beforeEach(async () => {
@@ -32,43 +33,43 @@ describe('identityKnowledge', () => {
             | CallOptions
             | ((err: ServiceError | null, response: IdentityKnowledgeResponse) => void),
         ): SurfaceCall => {
-          if (typeof res === 'function') 
+          if (typeof res === 'function')
             res(null, {
-                paths: [
+              paths: [
+                {
+                  nodes: [
                     {
-                        nodes: [
-                            {
-                                id:         "gid:abc",
-                                externalId: "1010",
-                                type:       "Person",
-                                tags:       [],
-                                properties: [
-                                    {
-                                        key: "abc",
-                                        value: Value.fromJson(Utils.objectToJsonValue('something'))
-                                    },
-                                ],
-                            },
-                            {
-                                id:         "gid:cba",
-                                externalId: "0101",
-                                type:       "Truck",
-                                properties: [],
-                                tags:       [],
-                            },
-                        ],
-                        relationships: [
-                            {
-                                id:         "gid:xxx",
-                                externalId: "999",
-                                type:       "SERVICES",
-                                source:     "",
-                                target:     "",
-                                properties: {}
-                            },
-                        ],
+                      id: 'gid:abc',
+                      externalId: '1010',
+                      type: 'Person',
+                      tags: [],
+                      properties: [
+                        {
+                          key: 'abc',
+                          value: Value.fromJson(Utils.objectToJsonValue('something')),
+                        },
+                      ],
                     },
-                ]
+                    {
+                      id: 'gid:cba',
+                      externalId: '0101',
+                      type: 'Truck',
+                      properties: [],
+                      tags: [],
+                    },
+                  ],
+                  relationships: [
+                    {
+                      id: 'gid:xxx',
+                      externalId: '999',
+                      type: 'SERVICES',
+                      source: '',
+                      target: '',
+                      properties: {},
+                    },
+                  ],
+                },
+              ],
             });
           return {} as SurfaceCall;
         },
@@ -76,22 +77,20 @@ describe('identityKnowledge', () => {
 
       jest.spyOn(sdk['client'], 'identityKnowledge').mockImplementation(mockFunc);
 
-      result = await sdk.identityKnowledge(
-        {
-            operation: Operation.READ,
-            path: "(:DigitalTwin)-[:SERVICES]->(n:Truck)",
-            conditions: "WHERE n.external_id = \"1234\"",
-        }
-      );
+      result = await sdk.identityKnowledge({
+        operation: Operation.READ,
+        path: '(:DigitalTwin)-[:SERVICES]->(n:Truck)',
+        conditions: 'WHERE n.external_id = "1234"',
+      });
     });
 
     it('sends a correct request', () => {
       expect(sdk['client'].identityKnowledge).toBeCalledTimes(1);
       expect(sdk['client'].identityKnowledge).toBeCalledWith(
         {
-            operation: Operation.READ,
-            path: "(:DigitalTwin)-[:SERVICES]->(n:Truck)",
-            conditions: "WHERE n.external_id = \"1234\"",
+          operation: Operation.READ,
+          path: '(:DigitalTwin)-[:SERVICES]->(n:Truck)',
+          conditions: 'WHERE n.external_id = "1234"',
         },
         expect.any(Function),
       );
@@ -100,14 +99,13 @@ describe('identityKnowledge', () => {
     it('returns a correct response', () => {
       expect(result.paths.length).toEqual(1);
       expect(result.paths[0].nodes.length).toEqual(2);
-      expect(result.paths[0].nodes[0].id).toEqual("gid:abc");
+      expect(result.paths[0].nodes[0].id).toEqual('gid:abc');
       expect(result.paths[0].relationships.length).toEqual(1);
-      expect(result.paths[0].relationships[0].id).toEqual("gid:xxx");
+      expect(result.paths[0].relationships[0].id).toEqual('gid:xxx');
     });
   });
 
   describe('when the response does not contain any value', () => {
-
     let caughtError: unknown;
 
     beforeEach(async () => {
@@ -130,8 +128,8 @@ describe('identityKnowledge', () => {
         caughtError = undefined;
         await sdk.identityKnowledge({
           operation: Operation.READ,
-          path: "(:DigitalTwin)-[:SERVICES]->(n:Truck)",
-          conditions: "WHERE n.external_id = \"1234\"",
+          path: '(:DigitalTwin)-[:SERVICES]->(n:Truck)',
+          conditions: 'WHERE n.external_id = "1234"',
         });
       } catch (err) {
         caughtError = err;
@@ -166,8 +164,8 @@ describe('identityKnowledge', () => {
       try {
         await sdk.identityKnowledge({
           operation: Operation.READ,
-          path: "(:DigitalTwin)-[:SERVICES]->(n:Truck)",
-          conditions: "WHERE n.external_id = \"1234\"",
+          path: '(:DigitalTwin)-[:SERVICES]->(n:Truck)',
+          conditions: 'WHERE n.external_id = "1234"',
         });
       } catch (err) {
         caughtError = err;

@@ -16,7 +16,9 @@ describe('when a new client is created', () => {
         .spyOn(SdkClient, 'createIdentityInstance')
         .mockImplementation(() => Promise.resolve({ client: {} } as SdkClient));
 
-      returnedValue = await IdentityKnowledgeClient.createInstance(JSON.stringify(applicationTokenMock));
+      returnedValue = await IdentityKnowledgeClient.createInstance(
+        JSON.stringify(applicationTokenMock),
+      );
     });
 
     it('creates a new instance', () => {

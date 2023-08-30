@@ -323,7 +323,7 @@ describe('readOAuth2Client', () => {
         {
           id: 'oauth2-client-id-request',
           bookmarks: [],
-          version: "",
+          version: '',
         },
         expect.any(Function),
       );
