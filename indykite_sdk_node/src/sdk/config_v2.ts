@@ -36,6 +36,8 @@ import {
   ListApplicationAgentsRequest,
   ListApplicationSpacesRequest,
   ListApplicationsRequest,
+  ListConfigNodeVersionsRequest,
+  ListConfigNodeVersionsResponse,
   ListTenantsRequest,
   ReadApplicationAgentCredentialRequest,
   ReadApplicationAgentCredentialResponse,
@@ -1359,10 +1361,11 @@ export class ConfigClientV2 {
     });
   }
 
-  static newReadConfigNodeRequest(id: string, bookmarks: string[] = []): ReadConfigNodeRequest {
+  static newReadConfigNodeRequest(id: string, bookmarks: string[] = [], version: string = ""): ReadConfigNodeRequest {
     return {
       id,
       bookmarks,
+      version
     } as ReadConfigNodeRequest;
   }
 
@@ -2107,6 +2110,29 @@ export class ConfigClientV2 {
                 SdkErrorCode.SDK_CODE_4,
                 SkdErrorText.SDK_CODE_4(tenantRequest.id, response?.id),
               ),
+            );
+          }
+        }
+      });
+    });
+  }
+
+  /**
+   * 
+   * @since 0.4.2
+   * @param request 
+   */
+  listConfigNodeVersions(request: ListConfigNodeVersionsRequest):Promise<ListConfigNodeVersionsResponse>{
+    return new Promise((resolve, reject) => {
+      this.client.listConfigNodeVersions(request, (err, response) => {
+        if (err) {
+          reject(err);
+        } else {
+          if (response?.configNodes) {
+            resolve(response);
+          } else {
+            reject(
+              new SdkError(SdkErrorCode.SDK_CODE_3, SkdErrorText.SDK_CODE_3(ConfigNode.name)),
             );
           }
         }

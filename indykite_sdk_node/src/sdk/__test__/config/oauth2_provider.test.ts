@@ -94,7 +94,6 @@ describe('createOAuth2Provider', () => {
               frontChannelConsentUri: { default: 'https://example.com/consent' },
               requestObjectSigningAlg: '',
               requestUris: [],
-              trusted: false,
             },
             bookmarks: [],
           },
@@ -138,7 +137,6 @@ describe('createOAuth2Provider', () => {
               frontChannelConsentUri: { default: 'https://example.com/consent' },
               requestObjectSigningAlg: '',
               requestUris: [],
-              trusted: false,
             },
             displayName: { value: 'Display Name' },
             description: { value: 'Description' },
@@ -308,7 +306,6 @@ describe('readOAuth2Provider', () => {
         frontChannelConsentUri: { default: 'https://example.com/consent' },
         requestObjectSigningAlg: '',
         requestUris: [],
-        trusted: false,
       });
     });
   });

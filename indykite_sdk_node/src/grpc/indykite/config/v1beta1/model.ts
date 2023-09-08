@@ -1010,6 +1010,12 @@ export interface ConfigNode {
     } | {
         oneofKind: undefined;
     };
+    /**
+     * Optional. If document is versioned, can be set to a specific document version
+     *
+     * @generated from protobuf field: int64 version = 29;
+     */
+    version: string;
 }
 /**
  * OAuth2ClientConfig is a service specific set of parameters
@@ -1567,10 +1573,6 @@ export interface OAuth2ProviderConfig {
     frontChannelConsentUri: {
         [key: string]: string;
     };
-    /**
-     * @generated from protobuf field: bool trusted = 10;
-     */
-    trusted: boolean;
 }
 /**
  * @generated from protobuf message indykite.config.v1beta1.WebAuthnProviderConfig
@@ -4144,11 +4146,12 @@ class ConfigNode$Type extends MessageType<ConfigNode> {
             { no: 21, name: "safr_provider_config", kind: "message", oneof: "config", T: () => SAFRProviderConfig, options: { "validate.rules": { message: { required: true } } } },
             { no: 23, name: "authorization_policy_config", kind: "message", oneof: "config", T: () => AuthorizationPolicyConfig, options: { "validate.rules": { message: { required: true } } } },
             { no: 24, name: "knowledge_graph_schema_config", kind: "message", oneof: "config", T: () => KnowledgeGraphSchemaConfig, options: { "validate.rules": { message: { required: true } } } },
-            { no: 25, name: "readid_provider_config", kind: "message", oneof: "config", T: () => ReadIDProviderConfig, options: { "validate.rules": { message: { required: true } } } }
+            { no: 25, name: "readid_provider_config", kind: "message", oneof: "config", T: () => ReadIDProviderConfig, options: { "validate.rules": { message: { required: true } } } },
+            { no: 29, name: "version", kind: "scalar", T: 3 /*ScalarType.INT64*/ }
         ]);
     }
     create(value?: PartialMessage<ConfigNode>): ConfigNode {
-        const message = { id: "", name: "", displayName: "", createdBy: "", updatedBy: "", etag: "", customerId: "", appSpaceId: "", tenantId: "", config: { oneofKind: undefined } };
+        const message = { id: "", name: "", displayName: "", createdBy: "", updatedBy: "", etag: "", customerId: "", appSpaceId: "", tenantId: "", config: { oneofKind: undefined }, version: "0" };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<ConfigNode>(this, message, value);
@@ -4267,6 +4270,9 @@ class ConfigNode$Type extends MessageType<ConfigNode> {
                         readidProviderConfig: ReadIDProviderConfig.internalBinaryRead(reader, reader.uint32(), options, (message.config as any).readidProviderConfig)
                     };
                     break;
+                case /* int64 version */ 29:
+                    message.version = reader.int64().toString();
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -4354,6 +4360,9 @@ class ConfigNode$Type extends MessageType<ConfigNode> {
         /* indykite.config.v1beta1.ReadIDProviderConfig readid_provider_config = 25; */
         if (message.config.oneofKind === "readidProviderConfig")
             ReadIDProviderConfig.internalBinaryWrite(message.config.readidProviderConfig, writer.tag(25, WireType.LengthDelimited).fork(), options).join();
+        /* int64 version = 29; */
+        if (message.version !== "0")
+            writer.tag(29, WireType.Varint).int64(message.version);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -5049,12 +5058,11 @@ class OAuth2ProviderConfig$Type extends MessageType<OAuth2ProviderConfig> {
             { no: 6, name: "request_uris", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { items: { string: { uri: true } } } } } },
             { no: 7, name: "request_object_signing_alg", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { in: ["RS256", "RS384", "RS512", "PS256", "PS384", "PS512", "ES256", "ES384", "ES512", "ES256K", "HS256", "HS384", "HS512", "EdDSA"], ignoreEmpty: true } } } },
             { no: 8, name: "front_channel_login_uri", kind: "map", K: 9 /*ScalarType.STRING*/, V: { kind: "scalar", T: 9 /*ScalarType.STRING*/ }, options: { "validate.rules": { map: { minPairs: "1", keys: { string: { maxLen: "32" } }, values: { string: { uri: true } } } } } },
-            { no: 9, name: "front_channel_consent_uri", kind: "map", K: 9 /*ScalarType.STRING*/, V: { kind: "scalar", T: 9 /*ScalarType.STRING*/ }, options: { "validate.rules": { map: { minPairs: "1", keys: { string: { maxLen: "32" } }, values: { string: { uri: true } } } } } },
-            { no: 10, name: "trusted", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+            { no: 9, name: "front_channel_consent_uri", kind: "map", K: 9 /*ScalarType.STRING*/, V: { kind: "scalar", T: 9 /*ScalarType.STRING*/ }, options: { "validate.rules": { map: { minPairs: "1", keys: { string: { maxLen: "32" } }, values: { string: { uri: true } } } } } }
         ]);
     }
     create(value?: PartialMessage<OAuth2ProviderConfig>): OAuth2ProviderConfig {
-        const message = { grantTypes: [], responseTypes: [], scopes: [], tokenEndpointAuthMethod: [], tokenEndpointAuthSigningAlg: [], requestUris: [], requestObjectSigningAlg: "", frontChannelLoginUri: {}, frontChannelConsentUri: {}, trusted: false };
+        const message = { grantTypes: [], responseTypes: [], scopes: [], tokenEndpointAuthMethod: [], tokenEndpointAuthSigningAlg: [], requestUris: [], requestObjectSigningAlg: "", frontChannelLoginUri: {}, frontChannelConsentUri: {} };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<OAuth2ProviderConfig>(this, message, value);
@@ -5103,9 +5111,6 @@ class OAuth2ProviderConfig$Type extends MessageType<OAuth2ProviderConfig> {
                     break;
                 case /* map<string, string> front_channel_consent_uri */ 9:
                     this.binaryReadMap9(message.frontChannelConsentUri, reader, options);
-                    break;
-                case /* bool trusted */ 10:
-                    message.trusted = reader.bool();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -5190,9 +5195,6 @@ class OAuth2ProviderConfig$Type extends MessageType<OAuth2ProviderConfig> {
         /* map<string, string> front_channel_consent_uri = 9; */
         for (let k of Object.keys(message.frontChannelConsentUri))
             writer.tag(9, WireType.LengthDelimited).fork().tag(1, WireType.LengthDelimited).string(k).tag(2, WireType.LengthDelimited).string(message.frontChannelConsentUri[k]).join();
-        /* bool trusted = 10; */
-        if (message.trusted !== false)
-            writer.tag(10, WireType.Varint).bool(message.trusted);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

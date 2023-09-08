@@ -294,6 +294,7 @@ describe('readAuthorizationPolicyConfiguration', () => {
                       tags: [],
                     },
                   },
+                  version: "1"
                 },
               });
             }
