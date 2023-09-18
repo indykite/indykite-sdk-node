@@ -120,9 +120,11 @@ describe('createOAuth2Provider', () => {
               frontChannelConsentUri: { default: 'https://example.com/consent' },
               requestObjectSigningAlg: '',
               requestUris: [],
-              trusted: true,
+
             },
             bookmarks: [],
+            description: undefined,
+            displayName: undefined,
           },
           expect.any(Function),
         );
@@ -173,7 +175,6 @@ describe('createOAuth2Provider', () => {
               frontChannelConsentUri: { default: 'https://example.com/consent' },
               requestObjectSigningAlg: '',
               requestUris: [],
-              trusted: true,
             },
             displayName: { value: 'Display Name' },
             description: { value: 'Description' },
@@ -359,7 +360,6 @@ describe('readOAuth2Provider', () => {
         frontChannelConsentUri: { default: 'https://example.com/consent' },
         requestObjectSigningAlg: '',
         requestUris: [],
-        trusted: false,
       });
     });
   });

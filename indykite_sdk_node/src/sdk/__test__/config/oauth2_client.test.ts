@@ -284,6 +284,7 @@ describe('readOAuth2Client', () => {
                   appSpaceId: 'app-space-id',
                   tenantId: 'tenant-id',
                   name: 'oauth2-client-name',
+                  version: "1",
                   config: {
                     oneofKind: 'oauth2ClientConfig',
                     oauth2ClientConfig: {

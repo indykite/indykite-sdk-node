@@ -280,6 +280,7 @@ describe('readWebAuthnProviderConfiguration', () => {
                   appSpaceId: 'app-space-id',
                   tenantId: 'tenant-id',
                   name: 'instance-name',
+                  version: "1",
                   config: {
                     oneofKind: 'webauthnProviderConfig',
                     webauthnProviderConfig: {

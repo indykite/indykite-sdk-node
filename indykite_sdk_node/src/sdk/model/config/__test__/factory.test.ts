@@ -35,6 +35,7 @@ describe('createInstance', () => {
         appSpaceId: 'app-space-id',
         tenantId: 'tenant-id',
         name: 'instance-name',
+        version: "1",
         config: {
           oneofKind: 'webauthnProviderConfig',
           webauthnProviderConfig: {
@@ -101,6 +102,7 @@ describe('createInstance', () => {
         appSpaceId: 'app-space-id',
         tenantId: 'tenant-id',
         name: 'instance-name',
+        version: "1",
         config: {
           oneofKind: 'oauth2ClientConfig',
           oauth2ClientConfig: {
@@ -184,6 +186,7 @@ describe('createInstance', () => {
         appSpaceId: 'app-space-id',
         tenantId: 'tenant-id',
         name: 'instance-name',
+        version: "1",
         config: {
           oneofKind: 'authFlowConfig',
           authFlowConfig: {
@@ -232,6 +235,7 @@ describe('createInstance', () => {
         appSpaceId: 'app-space-id',
         tenantId: 'tenant-id',
         name: 'instance-name',
+        version: "1",
         config: {
           oneofKind: 'emailServiceConfig',
           emailServiceConfig: {
@@ -292,6 +296,7 @@ describe('createInstance', () => {
           config: {
             oneofKind: undefined,
           },
+          version: "1",
         });
       } catch (err) {
         caughtError = err as SdkError;

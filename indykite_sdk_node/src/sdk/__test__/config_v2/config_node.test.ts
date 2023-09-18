@@ -6,6 +6,7 @@ import {
   CreateConfigNodeResponse,
   DeleteConfigNodeRequest,
   DeleteConfigNodeResponse,
+  ListConfigNodeVersionsResponse,
   ReadConfigNodeResponse,
   UpdateConfigNodeRequest,
   UpdateConfigNodeResponse,
@@ -376,6 +377,7 @@ describe('readConfigNode', () => {
                   config: {
                     oneofKind: undefined,
                   },
+                  version: "1"
                 },
               });
             }
@@ -393,6 +395,7 @@ describe('readConfigNode', () => {
         {
           id: 'configNode-id-request',
           bookmarks: [],
+          version: "",
         },
         expect.any(Function),
       );
@@ -416,6 +419,7 @@ describe('readConfigNode', () => {
           tenantId: 'tenant-id',
           createdBy: 'Lorem ipsum - creator',
           updatedBy: 'Lorem ipsum - updater',
+          version: "1",
         },
       });
     });
@@ -872,6 +876,147 @@ describe('deleteConfigNode', () => {
     it('throws an error', () => {
       expect(thrownError.code).toEqual(SdkErrorCode.SDK_CODE_3);
       expect(thrownError.description).toBe('No ConfigNode response.');
+    });
+  });
+});
+
+describe('listConfigNodeVersions', () => {
+  describe('when no error is returned', () => {
+    let listConfigNodeVersionsResponse: ListConfigNodeVersionsResponse;
+    let listConfigNodeVersionsSpy: jest.SpyInstance;
+
+    beforeEach(async () => {
+      const sdk = await ConfigClientV2.createInstance(JSON.stringify(serviceAccountTokenMock));
+      listConfigNodeVersionsSpy = jest
+        .spyOn(sdk['client'], 'listConfigNodeVersions')
+        .mockImplementation(
+          (
+            req,
+            res:
+              | Metadata
+              | CallOptions
+              | ((err: ServiceError | null, response: ListConfigNodeVersionsResponse) => void),
+          ) => {
+            if (typeof res === 'function') {
+              res(null, {
+                configNodes: [{
+                  displayName: 'Instance Name',
+                  description: StringValue.fromJson('Instance description'),
+                  etag: 'etag-token',
+                  id: 'configNode-id',
+                  createdBy: 'Lorem ipsum - creator',
+                  updatedBy: 'Lorem ipsum - updater',
+                  createTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 6, 21, 11, 13))),
+                  updateTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 6, 21, 11, 14))),
+                  customerId: 'customer-id',
+                  appSpaceId: 'app-space-id',
+                  tenantId: 'tenant-id',
+                  name: 'instance-name',
+                  config: {
+                    oneofKind: undefined,
+                  },
+                  version:"1"
+                }],
+              });
+            }
+            return {} as SurfaceCall;
+          },
+        );
+        listConfigNodeVersionsResponse = await sdk.listConfigNodeVersions(
+        ConfigClientV2.newReadConfigNodeRequest('configNode-id-request'),
+      );
+      // configNodeResponse = ConfigNodeFactory.createInstance(readConfigNodeResponse.configNode);
+    });
+
+    it('sends correct request', () => {
+      expect(listConfigNodeVersionsSpy).toBeCalledWith(
+        {
+          id: 'configNode-id-request',
+          version: "",
+          bookmarks: [],
+        },
+        expect.any(Function),
+      );
+    });
+
+    it('returns a correct instance', () => {
+      expect(listConfigNodeVersionsResponse.configNodes).not.toBeUndefined();
+      expect(listConfigNodeVersionsResponse.configNodes.length).toEqual(1);
+      expect(listConfigNodeVersionsResponse.configNodes[0].name).toEqual('instance-name');
+      expect(listConfigNodeVersionsResponse.configNodes[0].customerId).toEqual('customer-id');
+      expect(listConfigNodeVersionsResponse.configNodes[0].appSpaceId).toEqual('app-space-id');
+      expect(listConfigNodeVersionsResponse.configNodes[0].tenantId).toEqual('tenant-id');
+    });
+  });
+
+  describe('when an error is returned', () => {
+    const error = {
+      code: Status.NOT_FOUND,
+      details: 'DETAILS',
+      metadata: {},
+    } as ServiceError;
+    let thrownError: Error;
+
+    beforeEach(async () => {
+      const sdk = await ConfigClientV2.createInstance(JSON.stringify(serviceAccountTokenMock));
+      jest
+        .spyOn(sdk['client'], 'listConfigNodeVersions')
+        .mockImplementation(
+          (
+            req,
+            res:
+              | Metadata
+              | CallOptions
+              | ((err: ServiceError | null, response?: ListConfigNodeVersionsResponse) => void),
+          ) => {
+            if (typeof res === 'function') {
+              res(error);
+            }
+            return {} as SurfaceCall;
+          },
+        );
+      return sdk
+        .listConfigNodeVersions({id:'configNode-id-request'})
+        .catch((err) => {
+          thrownError = err;
+        });
+    });
+
+    it('throws an error', () => {
+      expect(thrownError).toBe(error);
+    });
+  });
+
+  describe('when no response is returned', () => {
+    let thrownError: Error;
+
+    beforeEach(async () => {
+      const sdk = await ConfigClientV2.createInstance(JSON.stringify(serviceAccountTokenMock));
+      jest
+        .spyOn(sdk['client'], 'listConfigNodeVersions')
+        .mockImplementation(
+          (
+            req,
+            res:
+              | Metadata
+              | CallOptions
+              | ((err: ServiceError | null, response?: ListConfigNodeVersionsResponse) => void),
+          ) => {
+            if (typeof res === 'function') {
+              res(null);
+            }
+            return {} as SurfaceCall;
+          },
+        );
+      return sdk
+        .listConfigNodeVersions({id:'configNode-id-request'})
+        .catch((err) => {
+          thrownError = err;
+        });
+    });
+
+    it('throws an error', () => {
+      expect(thrownError.message).toBe('No ConfigNode response.');
     });
   });
 });
