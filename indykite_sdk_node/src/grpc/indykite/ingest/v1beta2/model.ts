@@ -751,7 +751,7 @@ class Resource$Type extends MessageType<Resource> {
             { no: 1, name: "external_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "1", maxLen: "256" } } } },
             { no: 2, name: "type", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "64", pattern: "^([A-Z][a-z]+)+$" } } } },
             { no: 3, name: "tags", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { maxItems: "32", unique: true, items: { string: { maxLen: "64", pattern: "^([A-Z][a-z]+)+$" } } } } } },
-            { no: 4, name: "properties", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Property, options: { "validate.rules": { repeated: { maxItems: "10" } } } }
+            { no: 4, name: "properties", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Property, options: { "validate.rules": { repeated: { maxItems: "50" } } } }
         ]);
     }
     create(value?: PartialMessage<Resource>): Resource {
@@ -985,7 +985,7 @@ class Relation$Type extends MessageType<Relation> {
     constructor() {
         super("indykite.ingest.v1beta2.Relation", [
             { no: 1, name: "match", kind: "message", T: () => RelationMatch, options: { "validate.rules": { message: { required: true } } } },
-            { no: 2, name: "properties", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Property, options: { "validate.rules": { repeated: { maxItems: "10" } } } }
+            { no: 2, name: "properties", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Property, options: { "validate.rules": { repeated: { maxItems: "50" } } } }
         ]);
     }
     create(value?: PartialMessage<Relation>): Relation {

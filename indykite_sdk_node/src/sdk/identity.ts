@@ -144,6 +144,9 @@ export class IdentityClient {
     });
   }
 
+  /**
+   * @deprecated since 0.4.2 Use the equivalent function in the knowledge package.
+   */
   getDigitalTwin(
     digitalTwinId: string,
     tenantId: string,
@@ -183,6 +186,9 @@ export class IdentityClient {
     });
   }
 
+  /**
+   * @deprecated sincer 0.4.2 Use the equivalent function in the knowledge package.
+   */
   getDigitalTwinByToken(
     token: string,
     properties: string[],
@@ -227,6 +233,7 @@ export class IdentityClient {
   }
 
   /**
+   * @deprecated sincer 0.4.2 Use the equivalent function in the knowledge package.
    * Gets a DigitalTwin and requested properties.
    * @since 0.3.5
    * @param properties The list of requested properties to get
