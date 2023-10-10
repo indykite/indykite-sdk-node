@@ -110,6 +110,41 @@ export interface Property {
     value?: Value; // todo: add metadata for properties
 }
 /**
+ * @generated from protobuf message indykite.knowledge.v1beta1.InputParam
+ */
+export interface InputParam {
+    /**
+     * @generated from protobuf oneof: value
+     */
+    value: {
+        oneofKind: "stringValue";
+        /**
+         * @generated from protobuf field: string string_value = 1;
+         */
+        stringValue: string;
+    } | {
+        oneofKind: "boolValue";
+        /**
+         * @generated from protobuf field: bool bool_value = 2;
+         */
+        boolValue: boolean;
+    } | {
+        oneofKind: "integerValue";
+        /**
+         * @generated from protobuf field: int64 integer_value = 3;
+         */
+        integerValue: string;
+    } | {
+        oneofKind: "doubleValue";
+        /**
+         * @generated from protobuf field: double double_value = 4;
+         */
+        doubleValue: number;
+    } | {
+        oneofKind: undefined;
+    };
+}
+/**
  * @generated from protobuf enum indykite.knowledge.v1beta1.Operation
  */
 export enum Operation {
@@ -409,3 +444,83 @@ class Property$Type extends MessageType<Property> {
  * @generated MessageType for protobuf message indykite.knowledge.v1beta1.Property
  */
 export const Property = new Property$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class InputParam$Type extends MessageType<InputParam> {
+    constructor() {
+        super("indykite.knowledge.v1beta1.InputParam", [
+            { no: 1, name: "string_value", kind: "scalar", oneof: "value", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "1", maxLen: "50" } } } },
+            { no: 2, name: "bool_value", kind: "scalar", oneof: "value", T: 8 /*ScalarType.BOOL*/ },
+            { no: 3, name: "integer_value", kind: "scalar", oneof: "value", T: 3 /*ScalarType.INT64*/ },
+            { no: 4, name: "double_value", kind: "scalar", oneof: "value", T: 1 /*ScalarType.DOUBLE*/ }
+        ]);
+    }
+    create(value?: PartialMessage<InputParam>): InputParam {
+        const message = { value: { oneofKind: undefined } };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<InputParam>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: InputParam): InputParam {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string string_value */ 1:
+                    message.value = {
+                        oneofKind: "stringValue",
+                        stringValue: reader.string()
+                    };
+                    break;
+                case /* bool bool_value */ 2:
+                    message.value = {
+                        oneofKind: "boolValue",
+                        boolValue: reader.bool()
+                    };
+                    break;
+                case /* int64 integer_value */ 3:
+                    message.value = {
+                        oneofKind: "integerValue",
+                        integerValue: reader.int64().toString()
+                    };
+                    break;
+                case /* double double_value */ 4:
+                    message.value = {
+                        oneofKind: "doubleValue",
+                        doubleValue: reader.double()
+                    };
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: InputParam, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string string_value = 1; */
+        if (message.value.oneofKind === "stringValue")
+            writer.tag(1, WireType.LengthDelimited).string(message.value.stringValue);
+        /* bool bool_value = 2; */
+        if (message.value.oneofKind === "boolValue")
+            writer.tag(2, WireType.Varint).bool(message.value.boolValue);
+        /* int64 integer_value = 3; */
+        if (message.value.oneofKind === "integerValue")
+            writer.tag(3, WireType.Varint).int64(message.value.integerValue);
+        /* double double_value = 4; */
+        if (message.value.oneofKind === "doubleValue")
+            writer.tag(4, WireType.Bit64).double(message.value.doubleValue);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message indykite.knowledge.v1beta1.InputParam
+ */
+export const InputParam = new InputParam$Type();

@@ -81,7 +81,7 @@ describe('identityKnowledge', () => {
         operation: Operation.READ,
         path: '(:DigitalTwin)-[:SERVICES]->(n:Truck)',
         conditions: 'WHERE n.external_id = "1234"',
-      });
+      } as IdentityKnowledgeRequest);
     });
 
     it('sends a correct request', () => {
@@ -130,7 +130,7 @@ describe('identityKnowledge', () => {
           operation: Operation.READ,
           path: '(:DigitalTwin)-[:SERVICES]->(n:Truck)',
           conditions: 'WHERE n.external_id = "1234"',
-        });
+        } as IdentityKnowledgeRequest);
       } catch (err) {
         caughtError = err;
       }
@@ -166,7 +166,7 @@ describe('identityKnowledge', () => {
           operation: Operation.READ,
           path: '(:DigitalTwin)-[:SERVICES]->(n:Truck)',
           conditions: 'WHERE n.external_id = "1234"',
-        });
+        } as IdentityKnowledgeRequest);
       } catch (err) {
         caughtError = err;
       }

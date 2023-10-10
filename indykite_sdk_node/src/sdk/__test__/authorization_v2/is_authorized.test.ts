@@ -98,19 +98,10 @@ describe('isAuthorized', () => {
           policyTags: [],
           subject: {
             subject: {
-              oneofKind: 'digitalTwinIdentifier',
-              digitalTwinIdentifier: {
-                filter: {
-                  oneofKind: 'digitalTwin',
-                  digitalTwin: {
-                    id: 'digitaltwin-id',
-                    tenantId: 'tenant-id',
-                    kind: DigitalTwinKind.PERSON,
-                    state: DigitalTwinState.ACTIVE,
-                    tags: [],
-                  },
-                },
-              },
+              oneofKind: 'digitalTwinId',
+              digitalTwinId: {
+                id: 'digitaltwin-id',
+              }
             },
           },
           resources: [
@@ -326,13 +317,8 @@ describe('isAuthorizedByToken', () => {
           policyTags: ['some-tag'],
           subject: {
             subject: {
-              oneofKind: 'digitalTwinIdentifier',
-              digitalTwinIdentifier: {
-                filter: {
-                  oneofKind: 'accessToken',
-                  accessToken: 'access-token',
-                },
-              },
+              oneofKind: 'indykiteAccessToken',
+              indykiteAccessToken:  'access-token',
             },
           },
           resources: [
@@ -539,19 +525,13 @@ describe('isAuthorizedByProperty', () => {
           policyTags: [],
           subject: {
             subject: {
-              oneofKind: 'digitalTwinIdentifier',
-              digitalTwinIdentifier: {
-                filter: {
-                  oneofKind: 'propertyFilter',
-                  propertyFilter: {
-                    tenantId: 'tenant-id',
-                    type: 'email',
-                    value: {
-                      value: {
-                        oneofKind: 'stringValue',
-                        stringValue: 'user@example.com',
-                      },
-                    },
+              oneofKind: 'digitalTwinProperty',
+              digitalTwinProperty: {
+                type: 'email',
+                value: {
+                  value: {
+                    oneofKind: 'stringValue',
+                    stringValue: 'user@example.com',
                   },
                 },
               },

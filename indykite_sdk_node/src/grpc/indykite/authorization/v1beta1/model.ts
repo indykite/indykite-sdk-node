@@ -26,6 +26,7 @@ import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MESSAGE_TYPE } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
+import { Value } from "../../objects/v1beta1/struct";
 import { DigitalTwinIdentifier } from "../../identity/v1beta2/model";
 /**
  * Subject to check if is authorized.
@@ -39,12 +40,57 @@ export interface Subject {
     subject: {
         oneofKind: "digitalTwinIdentifier";
         /**
-         * @generated from protobuf field: indykite.identity.v1beta2.DigitalTwinIdentifier digital_twin_identifier = 1;
+         * @deprecated
+         * @generated from protobuf field: indykite.identity.v1beta2.DigitalTwinIdentifier digital_twin_identifier = 1 [deprecated = true];
          */
         digitalTwinIdentifier: DigitalTwinIdentifier;
     } | {
+        oneofKind: "digitalTwinId";
+        /**
+         * @generated from protobuf field: indykite.authorization.v1beta1.DigitalTwin digital_twin_id = 2;
+         */
+        digitalTwinId: DigitalTwin;
+    } | {
+        oneofKind: "digitalTwinProperty";
+        /**
+         * @generated from protobuf field: indykite.authorization.v1beta1.Property digital_twin_property = 3;
+         */
+        digitalTwinProperty: Property;
+    } | {
+        oneofKind: "indykiteAccessToken";
+        /**
+         * @generated from protobuf field: string indykite_access_token = 4;
+         */
+        indykiteAccessToken: string;
+    } | {
         oneofKind: undefined;
     };
+}
+/**
+ * DigitalTwin represents a digital entity.
+ *
+ * @generated from protobuf message indykite.authorization.v1beta1.DigitalTwin
+ */
+export interface DigitalTwin {
+    /**
+     * Id the unique credential identifier.
+     *
+     * @generated from protobuf field: string id = 1;
+     */
+    id: string;
+}
+/**
+ * @generated from protobuf message indykite.authorization.v1beta1.Property
+ */
+export interface Property {
+    /**
+     * @generated from protobuf field: string type = 1;
+     */
+    type: string;
+    /**
+     * @generated from protobuf field: indykite.objects.v1beta1.Value value = 2;
+     */
+    value?: Value;
 }
 /**
  * @generated from protobuf message indykite.authorization.v1beta1.InputParam
@@ -93,7 +139,10 @@ export interface InputParam {
 class Subject$Type extends MessageType<Subject> {
     constructor() {
         super("indykite.authorization.v1beta1.Subject", [
-            { no: 1, name: "digital_twin_identifier", kind: "message", oneof: "subject", T: () => DigitalTwinIdentifier, options: { "validate.rules": { message: { required: true } } } }
+            { no: 1, name: "digital_twin_identifier", kind: "message", oneof: "subject", T: () => DigitalTwinIdentifier, options: { "validate.rules": { message: { required: true } } } },
+            { no: 2, name: "digital_twin_id", kind: "message", oneof: "subject", T: () => DigitalTwin, options: { "validate.rules": { message: { required: true } } } },
+            { no: 3, name: "digital_twin_property", kind: "message", oneof: "subject", T: () => Property, options: { "validate.rules": { message: { required: true } } } },
+            { no: 4, name: "indykite_access_token", kind: "scalar", oneof: "subject", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "20" } } } }
         ]);
     }
     create(value?: PartialMessage<Subject>): Subject {
@@ -108,10 +157,28 @@ class Subject$Type extends MessageType<Subject> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* indykite.identity.v1beta2.DigitalTwinIdentifier digital_twin_identifier */ 1:
+                case /* indykite.identity.v1beta2.DigitalTwinIdentifier digital_twin_identifier = 1 [deprecated = true];*/ 1:
                     message.subject = {
                         oneofKind: "digitalTwinIdentifier",
                         digitalTwinIdentifier: DigitalTwinIdentifier.internalBinaryRead(reader, reader.uint32(), options, (message.subject as any).digitalTwinIdentifier)
+                    };
+                    break;
+                case /* indykite.authorization.v1beta1.DigitalTwin digital_twin_id */ 2:
+                    message.subject = {
+                        oneofKind: "digitalTwinId",
+                        digitalTwinId: DigitalTwin.internalBinaryRead(reader, reader.uint32(), options, (message.subject as any).digitalTwinId)
+                    };
+                    break;
+                case /* indykite.authorization.v1beta1.Property digital_twin_property */ 3:
+                    message.subject = {
+                        oneofKind: "digitalTwinProperty",
+                        digitalTwinProperty: Property.internalBinaryRead(reader, reader.uint32(), options, (message.subject as any).digitalTwinProperty)
+                    };
+                    break;
+                case /* string indykite_access_token */ 4:
+                    message.subject = {
+                        oneofKind: "indykiteAccessToken",
+                        indykiteAccessToken: reader.string()
                     };
                     break;
                 default:
@@ -126,9 +193,18 @@ class Subject$Type extends MessageType<Subject> {
         return message;
     }
     internalBinaryWrite(message: Subject, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* indykite.identity.v1beta2.DigitalTwinIdentifier digital_twin_identifier = 1; */
+        /* indykite.identity.v1beta2.DigitalTwinIdentifier digital_twin_identifier = 1 [deprecated = true]; */
         if (message.subject.oneofKind === "digitalTwinIdentifier")
             DigitalTwinIdentifier.internalBinaryWrite(message.subject.digitalTwinIdentifier, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* indykite.authorization.v1beta1.DigitalTwin digital_twin_id = 2; */
+        if (message.subject.oneofKind === "digitalTwinId")
+            DigitalTwin.internalBinaryWrite(message.subject.digitalTwinId, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* indykite.authorization.v1beta1.Property digital_twin_property = 3; */
+        if (message.subject.oneofKind === "digitalTwinProperty")
+            Property.internalBinaryWrite(message.subject.digitalTwinProperty, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        /* string indykite_access_token = 4; */
+        if (message.subject.oneofKind === "indykiteAccessToken")
+            writer.tag(4, WireType.LengthDelimited).string(message.subject.indykiteAccessToken);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -139,6 +215,107 @@ class Subject$Type extends MessageType<Subject> {
  * @generated MessageType for protobuf message indykite.authorization.v1beta1.Subject
  */
 export const Subject = new Subject$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class DigitalTwin$Type extends MessageType<DigitalTwin> {
+    constructor() {
+        super("indykite.authorization.v1beta1.DigitalTwin", [
+            { no: 1, name: "id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "27", maxLen: "100", pattern: "^gid:[A-Za-z0-9-_]{27,100}$" } } } }
+        ]);
+    }
+    create(value?: PartialMessage<DigitalTwin>): DigitalTwin {
+        const message = { id: "" };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<DigitalTwin>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DigitalTwin): DigitalTwin {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string id */ 1:
+                    message.id = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: DigitalTwin, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string id = 1; */
+        if (message.id !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.id);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message indykite.authorization.v1beta1.DigitalTwin
+ */
+export const DigitalTwin = new DigitalTwin$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class Property$Type extends MessageType<Property> {
+    constructor() {
+        super("indykite.authorization.v1beta1.Property", [
+            { no: 1, name: "type", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "2", maxLen: "20" } } } },
+            { no: 2, name: "value", kind: "message", T: () => Value, options: { "validate.rules": { message: { required: true } } } }
+        ]);
+    }
+    create(value?: PartialMessage<Property>): Property {
+        const message = { type: "" };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<Property>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: Property): Property {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string type */ 1:
+                    message.type = reader.string();
+                    break;
+                case /* indykite.objects.v1beta1.Value value */ 2:
+                    message.value = Value.internalBinaryRead(reader, reader.uint32(), options, message.value);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: Property, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string type = 1; */
+        if (message.type !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.type);
+        /* indykite.objects.v1beta1.Value value = 2; */
+        if (message.value)
+            Value.internalBinaryWrite(message.value, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message indykite.authorization.v1beta1.Property
+ */
+export const Property = new Property$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class InputParam$Type extends MessageType<InputParam> {
     constructor() {
