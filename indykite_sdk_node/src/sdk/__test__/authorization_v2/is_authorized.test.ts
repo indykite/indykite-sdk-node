@@ -101,7 +101,7 @@ describe('isAuthorized', () => {
               oneofKind: 'digitalTwinId',
               digitalTwinId: {
                 id: 'digitaltwin-id',
-              }
+              },
             },
           },
           resources: [
@@ -318,7 +318,7 @@ describe('isAuthorizedByToken', () => {
           subject: {
             subject: {
               oneofKind: 'indykiteAccessToken',
-              indykiteAccessToken:  'access-token',
+              indykiteAccessToken: 'access-token',
             },
           },
           resources: [

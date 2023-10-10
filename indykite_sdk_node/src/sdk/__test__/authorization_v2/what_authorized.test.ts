@@ -480,7 +480,7 @@ describe('isAuthorizedByProperty', () => {
                     stringValue: 'user@example.com',
                   },
                 },
-              }
+              },
             },
           },
           resourceTypes: [
