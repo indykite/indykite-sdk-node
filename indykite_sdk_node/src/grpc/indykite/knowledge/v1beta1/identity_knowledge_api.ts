@@ -28,6 +28,7 @@ import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MESSAGE_TYPE } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 import { Path } from "./model";
+import { InputParam } from "./model";
 import { Operation } from "./model";
 /**
  * @generated from protobuf message indykite.knowledge.v1beta1.IdentityKnowledgeRequest
@@ -45,6 +46,12 @@ export interface IdentityKnowledgeRequest {
      * @generated from protobuf field: string conditions = 3;
      */
     conditions: string;
+    /**
+     * @generated from protobuf field: map<string, indykite.knowledge.v1beta1.InputParam> input_params = 4;
+     */
+    inputParams: {
+        [key: string]: InputParam;
+    };
 }
 /**
  * @generated from protobuf message indykite.knowledge.v1beta1.IdentityKnowledgeResponse
@@ -61,11 +68,12 @@ class IdentityKnowledgeRequest$Type extends MessageType<IdentityKnowledgeRequest
         super("indykite.knowledge.v1beta1.IdentityKnowledgeRequest", [
             { no: 1, name: "operation", kind: "enum", T: () => ["indykite.knowledge.v1beta1.Operation", Operation, "OPERATION_"], options: { "validate.rules": { enum: { definedOnly: true, in: [1] } } } },
             { no: 2, name: "path", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "512000" } } } },
-            { no: 3, name: "conditions", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "512000" } } } }
+            { no: 3, name: "conditions", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "512000" } } } },
+            { no: 4, name: "input_params", kind: "map", K: 9 /*ScalarType.STRING*/, V: { kind: "message", T: () => InputParam } }
         ]);
     }
     create(value?: PartialMessage<IdentityKnowledgeRequest>): IdentityKnowledgeRequest {
-        const message = { operation: 0, path: "", conditions: "" };
+        const message = { operation: 0, path: "", conditions: "", inputParams: {} };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<IdentityKnowledgeRequest>(this, message, value);
@@ -85,6 +93,9 @@ class IdentityKnowledgeRequest$Type extends MessageType<IdentityKnowledgeRequest
                 case /* string conditions */ 3:
                     message.conditions = reader.string();
                     break;
+                case /* map<string, indykite.knowledge.v1beta1.InputParam> input_params */ 4:
+                    this.binaryReadMap4(message.inputParams, reader, options);
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -96,6 +107,22 @@ class IdentityKnowledgeRequest$Type extends MessageType<IdentityKnowledgeRequest
         }
         return message;
     }
+    private binaryReadMap4(map: IdentityKnowledgeRequest["inputParams"], reader: IBinaryReader, options: BinaryReadOptions): void {
+        let len = reader.uint32(), end = reader.pos + len, key: keyof IdentityKnowledgeRequest["inputParams"] | undefined, val: IdentityKnowledgeRequest["inputParams"][any] | undefined;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case 1:
+                    key = reader.string();
+                    break;
+                case 2:
+                    val = InputParam.internalBinaryRead(reader, reader.uint32(), options);
+                    break;
+                default: throw new globalThis.Error("unknown map entry field for field indykite.knowledge.v1beta1.IdentityKnowledgeRequest.input_params");
+            }
+        }
+        map[key ?? ""] = val ?? InputParam.create();
+    }
     internalBinaryWrite(message: IdentityKnowledgeRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* indykite.knowledge.v1beta1.Operation operation = 1; */
         if (message.operation !== 0)
@@ -106,6 +133,13 @@ class IdentityKnowledgeRequest$Type extends MessageType<IdentityKnowledgeRequest
         /* string conditions = 3; */
         if (message.conditions !== "")
             writer.tag(3, WireType.LengthDelimited).string(message.conditions);
+        /* map<string, indykite.knowledge.v1beta1.InputParam> input_params = 4; */
+        for (let k of Object.keys(message.inputParams)) {
+            writer.tag(4, WireType.LengthDelimited).fork().tag(1, WireType.LengthDelimited).string(k);
+            writer.tag(2, WireType.LengthDelimited).fork();
+            InputParam.internalBinaryWrite(message.inputParams[k], writer, options);
+            writer.join().join();
+        }
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
