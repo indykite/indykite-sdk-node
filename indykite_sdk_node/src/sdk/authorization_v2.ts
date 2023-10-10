@@ -12,17 +12,26 @@ import {
 } from '../grpc/indykite/authorization/v1beta1/authorization_service';
 import { AuthorizationAPIClient } from '../grpc/indykite/authorization/v1beta1/authorization_service.grpc-client';
 import { DigitalTwin } from '../grpc/indykite/identity/v1beta2/model';
-import { InputParam } from '../grpc/indykite/authorization/v1beta1/model';
+import { InputParam, Property } from '../grpc/indykite/authorization/v1beta1/model';
 import { PropertyFilter } from '../grpc/indykite/identity/v1beta2/attributes';
 import { SdkError, SdkErrorCode, SkdErrorText } from './error';
 import { Utils } from './utils/utils';
 
 export type InputParameters = string | boolean | number;
 
+/**
+ * @deprecated
+ * @since 0.4.2
+ */
 export const DIGITAL_TWIN_IDENTIFIER = 'digitalTwinIdentifier';
 export const DIGITAL_TWIN_IDENTIFIER_DIGITAL_TWIN = 'digitalTwin';
 export const DIGITAL_TWIN_IDENTIFIER_PROPERTY_FILTER = 'propertyFilter';
 export const DIGITAL_TWIN_IDENTIFIER_ACCESS_TOKEN = 'accessToken';
+
+export const DIGITAL_TWIN_ID = 'digitalTwinId';
+export const DIGITAL_TWIN_PROPERTY = 'digitalTwinProperty';
+export const DIGITAL_TWIN_ACCESS_TOKEN = 'indykiteAccessToken';
+
 
 /**
  * @category Clients
@@ -115,13 +124,8 @@ export class AuthorizationClientV2 {
       resources,
       subject: {
         subject: {
-          oneofKind: DIGITAL_TWIN_IDENTIFIER,
-          digitalTwinIdentifier: {
-            filter: {
-              oneofKind: DIGITAL_TWIN_IDENTIFIER_DIGITAL_TWIN,
-              digitalTwin: digitalTwin,
-            },
-          },
+          oneofKind: DIGITAL_TWIN_ID,
+          digitalTwinId: digitalTwin,
         },
       },
       inputParams,
@@ -173,13 +177,8 @@ export class AuthorizationClientV2 {
       resources,
       subject: {
         subject: {
-          oneofKind: DIGITAL_TWIN_IDENTIFIER,
-          digitalTwinIdentifier: {
-            filter: {
-              oneofKind: DIGITAL_TWIN_IDENTIFIER_PROPERTY_FILTER,
-              propertyFilter,
-            },
-          },
+          oneofKind: DIGITAL_TWIN_PROPERTY,
+          digitalTwinProperty: propertyFilter as Property,
         },
       },
       inputParams,
@@ -227,13 +226,8 @@ export class AuthorizationClientV2 {
       resources,
       subject: {
         subject: {
-          oneofKind: DIGITAL_TWIN_IDENTIFIER,
-          digitalTwinIdentifier: {
-            filter: {
-              oneofKind: DIGITAL_TWIN_IDENTIFIER_ACCESS_TOKEN,
-              accessToken: token,
-            },
-          },
+          oneofKind: DIGITAL_TWIN_ACCESS_TOKEN,
+          indykiteAccessToken: token,
         },
       },
       inputParams,
@@ -310,13 +304,8 @@ export class AuthorizationClientV2 {
       resourceTypes,
       subject: {
         subject: {
-          oneofKind: DIGITAL_TWIN_IDENTIFIER,
-          digitalTwinIdentifier: {
-            filter: {
-              oneofKind: DIGITAL_TWIN_IDENTIFIER_DIGITAL_TWIN,
-              digitalTwin,
-            },
-          },
+          oneofKind: DIGITAL_TWIN_ID,
+          digitalTwinId: digitalTwin
         },
       },
       inputParams,
@@ -368,13 +357,8 @@ export class AuthorizationClientV2 {
       resourceTypes,
       subject: {
         subject: {
-          oneofKind: DIGITAL_TWIN_IDENTIFIER,
-          digitalTwinIdentifier: {
-            filter: {
-              oneofKind: DIGITAL_TWIN_IDENTIFIER_PROPERTY_FILTER,
-              propertyFilter,
-            },
-          },
+          oneofKind: DIGITAL_TWIN_PROPERTY,
+          digitalTwinProperty: propertyFilter as Property
         },
       },
       inputParams,
@@ -419,13 +403,8 @@ export class AuthorizationClientV2 {
       resourceTypes,
       subject: {
         subject: {
-          oneofKind: DIGITAL_TWIN_IDENTIFIER,
-          digitalTwinIdentifier: {
-            filter: {
-              oneofKind: DIGITAL_TWIN_IDENTIFIER_ACCESS_TOKEN,
-              accessToken: token,
-            },
-          },
+          oneofKind: DIGITAL_TWIN_ACCESS_TOKEN,
+          indykiteAccessToken: token
         },
       },
       inputParams,
