@@ -1,4 +1,11 @@
 # Changelog
+## [0.4.2](https://github.com/indykite/indykite-sdk-node/compare/v0.4.1...v0.4.2) (2023-10-10)
+
+
+### Features
+
+* add listConfigNodeVersions method ([#276](https://github.com/indykite/indykite-sdk-node/issues/276)) ([245b522](https://github.com/indykite/indykite-sdk-node/commit/245b52266d7d6416c0f8617c2a32a9b1dbc67e5f))
+
 ## [0.4.1](https://github.com/indykite/indykite-sdk-node/compare/v0.4.0...v0.4.1) (2023-08-30)
 
 
