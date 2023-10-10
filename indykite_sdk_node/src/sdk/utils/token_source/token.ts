@@ -1,5 +1,9 @@
 export class Token {
-  constructor(public accessToken: string, public tokenType: string, public expiry: Date) {}
+  constructor(
+    public accessToken: string,
+    public tokenType: string,
+    public expiry: Date,
+  ) {}
 
   /**
    * Check if the token is valid. This function returns false when the token is expired or when
