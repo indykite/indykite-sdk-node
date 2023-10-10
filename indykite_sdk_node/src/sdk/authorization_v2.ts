@@ -32,7 +32,6 @@ export const DIGITAL_TWIN_ID = 'digitalTwinId';
 export const DIGITAL_TWIN_PROPERTY = 'digitalTwinProperty';
 export const DIGITAL_TWIN_ACCESS_TOKEN = 'indykiteAccessToken';
 
-
 /**
  * @category Clients
  * @since 0.4.1
@@ -305,7 +304,7 @@ export class AuthorizationClientV2 {
       subject: {
         subject: {
           oneofKind: DIGITAL_TWIN_ID,
-          digitalTwinId: digitalTwin
+          digitalTwinId: digitalTwin,
         },
       },
       inputParams,
@@ -358,7 +357,7 @@ export class AuthorizationClientV2 {
       subject: {
         subject: {
           oneofKind: DIGITAL_TWIN_PROPERTY,
-          digitalTwinProperty: propertyFilter as Property
+          digitalTwinProperty: propertyFilter as Property,
         },
       },
       inputParams,
@@ -404,7 +403,7 @@ export class AuthorizationClientV2 {
       subject: {
         subject: {
           oneofKind: DIGITAL_TWIN_ACCESS_TOKEN,
-          indykiteAccessToken: token
+          indykiteAccessToken: token,
         },
       },
       inputParams,

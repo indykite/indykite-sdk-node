@@ -120,7 +120,6 @@ describe('createOAuth2Provider', () => {
               frontChannelConsentUri: { default: 'https://example.com/consent' },
               requestObjectSigningAlg: '',
               requestUris: [],
-
             },
             bookmarks: [],
             description: undefined,

@@ -377,7 +377,7 @@ describe('readConfigNode', () => {
                   config: {
                     oneofKind: undefined,
                   },
-                  version: "1"
+                  version: '1',
                 },
               });
             }
@@ -395,7 +395,7 @@ describe('readConfigNode', () => {
         {
           id: 'configNode-id-request',
           bookmarks: [],
-          version: "",
+          version: '',
         },
         expect.any(Function),
       );
@@ -419,7 +419,7 @@ describe('readConfigNode', () => {
           tenantId: 'tenant-id',
           createdBy: 'Lorem ipsum - creator',
           updatedBy: 'Lorem ipsum - updater',
-          version: "1",
+          version: '1',
         },
       });
     });
@@ -899,30 +899,32 @@ describe('listConfigNodeVersions', () => {
           ) => {
             if (typeof res === 'function') {
               res(null, {
-                configNodes: [{
-                  displayName: 'Instance Name',
-                  description: StringValue.fromJson('Instance description'),
-                  etag: 'etag-token',
-                  id: 'configNode-id',
-                  createdBy: 'Lorem ipsum - creator',
-                  updatedBy: 'Lorem ipsum - updater',
-                  createTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 6, 21, 11, 13))),
-                  updateTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 6, 21, 11, 14))),
-                  customerId: 'customer-id',
-                  appSpaceId: 'app-space-id',
-                  tenantId: 'tenant-id',
-                  name: 'instance-name',
-                  config: {
-                    oneofKind: undefined,
+                configNodes: [
+                  {
+                    displayName: 'Instance Name',
+                    description: StringValue.fromJson('Instance description'),
+                    etag: 'etag-token',
+                    id: 'configNode-id',
+                    createdBy: 'Lorem ipsum - creator',
+                    updatedBy: 'Lorem ipsum - updater',
+                    createTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 6, 21, 11, 13))),
+                    updateTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 6, 21, 11, 14))),
+                    customerId: 'customer-id',
+                    appSpaceId: 'app-space-id',
+                    tenantId: 'tenant-id',
+                    name: 'instance-name',
+                    config: {
+                      oneofKind: undefined,
+                    },
+                    version: '1',
                   },
-                  version:"1"
-                }],
+                ],
               });
             }
             return {} as SurfaceCall;
           },
         );
-        listConfigNodeVersionsResponse = await sdk.listConfigNodeVersions(
+      listConfigNodeVersionsResponse = await sdk.listConfigNodeVersions(
         ConfigClientV2.newReadConfigNodeRequest('configNode-id-request'),
       );
       // configNodeResponse = ConfigNodeFactory.createInstance(readConfigNodeResponse.configNode);
@@ -932,7 +934,7 @@ describe('listConfigNodeVersions', () => {
       expect(listConfigNodeVersionsSpy).toBeCalledWith(
         {
           id: 'configNode-id-request',
-          version: "",
+          version: '',
           bookmarks: [],
         },
         expect.any(Function),
@@ -975,11 +977,9 @@ describe('listConfigNodeVersions', () => {
             return {} as SurfaceCall;
           },
         );
-      return sdk
-        .listConfigNodeVersions({id:'configNode-id-request'})
-        .catch((err) => {
-          thrownError = err;
-        });
+      return sdk.listConfigNodeVersions({ id: 'configNode-id-request' }).catch((err) => {
+        thrownError = err;
+      });
     });
 
     it('throws an error', () => {
@@ -1008,11 +1008,9 @@ describe('listConfigNodeVersions', () => {
             return {} as SurfaceCall;
           },
         );
-      return sdk
-        .listConfigNodeVersions({id:'configNode-id-request'})
-        .catch((err) => {
-          thrownError = err;
-        });
+      return sdk.listConfigNodeVersions({ id: 'configNode-id-request' }).catch((err) => {
+        thrownError = err;
+      });
     });
 
     it('throws an error', () => {

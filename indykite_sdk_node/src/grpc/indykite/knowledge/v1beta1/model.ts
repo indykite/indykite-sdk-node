@@ -74,10 +74,6 @@ export interface Relationship {
      */
     id: string;
     /**
-     * @generated from protobuf field: string external_id = 2;
-     */
-    externalId: string;
-    /**
      * @generated from protobuf field: string type = 3;
      */
     type: string;
@@ -293,7 +289,6 @@ class Relationship$Type extends MessageType<Relationship> {
     constructor() {
         super("indykite.knowledge.v1beta1.Relationship", [
             { no: 1, name: "id", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 2, name: "external_id", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 3, name: "type", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 4, name: "source", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 5, name: "target", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
@@ -301,7 +296,7 @@ class Relationship$Type extends MessageType<Relationship> {
         ]);
     }
     create(value?: PartialMessage<Relationship>): Relationship {
-        const message = { id: "", externalId: "", type: "", source: "", target: "", properties: {} };
+        const message = { id: "", type: "", source: "", target: "", properties: {} };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<Relationship>(this, message, value);
@@ -314,9 +309,6 @@ class Relationship$Type extends MessageType<Relationship> {
             switch (fieldNo) {
                 case /* string id */ 1:
                     message.id = reader.string();
-                    break;
-                case /* string external_id */ 2:
-                    message.externalId = reader.string();
                     break;
                 case /* string type */ 3:
                     message.type = reader.string();
@@ -361,9 +353,6 @@ class Relationship$Type extends MessageType<Relationship> {
         /* string id = 1; */
         if (message.id !== "")
             writer.tag(1, WireType.LengthDelimited).string(message.id);
-        /* string external_id = 2; */
-        if (message.externalId !== "")
-            writer.tag(2, WireType.LengthDelimited).string(message.externalId);
         /* string type = 3; */
         if (message.type !== "")
             writer.tag(3, WireType.LengthDelimited).string(message.type);

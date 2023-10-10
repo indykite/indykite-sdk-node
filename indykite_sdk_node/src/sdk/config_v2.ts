@@ -1361,11 +1361,15 @@ export class ConfigClientV2 {
     });
   }
 
-  static newReadConfigNodeRequest(id: string, bookmarks: string[] = [], version: string = ""): ReadConfigNodeRequest {
+  static newReadConfigNodeRequest(
+    id: string,
+    bookmarks: string[] = [],
+    version = '',
+  ): ReadConfigNodeRequest {
     return {
       id,
       bookmarks,
-      version
+      version,
     } as ReadConfigNodeRequest;
   }
 
@@ -2118,11 +2122,13 @@ export class ConfigClientV2 {
   }
 
   /**
-   * 
+   *
    * @since 0.4.2
-   * @param request 
+   * @param request
    */
-  listConfigNodeVersions(request: ListConfigNodeVersionsRequest):Promise<ListConfigNodeVersionsResponse>{
+  listConfigNodeVersions(
+    request: ListConfigNodeVersionsRequest,
+  ): Promise<ListConfigNodeVersionsResponse> {
     return new Promise((resolve, reject) => {
       this.client.listConfigNodeVersions(request, (err, response) => {
         if (err) {
@@ -2131,9 +2137,7 @@ export class ConfigClientV2 {
           if (response?.configNodes) {
             resolve(response);
           } else {
-            reject(
-              new SdkError(SdkErrorCode.SDK_CODE_3, SkdErrorText.SDK_CODE_3(ConfigNode.name)),
-            );
+            reject(new SdkError(SdkErrorCode.SDK_CODE_3, SkdErrorText.SDK_CODE_3(ConfigNode.name)));
           }
         }
       });
