@@ -88,14 +88,11 @@ export class IdentityKnowledgeClient {
    * @since 0.4.2
    */
   private parseMultipleNodesFromPaths(paths: Path[]): Node[] {
-    if (paths){
-      return paths.reduce((acc, path)=>{
-        if (path?.nodes) {
-          return acc.concat(path.nodes);
-        }else {
-          return acc;
-        }
-      }, [] as Node[]);
+    if (paths) {
+      return paths.reduce(
+        (acc, path) => (path?.nodes ? acc.concat(path.nodes) : acc),
+        [] as Node[],
+      );
     }
     return [];
   }
