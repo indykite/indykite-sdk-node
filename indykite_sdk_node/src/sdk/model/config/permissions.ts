@@ -4,10 +4,7 @@ import {
 } from '../../../grpc/indykite/config/v1beta1/config_management_api';
 
 export class PermissionRole {
-  constructor(
-    public id: string,
-    public displayName: string,
-  ) {}
+  constructor(public id: string, public displayName: string) {}
 
   static deserialize(role: ListPermissionsResponse_PermissionRole): PermissionRole {
     return new PermissionRole(role.id, role.displayName);
@@ -15,10 +12,7 @@ export class PermissionRole {
 }
 
 export class Permission {
-  constructor(
-    public id: string,
-    public roles: PermissionRole[],
-  ) {}
+  constructor(public id: string, public roles: PermissionRole[]) {}
 }
 
 export class UserPermission extends Permission {
@@ -28,11 +22,7 @@ export class UserPermission extends Permission {
 }
 
 export class ServiceAccountPermission extends Permission {
-  constructor(
-    id: string,
-    public name: string,
-    roles: PermissionRole[],
-  ) {
+  constructor(id: string, public name: string, roles: PermissionRole[]) {
     super(id, roles);
   }
 
@@ -48,11 +38,7 @@ export class ServiceAccountPermission extends Permission {
 }
 
 export class InvitationPermission extends Permission {
-  constructor(
-    id: string,
-    public invitee: string,
-    roles: PermissionRole[],
-  ) {
+  constructor(id: string, public invitee: string, roles: PermissionRole[]) {
     super(id, roles);
   }
 

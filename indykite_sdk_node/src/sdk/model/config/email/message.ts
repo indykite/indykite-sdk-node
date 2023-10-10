@@ -21,10 +21,7 @@ export class EmailMessage {
   attachments: grpc.EmailAttachment[] | undefined;
   eventPayload: string | undefined;
 
-  constructor(
-    public to: Email[],
-    public subject: string,
-  ) {}
+  constructor(public to: Email[], public subject: string) {}
 
   withTextContent(text: string): EmailMessage {
     this.textContent = text;

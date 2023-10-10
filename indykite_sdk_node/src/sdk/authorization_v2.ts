@@ -70,13 +70,10 @@ export class AuthorizationClientV2 {
    * @since 0.4.1
    */
   static getInputParams(options: Record<string, InputParameters>): Record<string, InputParam> {
-    return Object.keys(options).reduce(
-      (newOptions, optionKey) => {
-        newOptions[optionKey] = InputParam.fromJson(Utils.objectToJsonValue(options[optionKey]));
-        return newOptions;
-      },
-      {} as Record<string, InputParam>,
-    );
+    return Object.keys(options).reduce((newOptions, optionKey) => {
+      newOptions[optionKey] = InputParam.fromJson(Utils.objectToJsonValue(options[optionKey]));
+      return newOptions;
+    }, {} as Record<string, InputParam>);
   }
 
   /**

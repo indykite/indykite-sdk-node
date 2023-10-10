@@ -266,10 +266,7 @@ export class PatchResult {
   propertyId?: string;
   message?: string[];
 
-  constructor(
-    public index: string,
-    public status: PatchResultStatus,
-  ) {}
+  constructor(public index: string, public status: PatchResultStatus) {}
   static deserialize(result: grpcAttr.BatchOperationResult): PatchResult {
     const pResult = new PatchResult(result.index, result.result?.oneofKind || 'error');
     if (result.result && result.result.oneofKind == 'success') {

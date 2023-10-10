@@ -13,10 +13,7 @@ export type ProviderType =
   | 'custom'
   | 'unrecognized';
 export class ProviderInfo {
-  constructor(
-    public type: ProviderType,
-    public issuer: string,
-  ) {}
+  constructor(public type: ProviderType, public issuer: string) {}
 
   private static deserializeProviderType(type: grpcModel.ProviderType): ProviderType {
     switch (type) {
