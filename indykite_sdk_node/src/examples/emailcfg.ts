@@ -1,3 +1,4 @@
+import { StringValue } from '../grpc/google/protobuf/wrappers';
 import { ConfigClient } from '../sdk/config';
 import { EmailMessage } from '../sdk/model/config/email/message';
 import { SendgridEmailService } from '../sdk/model/config/email/providers/sendgrid';
@@ -18,7 +19,7 @@ ConfigClient.createInstance()
       address: 'test+config@indykite.com',
       name: 'Test Config',
     };
-    sendgrid.description = 'description-';
+    sendgrid.description = StringValue.create({ value: 'description-' });
 
     let cResp;
     try {
@@ -40,7 +41,7 @@ ConfigClient.createInstance()
 
     /** UPDATE description of the configuration */
     if (rResp) {
-      rResp.description = rResp.description + '1';
+      rResp.description = StringValue.create({ value: rResp.description + '1' });
       const uResp = await sdk.updateEmailServiceConfiguration(rResp);
       console.log('updated config: ', JSON.stringify(uResp, null, 2));
     }
