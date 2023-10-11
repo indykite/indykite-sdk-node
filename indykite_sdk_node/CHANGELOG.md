@@ -1,4 +1,12 @@
 # Changelog
+## [0.4.3](https://github.com/indykite/indykite-sdk-node/compare/v0.4.2...v0.4.3) (2023-10-11)
+
+
+### Bug Fixes
+
+* build cleanup update packagejson ([3378231](https://github.com/indykite/indykite-sdk-node/commit/33782310ea10a1f68296bcd5209d1c4be8fafab6))
+* build cleanup update packagejson ([#282](https://github.com/indykite/indykite-sdk-node/issues/282)) ([3378231](https://github.com/indykite/indykite-sdk-node/commit/33782310ea10a1f68296bcd5209d1c4be8fafab6))
+
 ## [0.4.2](https://github.com/indykite/indykite-sdk-node/compare/v0.4.1...v0.4.2) (2023-10-10)
 
 
