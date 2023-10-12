@@ -1,4 +1,11 @@
 # Changelog
+## [0.4.4](https://github.com/indykite/indykite-sdk-node/compare/v0.4.3...v0.4.4) (2023-10-12)
+
+
+### Bug Fixes
+
+* export IdentityKnowledgeClient ([#283](https://github.com/indykite/indykite-sdk-node/issues/283)) ([c4b4316](https://github.com/indykite/indykite-sdk-node/commit/c4b43166597392918a235147b65c199c981b85c3))
+
 ## [0.4.3](https://github.com/indykite/indykite-sdk-node/compare/v0.4.2...v0.4.3) (2023-10-11)
 
 
