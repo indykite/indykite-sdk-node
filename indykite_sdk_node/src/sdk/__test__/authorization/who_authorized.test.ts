@@ -92,12 +92,12 @@ describe('whoAuthorized', () => {
           policyTags: [],
           resources: [
             {
-              id: 'parking-lot-id1',
+              externalId: '',
               type: 'ParkingLot',
               actions: ['HAS_FREE_PARKING'],
             },
             {
-              id: 'parking-lot-id2',
+              externalId: '',
               type: 'ParkingLot',
               actions: ['HAS_FREE_PARKING'],
             },

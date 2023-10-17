@@ -24,12 +24,12 @@ describe('whoAuthorized', () => {
     const resources: WhoAuthorizedRequest_Resource[] = [
       {
         type: 'ParkingLot',
-        id: 'parking-lot-id1',
+        externalId: 'parking-lot-id1',
         actions: ['HAS_FREE_PARKING'],
       },
       {
         type: 'ParkingLot',
-        id: 'parking-lot-id2',
+        externalId: 'parking-lot-id2',
         actions: ['HAS_FREE_PARKING'],
       },
     ];
@@ -89,12 +89,12 @@ describe('whoAuthorized', () => {
           policyTags: [],
           resources: [
             {
-              id: 'parking-lot-id1',
+              externalId: 'parking-lot-id1',
               type: 'ParkingLot',
               actions: ['HAS_FREE_PARKING'],
             },
             {
-              id: 'parking-lot-id2',
+              externalId: 'parking-lot-id2',
               type: 'ParkingLot',
               actions: ['HAS_FREE_PARKING'],
             },
@@ -137,12 +137,12 @@ describe('whoAuthorized', () => {
     const resources: WhoAuthorizedRequest_Resource[] = [
       {
         type: 'ParkingLot',
-        id: 'parking-lot-id1',
+        externalId: 'parking-lot-id1',
         actions: ['HAS_FREE_PARKING'],
       },
       {
         type: 'ParkingLot',
-        id: 'parking-lot-id2',
+        externalId: 'parking-lot-id2',
         actions: ['HAS_FREE_PARKING'],
       },
     ];
@@ -181,12 +181,12 @@ describe('whoAuthorized', () => {
     const resources: WhoAuthorizedRequest_Resource[] = [
       {
         type: 'ParkingLot',
-        id: 'parking-lot-id1',
+        externalId: 'parking-lot-id1',
         actions: ['HAS_FREE_PARKING'],
       },
       {
         type: 'ParkingLot',
-        id: 'parking-lot-id2',
+        externalId: 'parking-lot-id2',
         actions: ['HAS_FREE_PARKING'],
       },
     ];
