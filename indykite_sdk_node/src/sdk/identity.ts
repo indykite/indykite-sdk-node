@@ -1,6 +1,5 @@
 import {
   CancelInvitationRequest,
-  ChangePasswordRequest,
   CheckOAuth2ConsentChallengeRequest,
   CheckInvitationStateRequest,
   ConsentRequestSessionData,
@@ -9,16 +8,10 @@ import {
   DeleteDigitalTwinRequest,
   EnrichTokenRequest,
   GetDigitalTwinRequest,
-  GetPasswordCredentialRequest,
   ListDigitalTwinsRequest,
   PatchDigitalTwinRequest,
   ResendInvitationRequest,
-  SessionIntrospectRequest,
-  StartDigitalTwinEmailVerificationRequest,
-  StartForgottenPasswordFlowRequest,
   TokenIntrospectRequest,
-  UpdatePasswordCredentialRequest,
-  VerifyDigitalTwinEmailRequest,
   CreateConsentRequest,
   CreateConsentResponse,
   RevokeConsentRequest,
@@ -52,7 +45,6 @@ import {
 } from '../grpc/indykite/identity/v1beta2/import';
 import { HashAlgorithm } from './model/hash_algorithm';
 import { ImportDigitalTwin, ImportResult } from './model/import_digitaltwin';
-import { BoolValue } from '../grpc/google/protobuf/wrappers';
 import { Readable } from 'stream';
 import { IndexFixer, streamSplitter } from './utils/stream';
 import { Value } from '../grpc/indykite/objects/v1beta1/struct';
@@ -108,38 +100,6 @@ export class IdentityClient {
         } catch (err) {
           reject(err);
         }
-      });
-    });
-  }
-
-  /**
-   * This function is experimental and not implemented yet
-   * @experimental
-   * @param token The string value of the token. For access tokens, this
-   * is the "access_token" value returned from the token endpoint
-   * defined in OAuth 2.0. For refresh tokens, this is the "refresh_token"
-   * value returned.
-   */
-  sessionIntrospect(
-    tenantId: string,
-    token: string,
-  ): Promise<{ tokenInfo: sdkTypes.TokenInfo; providers: string[] }> {
-    return new Promise((resolve, reject) => {
-      const request = SessionIntrospectRequest.create({
-        tenantId,
-        token,
-      });
-
-      this.client.sessionIntrospect(request, (err, res) => {
-        if (err) reject(err);
-        if (!res) {
-          reject(new SdkError(SdkErrorCode.SDK_CODE_1, 'Missing session introspect response'));
-          return;
-        }
-        resolve({
-          tokenInfo: sdkTypes.TokenInfo.deserialize(res),
-          providers: res.providerData,
-        });
       });
     });
   }
@@ -392,148 +352,6 @@ export class IdentityClient {
     });
     request.operations = dt.getPatchOperationsAndReset();
     return this.patch(request);
-  }
-
-  startEmailVerification(
-    digitalTwinId: string,
-    tenantId: string,
-    email: string,
-    attributes?: unknown,
-  ): Promise<boolean> {
-    const { digitalTwin } = Utils.createDigitalTwinId(digitalTwinId, tenantId);
-    const request = StartDigitalTwinEmailVerificationRequest.fromJson({
-      digitalTwin,
-      email,
-    });
-    if (attributes) {
-      const attributesValue = Utils.objectToValue(attributes);
-      if (attributesValue.value.oneofKind !== 'mapValue') {
-        throw new SdkError(
-          SdkErrorCode.SDK_CODE_1,
-          'Message attributes property needs to be an object value',
-        );
-      }
-      request.attributes = attributesValue.value.mapValue;
-    }
-
-    return new Promise<boolean>((resolve, reject) => {
-      this.client.startDigitalTwinEmailVerification(request, (err) => {
-        if (err) reject(err);
-        else resolve(true);
-      });
-    });
-  }
-
-  verifyDigitalTwinEmail(token: string): Promise<sdkTypes.DigitalTwin> {
-    if (token.length < 32) {
-      throw new Error('Token must be 32 chars or more.');
-    }
-
-    const request = VerifyDigitalTwinEmailRequest.fromJson({
-      token,
-    });
-
-    return new Promise<sdkTypes.DigitalTwin>((resolve, reject) => {
-      this.client.verifyDigitalTwinEmail(request, (err, response) => {
-        if (err) reject(err);
-        else {
-          if (response && response.digitalTwin) {
-            const dt = response.digitalTwin;
-            resolve(new sdkTypes.DigitalTwin(dt.id, dt.tenantId, dt.kind, dt.state, dt.tags));
-          } else {
-            reject(new SdkError(SdkErrorCode.SDK_CODE_1, 'Missing verify email response'));
-          }
-        }
-      });
-    });
-  }
-
-  startForgottenPasswordFlow(digitalTwinId: string, tenantId: string): Promise<boolean> {
-    const digitalTwin = Utils.createDigitalTwinId(digitalTwinId, tenantId);
-    const request = StartForgottenPasswordFlowRequest.fromJson(digitalTwin);
-
-    return new Promise<boolean>((resolve, reject) => {
-      this.client.startForgottenPasswordFlow(request, (err) => {
-        if (err) reject(err);
-        else resolve(true);
-      });
-    });
-  }
-
-  changePasswordByToken(token: string, password: string): Promise<boolean> {
-    if (token.length < 32) {
-      throw new Error('Token must be 32 chars or more.');
-    }
-    const request = ChangePasswordRequest.fromJson({
-      token,
-      password,
-    });
-
-    return new Promise<boolean>((resolve, reject) => {
-      this.client.changePassword(request, (err, response) => {
-        if (err) reject(err);
-        else if (response && response.error) reject(response.error);
-        else resolve(true);
-      });
-    });
-  }
-
-  /**
-   * @deprecated sine 0.1.6, use changePasswordByToken instead
-   */
-  changeMyPassword(token: string, password: string): Promise<boolean> {
-    if (token.length < 32) {
-      throw new Error('Token must be 32 chars or more.');
-    }
-    const request = ChangePasswordRequest.fromJson({
-      token,
-      password,
-    });
-
-    return new Promise<boolean>((resolve, reject) => {
-      this.client.changePassword(request, (err) => {
-        if (err) reject(err);
-        else resolve(true);
-      });
-    });
-  }
-
-  changePassword(digitalTwinId: string, tenantId: string, password: string): Promise<boolean> {
-    const { digitalTwin } = Utils.createDigitalTwinId(digitalTwinId, tenantId);
-    const request = ChangePasswordRequest.fromJson({
-      digitalTwin,
-      password,
-    });
-
-    return new Promise<boolean>((resolve, reject) => {
-      this.client.changePassword(request, (err, response) => {
-        if (err) reject(err);
-        else if (response && response.error) reject(response.error);
-        else resolve(true);
-      });
-    });
-  }
-
-  /**
-   * @deprecated sience 0.1.6, use changePassword instead
-   */
-  changePasswordOfDigitalTwin(
-    digitalTwinId: string,
-    tenantId: string,
-    password: string,
-  ): Promise<boolean> {
-    const { digitalTwin } = Utils.createDigitalTwinId(digitalTwinId, tenantId);
-    const request = ChangePasswordRequest.fromJson({
-      digitalTwin,
-      password,
-    });
-
-    return new Promise<boolean>((resolve, reject) => {
-      this.client.changePassword(request, (err) => {
-        if (err) reject(err);
-        else resolve(true);
-      });
-    });
   }
 
   deleteDigitalTwin(digitalTwinId: string, tenantId: string): Promise<sdkTypes.DigitalTwin> {
@@ -999,107 +817,6 @@ export class IdentityClient {
           }
           const digitalTwin = sdkTypes.DigitalTwinCore.deserializeCore(response.digitalTwin);
           resolve({ patchResults, digitalTwin });
-        }
-      });
-    });
-  }
-
-  /**
-   * This function is experimental and not implemented yet
-   * @experimental
-   */
-  getPasswordCredential(digitalTwin: DigitalTwinCore): Promise<void> {
-    const request = GetPasswordCredentialRequest.create({
-      digitalTwin: digitalTwin.marshal(),
-    });
-
-    return new Promise((resolve, reject) => {
-      this.client.getPasswordCredential(request, (err, response) => {
-        if (err) reject(err);
-        else if (!response) {
-          reject(new SdkError(SdkErrorCode.SDK_CODE_1, 'Missing get password credential response'));
-        } else {
-          resolve();
-        }
-      });
-    });
-  }
-
-  /**
-   * This function is experimental and not implemented yet
-   * @experimental
-   */
-  updateEmailPasswordCredential(
-    email: string,
-    loginProperties: Buffer[],
-    locked?: boolean,
-    mustChange?: boolean,
-  ): Promise<void> {
-    const request = UpdatePasswordCredentialRequest.create({
-      loginProperties: loginProperties.map((property) => Uint8Array.from(property)),
-      primary: {
-        oneofKind: 'email',
-        email,
-      },
-    });
-
-    if (locked !== undefined) {
-      request.locked = BoolValue.create({ value: locked });
-    }
-
-    if (mustChange !== undefined) {
-      request.mustChange = BoolValue.create({ value: mustChange });
-    }
-
-    return new Promise((resolve, reject) => {
-      this.client.updatePasswordCredential(request, (err, response) => {
-        if (err) reject(err);
-        else if (!response) {
-          reject(
-            new SdkError(SdkErrorCode.SDK_CODE_1, 'Missing update password credential response'),
-          );
-        } else {
-          resolve();
-        }
-      });
-    });
-  }
-
-  /**
-   * This function is experimental and not implemented yet
-   * @experimental
-   */
-  updateMobilePasswordCredential(
-    mobile: string,
-    loginProperties: Buffer[],
-    locked?: boolean,
-    mustChange?: boolean,
-  ): Promise<void> {
-    const request = UpdatePasswordCredentialRequest.create({
-      loginProperties: loginProperties.map((property) => Uint8Array.from(property)),
-      primary: {
-        oneofKind: 'mobile',
-        mobile,
-      },
-    });
-
-    if (locked !== undefined) {
-      request.locked = BoolValue.create({ value: locked });
-    }
-
-    if (mustChange !== undefined) {
-      request.mustChange = BoolValue.create({ value: mustChange });
-    }
-
-    return new Promise((resolve, reject) => {
-      this.client.updatePasswordCredential(request, (err, response) => {
-        if (err) reject(err);
-        else if (!response) {
-          reject(
-            new SdkError(SdkErrorCode.SDK_CODE_1, 'Missing update password credential response'),
-          );
-        } else {
-          resolve();
         }
       });
     });

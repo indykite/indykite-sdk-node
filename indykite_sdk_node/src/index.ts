@@ -10,17 +10,4 @@ export { IdentityKnowledgeClient } from './sdk/knowledge';
 export { HTTPClient, HTTPResponse } from './sdk/http';
 export * from './sdk/ingest';
 export * from './sdk/model';
-export {
-  ChangePasswordRequest,
-  DeleteDigitalTwinRequest,
-  // GetDigitalTwinRequest,
-  // GetDigitalTwinResponse,
-  // PatchDigitalTwinRequest,
-  StartDigitalTwinEmailVerificationRequest,
-  StartDigitalTwinEmailVerificationResponse,
-  StartForgottenPasswordFlowRequest,
-  StartForgottenPasswordFlowResponse,
-  // TokenIntrospectRequest,
-  // TokenIntrospectResponse,
-  VerifyDigitalTwinEmailRequest,
-} from './grpc/indykite/identity/v1beta2/identity_management_api';
+export { DeleteDigitalTwinRequest } from './grpc/indykite/identity/v1beta2/identity_management_api';
