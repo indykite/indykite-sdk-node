@@ -246,7 +246,7 @@ export class IdentityKnowledgeClient {
     const request: IdentityKnowledgeRequest = {
       operation: Operation.READ,
       path: `(n:${nodeType})`,
-      conditions: `WHERE n.external_id = $external_id AND n.type = $type`,
+      conditions: `WHERE n.external_id = $externalId AND n.type = $type`,
       inputParams: {
         externalId: InputParam.fromJson(Utils.objectToJsonValue(identifier.externalId)),
         type: InputParam.fromJson(Utils.objectToJsonValue(identifier.type)),
