@@ -192,6 +192,8 @@ export class IdentityKnowledgeClient {
     const request: IdentityKnowledgeRequest = {
       operation: Operation.READ,
       path: `(:${nodeType})`,
+      conditions: '',
+      inputParams: {},
     } as IdentityKnowledgeRequest;
     return new Promise((resolve, reject) => {
       this.identityKnowledge(request)
