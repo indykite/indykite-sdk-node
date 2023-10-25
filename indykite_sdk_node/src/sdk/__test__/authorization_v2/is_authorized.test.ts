@@ -37,12 +37,12 @@ describe('isAuthorized', () => {
     const resources: IsAuthorizedRequest_Resource[] = [
       {
         type: 'ParkingLot',
-        id: 'parking-lot-id1',
+        externalId: 'parking-lot-id1',
         actions: ['HAS_FREE_PARKING'],
       },
       {
         type: 'ParkingLot',
-        id: 'parking-lot-id2',
+        externalId: 'parking-lot-id2',
         actions: ['HAS_FREE_PARKING'],
       },
     ];
@@ -106,12 +106,12 @@ describe('isAuthorized', () => {
           },
           resources: [
             {
-              id: 'parking-lot-id1',
+              externalId: 'parking-lot-id1',
               type: 'ParkingLot',
               actions: ['HAS_FREE_PARKING'],
             },
             {
-              id: 'parking-lot-id2',
+              externalId: 'parking-lot-id2',
               type: 'ParkingLot',
               actions: ['HAS_FREE_PARKING'],
             },
@@ -150,12 +150,12 @@ describe('isAuthorized', () => {
     const resources: IsAuthorizedRequest_Resource[] = [
       {
         type: 'ParkingLot',
-        id: 'parking-lot-id1',
+        externalId: 'parking-lot-id1',
         actions: ['HAS_FREE_PARKING'],
       },
       {
         type: 'ParkingLot',
-        id: 'parking-lot-id2',
+        externalId: 'parking-lot-id2',
         actions: ['HAS_FREE_PARKING'],
       },
     ];
@@ -194,12 +194,12 @@ describe('isAuthorized', () => {
     const resources: IsAuthorizedRequest_Resource[] = [
       {
         type: 'ParkingLot',
-        id: 'parking-lot-id1',
+        externalId: 'parking-lot-id1',
         actions: ['HAS_FREE_PARKING'],
       },
       {
         type: 'ParkingLot',
-        id: 'parking-lot-id2',
+        externalId: 'parking-lot-id2',
         actions: ['HAS_FREE_PARKING'],
       },
     ];
@@ -242,12 +242,12 @@ describe('isAuthorizedByToken', () => {
     const resources: IsAuthorizedRequest_Resource[] = [
       {
         type: 'ParkingLot',
-        id: 'parking-lot-id1',
+        externalId: 'parking-lot-id1',
         actions: ['HAS_FREE_PARKING'],
       },
       {
         type: 'ParkingLot',
-        id: 'parking-lot-id2',
+        externalId: 'parking-lot-id2',
         actions: ['HAS_FREE_PARKING'],
       },
     ];
@@ -323,12 +323,12 @@ describe('isAuthorizedByToken', () => {
           },
           resources: [
             {
-              id: 'parking-lot-id1',
+              externalId: 'parking-lot-id1',
               type: 'ParkingLot',
               actions: ['HAS_FREE_PARKING'],
             },
             {
-              id: 'parking-lot-id2',
+              externalId: 'parking-lot-id2',
               type: 'ParkingLot',
               actions: ['HAS_FREE_PARKING'],
             },
@@ -367,12 +367,12 @@ describe('isAuthorizedByToken', () => {
     const resources: IsAuthorizedRequest_Resource[] = [
       {
         type: 'ParkingLot',
-        id: 'parking-lot-id1',
+        externalId: 'parking-lot-id1',
         actions: ['HAS_FREE_PARKING'],
       },
       {
         type: 'ParkingLot',
-        id: 'parking-lot-id2',
+        externalId: 'parking-lot-id2',
         actions: ['HAS_FREE_PARKING'],
       },
     ];
@@ -411,12 +411,12 @@ describe('isAuthorizedByToken', () => {
     const resources: IsAuthorizedRequest_Resource[] = [
       {
         type: 'ParkingLot',
-        id: 'parking-lot-id1',
+        externalId: 'parking-lot-id1',
         actions: ['HAS_FREE_PARKING'],
       },
       {
         type: 'ParkingLot',
-        id: 'parking-lot-id2',
+        externalId: 'parking-lot-id2',
         actions: ['HAS_FREE_PARKING'],
       },
     ];
@@ -464,12 +464,12 @@ describe('isAuthorizedByProperty', () => {
     const resources: IsAuthorizedRequest_Resource[] = [
       {
         type: 'ParkingLot',
-        id: 'parking-lot-id1',
+        externalId: 'parking-lot-id1',
         actions: ['HAS_FREE_PARKING'],
       },
       {
         type: 'ParkingLot',
-        id: 'parking-lot-id2',
+        externalId: 'parking-lot-id2',
         actions: ['HAS_FREE_PARKING'],
       },
     ];
@@ -539,12 +539,12 @@ describe('isAuthorizedByProperty', () => {
           },
           resources: [
             {
-              id: 'parking-lot-id1',
+              externalId: 'parking-lot-id1',
               type: 'ParkingLot',
               actions: ['HAS_FREE_PARKING'],
             },
             {
-              id: 'parking-lot-id2',
+              externalId: 'parking-lot-id2',
               type: 'ParkingLot',
               actions: ['HAS_FREE_PARKING'],
             },
@@ -583,12 +583,12 @@ describe('isAuthorizedByProperty', () => {
     const resources: IsAuthorizedRequest_Resource[] = [
       {
         type: 'ParkingLot',
-        id: 'parking-lot-id1',
+        externalId: 'parking-lot-id1',
         actions: ['HAS_FREE_PARKING'],
       },
       {
         type: 'ParkingLot',
-        id: 'parking-lot-id2',
+        externalId: 'parking-lot-id2',
         actions: ['HAS_FREE_PARKING'],
       },
     ];
@@ -627,12 +627,12 @@ describe('isAuthorizedByProperty', () => {
     const resources: IsAuthorizedRequest_Resource[] = [
       {
         type: 'ParkingLot',
-        id: 'parking-lot-id1',
+        externalId: 'parking-lot-id1',
         actions: ['HAS_FREE_PARKING'],
       },
       {
         type: 'ParkingLot',
-        id: 'parking-lot-id2',
+        externalId: 'parking-lot-id2',
         actions: ['HAS_FREE_PARKING'],
       },
     ];
