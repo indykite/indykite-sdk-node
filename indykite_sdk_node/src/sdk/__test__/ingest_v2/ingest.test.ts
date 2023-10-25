@@ -1,7 +1,6 @@
 import { EventEmitter } from 'events';
 import { SdkClient } from '../../client/client';
-import { IngestV2Client } from '../../ingest_v2';
-import { IngestRecord } from '../../ingest';
+import { IngestV2Client, IngestRecord } from '../../ingest_v2';
 import { applicationTokenMock } from '../../utils/test_utils';
 import { CallOptions, Metadata, ServiceError } from '@grpc/grpc-js';
 import {

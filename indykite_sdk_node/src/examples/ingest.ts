@@ -1,5 +1,4 @@
-import { IngestRecord } from '../sdk/ingest';
-import { IngestV2Client } from '../sdk/ingest_v2';
+import { IngestV2Client, IngestRecord } from '../sdk/ingest_v2';
 
 IngestV2Client.createInstance().then((sdk) => {
   const input = [
