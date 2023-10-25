@@ -22,6 +22,7 @@
     "coverage-ci": "jest --ci --silent --coverage --coverageReporters=json",
     "coverage-html": "jest --coverage --silent --coverageReporters=html",
     "buf-generate": "buf generate --template ../buf.gen.yaml buf.build/indykite/indykiteapis -o ..",
+    "buf-generate-noaudit": "buf generate --template ../buf.gen.yaml buf.build/indykite/indykiteapis --exclude-path indykite/auditsink -o ..",
     "doc-generate": "typedoc --options typedoc.json && ts-node scripts/fixApiDocLinks.ts"
   },
   "devDependencies": {

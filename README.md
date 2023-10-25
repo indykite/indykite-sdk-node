@@ -14,7 +14,7 @@ IndyKite is a cloud identity platform built to secure and manage human & non-per
 
 ## Terminology
 
-[IndyKite glossary](https://docs.indykite.com/docs/resources/glossary)
+[IndyKite glossary](https://docs.indykite.com/docs/references/glossary)
 
 ## Getting started
 Use these instructions to install the SDK and configure your environment.
