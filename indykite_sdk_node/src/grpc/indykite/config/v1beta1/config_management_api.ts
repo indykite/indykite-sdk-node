@@ -10357,7 +10357,7 @@ class AssignPermissionsRequest$Type extends MessageType<AssignPermissionsRequest
     constructor() {
         super("indykite.config.v1beta1.AssignPermissionsRequest", [
             { no: 1, name: "target_identifier", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
-            { no: 2, name: "role", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { in: ["all_editor", "all_viewer"] } } } },
+            { no: 2, name: "role", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { in: ["all_editor", "all_viewer", "customer_viewer"] } } } },
             { no: 3, name: "customer_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
             { no: 4, name: "object_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
             { no: 5, name: "bookmarks", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { items: { string: { minLen: "40", pattern: "^[a-zA-Z0-9_-]{40,}$" } } } } } }
@@ -10486,7 +10486,7 @@ class RevokePermissionsRequest$Type extends MessageType<RevokePermissionsRequest
     constructor() {
         super("indykite.config.v1beta1.RevokePermissionsRequest", [
             { no: 1, name: "target_identifier", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
-            { no: 2, name: "role", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { in: ["all_editor", "all_viewer"] } } } },
+            { no: 2, name: "role", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { in: ["all_editor", "all_viewer", "customer_viewer"] } } } },
             { no: 3, name: "customer_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
             { no: 4, name: "object_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
             { no: 5, name: "bookmarks", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { items: { string: { minLen: "40", pattern: "^[a-zA-Z0-9_-]{40,}$" } } } } } }

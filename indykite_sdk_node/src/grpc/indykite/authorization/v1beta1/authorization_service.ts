@@ -68,11 +68,11 @@ export interface IsAuthorizedRequest {
  */
 export interface IsAuthorizedRequest_Resource {
     /**
-     * Resource id.
+     * Resource external id.
      *
-     * @generated from protobuf field: string id = 1;
+     * @generated from protobuf field: string external_id = 1;
      */
-    id: string;
+    externalId: string;
     /**
      * Resource type.
      *
@@ -132,7 +132,7 @@ export interface IsAuthorizedResponse_Resource {
  */
 export interface IsAuthorizedResponse_ResourceType {
     /**
-     * Map with resource id as key.
+     * Map with resource external id as key.
      *
      * @generated from protobuf field: map<string, indykite.authorization.v1beta1.IsAuthorizedResponse.Resource> resources = 1;
      */
@@ -276,11 +276,11 @@ export interface WhoAuthorizedRequest {
  */
 export interface WhoAuthorizedRequest_Resource {
     /**
-     * Resource id.
+     * Resource external id.
      *
-     * @generated from protobuf field: string id = 1;
+     * @generated from protobuf field: string external_id = 1;
      */
-    id: string;
+    externalId: string;
     /**
      * Resource type.
      *
@@ -353,7 +353,7 @@ export interface WhoAuthorizedResponse_Resource {
  */
 export interface WhoAuthorizedResponse_ResourceType {
     /**
-     * Map with resource id as key.
+     * Map with resource external id as key.
      *
      * @generated from protobuf field: map<string, indykite.authorization.v1beta1.WhoAuthorizedResponse.Resource> resources = 1;
      */
@@ -453,13 +453,13 @@ export const IsAuthorizedRequest = new IsAuthorizedRequest$Type();
 class IsAuthorizedRequest_Resource$Type extends MessageType<IsAuthorizedRequest_Resource> {
     constructor() {
         super("indykite.authorization.v1beta1.IsAuthorizedRequest.Resource", [
-            { no: 1, name: "id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "2", maxLen: "50" } } } },
+            { no: 1, name: "external_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "2", maxLen: "50" } } } },
             { no: 2, name: "type", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "2", maxLen: "50", pattern: "^(?:[A-Z][a-z]+)+$" } } } },
             { no: 3, name: "actions", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { minItems: "1", maxItems: "5", items: { string: { minLen: "2", maxLen: "50", pattern: "^[a-zA-Z0-9.:_\\-\\/]{2,}$" } } } } } }
         ]);
     }
     create(value?: PartialMessage<IsAuthorizedRequest_Resource>): IsAuthorizedRequest_Resource {
-        const message = { id: "", type: "", actions: [] };
+        const message = { externalId: "", type: "", actions: [] };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<IsAuthorizedRequest_Resource>(this, message, value);
@@ -470,8 +470,8 @@ class IsAuthorizedRequest_Resource$Type extends MessageType<IsAuthorizedRequest_
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* string id */ 1:
-                    message.id = reader.string();
+                case /* string external_id */ 1:
+                    message.externalId = reader.string();
                     break;
                 case /* string type */ 2:
                     message.type = reader.string();
@@ -491,9 +491,9 @@ class IsAuthorizedRequest_Resource$Type extends MessageType<IsAuthorizedRequest_
         return message;
     }
     internalBinaryWrite(message: IsAuthorizedRequest_Resource, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* string id = 1; */
-        if (message.id !== "")
-            writer.tag(1, WireType.LengthDelimited).string(message.id);
+        /* string external_id = 1; */
+        if (message.externalId !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.externalId);
         /* string type = 2; */
         if (message.type !== "")
             writer.tag(2, WireType.LengthDelimited).string(message.type);
@@ -1227,13 +1227,13 @@ export const WhoAuthorizedRequest = new WhoAuthorizedRequest$Type();
 class WhoAuthorizedRequest_Resource$Type extends MessageType<WhoAuthorizedRequest_Resource> {
     constructor() {
         super("indykite.authorization.v1beta1.WhoAuthorizedRequest.Resource", [
-            { no: 1, name: "id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "2", maxLen: "50" } } } },
+            { no: 1, name: "external_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "2", maxLen: "50" } } } },
             { no: 2, name: "type", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "2", maxLen: "50", pattern: "^(?:[A-Z][a-z]+)+$" } } } },
             { no: 3, name: "actions", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { minItems: "1", maxItems: "5", items: { string: { minLen: "2", maxLen: "50", pattern: "^[a-zA-Z0-9.:_\\-\\/]{2,}$" } }, ignoreEmpty: true } } } }
         ]);
     }
     create(value?: PartialMessage<WhoAuthorizedRequest_Resource>): WhoAuthorizedRequest_Resource {
-        const message = { id: "", type: "", actions: [] };
+        const message = { externalId: "", type: "", actions: [] };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<WhoAuthorizedRequest_Resource>(this, message, value);
@@ -1244,8 +1244,8 @@ class WhoAuthorizedRequest_Resource$Type extends MessageType<WhoAuthorizedReques
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* string id */ 1:
-                    message.id = reader.string();
+                case /* string external_id */ 1:
+                    message.externalId = reader.string();
                     break;
                 case /* string type */ 2:
                     message.type = reader.string();
@@ -1265,9 +1265,9 @@ class WhoAuthorizedRequest_Resource$Type extends MessageType<WhoAuthorizedReques
         return message;
     }
     internalBinaryWrite(message: WhoAuthorizedRequest_Resource, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* string id = 1; */
-        if (message.id !== "")
-            writer.tag(1, WireType.LengthDelimited).string(message.id);
+        /* string external_id = 1; */
+        if (message.externalId !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.externalId);
         /* string type = 2; */
         if (message.type !== "")
             writer.tag(2, WireType.LengthDelimited).string(message.type);
