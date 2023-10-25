@@ -55,12 +55,6 @@ IdentityClient.createInstance()
 
     // const randPwd = Math.random().toString(36).slice(2);
     // console.log(`Random generated password: ${randPwd}`);
-
-    // sdk
-    //   .changePasswordByToken(userToken, randPwd)
-    //   .then(() => console.log('Password changed'))
-    //   .catch((err) => console.log('Password not changed due to:', JSON.stringify(err, null, 2)));
-
     // const delByToken = await sdk.deleteDigitalTwinByToken(userToken);
     // console.log('Delete by token', JSON.stringify(delByToken, null, 2));
   })

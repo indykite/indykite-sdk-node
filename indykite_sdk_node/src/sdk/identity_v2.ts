@@ -1,5 +1,4 @@
 import {
-  ChangePasswordRequest,
   CheckInvitationStateRequest,
   CheckInvitationStateResponse,
   CheckOAuth2ConsentChallengeRequest,
@@ -19,11 +18,8 @@ import {
   ResendInvitationRequest,
   RevokeConsentRequest,
   RevokeConsentResponse,
-  StartDigitalTwinEmailVerificationRequest,
-  StartForgottenPasswordFlowRequest,
   TokenIntrospectRequest,
   TokenIntrospectResponse,
-  VerifyDigitalTwinEmailRequest,
 } from '../grpc/indykite/identity/v1beta2/identity_management_api';
 import type { GetDigitalTwinResponse } from '../grpc/indykite/identity/v1beta2/identity_management_api';
 import { DigitalTwin, DigitalTwinIdentifier } from '../grpc/indykite/identity/v1beta2/model';
@@ -38,7 +34,6 @@ import {
   PropertyMask,
 } from '../grpc/indykite/identity/v1beta2/attributes';
 import { Utils } from './utils/utils';
-import { ChangePasswordResponse } from '../grpc/indykite/identity/v1beta1/identity_management_api';
 import {
   ImportDigitalTwin,
   ImportDigitalTwinsRequest,
@@ -323,172 +318,6 @@ export class IdentityClientV2 {
         else {
           resolve(response.result[0]);
         }
-      });
-    });
-  }
-
-  /**
-   * This function initiates the flow where Indykite systems sends a notification to DigitalTwin with a link
-   * to verify the control over the notification channel (email only for now).
-   * @since 0.4.1
-   * @example
-   * async function example(sdk: IdentityClientV2, digitalTwin: grpcIdentityModel.DigitalTwin) {
-   *   await sdk.startEmailVerification(digitalTwin, 'user@example.com');
-   *
-   *   // refrence id was sent to the specified email address
-   *
-   *   await sdk.verifyDigitalTwinEmail(REFERENCE_ID);
-   * }
-   */
-  startEmailVerification(
-    digitalTwin: DigitalTwin,
-    email: string,
-    attributes: Record<string, unknown> = {},
-  ): Promise<void> {
-    const request: StartDigitalTwinEmailVerificationRequest = {
-      email,
-      digitalTwin,
-    };
-    return new Promise((resolve, reject) => {
-      if (attributes) {
-        const attributesValue = Utils.objectToValue(attributes);
-        if (attributesValue.value.oneofKind !== 'mapValue') {
-          throw new SdkError(
-            SdkErrorCode.SDK_CODE_1,
-            'Message attributes property needs to be an object value',
-          );
-        }
-        request.attributes = attributesValue.value.mapValue;
-      }
-
-      this.client.startDigitalTwinEmailVerification(request, (err) => {
-        if (err) reject(err);
-        else resolve();
-      });
-    });
-  }
-
-  /**
-   * This function confirms to IndyKite system that the message from StartDigitalTwinEmailVerification function
-   * was sent and user visited the link.
-   * @since 0.4.1
-   * @example
-   * async function example(sdk: IdentityClientV2, digitalTwin: grpcIdentityModel.DigitalTwin) {
-   *   await sdk.startEmailVerification(digitalTwin, 'user@example.com');
-   *
-   *   // refrence id was sent to the specified email address
-   *
-   *   await sdk.verifyDigitalTwinEmail(REFERENCE_ID);
-   * }
-   */
-  verifyDigitalTwinEmail(token: string): Promise<DigitalTwin | undefined> {
-    const request: VerifyDigitalTwinEmailRequest = { token };
-    return new Promise((resolve, reject) => {
-      this.client.verifyDigitalTwinEmail(request, (err, response) => {
-        if (err) reject(err);
-        else resolve(response?.digitalTwin);
-      });
-    });
-  }
-
-  /**
-   * This function initiates the flow where systems sends a notification to DigitalTwin with a link
-   * to set the new password.
-   *
-   * The flow checks if the DigitalTwin has primary contact information and if so it sends a message
-   * with a link. By opening the link the UI SDK guides the User-Agent through the Authentication Flow
-   * where the user is allowed to set a new Password credential.
-   * @since 0.4.1
-   * @example
-   * async function example(sdk: IdentityClientV2) {
-   *   await sdk.startForgottenPasswordFlow({
-   *     id: 'gid:digital-twin-id',
-   *     tenantId: 'gid:tenant-id',
-   *     kind: grpcIdentityModel.DigitalTwinKind.PERSON,
-   *     state: grpcIdentityModel.DigitalTwinState.ACTIVE,
-   *     tags: [],
-   *   });
-   * }
-   */
-  startForgottenPasswordFlow(digitalTwin: DigitalTwin): Promise<void> {
-    const request: StartForgottenPasswordFlowRequest = {
-      digitalTwin,
-    };
-
-    return new Promise<void>((resolve, reject) => {
-      this.client.startForgottenPasswordFlow(request, (err) => {
-        if (err) reject(err);
-        else resolve();
-      });
-    });
-  }
-
-  /**
-   * Change password of DigitalTwin from bearer token.
-   * @since 0.4.1
-   * @example
-   * async function example(sdk: IdentityClientV2) {
-   *   await sdk.changeMyPassword(ACCESS_TOKEN, 'new-password');
-   * }
-   */
-  changeMyPassword(token: string, newPassword: string): Promise<void> {
-    const request: ChangePasswordRequest = {
-      uid: {
-        oneofKind: 'token',
-        token,
-      },
-      password: newPassword,
-      ignorePolicy: false,
-    };
-
-    return new Promise<void>((resolve, reject) => {
-      this.client.changePassword(request, (err, response) => {
-        if (err) reject(err);
-        else if (!response)
-          reject(new SdkError(SdkErrorCode.SDK_CODE_1, 'No change password response'));
-        else if (response && response.error) reject(response.error);
-        else resolve();
-      });
-    });
-  }
-
-  /**
-   * This function allows the Application to replace the Password credential of a DigitalTwin.
-   * @since 0.4.1
-   * @example
-   * async function example(sdk: IdentityClientV2) {
-   *   await sdk.changePasswordOfDigitalTwin(
-   *     {
-   *       id: 'gid:digitaltwin-id',
-   *       tenantId: 'gid:tenant-id',
-   *       state: DigitalTwinState.ACTIVE,
-   *       kind: DigitalTwinKind.PERSON,
-   *       tags: [],
-   *     },
-   *     'new-password',
-   *   );
-   * }
-   */
-  changePasswordOfDigitalTwin(
-    digitalTwin: DigitalTwin,
-    newPassword: string,
-  ): Promise<ChangePasswordResponse> {
-    const request: ChangePasswordRequest = {
-      uid: {
-        oneofKind: 'digitalTwin',
-        digitalTwin,
-      },
-      password: newPassword,
-      ignorePolicy: false,
-    };
-
-    return new Promise<ChangePasswordResponse>((resolve, reject) => {
-      this.client.changePassword(request, (err, response) => {
-        if (err) reject(err);
-        else if (!response)
-          reject(new SdkError(SdkErrorCode.SDK_CODE_1, 'No change password response'));
-        else if (response && response.error) reject(response.error);
-        else resolve(response);
       });
     });
   }
