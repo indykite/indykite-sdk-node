@@ -9,7 +9,6 @@ import {
 } from '../grpc/indykite/ingest/v1beta2/ingest_api';
 import { SdkError, SdkErrorCode, SkdErrorText } from './error';
 import { IndexFixer, streamKeeper } from './utils/stream';
-// import { Record } from '../grpc/indykite/ingest/v1beta2/model';
 import { Record as RecordModel } from '../grpc/indykite/ingest/v1beta2/model';
 
 export interface IngestResourceRecord {
