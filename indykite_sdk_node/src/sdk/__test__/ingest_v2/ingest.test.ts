@@ -599,6 +599,7 @@ describe('IngestRecord builder', () => {
           expect(
             upsert.node
               .digitalTwin({
+                id: '',
                 externalId: 'person-id',
                 type: 'Owner',
                 tenantId: 'tenant-id',
@@ -641,6 +642,7 @@ describe('IngestRecord builder', () => {
           expect(
             upsert.node
               .digitalTwin({
+                id: '',
                 externalId: 'person-id',
                 type: 'Owner',
                 tenantId: 'tenant-id',
@@ -658,6 +660,7 @@ describe('IngestRecord builder', () => {
                       type: {
                         oneofKind: 'digitalTwin',
                         digitalTwin: {
+                          id: '',
                           externalId: 'person-id',
                           type: 'Owner',
                           tenantId: 'tenant-id',
@@ -676,6 +679,7 @@ describe('IngestRecord builder', () => {
           expect(
             upsert.node
               .digitalTwin({
+                id: '',
                 externalId: 'person-id',
                 type: 'Owner',
                 tags: ['MyTag'],
@@ -700,6 +704,7 @@ describe('IngestRecord builder', () => {
                       type: {
                         oneofKind: 'digitalTwin',
                         digitalTwin: {
+                          id: '',
                           externalId: 'person-id',
                           type: 'Owner',
                           tenantId: 'tenant-id',
