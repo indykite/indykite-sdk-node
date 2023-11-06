@@ -393,7 +393,6 @@ export class IngestClient {
   }
 
   /**
-   * https://pkg.go.dev/github.com/indykite/jarvis-sdk-go@v0.11.0/ingest#V2Client.IngestRecord
    * @since 0.4.1
    * @example
    * await sdk.ingestRecord(
@@ -425,7 +424,6 @@ export class IngestClient {
   }
 
   /**
-   * https://pkg.go.dev/github.com/indykite/jarvis-sdk-go@v0.11.0/ingest#V2Client.SendRecord
    * @since 0.4.1
    * @example
    *   const input = [

@@ -1,6 +1,6 @@
-import { IngestV2Client, IngestRecord } from '../sdk/ingest';
+import { IngestClient, IngestRecord } from '../sdk/ingest';
 
-IngestV2Client.createInstance().then((sdk) => {
+IngestClient.createInstance().then((sdk) => {
   const input = [
     IngestRecord.upsert('recordId-3')
       .node.digitalTwin({
