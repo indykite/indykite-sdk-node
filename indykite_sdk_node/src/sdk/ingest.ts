@@ -373,18 +373,18 @@ export class IngestRecordUpsertNode extends IngestRecord {
  * @since 0.4.1
  * @example
  * // Example how to create a new ingest client
- * const sdk = await IngestV2Client.createInstance();
+ * const sdk = await IngestClient.createInstance();
  */
-export class IngestV2Client {
+export class IngestClient {
   private client: IngestAPIClient;
   constructor(sdk: SdkClient) {
     this.client = sdk.client as IngestAPIClient;
   }
-  static createInstance(appCredential?: string | unknown): Promise<IngestV2Client> {
-    return new Promise<IngestV2Client>((resolve, reject) => {
+  static createInstance(appCredential?: string | unknown): Promise<IngestClient> {
+    return new Promise<IngestClient>((resolve, reject) => {
       SdkClient.createIdentityInstance(IngestAPIClient, appCredential)
         .then((sdk) => {
-          resolve(new IngestV2Client(sdk));
+          resolve(new IngestClient(sdk));
         })
         .catch((err) => {
           reject(err);
@@ -415,7 +415,7 @@ export class IngestV2Client {
         if (err) reject(err);
         else if (!response)
           reject(
-            new SdkError(SdkErrorCode.SDK_CODE_6, SkdErrorText.SDK_CODE_6(IngestV2Client.name)),
+            new SdkError(SdkErrorCode.SDK_CODE_6, SkdErrorText.SDK_CODE_6(IngestClient.name)),
           );
         else {
           resolve(response);

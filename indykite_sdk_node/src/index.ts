@@ -8,6 +8,6 @@ export { ConfigClient } from './sdk/config';
 export { ConfigClientV2 } from './sdk/config_v2';
 export { IdentityKnowledgeClient } from './sdk/knowledge';
 export { HTTPClient, HTTPResponse } from './sdk/http';
-export * from './sdk/ingest_v2';
+export * from './sdk/ingest';
 export * from './sdk/model';
 export { DeleteDigitalTwinRequest } from './grpc/indykite/identity/v1beta2/identity_management_api';
