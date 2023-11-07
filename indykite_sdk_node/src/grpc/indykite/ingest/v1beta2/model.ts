@@ -168,6 +168,10 @@ export interface DigitalTwin {
      * @generated from protobuf field: repeated indykite.ingest.v1beta2.Property properties = 7;
      */
     properties: Property[];
+    /**
+     * @generated from protobuf field: string id = 8;
+     */
+    id: string;
 }
 /**
  * @generated from protobuf message indykite.ingest.v1beta2.Resource
@@ -671,11 +675,12 @@ class DigitalTwin$Type extends MessageType<DigitalTwin> {
             { no: 3, name: "tags", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { maxItems: "32", unique: true, items: { string: { maxLen: "64", pattern: "^([A-Z][a-z]+)+$" } } } } } },
             { no: 5, name: "tenant_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
             { no: 6, name: "identity_properties", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => IdentityProperty, options: { "validate.rules": { repeated: { maxItems: "10" } } } },
-            { no: 7, name: "properties", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Property, options: { "validate.rules": { repeated: { maxItems: "10" } } } }
+            { no: 7, name: "properties", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Property, options: { "validate.rules": { repeated: { maxItems: "10" } } } },
+            { no: 8, name: "id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "256", prefix: "gid:", ignoreEmpty: true } } } }
         ]);
     }
     create(value?: PartialMessage<DigitalTwin>): DigitalTwin {
-        const message = { externalId: "", type: "", tags: [], tenantId: "", identityProperties: [], properties: [] };
+        const message = { externalId: "", type: "", tags: [], tenantId: "", identityProperties: [], properties: [], id: "" };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<DigitalTwin>(this, message, value);
@@ -703,6 +708,9 @@ class DigitalTwin$Type extends MessageType<DigitalTwin> {
                     break;
                 case /* repeated indykite.ingest.v1beta2.Property properties */ 7:
                     message.properties.push(Property.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                case /* string id */ 8:
+                    message.id = reader.string();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -734,6 +742,9 @@ class DigitalTwin$Type extends MessageType<DigitalTwin> {
         /* repeated indykite.ingest.v1beta2.Property properties = 7; */
         for (let i = 0; i < message.properties.length; i++)
             Property.internalBinaryWrite(message.properties[i], writer.tag(7, WireType.LengthDelimited).fork(), options).join();
+        /* string id = 8; */
+        if (message.id !== "")
+            writer.tag(8, WireType.LengthDelimited).string(message.id);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
