@@ -19,6 +19,7 @@ export interface IngestResourceRecord {
 }
 
 export interface IngestDigitalTwinRecord extends IngestResourceRecord {
+  id: string;
   tenantId: string;
   identityProperties?: Record<string, unknown>;
 }
