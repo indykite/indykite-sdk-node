@@ -1,4 +1,16 @@
 # Changelog
+## [0.4.5](https://github.com/indykite/indykite-sdk-node/compare/v0.4.4...v0.4.5) (2023-11-07)
+
+
+### Features
+
+* add optional id to digital twin ingest ([#291](https://github.com/indykite/indykite-sdk-node/issues/291)) ([2b0a701](https://github.com/indykite/indykite-sdk-node/commit/2b0a701f1474d204ccc5f84b64d0a0134e165931))
+
+
+### Bug Fixes
+
+* fixed input parameter naming ([#287](https://github.com/indykite/indykite-sdk-node/issues/287)) ([3eb556e](https://github.com/indykite/indykite-sdk-node/commit/3eb556ec8ab02066afb5b0619909487bb1bad565))
+
 ## [0.4.4](https://github.com/indykite/indykite-sdk-node/compare/v0.4.3...v0.4.4) (2023-10-12)
 
 
