@@ -5,6 +5,7 @@ IngestV2Client.createInstance().then((sdk) => {
   const input = [
     IngestRecord.upsert('recordId-3')
       .node.digitalTwin({
+        id: 'gid:AAAAFerOLD365EphoKuHVcx-EF4',
         externalId: 'tom',
         type: 'Person',
         tenantId: 'gid:AAAAA2luZHlraURlgAADDwAAAAE',
