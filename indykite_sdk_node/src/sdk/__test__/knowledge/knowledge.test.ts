@@ -464,6 +464,8 @@ describe('listNodes', () => {
       expect(sdk['client'].identityKnowledge).toBeCalledTimes(1);
       expect(sdk['client'].identityKnowledge).toBeCalledWith(
         {
+          conditions: '',
+          inputParams: {},
           operation: Operation.READ,
           path: '(:DigitalTwin)',
         },
@@ -918,7 +920,7 @@ describe('getNodeByIdentifier', () => {
         {
           operation: Operation.READ,
           path: '(n:DigitalTwin)',
-          conditions: 'WHERE n.external_id = $external_id AND n.type = $type',
+          conditions: 'WHERE n.external_id = $externalId AND n.type = $type',
           inputParams: {
             externalId: {
               value: {
@@ -1233,6 +1235,8 @@ describe('listDigitalTwins', () => {
       expect(sdk['client'].identityKnowledge).toBeCalledTimes(1);
       expect(sdk['client'].identityKnowledge).toBeCalledWith(
         {
+          conditions: '',
+          inputParams: {},
           operation: Operation.READ,
           path: '(:DigitalTwin)',
         },
@@ -1310,6 +1314,8 @@ describe('listResources', () => {
       expect(sdk['client'].identityKnowledge).toBeCalledTimes(1);
       expect(sdk['client'].identityKnowledge).toBeCalledWith(
         {
+          conditions: '',
+          inputParams: {},
           operation: Operation.READ,
           path: '(:Resource)',
         },
@@ -1570,7 +1576,7 @@ describe('getResourceByIdentifier', () => {
         {
           operation: Operation.READ,
           path: '(n:Resource)',
-          conditions: 'WHERE n.external_id = $external_id AND n.type = $type',
+          conditions: 'WHERE n.external_id = $externalId AND n.type = $type',
           inputParams: {
             externalId: {
               value: {
@@ -1664,7 +1670,7 @@ describe('getDigitalTwinByIdentifier', () => {
         {
           operation: Operation.READ,
           path: '(n:DigitalTwin)',
-          conditions: 'WHERE n.external_id = $external_id AND n.type = $type',
+          conditions: 'WHERE n.external_id = $externalId AND n.type = $type',
           inputParams: {
             externalId: {
               value: {
