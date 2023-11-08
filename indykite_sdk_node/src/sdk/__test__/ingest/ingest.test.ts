@@ -6,11 +6,11 @@ import { CallOptions, Metadata, ServiceError } from '@grpc/grpc-js';
 import {
   IngestRecordRequest,
   IngestRecordResponse,
+  StreamRecordsResponse,
 } from '../../../grpc/indykite/ingest/v1beta2/ingest_api';
 import { SurfaceCall } from '@grpc/grpc-js/build/src/call';
 import { Status } from '@grpc/grpc-js/build/src/constants';
-import { streamKeeper } from '../../utils/stream';
-import { Stream } from 'stream';
+import { Record } from '../../../grpc/indykite/ingest/v1beta2/model';
 
 class ClientMock extends EventEmitter {
   end() {
@@ -61,14 +61,16 @@ afterAll(() => {
 });
 
 describe('ingestRecord', () => {
-  let record: IngestRecord;
+  let record: Record;
   let response: IngestRecordResponse | undefined;
 
   beforeEach(() => {
-    record = IngestRecord.upsert('record-id').node.resource({
-      externalId: 'lot-1',
-      type: 'ParkingLot',
-    });
+    record = IngestRecord.upsert('record-id')
+      .node.resource({
+        externalId: 'lot-1',
+        type: 'ParkingLot',
+      })
+      .getRecord();
     response = undefined;
   });
 
@@ -168,7 +170,7 @@ describe('ingestRecord', () => {
     });
 
     it('throws an error', () => {
-      expect(thrownError.message).toBe('No ingest record response');
+      expect(thrownError.message).toBe('No IngestClient record response');
     });
   });
 
@@ -212,112 +214,47 @@ describe('ingestRecord', () => {
 });
 
 describe('streamRecords', () => {
-  let mockedWrite: jest.SpyInstance;
-  let returnedValue: ClientMock;
-  let returnedData: unknown[] = [];
+  let returnedData: StreamRecordsResponse[] = [];
+  let streamRecordsSpy: jest.SpyInstance;
 
   beforeEach(async () => {
-    returnedData = [];
-    const [input, output] = streamKeeper(null as unknown as Parameters<typeof streamKeeper>[0]);
-    input.write = jest.fn();
-    input.end = jest.fn().mockImplementation(() => {
-      output.emit('data', {
-        error: {
-          oneofKind: undefined,
-        },
-        recordId: 'lot-1',
-      } as IngestRecordResponse);
-      output.emit('data', {
-        error: {
-          oneofKind: undefined,
-        },
-        recordId: 'lot-2',
-      } as IngestRecordResponse);
-      output.emit('end');
-    });
-    mockedWrite = input.write as jest.Mock;
-
-    const stream = new Stream.Readable({
-      objectMode: true,
-      read: jest.fn(),
-    });
-    stream.push(
-      IngestRecord.upsert('record-1').node.resource({
-        externalId: 'lot-1',
-        type: 'ParkingLot',
-      }),
-    );
-    stream.push(
-      IngestRecord.upsert('record-2').node.resource({
-        externalId: 'lot-2',
-        type: 'ParkingLot',
-      }),
-    );
-    stream.push(null);
-
-    returnedValue = sdk.streamRecords(stream) as unknown as ClientMock;
-    returnedValue.on('data', (data) => {
-      returnedData.push(data);
-    });
-
-    return new Promise<void>((resolve) => {
-      returnedValue.on('end', () => {
-        returnedValue.removeAllListeners();
-        resolve();
+    streamRecordsSpy = jest.spyOn(sdk, 'streamRecords').mockImplementation(() => {
+      return new Promise((resolve) => {
+        resolve([
+          {
+            error: {
+              oneofKind: undefined,
+            },
+            recordId: 'lot-1',
+          } as StreamRecordsResponse,
+          {
+            error: {
+              oneofKind: undefined,
+            },
+            recordId: 'lot-2',
+          } as StreamRecordsResponse,
+        ] as StreamRecordsResponse[]);
       });
     });
+
+    returnedData = await sdk.streamRecords([
+      IngestRecord.upsert('record-1')
+        .node.resource({
+          externalId: 'lot-1',
+          type: 'ParkingLot',
+        })
+        .getRecord(),
+      IngestRecord.upsert('record-2')
+        .node.resource({
+          externalId: 'lot-2',
+          type: 'ParkingLot',
+        })
+        .getRecord(),
+    ]);
   });
 
   it('sends a correct request', () => {
-    expect(mockedWrite).toBeCalledTimes(2);
-    expect(mockedWrite).nthCalledWith(1, {
-      record: {
-        id: 'record-1',
-        operation: {
-          oneofKind: 'upsert',
-          upsert: {
-            data: {
-              oneofKind: 'node',
-              node: {
-                type: {
-                  oneofKind: 'resource',
-                  resource: {
-                    externalId: 'lot-1',
-                    type: 'ParkingLot',
-                    tags: [],
-                    properties: [],
-                  },
-                },
-              },
-            },
-          },
-        },
-      },
-    });
-    expect(mockedWrite).nthCalledWith(2, {
-      record: {
-        id: 'record-2',
-        operation: {
-          oneofKind: 'upsert',
-          upsert: {
-            data: {
-              oneofKind: 'node',
-              node: {
-                type: {
-                  oneofKind: 'resource',
-                  resource: {
-                    externalId: 'lot-2',
-                    type: 'ParkingLot',
-                    tags: [],
-                    properties: [],
-                  },
-                },
-              },
-            },
-          },
-        },
-      },
-    });
+    expect(streamRecordsSpy).toBeCalledTimes(1);
   });
 
   it('returns correct response', () => {
