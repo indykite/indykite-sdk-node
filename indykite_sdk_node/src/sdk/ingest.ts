@@ -414,9 +414,7 @@ export class IngestClient {
       this.client.ingestRecord(req, (err, response) => {
         if (err) reject(err);
         else if (!response)
-          reject(
-            new SdkError(SdkErrorCode.SDK_CODE_6, SkdErrorText.SDK_CODE_6(IngestClient.name)),
-          );
+          reject(new SdkError(SdkErrorCode.SDK_CODE_6, SkdErrorText.SDK_CODE_6(IngestClient.name)));
         else {
           resolve(response);
         }
