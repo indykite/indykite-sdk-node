@@ -43,7 +43,7 @@ export class ApplicationCredential extends Credential {
     if (!this.privateKey.alg) {
       throw new SdkError(SdkErrorCode.SDK_CODE_1, 'Missing private key algorithm');
     }
-    if (!this.expirationTime) {
+    if (!this.expirationTime || (new Date().getTime() >= this.expirationTime.getTime())) {
       this.setExpirationTime();
     }
     this.jwt = await new SignJWT({})
