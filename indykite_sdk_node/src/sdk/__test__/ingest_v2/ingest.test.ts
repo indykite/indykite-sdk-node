@@ -1,7 +1,6 @@
 import { EventEmitter } from 'events';
 import { SdkClient } from '../../client/client';
-import { IngestV2Client } from '../../ingest_v2';
-import { IngestRecord } from '../../ingest';
+import { IngestClient, IngestRecord } from '../../ingest';
 import { applicationTokenMock } from '../../utils/test_utils';
 import { CallOptions, Metadata, ServiceError } from '@grpc/grpc-js';
 import {
@@ -41,7 +40,7 @@ jest.mock('../../utils/stream', () => {
   };
 });
 
-let sdk: IngestV2Client;
+let sdk: IngestClient;
 
 beforeAll(() => {
   jest.spyOn(console, 'log').mockImplementation();
@@ -49,7 +48,7 @@ beforeAll(() => {
 });
 
 beforeEach(async () => {
-  sdk = new IngestV2Client({ client: { streamRecords: jest.fn() } } as unknown as SdkClient);
+  sdk = new IngestClient({ client: { streamRecords: jest.fn() } } as unknown as SdkClient);
 });
 
 afterEach(() => {
@@ -77,10 +76,10 @@ describe('ingestRecord', () => {
 
   describe('when no error is returned', () => {
     let ingestRecordSpy: jest.SpyInstance;
-    let sdk: IngestV2Client;
+    let sdk: IngestClient;
 
     beforeEach(async () => {
-      sdk = await IngestV2Client.createInstance(JSON.stringify(applicationTokenMock));
+      sdk = await IngestClient.createInstance(JSON.stringify(applicationTokenMock));
       ingestRecordSpy = jest
         .spyOn(sdk['client'], 'ingestRecord')
         .mockImplementation(
@@ -144,10 +143,10 @@ describe('ingestRecord', () => {
 
   describe('when the response is empty', () => {
     let thrownError: Error;
-    let sdk: IngestV2Client;
+    let sdk: IngestClient;
 
     beforeEach(async () => {
-      sdk = await IngestV2Client.createInstance(JSON.stringify(applicationTokenMock));
+      sdk = await IngestClient.createInstance(JSON.stringify(applicationTokenMock));
       jest
         .spyOn(sdk['client'], 'ingestRecord')
         .mockImplementation(
@@ -171,7 +170,7 @@ describe('ingestRecord', () => {
     });
 
     it('throws an error', () => {
-      expect(thrownError.message).toBe('No IngestV2Client record response');
+      expect(thrownError.message).toBe('No IngestClient record response');
     });
   });
 
@@ -182,10 +181,10 @@ describe('ingestRecord', () => {
       metadata: {},
     } as ServiceError;
     let thrownError: Error;
-    let sdk: IngestV2Client;
+    let sdk: IngestClient;
 
     beforeEach(async () => {
-      sdk = await IngestV2Client.createInstance(JSON.stringify(applicationTokenMock));
+      sdk = await IngestClient.createInstance(JSON.stringify(applicationTokenMock));
       jest
         .spyOn(sdk['client'], 'ingestRecord')
         .mockImplementation(
