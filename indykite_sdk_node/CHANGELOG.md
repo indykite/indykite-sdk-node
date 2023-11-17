@@ -1,4 +1,11 @@
 # Changelog
+## [0.4.6](https://github.com/indykite/indykite-sdk-node/compare/v0.4.5...v0.4.6) (2023-11-17)
+
+
+### Bug Fixes
+
+* add alternative expiration time renewal ([#295](https://github.com/indykite/indykite-sdk-node/issues/295)) ([7be1009](https://github.com/indykite/indykite-sdk-node/commit/7be1009c3e68e9932382655a7f1679eb3a46fe79))
+
 ## [0.4.5](https://github.com/indykite/indykite-sdk-node/compare/v0.4.4...v0.4.5) (2023-11-07)
 
 
