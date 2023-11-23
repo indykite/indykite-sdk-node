@@ -19,7 +19,7 @@ export interface IngestResourceRecord {
 }
 
 export interface IngestDigitalTwinRecord extends IngestResourceRecord {
-  id: string;
+  id?: string;
   tenantId: string;
   identityProperties?: Record<string, unknown>;
 }
@@ -309,6 +309,7 @@ export class IngestRecordUpsertNode extends IngestRecord {
           oneofKind: 'digitalTwin',
           digitalTwin: {
             ...dt,
+            id: dt.id ?? '',
             tags: dt.tags ?? [],
             properties: !properties
               ? []
