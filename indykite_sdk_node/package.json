@@ -51,14 +51,14 @@
     "protoc-gen-ts": "0.8.7",
     "rimraf": "5.0.5",
     "ts-jest": "29.1.1",
-    "ts-node": "10.9.1",
+    "ts-node": "^10.9.1",
     "typedoc": "0.24.8",
     "typescript": "5.0.4"
   },
   "dependencies": {
     "@grpc/grpc-js": "1.9.5",
-    "@protobuf-ts/runtime-rpc": "2.9.1",
     "@protobuf-ts/runtime": "2.9.1",
+    "@protobuf-ts/runtime-rpc": "2.9.1",
     "google-protobuf": "3.21.2",
     "jose": "^4.6.0",
     "protobufjs": "7.2.5",

@@ -7,6 +7,7 @@ import {
   StreamRecordsRequest,
   StreamRecordsResponse,
 } from '../grpc/indykite/ingest/v1beta2/ingest_api';
+import { Readable } from 'stream';
 import { SdkError, SdkErrorCode, SkdErrorText } from './error';
 import { IndexFixer, streamKeeper } from './utils/stream';
 import { Record as RecordModel } from '../grpc/indykite/ingest/v1beta2/model';
@@ -394,7 +395,7 @@ export class IngestClient {
   }
 
   /**
-   * @since 0.4.1
+   * @since 0.3.4
    * @example
    * await sdk.ingestRecord(
    *   IngestRecord.upsert('recordId-1').node.resource({
@@ -403,25 +404,75 @@ export class IngestClient {
    *     properties: {
    *       customProp: '42',
    *     },
-   *   }).getRecord(),
-   * )
+   *   }),
+   * );
    */
-  ingestRecord(record: RecordModel): Promise<IngestRecordResponse> {
-    const req: IngestRecordRequest = {
-      record,
-    } as IngestRecordRequest;
+  ingestRecord(record: IngestRecord): Promise<IngestRecordResponse> {
+    const req: IngestRecordRequest = record.marshal();
     return new Promise((resolve, reject) => {
       this.client.ingestRecord(req, (err, response) => {
         if (err) reject(err);
         else if (!response)
-          reject(
-            new SdkError(SdkErrorCode.SDK_CODE_6, SkdErrorText.SDK_CODE_6(IngestClient.name)),
-          );
+          reject(new SdkError(SdkErrorCode.SDK_CODE_6, SkdErrorText.SDK_CODE_6(IngestClient.name)));
         else {
           resolve(response);
         }
       });
     });
+  }
+
+  /**
+   * @since 0.3.4
+   * @example
+   * const input = Readable.from(
+   *   [
+   *     IngestRecord.upsert('recordId-1').node.resource({
+   *       externalId: 'lotA',
+   *       type: 'ParkingLot',
+   *     }),
+   *     IngestRecord.upsert('recordId-2').node.resource({
+   *       externalId: 'vehicleA',
+   *       type: 'Vehicle',
+   *     }),
+   *     IngestRecord.upsert('recordId-3').node.digitalTwin({
+   *       externalId: 'person1',
+   *       type: 'Person',
+   *       properties: {
+   *         customProp: '42',
+   *       },
+   *     }),
+   *     IngestRecord.upsert('recordId-4').relation({
+   *       sourceMatch: { externalId: 'person1', type: 'Person' },
+   *       targetMatch: { externalId: 'vehicleA', type: 'Vehicle' },
+   *       type: 'OWNS',
+   *     }),
+   *     IngestRecord.upsert('recordId-5').relation({
+   *       sourceMatch: { externalId: 'vehicleA', type: 'Vehicle' },
+   *       targetMatch: { externalId: 'lotA', type: 'ParkingLot' },
+   *       type: 'CAN_PARK',
+   *     }),
+   *   ],
+   *   { objectMode: true },
+   * );
+   *
+   * const output = sdk.streamRecords(input);
+   */
+  streamRecords(stream: Readable) {
+    const [input, output] = streamKeeper(this.client.streamRecords.bind(this.client), [
+      new IndexFixer('recordIndex'),
+    ]);
+
+    stream.on('data', async (chunk) => {
+      if (chunk instanceof IngestRecord) {
+        input.write(chunk.marshal());
+      }
+    });
+
+    stream.on('end', () => {
+      input.end();
+    });
+
+    return output;
   }
 
   /**
@@ -455,7 +506,7 @@ export class IngestClient {
    *   ];
    *   await sdk.streamRecords(input)
    */
-  streamRecords(records: RecordModel[]): Promise<StreamRecordsResponse[]> {
+  streamRecordsArray(records: RecordModel[]): Promise<StreamRecordsResponse[]> {
     return new Promise((resolve, reject) => {
       const result: StreamRecordsResponse[] = [];
       const [input, output] = streamKeeper<StreamRecordsRequest, StreamRecordsResponse>(

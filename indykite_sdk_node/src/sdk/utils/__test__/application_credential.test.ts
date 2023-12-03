@@ -62,12 +62,10 @@ describe('Crednetial', () => {
   });
   it('build token - get expiration time invalid, in the past', async () => {
     const newCred = ApplicationCredential.fromObject(applicationTokenMock);
-    let tmpDate = new Date();
+    const tmpDate = new Date();
     tmpDate.setHours(tmpDate.getHours() - 2);
-    newCred["expirationTime"] = tmpDate;
-    expect(newCred.getExpirationTime().getTime()).not.toBeGreaterThan(
-      new Date().getTime()
-    );
+    newCred['expirationTime'] = tmpDate;
+    expect(newCred.getExpirationTime().getTime()).not.toBeGreaterThan(new Date().getTime());
     const token = await newCred.buildToken();
     expect(token.getExpirationTime().getTime()).not.toBeGreaterThan(
       new Date().setHours(token.getExpirationTime().getHours() + 2),

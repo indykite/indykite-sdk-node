@@ -1,6 +1,6 @@
 import { IdentityClient } from '../sdk/identity';
 
-const OAUTH2_APPLICATON_ID = process.env.OAUTH2_APPLICATON_ID;
+const OAUTH2_APPLICATION_ID = process.env.OAUTH2_APPLICATION_ID;
 const DIGITAL_TWIN_ID = process.env.DIGITAL_TWIN_ID;
 const CONSENT_ID = process.env.CONSENT_ID;
 
@@ -9,9 +9,9 @@ IdentityClient.createInstance()
     if (!DIGITAL_TWIN_ID) throw new Error('Missing DIGITAL_TWIN_ID');
 
     // Create a consent for the user
-    if (!OAUTH2_APPLICATON_ID) throw new Error('Missing APPLICATION_ID');
+    if (!OAUTH2_APPLICATION_ID) throw new Error('Missing APPLICATION_ID');
     console.log('creating consent...');
-    const createResponse = await sdk.createConsent(OAUTH2_APPLICATON_ID, DIGITAL_TWIN_ID, [
+    const createResponse = await sdk.createConsent(OAUTH2_APPLICATION_ID, DIGITAL_TWIN_ID, [
       'ice_cream',
     ]);
     console.log(createResponse);
