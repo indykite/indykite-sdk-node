@@ -2,53 +2,51 @@ import { IngestClient, IngestRecord } from '../sdk/ingest';
 
 IngestClient.createInstance().then((sdk) => {
   const input = [
-    IngestRecord.upsert('recordId-3')
+    IngestRecord.upsert('recordId-33')
       .node.digitalTwin({
-        id: 'gid:AAAAFerOLD365EphoKuHVcx-EF4',
-        externalId: 'tom',
-        type: 'Person',
-        tenantId: 'gid:AAAAA2luZHlraURlgAADDwAAAAE',
-        identityProperties: {
-          email: 'tom@demo.com',
-        },
+        id: '',
+        externalId: '784512',
+        type: 'Individual',
+        tenantId: 'gid:AAAAAx22oL0cQU_3tuaeFPDVfEY',
         properties: {
-          employeeId: '123',
-          name: 'Tom Doe',
+          employeeId: '63259',
+          name: 'Rufus Molecule',
+        },
+        identityProperties: {
+          email: 'mol@yahoo.uk',
         },
       })
       .getRecord(),
-    IngestRecord.upsert('recordId-3')
+    IngestRecord.upsert('recordId-34')
       .node.resource({
-        externalId: 'w_west_g1',
+        externalId: '654789',
         type: 'UserGroup',
         properties: {
           name: 'west',
         },
       })
       .getRecord(),
-    IngestRecord.upsert('recordId-3')
+    IngestRecord.upsert('recordId-35')
       .relation({
-        sourceMatch: { externalId: 'tom', type: 'Person' },
-        targetMatch: { externalId: 'w_west_g1', type: 'UserGroup' },
+        sourceMatch: { externalId: '784512', type: 'Individual' },
+        targetMatch: { externalId: '654789', type: 'UserGroup' },
         type: 'BELONGS',
       })
       .getRecord(),
   ];
-  const output = sdk.streamRecords(input).then((response) => {
+  const output = sdk.streamRecordsArray(input).then((response) => {
     for (const item of response) console.log(JSON.stringify(item), item.error, item.info);
   });
   console.log(JSON.stringify(output));
   sdk
     .ingestRecord(
-      IngestRecord.upsert('recordId-1')
-        .node.resource({
-          externalId: 'parkingLot-1',
-          type: 'ParkingLot',
-          properties: {
-            customProp: '42',
-          },
-        })
-        .getRecord(),
+      IngestRecord.upsert('recordId-36').node.resource({
+        externalId: 'loollolol',
+        type: 'ParkingLot',
+        properties: {
+          customProp: '42',
+        },
+      }),
     )
     .then((response) => {
       console.log(JSON.stringify(response));
