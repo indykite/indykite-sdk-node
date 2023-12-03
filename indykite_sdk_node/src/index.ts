@@ -2,6 +2,8 @@ export * as grpcIdentityModel from './grpc/indykite/identity/v1beta2/model';
 export * as grpcIdentityAPI from './grpc/indykite/identity/v1beta2/identity_management_api';
 export * as grpcIdentityAttributes from './grpc/indykite/identity/v1beta2/attributes';
 export * from './sdk/authorization';
+export * from './sdk/authorization_v2';
+export { type InputParameters } from './sdk/authorization_v2';
 export { IdentityClient } from './sdk/identity';
 export * from './sdk/identity_v2';
 export { ConfigClient } from './sdk/config';
