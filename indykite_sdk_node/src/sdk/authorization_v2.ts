@@ -13,7 +13,6 @@ import {
 import { AuthorizationAPIClient } from '../grpc/indykite/authorization/v1beta1/authorization_service.grpc-client';
 import { DigitalTwin } from '../grpc/indykite/identity/v1beta2/model';
 import { InputParam, Property } from '../grpc/indykite/authorization/v1beta1/model';
-import { PropertyFilter } from '../grpc/indykite/identity/v1beta2/attributes';
 import { SdkError, SdkErrorCode, SkdErrorText } from './error';
 import { Utils } from './utils/utils';
 
@@ -147,7 +146,6 @@ export class AuthorizationClientV2 {
    *     .then(async (sdk) => {
    *       const resp = await this.isAuthorizedByProperty(
    *         {
-   *           tenantId: 'tenant-id',
    *           type: 'email',
    *           value: 'user@example.com',
    *         },
@@ -167,7 +165,7 @@ export class AuthorizationClientV2 {
    * }
    */
   isAuthorizedByProperty(
-    propertyFilter: PropertyFilter,
+    property: Property,
     resources: IsAuthorizedRequest_Resource[],
     inputParams: Record<string, InputParam> = {},
     policyTags?: string[],
@@ -177,7 +175,7 @@ export class AuthorizationClientV2 {
       subject: {
         subject: {
           oneofKind: DIGITAL_TWIN_PROPERTY,
-          digitalTwinProperty: propertyFilter as Property,
+          digitalTwinProperty: property as Property,
         },
       },
       inputParams,
@@ -327,7 +325,6 @@ export class AuthorizationClientV2 {
    *     .then(async (sdk) => {
    *       const resp = await sdk.whatAuthorizedByProperty(
    *         {
-   *           tenantId: 'tenant-id',
    *           type: 'email',
    *           value: 'user@example.com',
    *         },
@@ -347,7 +344,7 @@ export class AuthorizationClientV2 {
    * }
    */
   whatAuthorizedByProperty(
-    propertyFilter: PropertyFilter,
+    property: Property,
     resourceTypes: WhatAuthorizedRequest_ResourceType[],
     inputParams: Record<string, InputParam> = {},
     policyTags?: string[],
@@ -357,7 +354,7 @@ export class AuthorizationClientV2 {
       subject: {
         subject: {
           oneofKind: DIGITAL_TWIN_PROPERTY,
-          digitalTwinProperty: propertyFilter as Property,
+          digitalTwinProperty: property as Property,
         },
       },
       inputParams,
