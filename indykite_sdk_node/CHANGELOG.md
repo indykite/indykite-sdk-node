@@ -1,4 +1,16 @@
 # Changelog
+## [0.4.7](https://github.com/indykite/indykite-sdk-node/compare/v0.4.6...v0.4.7) (2023-12-04)
+
+
+### Features
+
+* delete utility function identityknowledge ([fd058eb](https://github.com/indykite/indykite-sdk-node/commit/fd058eb8126d47a59b77c8dcfea169b890d2306f))
+
+
+### Bug Fixes
+
+* put former ingest and stream back ([5a19625](https://github.com/indykite/indykite-sdk-node/commit/5a19625250bb3777d982068ca0179bcc7b0ea82e))
+
 ## [0.4.6](https://github.com/indykite/indykite-sdk-node/compare/v0.4.5...v0.4.6) (2023-11-17)
 
 
