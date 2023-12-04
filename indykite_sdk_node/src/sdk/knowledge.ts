@@ -8,6 +8,8 @@ import {
 } from '../grpc/indykite/knowledge/v1beta1/identity_knowledge_api';
 import { InputParam } from '../grpc/indykite/authorization/v1beta1/model';
 import { Utils } from './utils/utils';
+import { IngestRecord } from './ingest';
+import { v4 } from 'uuid';
 
 export const NODE_TYPE = {
   DIGITAL_TWIN: 'DigitalTwin',
@@ -260,4 +262,18 @@ export class IdentityKnowledgeClient {
         .catch((error) => reject(error));
     });
   }
+
+ /**
+   * delete all nodes of defined type
+   */
+ async deleteAllWithNodeType(nodeType: string){
+  let nodes: Node[] = await this.listNodes(nodeType);
+  let records: IngestRecord[] = [];
+  records = nodes.map((node)=>{
+    return IngestRecord.delete(Utils.uuidToBase64(v4()),).node({
+           externalId: node.externalId,
+           type: node.type
+        });
+  });
+ }
 }
