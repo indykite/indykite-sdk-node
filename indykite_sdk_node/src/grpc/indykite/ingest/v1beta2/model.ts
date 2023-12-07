@@ -157,11 +157,13 @@ export interface DigitalTwin {
      */
     tags: string[];
     /**
-     * @generated from protobuf field: string tenant_id = 5;
+     * @deprecated
+     * @generated from protobuf field: string tenant_id = 5 [deprecated = true];
      */
     tenantId: string;
     /**
-     * @generated from protobuf field: repeated indykite.ingest.v1beta2.IdentityProperty identity_properties = 6;
+     * @deprecated
+     * @generated from protobuf field: repeated indykite.ingest.v1beta2.IdentityProperty identity_properties = 6 [deprecated = true];
      */
     identityProperties: IdentityProperty[];
     /**
@@ -673,7 +675,7 @@ class DigitalTwin$Type extends MessageType<DigitalTwin> {
             { no: 1, name: "external_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "1", maxLen: "256" } } } },
             { no: 2, name: "type", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "64", pattern: "^([A-Z][a-z]+)+$" } } } },
             { no: 3, name: "tags", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { maxItems: "32", unique: true, items: { string: { maxLen: "64", pattern: "^([A-Z][a-z]+)+$" } } } } } },
-            { no: 5, name: "tenant_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
+            { no: 5, name: "tenant_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$", ignoreEmpty: true } } } },
             { no: 6, name: "identity_properties", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => IdentityProperty, options: { "validate.rules": { repeated: { maxItems: "10" } } } },
             { no: 7, name: "properties", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Property, options: { "validate.rules": { repeated: { maxItems: "10" } } } },
             { no: 8, name: "id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "256", prefix: "gid:", ignoreEmpty: true } } } }
@@ -700,10 +702,10 @@ class DigitalTwin$Type extends MessageType<DigitalTwin> {
                 case /* repeated string tags */ 3:
                     message.tags.push(reader.string());
                     break;
-                case /* string tenant_id */ 5:
+                case /* string tenant_id = 5 [deprecated = true];*/ 5:
                     message.tenantId = reader.string();
                     break;
-                case /* repeated indykite.ingest.v1beta2.IdentityProperty identity_properties */ 6:
+                case /* repeated indykite.ingest.v1beta2.IdentityProperty identity_properties = 6 [deprecated = true];*/ 6:
                     message.identityProperties.push(IdentityProperty.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 case /* repeated indykite.ingest.v1beta2.Property properties */ 7:
@@ -733,10 +735,10 @@ class DigitalTwin$Type extends MessageType<DigitalTwin> {
         /* repeated string tags = 3; */
         for (let i = 0; i < message.tags.length; i++)
             writer.tag(3, WireType.LengthDelimited).string(message.tags[i]);
-        /* string tenant_id = 5; */
+        /* string tenant_id = 5 [deprecated = true]; */
         if (message.tenantId !== "")
             writer.tag(5, WireType.LengthDelimited).string(message.tenantId);
-        /* repeated indykite.ingest.v1beta2.IdentityProperty identity_properties = 6; */
+        /* repeated indykite.ingest.v1beta2.IdentityProperty identity_properties = 6 [deprecated = true]; */
         for (let i = 0; i < message.identityProperties.length; i++)
             IdentityProperty.internalBinaryWrite(message.identityProperties[i], writer.tag(6, WireType.LengthDelimited).fork(), options).join();
         /* repeated indykite.ingest.v1beta2.Property properties = 7; */

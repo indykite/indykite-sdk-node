@@ -1,6 +1,6 @@
 import { AuthorizationAPIClient } from '../../../grpc/indykite/authorization/v1beta1/authorization_service.grpc-client';
 import { SdkClient } from '../../client/client';
-import { AuthorizationClient } from '../../authorization';
+import { AuthorizationClient, InputParameters } from '../../authorization';
 import { applicationTokenMock } from '../../utils/test_utils';
 
 afterEach(() => {
@@ -19,6 +19,10 @@ describe('when a new client is created', () => {
       returnedValue = await AuthorizationClient.createInstance(
         JSON.stringify(applicationTokenMock),
       );
+      AuthorizationClient.getInputParams({
+        key1: 'value1',
+        key2: 'value2',
+      } as Record<string, InputParameters>);
     });
 
     it('creates a new instance', () => {

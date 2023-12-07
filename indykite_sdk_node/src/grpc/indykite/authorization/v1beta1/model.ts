@@ -63,6 +63,12 @@ export interface Subject {
          */
         indykiteAccessToken: string;
     } | {
+        oneofKind: "externalId";
+        /**
+         * @generated from protobuf field: indykite.authorization.v1beta1.ExternalID external_id = 5;
+         */
+        externalId: ExternalID;
+    } | {
         oneofKind: undefined;
     };
 }
@@ -91,6 +97,19 @@ export interface Property {
      * @generated from protobuf field: indykite.objects.v1beta1.Value value = 2;
      */
     value?: Value;
+}
+/**
+ * @generated from protobuf message indykite.authorization.v1beta1.ExternalID
+ */
+export interface ExternalID {
+    /**
+     * @generated from protobuf field: string type = 1;
+     */
+    type: string;
+    /**
+     * @generated from protobuf field: string external_id = 2;
+     */
+    externalId: string;
 }
 /**
  * @generated from protobuf message indykite.authorization.v1beta1.InputParam
@@ -142,7 +161,8 @@ class Subject$Type extends MessageType<Subject> {
             { no: 1, name: "digital_twin_identifier", kind: "message", oneof: "subject", T: () => DigitalTwinIdentifier, options: { "validate.rules": { message: { required: true } } } },
             { no: 2, name: "digital_twin_id", kind: "message", oneof: "subject", T: () => DigitalTwin, options: { "validate.rules": { message: { required: true } } } },
             { no: 3, name: "digital_twin_property", kind: "message", oneof: "subject", T: () => Property, options: { "validate.rules": { message: { required: true } } } },
-            { no: 4, name: "indykite_access_token", kind: "scalar", oneof: "subject", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "20" } } } }
+            { no: 4, name: "indykite_access_token", kind: "scalar", oneof: "subject", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "20" } } } },
+            { no: 5, name: "external_id", kind: "message", oneof: "subject", T: () => ExternalID, options: { "validate.rules": { message: { required: true } } } }
         ]);
     }
     create(value?: PartialMessage<Subject>): Subject {
@@ -181,6 +201,12 @@ class Subject$Type extends MessageType<Subject> {
                         indykiteAccessToken: reader.string()
                     };
                     break;
+                case /* indykite.authorization.v1beta1.ExternalID external_id */ 5:
+                    message.subject = {
+                        oneofKind: "externalId",
+                        externalId: ExternalID.internalBinaryRead(reader, reader.uint32(), options, (message.subject as any).externalId)
+                    };
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -205,6 +231,9 @@ class Subject$Type extends MessageType<Subject> {
         /* string indykite_access_token = 4; */
         if (message.subject.oneofKind === "indykiteAccessToken")
             writer.tag(4, WireType.LengthDelimited).string(message.subject.indykiteAccessToken);
+        /* indykite.authorization.v1beta1.ExternalID external_id = 5; */
+        if (message.subject.oneofKind === "externalId")
+            ExternalID.internalBinaryWrite(message.subject.externalId, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -316,6 +345,60 @@ class Property$Type extends MessageType<Property> {
  * @generated MessageType for protobuf message indykite.authorization.v1beta1.Property
  */
 export const Property = new Property$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ExternalID$Type extends MessageType<ExternalID> {
+    constructor() {
+        super("indykite.authorization.v1beta1.ExternalID", [
+            { no: 1, name: "type", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "64", pattern: "^[a-zA-Z]*$" } } } },
+            { no: 2, name: "external_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "1" } } } }
+        ]);
+    }
+    create(value?: PartialMessage<ExternalID>): ExternalID {
+        const message = { type: "", externalId: "" };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<ExternalID>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ExternalID): ExternalID {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string type */ 1:
+                    message.type = reader.string();
+                    break;
+                case /* string external_id */ 2:
+                    message.externalId = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ExternalID, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string type = 1; */
+        if (message.type !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.type);
+        /* string external_id = 2; */
+        if (message.externalId !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.externalId);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message indykite.authorization.v1beta1.ExternalID
+ */
+export const ExternalID = new ExternalID$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class InputParam$Type extends MessageType<InputParam> {
     constructor() {

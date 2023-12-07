@@ -1,12 +1,9 @@
-import {
-  AuthorizationClient,
-  AuthorizationResource,
-  WhoAuthorizedResponse,
-} from '../../authorization';
+import { AuthorizationClient } from '../../authorization';
 import { ServiceError, SurfaceCall } from '@grpc/grpc-js/build/src/call';
 import {
-  WhoAuthorizedRequest as grpcWhoAuthorizedRequest,
-  WhoAuthorizedResponse as grpcWhoAuthorizedResponse,
+  WhoAuthorizedRequest,
+  WhoAuthorizedRequest_Resource,
+  WhoAuthorizedResponse,
 } from '../../../grpc/indykite/authorization/v1beta1/authorization_service';
 import { CallOptions, Metadata } from '@grpc/grpc-js';
 import { Utils } from '../../utils/utils';
@@ -24,19 +21,19 @@ afterEach(() => {
 
 describe('whoAuthorized', () => {
   describe('when the response does not contain an error', () => {
-    const resources: AuthorizationResource[] = [
+    const resources: WhoAuthorizedRequest_Resource[] = [
       {
         type: 'ParkingLot',
-        id: 'parking-lot-id1',
+        externalId: 'parking-lot-id1',
         actions: ['HAS_FREE_PARKING'],
       },
       {
         type: 'ParkingLot',
-        id: 'parking-lot-id2',
+        externalId: 'parking-lot-id2',
         actions: ['HAS_FREE_PARKING'],
       },
     ];
-    const decisionsResult: grpcWhoAuthorizedResponse = {
+    const decisionsResult: WhoAuthorizedResponse = {
       decisions: {
         ParkingLot: {
           resources: {
@@ -68,11 +65,11 @@ describe('whoAuthorized', () => {
     beforeEach(async () => {
       const mockFunc = jest.fn(
         (
-          request: grpcWhoAuthorizedRequest,
+          request: WhoAuthorizedRequest,
           callback:
             | Metadata
             | CallOptions
-            | ((error: ServiceError | null, response?: grpcWhoAuthorizedResponse) => void),
+            | ((error: ServiceError | null, response?: WhoAuthorizedResponse) => void),
         ): SurfaceCall => {
           if (typeof callback === 'function') callback(null, decisionsResult);
           return {} as SurfaceCall;
@@ -81,7 +78,7 @@ describe('whoAuthorized', () => {
 
       jest.spyOn(sdk['client'], 'whoAuthorized').mockImplementation(mockFunc);
 
-      result = await sdk.whoAuthorized(resources);
+      result = await sdk.whoAuthorized(AuthorizationClient.newWhoAuthorizedRequest(resources));
     });
 
     it('sends a correct request', () => {
@@ -92,12 +89,12 @@ describe('whoAuthorized', () => {
           policyTags: [],
           resources: [
             {
-              externalId: '',
+              externalId: 'parking-lot-id1',
               type: 'ParkingLot',
               actions: ['HAS_FREE_PARKING'],
             },
             {
-              externalId: '',
+              externalId: 'parking-lot-id2',
               type: 'ParkingLot',
               actions: ['HAS_FREE_PARKING'],
             },
@@ -108,7 +105,7 @@ describe('whoAuthorized', () => {
     });
 
     it('returns a correct response', () => {
-      expect(result.decisionTime).toEqual(Utils.timestampToDate(decisionsResult.decisionTime));
+      expect(result.decisionTime).toEqual(decisionsResult.decisionTime);
       expect(result.decisions).toEqual({
         ParkingLot: {
           resources: {
@@ -137,15 +134,15 @@ describe('whoAuthorized', () => {
   });
 
   describe('when the response does not contain any value', () => {
-    const resources: AuthorizationResource[] = [
+    const resources: WhoAuthorizedRequest_Resource[] = [
       {
         type: 'ParkingLot',
-        id: 'parking-lot-id1',
+        externalId: 'parking-lot-id1',
         actions: ['HAS_FREE_PARKING'],
       },
       {
         type: 'ParkingLot',
-        id: 'parking-lot-id2',
+        externalId: 'parking-lot-id2',
         actions: ['HAS_FREE_PARKING'],
       },
     ];
@@ -154,22 +151,22 @@ describe('whoAuthorized', () => {
     beforeEach(async () => {
       const mockFunc = jest.fn(
         (
-          request: grpcWhoAuthorizedRequest,
+          request: WhoAuthorizedRequest,
           callback:
             | Metadata
             | CallOptions
-            | ((error: ServiceError | null, response?: grpcWhoAuthorizedResponse) => void),
+            | ((error: ServiceError | null, response?: WhoAuthorizedResponse) => void),
         ): SurfaceCall => {
           if (typeof callback === 'function') callback(null);
           return {} as SurfaceCall;
         },
       );
-
+      mockFunc.mockName('whoAuthorized');
       jest.spyOn(sdk['client'], 'whoAuthorized').mockImplementation(mockFunc);
 
       try {
         caughtError = undefined;
-        await sdk.whoAuthorized(resources);
+        await sdk.whoAuthorized(AuthorizationClient.newWhoAuthorizedRequest(resources));
       } catch (err) {
         caughtError = err;
       }
@@ -181,15 +178,15 @@ describe('whoAuthorized', () => {
   });
 
   describe('when the response returns an error', () => {
-    const resources: AuthorizationResource[] = [
+    const resources: WhoAuthorizedRequest_Resource[] = [
       {
         type: 'ParkingLot',
-        id: 'parking-lot-id1',
+        externalId: 'parking-lot-id1',
         actions: ['HAS_FREE_PARKING'],
       },
       {
         type: 'ParkingLot',
-        id: 'parking-lot-id2',
+        externalId: 'parking-lot-id2',
         actions: ['HAS_FREE_PARKING'],
       },
     ];
@@ -199,11 +196,11 @@ describe('whoAuthorized', () => {
     beforeEach(async () => {
       const mockFunc = jest.fn(
         (
-          request: grpcWhoAuthorizedRequest,
+          request: WhoAuthorizedRequest,
           callback:
             | Metadata
             | CallOptions
-            | ((error: ServiceError | null, response?: grpcWhoAuthorizedResponse) => void),
+            | ((error: ServiceError | null, response?: WhoAuthorizedResponse) => void),
         ): SurfaceCall => {
           if (typeof callback === 'function') callback(error);
           return {} as SurfaceCall;
@@ -213,7 +210,7 @@ describe('whoAuthorized', () => {
       jest.spyOn(sdk['client'], 'whoAuthorized').mockImplementation(mockFunc);
 
       try {
-        await sdk.whoAuthorized(resources);
+        await sdk.whoAuthorized(AuthorizationClient.newWhoAuthorizedRequest(resources));
       } catch (err) {
         caughtError = err;
       }
