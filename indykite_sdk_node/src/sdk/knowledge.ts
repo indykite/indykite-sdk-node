@@ -263,17 +263,17 @@ export class IdentityKnowledgeClient {
     });
   }
 
- /**
+  /**
    * delete all nodes of defined type
    */
- async deleteAllWithNodeType(nodeType: string){
-  let nodes: Node[] = await this.listNodes(nodeType);
-  let records: IngestRecord[] = [];
-  records = nodes.map((node)=>{
-    return IngestRecord.delete(Utils.uuidToBase64(v4()),).node({
-           externalId: node.externalId,
-           type: node.type
-        });
-  });
- }
+  async deleteAllWithNodeType(nodeType: string) {
+    const nodes: Node[] = await this.listNodes(nodeType);
+    let records: IngestRecord[] = [];
+    records = nodes.map((node) => {
+      return IngestRecord.delete(Utils.uuidToBase64(v4())).node({
+        externalId: node.externalId,
+        type: node.type,
+      });
+    });
+  }
 }

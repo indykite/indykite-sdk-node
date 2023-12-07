@@ -33,11 +33,9 @@ import { OAuth2ApplicationConfig } from "./model";
 import { OAuth2Provider } from "./model";
 import { OAuth2ProviderConfig } from "./model";
 import { ConfigNode } from "./model";
-import { ReadIDProviderConfig } from "./model";
 import { KnowledgeGraphSchemaConfig } from "./model";
 import { AuthorizationPolicyConfig } from "./model";
 import { SAFRProviderConfig } from "./model";
-import { AuthenteqProviderConfig } from "./model";
 import { WebAuthnProviderConfig } from "./model";
 import { PasswordProviderConfig } from "./model";
 import { OAuth2ClientConfig } from "./model";
@@ -2269,12 +2267,6 @@ export interface CreateConfigNodeRequest {
          */
         webauthnProviderConfig: WebAuthnProviderConfig;
     } | {
-        oneofKind: "authenteqProviderConfig";
-        /**
-         * @generated from protobuf field: indykite.config.v1beta1.AuthenteqProviderConfig authenteq_provider_config = 22;
-         */
-        authenteqProviderConfig: AuthenteqProviderConfig;
-    } | {
         oneofKind: "safrProviderConfig";
         /**
          * @generated from protobuf field: indykite.config.v1beta1.SAFRProviderConfig safr_provider_config = 23;
@@ -2292,12 +2284,6 @@ export interface CreateConfigNodeRequest {
          * @generated from protobuf field: indykite.config.v1beta1.KnowledgeGraphSchemaConfig knowledge_graph_schema_config = 26;
          */
         knowledgeGraphSchemaConfig: KnowledgeGraphSchemaConfig;
-    } | {
-        oneofKind: "readidProviderConfig";
-        /**
-         * @generated from protobuf field: indykite.config.v1beta1.ReadIDProviderConfig readid_provider_config = 27;
-         */
-        readidProviderConfig: ReadIDProviderConfig;
     } | {
         oneofKind: undefined;
     };
@@ -2474,12 +2460,6 @@ export interface UpdateConfigNodeRequest {
          */
         webauthnProviderConfig: WebAuthnProviderConfig;
     } | {
-        oneofKind: "authenteqProviderConfig";
-        /**
-         * @generated from protobuf field: indykite.config.v1beta1.AuthenteqProviderConfig authenteq_provider_config = 22;
-         */
-        authenteqProviderConfig: AuthenteqProviderConfig;
-    } | {
         oneofKind: "safrProviderConfig";
         /**
          * @generated from protobuf field: indykite.config.v1beta1.SAFRProviderConfig safr_provider_config = 23;
@@ -2497,12 +2477,6 @@ export interface UpdateConfigNodeRequest {
          * @generated from protobuf field: indykite.config.v1beta1.KnowledgeGraphSchemaConfig knowledge_graph_schema_config = 26;
          */
         knowledgeGraphSchemaConfig: KnowledgeGraphSchemaConfig;
-    } | {
-        oneofKind: "readidProviderConfig";
-        /**
-         * @generated from protobuf field: indykite.config.v1beta1.ReadIDProviderConfig readid_provider_config = 27;
-         */
-        readidProviderConfig: ReadIDProviderConfig;
     } | {
         oneofKind: undefined;
     };
@@ -8359,11 +8333,9 @@ class CreateConfigNodeRequest$Type extends MessageType<CreateConfigNodeRequest> 
             { no: 18, name: "oauth2_client_config", kind: "message", oneof: "config", T: () => OAuth2ClientConfig, options: { "validate.rules": { message: { required: true } } } },
             { no: 20, name: "password_provider_config", kind: "message", oneof: "config", T: () => PasswordProviderConfig, options: { "validate.rules": { message: { required: true } } } },
             { no: 21, name: "webauthn_provider_config", kind: "message", oneof: "config", T: () => WebAuthnProviderConfig, options: { "validate.rules": { message: { required: true } } } },
-            { no: 22, name: "authenteq_provider_config", kind: "message", oneof: "config", T: () => AuthenteqProviderConfig, options: { "validate.rules": { message: { required: true } } } },
             { no: 23, name: "safr_provider_config", kind: "message", oneof: "config", T: () => SAFRProviderConfig, options: { "validate.rules": { message: { required: true } } } },
             { no: 25, name: "authorization_policy_config", kind: "message", oneof: "config", T: () => AuthorizationPolicyConfig, options: { "validate.rules": { message: { required: true } } } },
             { no: 26, name: "knowledge_graph_schema_config", kind: "message", oneof: "config", T: () => KnowledgeGraphSchemaConfig, options: { "validate.rules": { message: { required: true } } } },
-            { no: 27, name: "readid_provider_config", kind: "message", oneof: "config", T: () => ReadIDProviderConfig, options: { "validate.rules": { message: { required: true } } } },
             { no: 7, name: "bookmarks", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { items: { string: { minLen: "40", pattern: "^[a-zA-Z0-9_-]{40,}$" } } } } } }
         ]);
     }
@@ -8433,12 +8405,6 @@ class CreateConfigNodeRequest$Type extends MessageType<CreateConfigNodeRequest> 
                         webauthnProviderConfig: WebAuthnProviderConfig.internalBinaryRead(reader, reader.uint32(), options, (message.config as any).webauthnProviderConfig)
                     };
                     break;
-                case /* indykite.config.v1beta1.AuthenteqProviderConfig authenteq_provider_config */ 22:
-                    message.config = {
-                        oneofKind: "authenteqProviderConfig",
-                        authenteqProviderConfig: AuthenteqProviderConfig.internalBinaryRead(reader, reader.uint32(), options, (message.config as any).authenteqProviderConfig)
-                    };
-                    break;
                 case /* indykite.config.v1beta1.SAFRProviderConfig safr_provider_config */ 23:
                     message.config = {
                         oneofKind: "safrProviderConfig",
@@ -8455,12 +8421,6 @@ class CreateConfigNodeRequest$Type extends MessageType<CreateConfigNodeRequest> 
                     message.config = {
                         oneofKind: "knowledgeGraphSchemaConfig",
                         knowledgeGraphSchemaConfig: KnowledgeGraphSchemaConfig.internalBinaryRead(reader, reader.uint32(), options, (message.config as any).knowledgeGraphSchemaConfig)
-                    };
-                    break;
-                case /* indykite.config.v1beta1.ReadIDProviderConfig readid_provider_config */ 27:
-                    message.config = {
-                        oneofKind: "readidProviderConfig",
-                        readidProviderConfig: ReadIDProviderConfig.internalBinaryRead(reader, reader.uint32(), options, (message.config as any).readidProviderConfig)
                     };
                     break;
                 case /* repeated string bookmarks */ 7:
@@ -8511,9 +8471,6 @@ class CreateConfigNodeRequest$Type extends MessageType<CreateConfigNodeRequest> 
         /* indykite.config.v1beta1.WebAuthnProviderConfig webauthn_provider_config = 21; */
         if (message.config.oneofKind === "webauthnProviderConfig")
             WebAuthnProviderConfig.internalBinaryWrite(message.config.webauthnProviderConfig, writer.tag(21, WireType.LengthDelimited).fork(), options).join();
-        /* indykite.config.v1beta1.AuthenteqProviderConfig authenteq_provider_config = 22; */
-        if (message.config.oneofKind === "authenteqProviderConfig")
-            AuthenteqProviderConfig.internalBinaryWrite(message.config.authenteqProviderConfig, writer.tag(22, WireType.LengthDelimited).fork(), options).join();
         /* indykite.config.v1beta1.SAFRProviderConfig safr_provider_config = 23; */
         if (message.config.oneofKind === "safrProviderConfig")
             SAFRProviderConfig.internalBinaryWrite(message.config.safrProviderConfig, writer.tag(23, WireType.LengthDelimited).fork(), options).join();
@@ -8523,9 +8480,6 @@ class CreateConfigNodeRequest$Type extends MessageType<CreateConfigNodeRequest> 
         /* indykite.config.v1beta1.KnowledgeGraphSchemaConfig knowledge_graph_schema_config = 26; */
         if (message.config.oneofKind === "knowledgeGraphSchemaConfig")
             KnowledgeGraphSchemaConfig.internalBinaryWrite(message.config.knowledgeGraphSchemaConfig, writer.tag(26, WireType.LengthDelimited).fork(), options).join();
-        /* indykite.config.v1beta1.ReadIDProviderConfig readid_provider_config = 27; */
-        if (message.config.oneofKind === "readidProviderConfig")
-            ReadIDProviderConfig.internalBinaryWrite(message.config.readidProviderConfig, writer.tag(27, WireType.LengthDelimited).fork(), options).join();
         /* repeated string bookmarks = 7; */
         for (let i = 0; i < message.bookmarks.length; i++)
             writer.tag(7, WireType.LengthDelimited).string(message.bookmarks[i]);
@@ -8758,11 +8712,9 @@ class UpdateConfigNodeRequest$Type extends MessageType<UpdateConfigNodeRequest> 
             { no: 18, name: "oauth2_client_config", kind: "message", oneof: "config", T: () => OAuth2ClientConfig, options: { "validate.rules": { message: { required: true } } } },
             { no: 20, name: "password_provider_config", kind: "message", oneof: "config", T: () => PasswordProviderConfig, options: { "validate.rules": { message: { required: true } } } },
             { no: 21, name: "webauthn_provider_config", kind: "message", oneof: "config", T: () => WebAuthnProviderConfig, options: { "validate.rules": { message: { required: true } } } },
-            { no: 22, name: "authenteq_provider_config", kind: "message", oneof: "config", T: () => AuthenteqProviderConfig, options: { "validate.rules": { message: { required: true } } } },
             { no: 23, name: "safr_provider_config", kind: "message", oneof: "config", T: () => SAFRProviderConfig, options: { "validate.rules": { message: { required: true } } } },
             { no: 25, name: "authorization_policy_config", kind: "message", oneof: "config", T: () => AuthorizationPolicyConfig, options: { "validate.rules": { message: { required: true } } } },
             { no: 26, name: "knowledge_graph_schema_config", kind: "message", oneof: "config", T: () => KnowledgeGraphSchemaConfig, options: { "validate.rules": { message: { required: true } } } },
-            { no: 27, name: "readid_provider_config", kind: "message", oneof: "config", T: () => ReadIDProviderConfig, options: { "validate.rules": { message: { required: true } } } },
             { no: 5, name: "bookmarks", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { items: { string: { minLen: "40", pattern: "^[a-zA-Z0-9_-]{40,}$" } } } } } }
         ]);
     }
@@ -8832,12 +8784,6 @@ class UpdateConfigNodeRequest$Type extends MessageType<UpdateConfigNodeRequest> 
                         webauthnProviderConfig: WebAuthnProviderConfig.internalBinaryRead(reader, reader.uint32(), options, (message.config as any).webauthnProviderConfig)
                     };
                     break;
-                case /* indykite.config.v1beta1.AuthenteqProviderConfig authenteq_provider_config */ 22:
-                    message.config = {
-                        oneofKind: "authenteqProviderConfig",
-                        authenteqProviderConfig: AuthenteqProviderConfig.internalBinaryRead(reader, reader.uint32(), options, (message.config as any).authenteqProviderConfig)
-                    };
-                    break;
                 case /* indykite.config.v1beta1.SAFRProviderConfig safr_provider_config */ 23:
                     message.config = {
                         oneofKind: "safrProviderConfig",
@@ -8854,12 +8800,6 @@ class UpdateConfigNodeRequest$Type extends MessageType<UpdateConfigNodeRequest> 
                     message.config = {
                         oneofKind: "knowledgeGraphSchemaConfig",
                         knowledgeGraphSchemaConfig: KnowledgeGraphSchemaConfig.internalBinaryRead(reader, reader.uint32(), options, (message.config as any).knowledgeGraphSchemaConfig)
-                    };
-                    break;
-                case /* indykite.config.v1beta1.ReadIDProviderConfig readid_provider_config */ 27:
-                    message.config = {
-                        oneofKind: "readidProviderConfig",
-                        readidProviderConfig: ReadIDProviderConfig.internalBinaryRead(reader, reader.uint32(), options, (message.config as any).readidProviderConfig)
                     };
                     break;
                 case /* repeated string bookmarks */ 5:
@@ -8910,9 +8850,6 @@ class UpdateConfigNodeRequest$Type extends MessageType<UpdateConfigNodeRequest> 
         /* indykite.config.v1beta1.WebAuthnProviderConfig webauthn_provider_config = 21; */
         if (message.config.oneofKind === "webauthnProviderConfig")
             WebAuthnProviderConfig.internalBinaryWrite(message.config.webauthnProviderConfig, writer.tag(21, WireType.LengthDelimited).fork(), options).join();
-        /* indykite.config.v1beta1.AuthenteqProviderConfig authenteq_provider_config = 22; */
-        if (message.config.oneofKind === "authenteqProviderConfig")
-            AuthenteqProviderConfig.internalBinaryWrite(message.config.authenteqProviderConfig, writer.tag(22, WireType.LengthDelimited).fork(), options).join();
         /* indykite.config.v1beta1.SAFRProviderConfig safr_provider_config = 23; */
         if (message.config.oneofKind === "safrProviderConfig")
             SAFRProviderConfig.internalBinaryWrite(message.config.safrProviderConfig, writer.tag(23, WireType.LengthDelimited).fork(), options).join();
@@ -8922,9 +8859,6 @@ class UpdateConfigNodeRequest$Type extends MessageType<UpdateConfigNodeRequest> 
         /* indykite.config.v1beta1.KnowledgeGraphSchemaConfig knowledge_graph_schema_config = 26; */
         if (message.config.oneofKind === "knowledgeGraphSchemaConfig")
             KnowledgeGraphSchemaConfig.internalBinaryWrite(message.config.knowledgeGraphSchemaConfig, writer.tag(26, WireType.LengthDelimited).fork(), options).join();
-        /* indykite.config.v1beta1.ReadIDProviderConfig readid_provider_config = 27; */
-        if (message.config.oneofKind === "readidProviderConfig")
-            ReadIDProviderConfig.internalBinaryWrite(message.config.readidProviderConfig, writer.tag(27, WireType.LengthDelimited).fork(), options).join();
         /* repeated string bookmarks = 5; */
         for (let i = 0; i < message.bookmarks.length; i++)
             writer.tag(5, WireType.LengthDelimited).string(message.bookmarks[i]);

@@ -1,134 +1,44 @@
 import { SdkClient } from './client/client';
 import {
   IsAuthorizedRequest,
+  IsAuthorizedRequest_Resource,
+  IsAuthorizedResponse,
   WhatAuthorizedRequest,
+  WhatAuthorizedRequest_ResourceType,
+  WhatAuthorizedResponse,
   WhoAuthorizedRequest,
+  WhoAuthorizedRequest_Resource,
+  WhoAuthorizedResponse,
 } from '../grpc/indykite/authorization/v1beta1/authorization_service';
 import { AuthorizationAPIClient } from '../grpc/indykite/authorization/v1beta1/authorization_service.grpc-client';
-import { InputParam } from '../grpc/indykite/authorization/v1beta1/model';
-import { DigitalTwinCore } from './model';
-import { SdkError, SdkErrorCode } from './error';
+import {
+  DigitalTwin,
+  ExternalID,
+  InputParam,
+  Property,
+} from '../grpc/indykite/authorization/v1beta1/model';
+import { SdkError, SdkErrorCode, SkdErrorText } from './error';
 import { Utils } from './utils/utils';
-
-export type InputParameter = string | number | boolean;
-
-export interface IsAuthorizedResponse {
-  /**
-   * Time the decision was made.
-   * @since 0.3.0
-   */
-  decisionTime?: Date;
-  /**
-   * Map with resource type as key.
-   * @since 0.3.0
-   */
-  decisions: {
-    [key: string]: {
-      resources: {
-        [key: string]: {
-          actions: {
-            [key: string]: {
-              allow: boolean;
-            };
-          };
-        };
-      };
-    };
-  };
-}
-
-export interface WhatAuthorizedResponse {
-  /**
-   * Time the decision was made.
-   * @since 0.3.0
-   */
-  decisionTime?: Date;
-  /**
-   * Map with resource type as key.
-   * @since 0.3.0
-   */
-  decisions: {
-    [key: string]: {
-      actions: {
-        [key: string]: {
-          resources: {
-            externalId: string;
-          }[];
-        };
-      };
-    };
-  };
-}
-
-export interface WhoAuthorizedResponse {
-  /**
-   * Time the decision was made.
-   * @since 0.3.3
-   */
-  decisionTime?: Date;
-  /**
-   * Map with resource type as key.
-   * @since 0.3.3
-   */
-  decisions: {
-    [key: string]: {
-      resources: {
-        [key: string]: {
-          actions: {
-            [key: string]: {
-              subjects: {
-                externalId: string;
-              }[];
-            };
-          };
-        };
-      };
-    };
-  };
-}
-
-export interface AuthorizationResource {
-  /**
-   * Resource id.
-   * @since 0.3.0
-   */
-  id: string;
-  /**
-   * Resource type.
-   * @since 0.3.0
-   */
-  type: string;
-  /**
-   * A list of actions the subject want to perform.
-   * @since 0.3.0
-   */
-  actions: string[];
-}
-
-export interface AuthorizationResourceType {
-  /**
-   * Resource type.
-   * @since 0.3.0
-   */
-  type: string;
-  /**
-   * A list of actions the subject want to perform.
-   * @since 0.3.0
-   */
-  actions: string[];
-}
 
 export type InputParameters = string | boolean | number;
 
-export interface PropertyFilter {
-  type: string;
-  tenantId: string;
-  value: unknown;
-}
+/**
+ * @deprecated
+ * @since 0.4.2
+ */
+export const DIGITAL_TWIN_IDENTIFIER = 'digitalTwinIdentifier';
+export const DIGITAL_TWIN_IDENTIFIER_DIGITAL_TWIN = 'digitalTwin';
+export const DIGITAL_TWIN_IDENTIFIER_PROPERTY_FILTER = 'propertyFilter';
+export const DIGITAL_TWIN_IDENTIFIER_ACCESS_TOKEN = 'accessToken';
+
+export const DIGITAL_TWIN_ID = 'digitalTwinId';
+export const DIGITAL_TWIN_PROPERTY = 'digitalTwinProperty';
+export const DIGITAL_TWIN_ACCESS_TOKEN = 'indykiteAccessToken';
+export const DIGITAL_TWIN_EXTERNAL_ID = 'externalId';
 
 /**
  * @category Clients
- * @since 0.2.2
+ * @since 0.4.1
  * @example
  * // Example how to create a new authorization client
  * const sdk = await AuthorizationClient.createInstance();
@@ -137,14 +47,14 @@ export class AuthorizationClient {
   private client: AuthorizationAPIClient;
 
   /**
-   * @since 0.2.2
+   * @since 0.4.1
    */
   constructor(sdk: SdkClient) {
     this.client = sdk.client as AuthorizationAPIClient;
   }
 
   /**
-   * @since 0.2.2
+   * @since 0.4.1
    */
   static createInstance(appCredential?: string | unknown): Promise<AuthorizationClient> {
     return new Promise<AuthorizationClient>((resolve, reject) => {
@@ -159,23 +69,36 @@ export class AuthorizationClient {
   }
 
   /**
-   * Check whether the actions are allowed in the specified resources for the selected subject
-   * @since 0.3.0
-   * @param subject Subject to check if is authorized to perform given actions.
-   * @param resources A list of resources to authorize against.
-   * @param inputParameters Policy input params.
-   * @param policyTags Only evaluate polices containing provided tags.
+   * Convert simple (string | boolean | number) map of parameters into `InputParam`
+   * https://buf.build/indykite/indykiteapis/docs/main:indykite.authorization.v1beta1#indykite.authorization.v1beta1.InputParam
+   * @since 0.4.1
+   */
+  static getInputParams(options: Record<string, InputParameters>): Record<string, InputParam> {
+    return Object.keys(options).reduce((newOptions, optionKey) => {
+      newOptions[optionKey] = InputParam.fromJson(Utils.objectToJsonValue(options[optionKey]));
+      return newOptions;
+    }, {} as Record<string, InputParam>);
+  }
+
+  /**
+   * https://pkg.go.dev/github.com/indykite/jarvis-sdk-go@v0.11.0/authorization#Client.IsAuthorized
+   * Check whether the actions are allowed in the specified resources
+   * @since 0.4.1
+   * @param {DigitalTwin} digitalTwin
+   * @param {IsAuthorizedRequest_Resource[]} resources A list of resources to authorize against.
+   * @param {Record<string, InputParam>} inputParams Policy input params.
+   * @param {string[]} policyTags Only evaluate polices containing provided tags.
    * @example
    * function printAuthorization(token: string) {
    *   AuthorizationClient.createInstance()
    *     .then(async (sdk) => {
    *       const resp = await sdk.isAuthorized(
-   *         new DigitalTwinCore(
-   *           'digitaltwin-id',
-   *           'tenant-id',
-   *           DigitalTwinKind.PERSON,
-   *           DigitalTwinState.ACTIVE,
-   *         ),
+   *          DigitalTwin.fromJson({
+   *            id: 'digitaltwin-id',
+   *            tenantId: 'tenant-id',
+   *            kind: DigitalTwinKind.PERSON,
+   *            state: DigitalTwinState.ACTIVE,
+   *          }),
    *         [
    *           {
    *             id: 'lotA',
@@ -195,50 +118,85 @@ export class AuthorizationClient {
    * }
    */
   isAuthorized(
-    digitalTwin: DigitalTwinCore,
-    resources: AuthorizationResource[],
-    inputParameters: Record<string, InputParameters> = {},
+    digitalTwin: DigitalTwin,
+    resources: IsAuthorizedRequest_Resource[],
+    inputParams: Record<string, InputParam> = {},
     policyTags?: string[],
   ): Promise<IsAuthorizedResponse> {
-    return new Promise((resolve, reject) => {
-      const request = IsAuthorizedRequest.create({
-        resources,
+    const request = IsAuthorizedRequest.create({
+      resources,
+      subject: {
         subject: {
-          subject: {
-            oneofKind: 'digitalTwinIdentifier',
-            digitalTwinIdentifier: {
-              filter: {
-                oneofKind: 'digitalTwin',
-                digitalTwin: digitalTwin.marshal(),
-              },
-            },
-          },
+          oneofKind: DIGITAL_TWIN_ID,
+          digitalTwinId: digitalTwin,
         },
-        inputParams: this.marshalAuthorizationInputParameters(inputParameters),
-        policyTags,
-      });
-
-      this.client.isAuthorized(request, (err, res) => {
-        if (err) reject(err);
-        else if (!res) {
-          throw new SdkError(SdkErrorCode.SDK_CODE_1, 'No data in isAuthorized response');
-        } else {
-          resolve({
-            decisionTime: Utils.timestampToDate(res.decisionTime),
-            decisions: res.decisions,
-          });
-        }
-      });
+      },
+      inputParams,
+      policyTags,
     });
+    return this.isAuthorizedWithRawRequest(request);
   }
 
   /**
-   * Check whether the actions are allowed in the specified resources for the selected subject
-   * @since 0.3.0
-   * @param subjectToken Subject to check if is authorized to perform given actions.
-   * @param resources A list of resources to authorize against.
-   * @param inputParameters Policy input params.
-   * @param policyTags Only evaluate polices containing provided tags.
+   * Check whether the actions are allowed in the specified resources for the selected property
+   * https://pkg.go.dev/github.com/indykite/jarvis-sdk-go@v0.11.0/authorization#Client.IsAuthorizedByProperty
+   * @since 0.4.1
+   * @param {PropertyFilter} propertyFilter Property to check if is authorized to perform given actions.
+   * @param {IsAuthorizedRequest_Resource[]} resources A list of resources to authorize against.
+   * @param {Record<string, InputParam>} inputParams Policy input params.
+   * @param {string[]} policyTags Only evaluate polices containing provided tags.
+   * @example
+   * function printAuthorization(token: string) {
+   *   AuthorizationClient.createInstance()
+   *     .then(async (sdk) => {
+   *       const resp = await this.isAuthorizedByProperty(
+   *         {
+   *           type: 'email',
+   *           value: 'user@example.com',
+   *         },
+   *         [
+   *           {
+   *             id: 'lotA',
+   *             type: 'ParkingLot',
+   *             actions: ['HAS_FREE_PARKING'],
+   *           },
+   *         ],
+   *       );
+   *       console.log('Action:', resp.decisions['ParkingLot'].resources['lotA'].actions['HAS_FREE_PARKING'].allow);
+   *     })
+   *     .catch((err) => {
+   *       console.error(err);
+   *     });
+   * }
+   */
+  isAuthorizedByProperty(
+    property: Property,
+    resources: IsAuthorizedRequest_Resource[],
+    inputParams: Record<string, InputParam> = {},
+    policyTags?: string[],
+  ): Promise<IsAuthorizedResponse> {
+    const request = IsAuthorizedRequest.create({
+      resources,
+      subject: {
+        subject: {
+          oneofKind: DIGITAL_TWIN_PROPERTY,
+          digitalTwinProperty: property as Property,
+        },
+      },
+      inputParams,
+      policyTags,
+    });
+    return this.isAuthorizedWithRawRequest(request);
+  }
+
+  /**
+   * https://pkg.go.dev/github.com/indykite/jarvis-sdk-go@v0.11.0/authorization#Client.IsAuthorizedByToken
+   * Check whether the actions are allowed in the specified resources for the token
+   * @since 0.4.1
+   * @param {string} token Token to check if is authorized to perform given actions.
+   * @param {IsAuthorizedRequest_Resource[]} resources A list of resources to authorize against.
+   * @param {Record<string, InputParam>} inputParams Policy input params.
+   * @param {string[]} policyTags Only evaluate polices containing provided tags.
    * @example
    * function printAuthorization(token: string) {
    *   AuthorizationClient.createInstance()
@@ -261,59 +219,41 @@ export class AuthorizationClient {
    * }
    */
   isAuthorizedByToken(
-    subjectToken: string,
-    resources: AuthorizationResource[],
-    inputParameters: Record<string, InputParameters> = {},
+    token: string,
+    resources: IsAuthorizedRequest_Resource[],
+    inputParams: Record<string, InputParam> = {},
     policyTags?: string[],
   ): Promise<IsAuthorizedResponse> {
-    return new Promise((resolve, reject) => {
-      const request = IsAuthorizedRequest.create({
-        resources,
+    const request = IsAuthorizedRequest.create({
+      resources,
+      subject: {
         subject: {
-          subject: {
-            oneofKind: 'digitalTwinIdentifier',
-            digitalTwinIdentifier: {
-              filter: {
-                oneofKind: 'accessToken',
-                accessToken: subjectToken,
-              },
-            },
-          },
+          oneofKind: DIGITAL_TWIN_ACCESS_TOKEN,
+          indykiteAccessToken: token,
         },
-        inputParams: this.marshalAuthorizationInputParameters(inputParameters),
-        policyTags,
-      });
-
-      this.client.isAuthorized(request, (err, res) => {
-        if (err) reject(err);
-        else if (!res) {
-          throw new SdkError(SdkErrorCode.SDK_CODE_1, 'No data in isAuthorized response');
-        } else {
-          resolve({
-            decisionTime: Utils.timestampToDate(res.decisionTime),
-            decisions: res.decisions,
-          });
-        }
-      });
+      },
+      inputParams,
+      policyTags,
     });
+    return this.isAuthorizedWithRawRequest(request);
   }
 
   /**
-   * Check whether the actions are allowed in the specified resources for the selected subject
-   * @since 0.3.0
-   * @param subjectProperty Subject to check if is authorized to perform given actions.
-   * @param resources A list of resources to authorize against.
-   * @param inputParameters Policy input params.
-   * @param policyTags Only evaluate polices containing provided tags.
+   * Check whether the actions are allowed in the specified resources for the selected external id
+   * https://pkg.go.dev/github.com/indykite/jarvis-sdk-go@v0.11.0/authorization#Client.IsAuthorizedByExternalID
+   * @since 0.4.1
+   * @param {externalID} externalId to check if is authorized to perform given actions.
+   * @param {IsAuthorizedRequest_Resource[]} resources A list of resources to authorize against.
+   * @param {Record<string, InputParam>} inputParams Policy input params.
+   * @param {string[]} policyTags Only evaluate polices containing provided tags.
    * @example
    * function printAuthorization(token: string) {
    *   AuthorizationClient.createInstance()
    *     .then(async (sdk) => {
-   *       const resp = await this.isAuthorizedByProperty(
+   *       const resp = await this.IsAuthorizedByExternalID(
    *         {
-   *           tenantId: 'tenant-id',
-   *           type: 'email',
-   *           value: 'user@example.com',
+   *           type: 'Individual',
+   *           value: 'ValueOfExternalId',
    *         },
    *         [
    *           {
@@ -330,67 +270,69 @@ export class AuthorizationClient {
    *     });
    * }
    */
-  isAuthorizedByProperty(
-    subjectProperty: PropertyFilter,
-    resources: AuthorizationResource[],
-    inputParameters: Record<string, InputParameters> = {},
+  IsAuthorizedByExternalID(
+    externalId: ExternalID,
+    resources: IsAuthorizedRequest_Resource[],
+    inputParams: Record<string, InputParam> = {},
     policyTags?: string[],
   ): Promise<IsAuthorizedResponse> {
-    return new Promise((resolve, reject) => {
-      const request = IsAuthorizedRequest.create({
-        resources,
+    const request = IsAuthorizedRequest.create({
+      resources,
+      subject: {
         subject: {
-          subject: {
-            oneofKind: 'digitalTwinIdentifier',
-            digitalTwinIdentifier: {
-              filter: {
-                oneofKind: 'propertyFilter',
-                propertyFilter: {
-                  ...subjectProperty,
-                  value: ([undefined, null] as unknown[]).includes(subjectProperty.value)
-                    ? undefined
-                    : Utils.objectToValue(subjectProperty.value),
-                },
-              },
-            },
-          },
+          oneofKind: DIGITAL_TWIN_EXTERNAL_ID,
+          externalId: externalId,
         },
-        inputParams: this.marshalAuthorizationInputParameters(inputParameters),
-        policyTags,
-      });
+      },
+      inputParams,
+      policyTags,
+    });
+    return this.isAuthorizedWithRawRequest(request);
+  }
 
-      this.client.isAuthorized(request, (err, res) => {
-        if (err) reject(err);
-        else if (!res) {
-          throw new SdkError(SdkErrorCode.SDK_CODE_1, 'No data in isAuthorized response');
+  /**
+   * https://pkg.go.dev/github.com/indykite/jarvis-sdk-go@v0.11.0/authorization#Client.IsAuthorizedWithRawRequest
+   * Check whether the there is an authorization based on raw request
+   * @since 0.4.1
+   */
+  isAuthorizedWithRawRequest(request: IsAuthorizedRequest): Promise<IsAuthorizedResponse> {
+    return new Promise((resolve, reject) => {
+      this.client.isAuthorized(request, (err, response) => {
+        if (err) {
+          reject(err);
         } else {
-          resolve({
-            decisionTime: Utils.timestampToDate(res.decisionTime),
-            decisions: res.decisions,
-          });
+          if (!response) {
+            throw new SdkError(
+              SdkErrorCode.SDK_CODE_5,
+              SkdErrorText.SDK_CODE_5(AuthorizationClient.prototype.isAuthorized.name),
+            );
+          } else {
+            resolve(response);
+          }
         }
       });
     });
   }
 
   /**
-   * Get list of resources where the selected actions are allowed by the selected subject
-   * @since 0.3.0
-   * @param subject Subject to check if is authorized to perform given actions.
-   * @param resourceTypes A list of resources types that should be checked against.
-   * @param inputParameters Policy input params.
-   * @param policyTags Only evaluate polices containing provided tags.
+   * https://pkg.go.dev/github.com/indykite/jarvis-sdk-go@v0.11.0/authorization#Client.WhatAuthorized
+   * Get list of resources where the selected actions are allowed by the digitalTwin
+   * @since 0.4.1
+   * @param {DigitalTwin} digitalTwin
+   * @param {WhatAuthorizedRequest_ResourceType[]} resourceTypes A list of resources types that should be checked against.
+   * @param {Record<string, InputParam>} inputParams Policy input params.
+   * @param {string[]} policyTags Only evaluate polices containing provided tags.
    * @example
    * function getAuthorizedResources(token: string) {
    *   AuthorizationClient.createInstance()
    *     .then(async (sdk) => {
    *       const resp = await sdk.whatAuthorized(
-   *         new DigitalTwinCore(
-   *           'digitaltwin-id',
-   *           'tenant-id',
-   *           DigitalTwinKind.PERSON,
-   *           DigitalTwinState.ACTIVE,
-   *         ),
+   *          DigitalTwin.fromJson({
+   *            id: 'digitaltwin-id',
+   *            tenantId: 'tenant-id',
+   *            kind: DigitalTwinKind.PERSON,
+   *            state: DigitalTwinState.ACTIVE,
+   *          }),
    *         [
    *           {
    *             type: 'ParkingLot',
@@ -407,120 +349,39 @@ export class AuthorizationClient {
    * }
    */
   whatAuthorized(
-    digitalTwin: DigitalTwinCore,
-    resourceTypes: AuthorizationResourceType[],
-    inputParameters: Record<string, InputParameters> = {},
+    digitalTwin: DigitalTwin,
+    resourceTypes: WhatAuthorizedRequest_ResourceType[],
+    inputParams: Record<string, InputParam> = {},
     policyTags?: string[],
   ): Promise<WhatAuthorizedResponse> {
-    return new Promise((resolve, reject) => {
-      const request = WhatAuthorizedRequest.create({
-        resourceTypes,
+    const request = WhatAuthorizedRequest.create({
+      resourceTypes,
+      subject: {
         subject: {
-          subject: {
-            oneofKind: 'digitalTwinIdentifier',
-            digitalTwinIdentifier: {
-              filter: {
-                oneofKind: 'digitalTwin',
-                digitalTwin: digitalTwin.marshal(),
-              },
-            },
-          },
+          oneofKind: DIGITAL_TWIN_ID,
+          digitalTwinId: digitalTwin,
         },
-        inputParams: this.marshalAuthorizationInputParameters(inputParameters),
-        policyTags,
-      });
-
-      this.client.whatAuthorized(request, (err, res) => {
-        if (err) reject(err);
-        else if (!res) {
-          throw new SdkError(SdkErrorCode.SDK_CODE_1, 'No data in whatAuthorized response');
-        } else {
-          resolve({
-            decisionTime: Utils.timestampToDate(res.decisionTime),
-            decisions: res.decisions,
-          });
-        }
-      });
+      },
+      inputParams,
+      policyTags,
     });
+    return this.whatAuthorizedWithRawRequest(request);
   }
 
   /**
-   * Get list of resources where the selected actions are allowed by the selected subject
-   * @since 0.3.0
-   * @param subjectToken Subject to check if is authorized to perform given actions.
-   * @param resourceTypes A list of resources types that should be checked against.
-   * @param inputParameters Policy input params.
-   * @param policyTags Only evaluate polices containing provided tags.
-   * @example
-   * function getAuthorizedResources(token: string) {
-   *   AuthorizationClient.createInstance()
-   *     .then(async (sdk) => {
-   *       const resp = await sdk.whatAuthorizedByToken('access-token', [
-   *         {
-   *           type: 'ParkingLot',
-   *           actions: ['HAS_FREE_PARKING'],
-   *         },
-   *       ]);
-   *
-   *       console.log('Resources:', resp.decisions['ParkingLot'].actions['HAS_FREE_PARKING'].resources);
-   *     })
-   *     .catch((err) => {
-   *       console.error(err);
-   *     });
-   * }
-   */
-  whatAuthorizedByToken(
-    subjectToken: string,
-    resourceTypes: AuthorizationResourceType[],
-    inputParameters: Record<string, InputParameters> = {},
-    policyTags?: string[],
-  ): Promise<WhatAuthorizedResponse> {
-    return new Promise((resolve, reject) => {
-      const request = WhatAuthorizedRequest.create({
-        resourceTypes,
-        subject: {
-          subject: {
-            oneofKind: 'digitalTwinIdentifier',
-            digitalTwinIdentifier: {
-              filter: {
-                oneofKind: 'accessToken',
-                accessToken: subjectToken,
-              },
-            },
-          },
-        },
-        inputParams: this.marshalAuthorizationInputParameters(inputParameters),
-        policyTags,
-      });
-
-      this.client.whatAuthorized(request, (err, res) => {
-        if (err) reject(err);
-        else if (!res) {
-          throw new SdkError(SdkErrorCode.SDK_CODE_1, 'No data in whatAuthorizedByToken response');
-        } else {
-          resolve({
-            decisionTime: Utils.timestampToDate(res.decisionTime),
-            decisions: res.decisions,
-          });
-        }
-      });
-    });
-  }
-
-  /**
-   * Get list of resources where the selected actions are allowed by the selected subject
-   * @since 0.3.0
-   * @param subjectProperty Subject to check if is authorized to perform given actions.
-   * @param resourceTypes A list of resources types that should be checked against.
-   * @param inputParameters Policy input params.
-   * @param policyTags Only evaluate polices containing provided tags.
+   * https://pkg.go.dev/github.com/indykite/jarvis-sdk-go@v0.11.0/authorization#Client.WhatAuthorizedByProperty
+   * Get list of resources where the selected actions are allowed by provided property
+   * @since 0.4.1
+   * @param {PropertyFilter} propertyFilter Property to check if is authorized to perform given actions.
+   * @param {WhatAuthorizedRequest_ResourceType[]} resourceTypes A list of resources types that should be checked against.
+   * @param {Record<string, InputParam>} inputParams Policy input params.
+   * @param {string[]} policyTags Only evaluate polices containing provided tags.
    * @example
    * function getAuthorizedResources(token: string) {
    *   AuthorizationClient.createInstance()
    *     .then(async (sdk) => {
    *       const resp = await sdk.whatAuthorizedByProperty(
    *         {
-   *           tenantId: 'tenant-id',
    *           type: 'email',
    *           value: 'user@example.com',
    *         },
@@ -540,68 +401,186 @@ export class AuthorizationClient {
    * }
    */
   whatAuthorizedByProperty(
-    subjectProperty: PropertyFilter,
-    resourceTypes: AuthorizationResourceType[],
-    inputParameters: Record<string, InputParameters> = {},
+    property: Property,
+    resourceTypes: WhatAuthorizedRequest_ResourceType[],
+    inputParams: Record<string, InputParam> = {},
     policyTags?: string[],
   ): Promise<WhatAuthorizedResponse> {
-    return new Promise((resolve, reject) => {
-      const request = WhatAuthorizedRequest.create({
-        resourceTypes,
+    const request = WhatAuthorizedRequest.create({
+      resourceTypes,
+      subject: {
         subject: {
-          subject: {
-            oneofKind: 'digitalTwinIdentifier',
-            digitalTwinIdentifier: {
-              filter: {
-                oneofKind: 'propertyFilter',
-                propertyFilter: {
-                  ...subjectProperty,
-                  value: ([undefined, null] as unknown[]).includes(subjectProperty.value)
-                    ? undefined
-                    : Utils.objectToValue(subjectProperty.value),
-                },
-              },
-            },
-          },
+          oneofKind: DIGITAL_TWIN_PROPERTY,
+          digitalTwinProperty: property as Property,
         },
-        inputParams: this.marshalAuthorizationInputParameters(inputParameters),
-        policyTags,
-      });
+      },
+      inputParams,
+      policyTags,
+    });
+    return this.whatAuthorizedWithRawRequest(request);
+  }
 
-      this.client.whatAuthorized(request, (err, res) => {
+  /**
+   * https://pkg.go.dev/github.com/indykite/jarvis-sdk-go@v0.11.0/authorization#Client.WhatAuthorizedByToken
+   * Get list of resources where the selected actions are allowed by the selected subject
+   * @since 0.4.1
+   * @param {string} token Token to check if is authorized to perform given actions.
+   * @param {WhatAuthorizedRequest_ResourceType[]} resourceTypes A list of resources types that should be checked against.
+   * @param {Record<string, InputParam>} inputParams Policy input params.
+   * @param {string[]} policyTags Only evaluate polices containing provided tags.
+   * @example
+   * function getAuthorizedResources(token: string) {
+   *   AuthorizationClient.createInstance()
+   *     .then(async (sdk) => {
+   *       const resp = await sdk.whatAuthorizedByToken('access-token', [
+   *         {
+   *           type: 'ParkingLot',
+   *           actions: ['HAS_FREE_PARKING'],
+   *         },
+   *       ]);
+   *
+   *       console.log('Resources:', resp.decisions['ParkingLot'].actions['HAS_FREE_PARKING'].resources);
+   *     })
+   *     .catch((err) => {
+   *       console.error(err);
+   *     });
+   * }
+   */
+  whatAuthorizedByToken(
+    token: string,
+    resourceTypes: WhatAuthorizedRequest_ResourceType[],
+    inputParams: Record<string, InputParam> = {},
+    policyTags?: string[],
+  ): Promise<WhatAuthorizedResponse> {
+    const request = WhatAuthorizedRequest.create({
+      resourceTypes,
+      subject: {
+        subject: {
+          oneofKind: DIGITAL_TWIN_ACCESS_TOKEN,
+          indykiteAccessToken: token,
+        },
+      },
+      inputParams,
+      policyTags,
+    });
+    return this.whatAuthorizedWithRawRequest(request);
+  }
+
+  /**
+   * https://pkg.go.dev/github.com/indykite/jarvis-sdk-go@v0.11.0/authorization#Client.WhatAuthorizedByExternalID
+   * Get list of resources where the selected actions are allowed by provided external id
+   * @since 0.4.1
+   * @param {ExternalID} externalId to check if is authorized to perform given actions.
+   * @param {WhatAuthorizedRequest_ResourceType[]} resourceTypes A list of resources types that should be checked against.
+   * @param {Record<string, InputParam>} inputParams Policy input params.
+   * @param {string[]} policyTags Only evaluate polices containing provided tags.
+   * @example
+   * function getAuthorizedResources(token: string) {
+   *   AuthorizationClient.createInstance()
+   *     .then(async (sdk) => {
+   *       const resp = await sdk.whatAuthorizedByExternalID(
+   *         {
+   *           type: 'Individual',
+   *           value: 'ValueOfExternalId',
+   *         },
+   *         [
+   *           {
+   *             type: 'ParkingLot',
+   *             actions: ['HAS_FREE_PARKING'],
+   *           },
+   *         ],
+   *       );
+   *
+   *       console.log('Resources:', resp.decisions['ParkingLot'].actions['HAS_FREE_PARKING'].resources);
+   *     })
+   *     .catch((err) => {
+   *       console.error(err);
+   *     });
+   * }
+   */
+  whatAuthorizedByExternalID(
+    externalId: ExternalID,
+    resourceTypes: WhatAuthorizedRequest_ResourceType[],
+    inputParams: Record<string, InputParam> = {},
+    policyTags?: string[],
+  ): Promise<WhatAuthorizedResponse> {
+    const request = WhatAuthorizedRequest.create({
+      resourceTypes,
+      subject: {
+        subject: {
+          oneofKind: DIGITAL_TWIN_EXTERNAL_ID,
+          externalId: externalId,
+        },
+      },
+      inputParams,
+      policyTags,
+    });
+    return this.whatAuthorizedWithRawRequest(request);
+  }
+
+  /**
+   * https://pkg.go.dev/github.com/indykite/jarvis-sdk-go@v0.11.0/authorization#Client.WhatAuthorizedWithRawRequest
+   * Get list of resources where the selected actions are allowed for the provided request
+   * @since 0.4.1
+   */
+  whatAuthorizedWithRawRequest(request: WhatAuthorizedRequest): Promise<WhatAuthorizedResponse> {
+    return new Promise<WhatAuthorizedResponse>((resolve, reject) => {
+      this.client.whatAuthorized(request, (err, response) => {
         if (err) reject(err);
-        else if (!res) {
+        else if (!response) {
           throw new SdkError(
-            SdkErrorCode.SDK_CODE_1,
-            'No data in whatAuthorizedByProperty response',
+            SdkErrorCode.SDK_CODE_5,
+            SkdErrorText.SDK_CODE_5(AuthorizationClient.prototype.whatAuthorized.name),
           );
         } else {
-          resolve({
-            decisionTime: Utils.timestampToDate(res.decisionTime),
-            decisions: res.decisions,
-          });
+          resolve(response);
         }
       });
     });
   }
 
   /**
-   * Return a list of subjects and allowed actions for provided resources.
-   * @since 0.3.3
-   * @param resources A list of resources to authorize against.
-   * @param inputParameters Policy input params.
-   * @param policyTags Only evaluate polices containing provided tags.
+   * Static methos used to create a new `WhoAuthorizedRequest`
+   * @since 0.4.1
+   * @param {WhoAuthorizedRequest_Resource[]} resources A list of resources to authorize against.
+   * @param {Record<string, InputParam>} inputParams Policy input params.
+   * @param {string[]} policyTags Only evaluate polices containing provided tags.
+   * @returns {WhoAuthorizedRequest}
+   * @example
+   * const request = AuthorizationClient.newWhoAuthorizedRequest([{
+   *   id: 'lotA',
+   *   type: 'ParkingLot',
+   *   actions: ['HAS_FREE_PARKING'],
+   *  }]);
+   */
+  static newWhoAuthorizedRequest(
+    resources: WhoAuthorizedRequest_Resource[],
+    inputParams: Record<string, InputParam> = {},
+    policyTags?: string[],
+  ): WhoAuthorizedRequest {
+    return WhoAuthorizedRequest.create({
+      resources,
+      inputParams,
+      policyTags,
+    });
+  }
+
+  /**
+   * https://pkg.go.dev/github.com/indykite/jarvis-sdk-go@v0.11.0/authorization#Client.WhoAuthorized
+   * Return a list of subjects and allowed actions for provided request.
+   * @since 0.4.1
    * @example
    * function getAuthorizedSubjects() {
    *   AuthorizationClient.createInstance()
    *     .then(async (sdk) => {
-   *       const resp = await sdk.whoAuthorized([
+   *       const request = AuthorizationClient.newWhoAuthorizedRequest([
    *         {
    *           id: 'lotA',
    *           type: 'ParkingLot',
    *           actions: ['HAS_FREE_PARKING'],
    *         },
    *       ]);
+   *       const resp = await sdk.whoAuthorized(request);
    *       console.log(
    *         'Subjects:',
    *         resp.decisions['ParkingLot'].resources['lotA'].actions['HAS_FREE_PARKING'].subjects,
@@ -612,38 +591,22 @@ export class AuthorizationClient {
    *     });
    * }
    */
-  whoAuthorized(
-    resources: AuthorizationResource[],
-    inputParameters: Record<string, InputParameters> = {},
-    policyTags?: string[],
-  ): Promise<WhoAuthorizedResponse> {
+  whoAuthorized(request: WhoAuthorizedRequest): Promise<WhoAuthorizedResponse> {
     return new Promise((resolve, reject) => {
-      const request = WhoAuthorizedRequest.create({
-        resources,
-        inputParams: this.marshalAuthorizationInputParameters(inputParameters),
-        policyTags,
-      });
-
-      this.client.whoAuthorized(request, (err, res) => {
-        if (err) reject(err);
-        else if (!res) {
-          throw new SdkError(SdkErrorCode.SDK_CODE_1, 'No data in whoAuthorized response');
+      this.client.whoAuthorized(request, (err, response) => {
+        if (err) {
+          reject(err);
         } else {
-          resolve({
-            decisionTime: Utils.timestampToDate(res.decisionTime),
-            decisions: res.decisions,
-          });
+          if (!response) {
+            throw new SdkError(
+              SdkErrorCode.SDK_CODE_5,
+              SkdErrorText.SDK_CODE_5(AuthorizationClient.prototype.whoAuthorized.name),
+            );
+          } else {
+            resolve(response);
+          }
         }
       });
     });
-  }
-
-  private marshalAuthorizationInputParameters(
-    options: Record<string, InputParameters>,
-  ): Record<string, InputParam> {
-    return Object.keys(options).reduce((newOptions, optionKey) => {
-      newOptions[optionKey] = InputParam.fromJson(Utils.objectToJsonValue(options[optionKey]));
-      return newOptions;
-    }, {} as Record<string, InputParam>);
   }
 }
