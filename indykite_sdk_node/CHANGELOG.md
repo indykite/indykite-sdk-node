@@ -1,4 +1,15 @@
 # Changelog
+## [0.5.0](https://github.com/indykite/indykite-sdk-node/compare/v0.4.7...v0.5.0) (2023-12-14)
+
+
+### ⚠ BREAKING CHANGES
+
+* ENG-2470
+
+### Features
+
+* add subject ExternalID and merge authz services ([460b1df](https://github.com/indykite/indykite-sdk-node/commit/460b1dfa3bae2884ab403ee01f9abb537d02f470))
+
 ## [0.4.7](https://github.com/indykite/indykite-sdk-node/compare/v0.4.6...v0.4.7) (2023-12-04)
 
 
