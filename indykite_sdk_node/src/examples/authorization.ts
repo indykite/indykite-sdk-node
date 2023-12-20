@@ -22,14 +22,14 @@ AuthorizationClient.createInstance()
     console.error(err);
   });
 
-
 AuthorizationClient.createInstance()
   .then(async (sdk) => {
-    const resp = await sdk.IsAuthorizedByExternalID({
-      type: 'Individual',
-      externalId: '125478',
-    },
-    [
+    const resp = await sdk.IsAuthorizedByExternalID(
+      {
+        type: 'Individual',
+        externalId: '125478',
+      },
+      [
         {
           type: 'ParkingLot',
           externalId: 'parking-lot-id1',
@@ -40,8 +40,9 @@ AuthorizationClient.createInstance()
           externalId: 'parking-lot-id2',
           actions: ['HAS_FREE_PARKING'],
         },
-      ]);
-      console.log(JSON.stringify(resp, null, 2));
+      ],
+    );
+    console.log(JSON.stringify(resp, null, 2));
   })
   .catch((err) => {
     console.error(err);

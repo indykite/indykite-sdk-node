@@ -828,7 +828,7 @@ describe('Read, Update, Delete - Email Configuration', () => {
     );
     jest.spyOn(sdk['client'], 'createConfigNode').mockImplementation(mockFunc);
     const resp = sdk.createAuthflowConfiguration('location', {
-      marshal: () => ({} as AuthFlowConfig),
+      marshal: () => ({}) as AuthFlowConfig,
       name: 'name',
     } as AuthFlow);
     expect(mockFunc).toBeCalled();
@@ -888,7 +888,7 @@ describe('Read, Update, Delete - Email Configuration', () => {
   it('Update auth flow configuration - Error', async () => {
     const config = {} as AuthFlow;
     config.displayName = 'Display Name';
-    config.marshal = () => ({} as AuthFlowConfig);
+    config.marshal = () => ({}) as AuthFlowConfig;
     const mockResp = UpdateConfigNodeResponse.fromJson({});
     const mockError = {
       code: Status.NOT_FOUND,
@@ -920,7 +920,7 @@ describe('Read, Update, Delete - Email Configuration', () => {
     const config = {} as AuthFlow;
     config.id = '42';
     config.displayName = 'Display Name';
-    config.marshal = () => ({} as AuthFlowConfig);
+    config.marshal = () => ({}) as AuthFlowConfig;
     const mockResp = UpdateConfigNodeResponse.fromJson({
       id: 'incorrect-id',
     });

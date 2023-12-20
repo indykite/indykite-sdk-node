@@ -216,7 +216,10 @@ export class ImportResultSuccess extends ImportResult {
 }
 
 export class ImportResultError extends ImportResult {
-  constructor(index: string, public message: string[]) {
+  constructor(
+    index: string,
+    public message: string[],
+  ) {
     super(index);
   }
 }

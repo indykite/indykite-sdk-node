@@ -727,7 +727,6 @@ describe('IngestRecord builder', () => {
                 id: '',
                 externalId: 'person-id',
                 type: 'Owner',
-                tenantId: 'tenant-id',
               })
               .marshal(),
           ).toEqual({
@@ -770,7 +769,6 @@ describe('IngestRecord builder', () => {
                 id: '',
                 externalId: 'person-id',
                 type: 'Owner',
-                tenantId: 'tenant-id',
               })
               .marshal(),
           ).toEqual({
@@ -785,13 +783,13 @@ describe('IngestRecord builder', () => {
                       type: {
                         oneofKind: 'digitalTwin',
                         digitalTwin: {
-                          id: '',
                           externalId: 'person-id',
-                          type: 'Owner',
-                          tenantId: 'tenant-id',
-                          tags: [],
-                          properties: [],
+                          id: '',
                           identityProperties: [],
+                          properties: [],
+                          tags: [],
+                          tenantId: '',
+                          type: 'Owner',
                         },
                       },
                     },
@@ -811,10 +809,6 @@ describe('IngestRecord builder', () => {
                 properties: {
                   propertyKey: 'property-value',
                 },
-                tenantId: 'tenant-id',
-                identityProperties: {
-                  identityProperty: 'some-value',
-                },
               })
               .marshal(),
           ).toEqual({
@@ -832,8 +826,8 @@ describe('IngestRecord builder', () => {
                           id: '',
                           externalId: 'person-id',
                           type: 'Owner',
-                          tenantId: 'tenant-id',
                           tags: ['MyTag'],
+                          tenantId: '',
                           properties: [
                             {
                               key: 'propertyKey',
@@ -845,17 +839,7 @@ describe('IngestRecord builder', () => {
                               },
                             },
                           ],
-                          identityProperties: [
-                            {
-                              key: 'identityProperty',
-                              value: {
-                                value: {
-                                  oneofKind: 'stringValue',
-                                  stringValue: 'some-value',
-                                },
-                              },
-                            },
-                          ],
+                          identityProperties: [],
                         },
                       },
                     },

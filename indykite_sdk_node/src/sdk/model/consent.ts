@@ -18,7 +18,10 @@ export class PiiProcessor {
 }
 
 export class PiiController {
-  constructor(public piiControllerId: string, public displayName: string) {}
+  constructor(
+    public piiControllerId: string,
+    public displayName: string,
+  ) {}
 }
 
 export class ConsentReceipt {
