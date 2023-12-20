@@ -74,10 +74,13 @@ export class AuthorizationClient {
    * @since 0.4.1
    */
   static getInputParams(options: Record<string, InputParameters>): Record<string, InputParam> {
-    return Object.keys(options).reduce((newOptions, optionKey) => {
-      newOptions[optionKey] = InputParam.fromJson(Utils.objectToJsonValue(options[optionKey]));
-      return newOptions;
-    }, {} as Record<string, InputParam>);
+    return Object.keys(options).reduce(
+      (newOptions, optionKey) => {
+        newOptions[optionKey] = InputParam.fromJson(Utils.objectToJsonValue(options[optionKey]));
+        return newOptions;
+      },
+      {} as Record<string, InputParam>,
+    );
   }
 
   /**
@@ -95,9 +98,6 @@ export class AuthorizationClient {
    *       const resp = await sdk.isAuthorized(
    *          DigitalTwin.fromJson({
    *            id: 'digitaltwin-id',
-   *            tenantId: 'tenant-id',
-   *            kind: DigitalTwinKind.PERSON,
-   *            state: DigitalTwinState.ACTIVE,
    *          }),
    *         [
    *           {
@@ -329,9 +329,6 @@ export class AuthorizationClient {
    *       const resp = await sdk.whatAuthorized(
    *          DigitalTwin.fromJson({
    *            id: 'digitaltwin-id',
-   *            tenantId: 'tenant-id',
-   *            kind: DigitalTwinKind.PERSON,
-   *            state: DigitalTwinState.ACTIVE,
    *          }),
    *         [
    *           {

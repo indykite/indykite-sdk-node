@@ -21,8 +21,6 @@ export interface IngestResourceRecord {
 
 export interface IngestDigitalTwinRecord extends IngestResourceRecord {
   id: string;
-  tenantId: string;
-  identityProperties?: Record<string, unknown>;
 }
 
 export interface IngestNodeMatch {
@@ -292,7 +290,6 @@ export class IngestRecordUpsertNode extends IngestRecord {
    * ingestSdk.ingestRecord(
    *   IngestRecord.upsert('record-id').node.digitalTwin({
    *     externalId: 'external-dt-id',
-   *     tenantId: 'tenant-id',
    *     type: 'CarOwner'
    *   })
    * );
@@ -300,7 +297,6 @@ export class IngestRecordUpsertNode extends IngestRecord {
   digitalTwin(dt: IngestDigitalTwinRecord) {
     if (!this.request.record) return new IngestRecord(this.request);
     const properties = dt.properties;
-    const identityProperties = dt.identityProperties;
 
     const operation = this.request.record.operation;
     if (operation.oneofKind === 'upsert') {
@@ -317,12 +313,8 @@ export class IngestRecordUpsertNode extends IngestRecord {
                   key: propertyKey,
                   value: Utils.objectToValue(properties[propertyKey]),
                 })),
-            identityProperties: !identityProperties
-              ? []
-              : Object.keys(identityProperties).map((propertyKey) => ({
-                  key: propertyKey,
-                  value: Utils.objectToValue(identityProperties[propertyKey]),
-                })),
+            tenantId: '',
+            identityProperties: [],
           },
         };
       }
@@ -482,10 +474,6 @@ export class IngestClient {
    *     IngestRecord.upsert('recordId-3').node.digitalTwin({
    *       externalId: 'tom',
    *       type: 'Person',
-   *       tenantId: 'gid:AAAAA2luZHlraURlgAADDwAAAAE',
-   *       identityProperties:{
-   *         email: "tom@demo.com"
-   *       },
    *       properties: {
    *         employeeId: '123',
    *         name: "Tom Doe"

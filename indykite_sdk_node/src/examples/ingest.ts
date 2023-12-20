@@ -7,12 +7,9 @@ IngestClient.createInstance().then((sdk) => {
         id: '',
         externalId: '784512',
         type: 'Individual',
-        tenantId: 'gid:AAAAAx22oL0cQU_3tuaeFPDVfEY',
         properties: {
           employeeId: '63259',
           name: 'Rufus Molecule',
-        },
-        identityProperties: {
           email: 'mol@yahoo.uk',
         },
       })
