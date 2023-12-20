@@ -22,7 +22,11 @@ export class EmailTemplate {
   /** The Amazon Resource Name (ARN) of the template. */
   templateArn: string;
 
-  constructor(public templateId: string, public to: Email[], public subject: string) {
+  constructor(
+    public templateId: string,
+    public to: Email[],
+    public subject: string,
+  ) {
     this.templateArn = '';
   }
 

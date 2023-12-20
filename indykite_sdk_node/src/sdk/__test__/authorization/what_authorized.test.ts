@@ -10,11 +10,12 @@ import { CallOptions, Metadata } from '@grpc/grpc-js';
 import { Utils } from '../../utils/utils';
 import { applicationTokenMock } from '../../utils/test_utils';
 import { Value } from '../../../grpc/indykite/objects/v1beta1/struct';
-import {   
+import {
   DigitalTwin,
   InputParam,
   Property,
-  ExternalID, } from '../../../grpc/indykite/authorization/v1beta1/model';
+  ExternalID,
+} from '../../../grpc/indykite/authorization/v1beta1/model';
 
 let sdk: AuthorizationClient;
 
@@ -30,7 +31,6 @@ describe('whatAuthorized', () => {
   const subject: DigitalTwin = {
     id: 'gid:digitaltwin-id',
   };
-
 
   describe('when the response does not contain an error', () => {
     const resources: WhatAuthorizedRequest_ResourceType[] = [

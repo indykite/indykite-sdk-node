@@ -275,5 +275,6 @@ export class IdentityKnowledgeClient {
         type: node.type,
       });
     });
+    return records;
   }
 }

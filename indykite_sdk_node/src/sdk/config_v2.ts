@@ -906,8 +906,8 @@ export class ConfigClientV2 {
         typeof idOrServiceAccount === 'string'
           ? undefined
           : idOrServiceAccount?.etag
-          ? StringValue.create({ value: idOrServiceAccount?.etag })
-          : undefined,
+            ? StringValue.create({ value: idOrServiceAccount?.etag })
+            : undefined,
     } as DeleteServiceAccountRequest;
   }
 
