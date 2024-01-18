@@ -3,20 +3,35 @@ import { IdentityClient } from '../../identity';
 import { Status } from '@grpc/grpc-js/build/src/constants';
 import { CallOptions, Metadata } from '@grpc/grpc-js';
 import {
+  ImportDigitalTwin,
   ImportDigitalTwinsRequest,
   ImportDigitalTwinsResponse,
 } from '../../../grpc/indykite/identity/v1beta2/import';
-import { HashAlgorithmFactory } from '../../model/hash_algorithm';
-import { ImportDigitalTwin, ImportResult } from '../../model/import_digitaltwin';
 import { DigitalTwinKind, DigitalTwinState } from '../../../grpc/indykite/identity/v1beta2/model';
 import { applicationTokenMock, generateRandomGID } from '../../utils/test_utils';
+import { Readable } from 'stream';
 
 let sdk: IdentityClient;
 
 const tenantId = generateRandomGID();
 
-const importDts = [
-  new ImportDigitalTwin(tenantId, DigitalTwinKind.PERSON, DigitalTwinState.ACTIVE, []),
+const importDts: ImportDigitalTwin[] = [
+  {
+    id: '',
+    tenantId: tenantId,
+    kind: DigitalTwinKind.PERSON,
+    state: DigitalTwinState.ACTIVE,
+    tags: [],
+    providerUserInfo: [
+      {
+        uid: 'user-id',
+        displayName: 'User Name',
+        email: 'user@example.com',
+        photoUrl: '',
+        providerId: 'provider-id',
+      },
+    ],
+  },
 ];
 
 beforeAll(async () => {
@@ -28,151 +43,244 @@ afterEach(() => {
 });
 
 describe('when the response is successful', () => {
-  describe('when the result type is "success"', () => {
-    const newDtId = generateRandomGID();
-    let results: ImportResult[];
+  const newDtId = generateRandomGID();
+  let result: ImportDigitalTwinsResponse;
 
-    beforeEach(async () => {
-      const mockFunc = jest.fn(
-        (
-          request: ImportDigitalTwinsRequest,
-          callback:
-            | Metadata
-            | CallOptions
-            | ((error: ServiceError | null, response?: ImportDigitalTwinsResponse) => void),
-        ): SurfaceCall => {
-          if (typeof callback === 'function')
-            callback(null, {
+  beforeEach(async () => {
+    const mockFunc = jest.fn(
+      (
+        request: ImportDigitalTwinsRequest,
+        callback:
+          | Metadata
+          | CallOptions
+          | ((error: ServiceError | null, response?: ImportDigitalTwinsResponse) => void),
+      ): SurfaceCall => {
+        if (typeof callback === 'function')
+          callback(null, {
+            results: [
+              {
+                index: '0',
+                result: {
+                  oneofKind: 'success',
+                  success: {
+                    digitalTwin: {
+                      id: newDtId,
+                      tenantId,
+                      kind: DigitalTwinKind.INVALID,
+                      state: DigitalTwinState.INVALID,
+                      tags: [],
+                    },
+                    results: [
+                      {
+                        index: '0',
+                        result: {
+                          oneofKind: 'success',
+                          success: {
+                            propertyId: 'property-id',
+                          },
+                        },
+                      },
+                    ],
+                  },
+                },
+              },
+            ],
+          });
+        return {} as SurfaceCall;
+      },
+    );
+
+    jest.spyOn(sdk['client'], 'importDigitalTwins').mockImplementation(mockFunc);
+
+    result = await sdk.importDigitalTwins(importDts, { oneofKind: 'bcrypt', bcrypt: {} });
+  });
+
+  it('sends correct request', () => {
+    expect(sdk['client'].importDigitalTwins).toBeCalledTimes(1);
+    expect(sdk['client'].importDigitalTwins).toBeCalledWith(
+      {
+        entities: [
+          {
+            id: '',
+            tenantId,
+            kind: DigitalTwinKind.PERSON,
+            state: DigitalTwinState.ACTIVE,
+            tags: [],
+            providerUserInfo: [
+              {
+                uid: 'user-id',
+                displayName: 'User Name',
+                email: 'user@example.com',
+                photoUrl: '',
+                providerId: 'provider-id',
+              },
+            ],
+          },
+        ],
+        hashAlgorithm: {
+          oneofKind: 'bcrypt',
+          bcrypt: {},
+        },
+      },
+      expect.any(Function),
+    );
+  });
+
+  it('returns a successful response', () => {
+    expect(result).toEqual({
+      results: [
+        {
+          index: '0',
+          result: {
+            oneofKind: 'success',
+            success: {
+              digitalTwin: {
+                id: newDtId,
+                tenantId,
+                kind: DigitalTwinKind.INVALID,
+                state: DigitalTwinState.INVALID,
+                tags: [],
+              },
               results: [
                 {
                   index: '0',
                   result: {
                     oneofKind: 'success',
                     success: {
-                      digitalTwin: {
-                        id: newDtId,
-                        tenantId,
-                        kind: 0,
-                        state: 0,
-                        tags: [],
-                      },
-                      results: [
-                        {
-                          index: '0',
-                          result: {
-                            oneofKind: 'success',
-                            success: {
-                              propertyId: 'property-id',
-                            },
-                          },
-                        },
-                      ],
+                      propertyId: 'property-id',
                     },
                   },
                 },
               ],
-            });
-          return {} as SurfaceCall;
-        },
-      );
-
-      jest.spyOn(sdk['client'], 'importDigitalTwins').mockImplementation(mockFunc);
-
-      results = await sdk.importDigitalTwins(importDts, HashAlgorithmFactory.createBcrypt());
-    });
-
-    it('sends correct request', () => {
-      expect(sdk['client'].importDigitalTwins).toBeCalledTimes(1);
-      expect(sdk['client'].importDigitalTwins).toBeCalledWith(
-        {
-          entities: [
-            {
-              id: '',
-              tenantId,
-              kind: DigitalTwinKind.PERSON,
-              state: DigitalTwinState.ACTIVE,
-              tags: [],
-              properties: {
-                forceDelete: false,
-                operations: [],
-              },
-              providerUserInfo: [],
             },
-          ],
-          hashAlgorithm: {
-            oneofKind: 'bcrypt',
-            bcrypt: {},
           },
         },
-        expect.any(Function),
-      );
-    });
-
-    it('returns a successful response', () => {
-      expect(results).toHaveLength(1);
-      expect(results[0].index).toEqual('0');
-      expect(results[0].isSuccess()).toBeTruthy();
-      if (results[0].isSuccess()) {
-        expect(results[0].digitalTwin?.id).toEqual(newDtId);
-        expect(results[0].digitalTwin?.kind).toEqual(0);
-        expect(results[0].digitalTwin?.state).toEqual(0);
-        expect(results[0].digitalTwin?.tenantId).toEqual(tenantId);
-        expect(results[0].propertiesResult?.length).toEqual(1);
-        expect(results[0].propertiesResult?.[0].index).toEqual('0');
-        expect(results[0].propertiesResult?.[0].propertyId).toEqual('property-id');
-        expect(results[0].propertiesResult?.[0].status).toEqual('success');
-      }
+      ],
     });
   });
+});
 
-  describe('when the result type is "error"', () => {
-    let results: ImportResult[];
+describe('when a stream is used', () => {
+  const newDtId = generateRandomGID();
+  let result: ImportDigitalTwinsResponse;
 
-    beforeEach(async () => {
-      const mockFunc = jest.fn(
-        (
-          request: ImportDigitalTwinsRequest,
-          callback:
-            | Metadata
-            | CallOptions
-            | ((error: ServiceError | null, response?: ImportDigitalTwinsResponse) => void),
-        ): SurfaceCall => {
-          if (typeof callback === 'function')
-            callback(null, {
+  beforeEach(async () => {
+    const mockFunc = jest.fn(
+      (
+        request: ImportDigitalTwinsRequest,
+        callback:
+          | Metadata
+          | CallOptions
+          | ((error: ServiceError | null, response?: ImportDigitalTwinsResponse) => void),
+      ): SurfaceCall => {
+        if (typeof callback === 'function')
+          callback(null, {
+            results: [
+              {
+                index: '0',
+                result: {
+                  oneofKind: 'success',
+                  success: {
+                    digitalTwin: {
+                      id: newDtId,
+                      tenantId,
+                      kind: DigitalTwinKind.INVALID,
+                      state: DigitalTwinState.INVALID,
+                      tags: [],
+                    },
+                    results: [
+                      {
+                        index: '0',
+                        result: {
+                          oneofKind: 'success',
+                          success: {
+                            propertyId: 'property-id',
+                          },
+                        },
+                      },
+                    ],
+                  },
+                },
+              },
+            ],
+          });
+        return {} as SurfaceCall;
+      },
+    );
+
+    jest.spyOn(sdk['client'], 'importDigitalTwins').mockImplementation(mockFunc);
+
+    const stream = Readable.from(importDts);
+    result = await sdk.importDigitalTwins(stream, { oneofKind: 'bcrypt', bcrypt: {} });
+  });
+
+  it('sends correct request', () => {
+    expect(sdk['client'].importDigitalTwins).toBeCalledTimes(1);
+    expect(sdk['client'].importDigitalTwins).toBeCalledWith(
+      {
+        entities: [
+          {
+            id: '',
+            tenantId,
+            kind: DigitalTwinKind.PERSON,
+            state: DigitalTwinState.ACTIVE,
+            tags: [],
+            providerUserInfo: [
+              {
+                uid: 'user-id',
+                displayName: 'User Name',
+                email: 'user@example.com',
+                photoUrl: '',
+                providerId: 'provider-id',
+              },
+            ],
+          },
+        ],
+        hashAlgorithm: {
+          oneofKind: 'bcrypt',
+          bcrypt: {},
+        },
+      },
+      expect.any(Function),
+    );
+  });
+
+  it('returns a successful response', () => {
+    expect(result).toEqual({
+      results: [
+        {
+          index: '0',
+          result: {
+            oneofKind: 'success',
+            success: {
+              digitalTwin: {
+                id: newDtId,
+                tenantId,
+                kind: DigitalTwinKind.INVALID,
+                state: DigitalTwinState.INVALID,
+                tags: [],
+              },
               results: [
                 {
                   index: '0',
                   result: {
-                    oneofKind: 'error',
-                    error: {
-                      message: ['Error description'],
+                    oneofKind: 'success',
+                    success: {
+                      propertyId: 'property-id',
                     },
                   },
                 },
               ],
-            });
-          return {} as SurfaceCall;
+            },
+          },
         },
-      );
-
-      jest.spyOn(sdk['client'], 'importDigitalTwins').mockImplementation(mockFunc);
-
-      results = await sdk.importDigitalTwins(importDts, HashAlgorithmFactory.createBcrypt());
-    });
-
-    it('returns an error response', () => {
-      expect(results).toHaveLength(1);
-      expect(results[0].index).toEqual('0');
-      expect(results[0].isError()).toBeTruthy();
-      if (results[0].isError()) {
-        expect(results[0].message).toEqual(['Error description']);
-      }
+      ],
     });
   });
 });
 
 describe('when the response is missing', () => {
-  let results: ImportResult[];
+  let result: ImportDigitalTwinsResponse;
 
   beforeEach(async () => {
     const mockFunc = jest.fn(
@@ -190,38 +298,13 @@ describe('when the response is missing', () => {
 
     jest.spyOn(sdk['client'], 'importDigitalTwins').mockImplementation(mockFunc);
 
-    results = await sdk.importDigitalTwins(importDts, HashAlgorithmFactory.createBcrypt());
-  });
-
-  it('sends correct request', () => {
-    expect(sdk['client'].importDigitalTwins).toBeCalledTimes(1);
-    expect(sdk['client'].importDigitalTwins).toBeCalledWith(
-      {
-        entities: [
-          {
-            id: '',
-            tenantId,
-            kind: DigitalTwinKind.PERSON,
-            state: DigitalTwinState.ACTIVE,
-            tags: [],
-            properties: {
-              forceDelete: false,
-              operations: [],
-            },
-            providerUserInfo: [],
-          },
-        ],
-        hashAlgorithm: {
-          oneofKind: 'bcrypt',
-          bcrypt: {},
-        },
-      },
-      expect.any(Function),
-    );
+    result = await sdk.importDigitalTwins(importDts, { oneofKind: 'bcrypt', bcrypt: {} });
   });
 
   it('returns an empty array', () => {
-    expect(results).toEqual([]);
+    expect(result).toEqual({
+      results: [],
+    });
   });
 });
 
@@ -250,7 +333,7 @@ describe('when the response contains an error', () => {
     jest.spyOn(sdk['client'], 'importDigitalTwins').mockImplementation(mockFunc);
 
     try {
-      await sdk.importDigitalTwins(importDts, HashAlgorithmFactory.createBcrypt());
+      await sdk.importDigitalTwins(importDts, { oneofKind: 'bcrypt', bcrypt: {} });
     } catch (err) {
       caughtError = err;
     }

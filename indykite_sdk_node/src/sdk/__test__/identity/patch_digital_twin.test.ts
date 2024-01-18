@@ -2,7 +2,7 @@ import { CallOptions, Metadata } from '@grpc/grpc-js';
 import { ServiceError, SurfaceCall } from '@grpc/grpc-js/build/src/call';
 import { Status } from '@grpc/grpc-js/build/src/constants';
 import { PatchDigitalTwinResponse } from '../../../grpc/indykite/identity/v1beta2/identity_management_api';
-import { IdentityClientV2 } from '../../identity_v2';
+import { IdentityClient } from '../../identity';
 import { applicationTokenMock } from '../../utils/test_utils';
 import { DigitalTwinKind, DigitalTwinState } from '../../../grpc/indykite/identity/v1beta2/model';
 import { BatchOperationResult } from '../../../grpc/indykite/identity/v1beta2/attributes';
@@ -23,11 +23,11 @@ describe('patchDigitalTwin', () => {
       ],
     };
     let patchDigitalTwinSpy: jest.SpyInstance;
-    let sdk: IdentityClientV2;
+    let sdk: IdentityClient;
     let response: BatchOperationResult;
 
     beforeEach(async () => {
-      sdk = await IdentityClientV2.createInstance(JSON.stringify(applicationTokenMock));
+      sdk = await IdentityClient.createInstance(JSON.stringify(applicationTokenMock));
       patchDigitalTwinSpy = jest
         .spyOn(sdk['client'], 'patchDigitalTwin')
         .mockImplementation(
@@ -129,7 +129,7 @@ describe('patchDigitalTwin', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await IdentityClientV2.createInstance(JSON.stringify(applicationTokenMock));
+      const sdk = await IdentityClient.createInstance(JSON.stringify(applicationTokenMock));
       jest
         .spyOn(sdk['client'], 'patchDigitalTwin')
         .mockImplementation(
@@ -189,7 +189,7 @@ describe('patchDigitalTwin', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await IdentityClientV2.createInstance(JSON.stringify(applicationTokenMock));
+      const sdk = await IdentityClient.createInstance(JSON.stringify(applicationTokenMock));
       jest
         .spyOn(sdk['client'], 'patchDigitalTwin')
         .mockImplementation(
@@ -262,11 +262,11 @@ describe('patchDigitalTwinByToken', () => {
       ],
     };
     let patchDigitalTwinSpy: jest.SpyInstance;
-    let sdk: IdentityClientV2;
+    let sdk: IdentityClient;
     let response: BatchOperationResult;
 
     beforeEach(async () => {
-      sdk = await IdentityClientV2.createInstance(JSON.stringify(applicationTokenMock));
+      sdk = await IdentityClient.createInstance(JSON.stringify(applicationTokenMock));
       patchDigitalTwinSpy = jest
         .spyOn(sdk['client'], 'patchDigitalTwin')
         .mockImplementation(
@@ -353,7 +353,7 @@ describe('patchDigitalTwinByToken', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await IdentityClientV2.createInstance(JSON.stringify(applicationTokenMock));
+      const sdk = await IdentityClient.createInstance(JSON.stringify(applicationTokenMock));
       jest
         .spyOn(sdk['client'], 'patchDigitalTwin')
         .mockImplementation(
@@ -404,7 +404,7 @@ describe('patchDigitalTwinByToken', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await IdentityClientV2.createInstance(JSON.stringify(applicationTokenMock));
+      const sdk = await IdentityClient.createInstance(JSON.stringify(applicationTokenMock));
       jest
         .spyOn(sdk['client'], 'patchDigitalTwin')
         .mockImplementation(

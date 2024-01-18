@@ -5,7 +5,7 @@ import {
   CheckOAuth2ConsentChallengeResponse,
   CreateOAuth2ConsentVerifierResponse,
 } from '../../../grpc/indykite/identity/v1beta2/identity_management_api';
-import { IdentityClientV2 } from '../../identity_v2';
+import { IdentityClient } from '../../identity';
 import { applicationTokenMock } from '../../utils/test_utils';
 
 describe('checkConsentChallenge', () => {
@@ -28,11 +28,11 @@ describe('checkConsentChallenge', () => {
       subjectIdentifier: 'subject',
     };
     let checkOAuth2ConsentChallengeSpy: jest.SpyInstance;
-    let sdk: IdentityClientV2;
+    let sdk: IdentityClient;
     let response: CheckOAuth2ConsentChallengeResponse | undefined;
 
     beforeEach(async () => {
-      sdk = await IdentityClientV2.createInstance(JSON.stringify(applicationTokenMock));
+      sdk = await IdentityClient.createInstance(JSON.stringify(applicationTokenMock));
       checkOAuth2ConsentChallengeSpy = jest
         .spyOn(sdk['client'], 'checkOAuth2ConsentChallenge')
         .mockImplementation(
@@ -77,7 +77,7 @@ describe('checkConsentChallenge', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await IdentityClientV2.createInstance(JSON.stringify(applicationTokenMock));
+      const sdk = await IdentityClient.createInstance(JSON.stringify(applicationTokenMock));
       jest
         .spyOn(sdk['client'], 'checkOAuth2ConsentChallenge')
         .mockImplementation(
@@ -119,11 +119,11 @@ describe('createConsentVerifier', () => {
       verifier: 'consent-verifier-token',
     };
     let checkOAuth2ConsentChallengeSpy: jest.SpyInstance;
-    let sdk: IdentityClientV2;
+    let sdk: IdentityClient;
     let response: CreateOAuth2ConsentVerifierResponse | undefined;
 
     beforeEach(async () => {
-      sdk = await IdentityClientV2.createInstance(JSON.stringify(applicationTokenMock));
+      sdk = await IdentityClient.createInstance(JSON.stringify(applicationTokenMock));
       checkOAuth2ConsentChallengeSpy = jest
         .spyOn(sdk['client'], 'createOAuth2ConsentVerifier')
         .mockImplementation(
@@ -186,7 +186,7 @@ describe('createConsentVerifier', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await IdentityClientV2.createInstance(JSON.stringify(applicationTokenMock));
+      const sdk = await IdentityClient.createInstance(JSON.stringify(applicationTokenMock));
       jest
         .spyOn(sdk['client'], 'createOAuth2ConsentVerifier')
         .mockImplementation(

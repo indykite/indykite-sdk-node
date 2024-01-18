@@ -2,7 +2,7 @@ import { CallOptions, Metadata } from '@grpc/grpc-js';
 import { ServiceError, SurfaceCall } from '@grpc/grpc-js/build/src/call';
 import { Status } from '@grpc/grpc-js/build/src/constants';
 import { GetDigitalTwinResponse } from '../../../grpc/indykite/identity/v1beta2/identity_management_api';
-import { IdentityClientV2 } from '../../identity_v2';
+import { IdentityClient } from '../../identity';
 import { applicationTokenMock } from '../../utils/test_utils';
 import { DigitalTwinKind, DigitalTwinState } from '../../../grpc/indykite/identity/v1beta2/model';
 
@@ -32,11 +32,11 @@ describe('getDigitalTwin', () => {
       },
     };
     let getDigitalTwinSpy: jest.SpyInstance;
-    let sdk: IdentityClientV2;
+    let sdk: IdentityClient;
     let response: GetDigitalTwinResponse;
 
     beforeEach(async () => {
-      sdk = await IdentityClientV2.createInstance(JSON.stringify(applicationTokenMock));
+      sdk = await IdentityClient.createInstance(JSON.stringify(applicationTokenMock));
       getDigitalTwinSpy = jest
         .spyOn(sdk['client'], 'getDigitalTwin')
         .mockImplementation(
@@ -116,7 +116,7 @@ describe('getDigitalTwin', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await IdentityClientV2.createInstance(JSON.stringify(applicationTokenMock));
+      const sdk = await IdentityClient.createInstance(JSON.stringify(applicationTokenMock));
       jest
         .spyOn(sdk['client'], 'getDigitalTwin')
         .mockImplementation(
@@ -166,7 +166,7 @@ describe('getDigitalTwin', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await IdentityClientV2.createInstance(JSON.stringify(applicationTokenMock));
+      const sdk = await IdentityClient.createInstance(JSON.stringify(applicationTokenMock));
       jest
         .spyOn(sdk['client'], 'getDigitalTwin')
         .mockImplementation(
@@ -239,11 +239,11 @@ describe('getDigitalTwinByToken', () => {
       },
     };
     let getDigitalTwinSpy: jest.SpyInstance;
-    let sdk: IdentityClientV2;
+    let sdk: IdentityClient;
     let response: GetDigitalTwinResponse;
 
     beforeEach(async () => {
-      sdk = await IdentityClientV2.createInstance(JSON.stringify(applicationTokenMock));
+      sdk = await IdentityClient.createInstance(JSON.stringify(applicationTokenMock));
       getDigitalTwinSpy = jest
         .spyOn(sdk['client'], 'getDigitalTwin')
         .mockImplementation(
@@ -308,7 +308,7 @@ describe('getDigitalTwinByToken', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await IdentityClientV2.createInstance(JSON.stringify(applicationTokenMock));
+      const sdk = await IdentityClient.createInstance(JSON.stringify(applicationTokenMock));
       jest
         .spyOn(sdk['client'], 'getDigitalTwin')
         .mockImplementation(
@@ -349,7 +349,7 @@ describe('getDigitalTwinByToken', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await IdentityClientV2.createInstance(JSON.stringify(applicationTokenMock));
+      const sdk = await IdentityClient.createInstance(JSON.stringify(applicationTokenMock));
       jest
         .spyOn(sdk['client'], 'getDigitalTwin')
         .mockImplementation(
@@ -413,11 +413,11 @@ describe('getDigitalTwinByProperty', () => {
       },
     };
     let getDigitalTwinSpy: jest.SpyInstance;
-    let sdk: IdentityClientV2;
+    let sdk: IdentityClient;
     let response: GetDigitalTwinResponse;
 
     beforeEach(async () => {
-      sdk = await IdentityClientV2.createInstance(JSON.stringify(applicationTokenMock));
+      sdk = await IdentityClient.createInstance(JSON.stringify(applicationTokenMock));
       getDigitalTwinSpy = jest
         .spyOn(sdk['client'], 'getDigitalTwin')
         .mockImplementation(
@@ -503,7 +503,7 @@ describe('getDigitalTwinByProperty', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await IdentityClientV2.createInstance(JSON.stringify(applicationTokenMock));
+      const sdk = await IdentityClient.createInstance(JSON.stringify(applicationTokenMock));
       jest
         .spyOn(sdk['client'], 'getDigitalTwin')
         .mockImplementation(
@@ -556,7 +556,7 @@ describe('getDigitalTwinByProperty', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await IdentityClientV2.createInstance(JSON.stringify(applicationTokenMock));
+      const sdk = await IdentityClient.createInstance(JSON.stringify(applicationTokenMock));
       jest
         .spyOn(sdk['client'], 'getDigitalTwin')
         .mockImplementation(
