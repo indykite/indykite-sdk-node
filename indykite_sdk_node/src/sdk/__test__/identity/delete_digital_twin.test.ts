@@ -2,7 +2,7 @@ import { CallOptions, Metadata } from '@grpc/grpc-js';
 import { ServiceError, SurfaceCall } from '@grpc/grpc-js/build/src/call';
 import { Status } from '@grpc/grpc-js/build/src/constants';
 import { DeleteDigitalTwinResponse } from '../../../grpc/indykite/identity/v1beta2/identity_management_api';
-import { IdentityClientV2 } from '../../identity_v2';
+import { IdentityClient } from '../../identity';
 import { applicationTokenMock } from '../../utils/test_utils';
 import {
   DigitalTwin,
@@ -22,11 +22,11 @@ describe('deleteDigitalTwin', () => {
       },
     };
     let deleteDigitalTwinSpy: jest.SpyInstance;
-    let sdk: IdentityClientV2;
+    let sdk: IdentityClient;
     let response: DigitalTwin;
 
     beforeEach(async () => {
-      sdk = await IdentityClientV2.createInstance(JSON.stringify(applicationTokenMock));
+      sdk = await IdentityClient.createInstance(JSON.stringify(applicationTokenMock));
       deleteDigitalTwinSpy = jest
         .spyOn(sdk['client'], 'deleteDigitalTwin')
         .mockImplementation(
@@ -87,7 +87,7 @@ describe('deleteDigitalTwin', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await IdentityClientV2.createInstance(JSON.stringify(applicationTokenMock));
+      const sdk = await IdentityClient.createInstance(JSON.stringify(applicationTokenMock));
       jest
         .spyOn(sdk['client'], 'deleteDigitalTwin')
         .mockImplementation(
@@ -126,7 +126,7 @@ describe('deleteDigitalTwin', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await IdentityClientV2.createInstance(JSON.stringify(applicationTokenMock));
+      const sdk = await IdentityClient.createInstance(JSON.stringify(applicationTokenMock));
       jest
         .spyOn(sdk['client'], 'deleteDigitalTwin')
         .mockImplementation(
@@ -174,11 +174,11 @@ describe('deleteDigitalTwinByToken', () => {
       },
     };
     let deleteDigitalTwinSpy: jest.SpyInstance;
-    let sdk: IdentityClientV2;
+    let sdk: IdentityClient;
     let response: DigitalTwin;
 
     beforeEach(async () => {
-      sdk = await IdentityClientV2.createInstance(JSON.stringify(applicationTokenMock));
+      sdk = await IdentityClient.createInstance(JSON.stringify(applicationTokenMock));
       deleteDigitalTwinSpy = jest
         .spyOn(sdk['client'], 'deleteDigitalTwin')
         .mockImplementation(
@@ -227,7 +227,7 @@ describe('deleteDigitalTwinByToken', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await IdentityClientV2.createInstance(JSON.stringify(applicationTokenMock));
+      const sdk = await IdentityClient.createInstance(JSON.stringify(applicationTokenMock));
       jest
         .spyOn(sdk['client'], 'deleteDigitalTwin')
         .mockImplementation(
@@ -258,7 +258,7 @@ describe('deleteDigitalTwinByToken', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await IdentityClientV2.createInstance(JSON.stringify(applicationTokenMock));
+      const sdk = await IdentityClient.createInstance(JSON.stringify(applicationTokenMock));
       jest
         .spyOn(sdk['client'], 'deleteDigitalTwin')
         .mockImplementation(

@@ -2,7 +2,7 @@ import { CallOptions, Metadata } from '@grpc/grpc-js';
 import { ServiceError, SurfaceCall } from '@grpc/grpc-js/build/src/call';
 import { Status } from '@grpc/grpc-js/build/src/constants';
 import { RegisterDigitalTwinWithoutCredentialResponse } from '../../../grpc/indykite/identity/v1beta2/identity_management_api';
-import { IdentityClientV2 } from '../../identity_v2';
+import { IdentityClient } from '../../identity';
 import { applicationTokenMock } from '../../utils/test_utils';
 import { DigitalTwinKind } from '../../../grpc/indykite/identity/v1beta2/model';
 
@@ -24,11 +24,11 @@ describe('registerDigitalTwinWithoutCredential', () => {
         ],
       };
     let registerDigitalTwinWithoutCredentialSpy: jest.SpyInstance;
-    let sdk: IdentityClientV2;
+    let sdk: IdentityClient;
     let response: RegisterDigitalTwinWithoutCredentialResponse;
 
     beforeEach(async () => {
-      sdk = await IdentityClientV2.createInstance(JSON.stringify(applicationTokenMock));
+      sdk = await IdentityClient.createInstance(JSON.stringify(applicationTokenMock));
       registerDigitalTwinWithoutCredentialSpy = jest
         .spyOn(sdk['client'], 'registerDigitalTwinWithoutCredential')
         .mockImplementation(
@@ -84,7 +84,7 @@ describe('registerDigitalTwinWithoutCredential', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await IdentityClientV2.createInstance(JSON.stringify(applicationTokenMock));
+      const sdk = await IdentityClient.createInstance(JSON.stringify(applicationTokenMock));
       jest
         .spyOn(sdk['client'], 'registerDigitalTwinWithoutCredential')
         .mockImplementation(
@@ -126,7 +126,7 @@ describe('registerDigitalTwinWithoutCredential', () => {
     let thrownError: Error;
 
     beforeEach(async () => {
-      const sdk = await IdentityClientV2.createInstance(JSON.stringify(applicationTokenMock));
+      const sdk = await IdentityClient.createInstance(JSON.stringify(applicationTokenMock));
       jest
         .spyOn(sdk['client'], 'registerDigitalTwinWithoutCredential')
         .mockImplementation(

@@ -1,53 +1,47 @@
 import {
-  CancelInvitationRequest,
-  CheckOAuth2ConsentChallengeRequest,
   CheckInvitationStateRequest,
-  ConsentRequestSessionData,
-  CreateOAuth2ConsentVerifierRequest,
-  CreateInvitationRequest,
-  DeleteDigitalTwinRequest,
-  EnrichTokenRequest,
-  GetDigitalTwinRequest,
-  ListDigitalTwinsRequest,
-  PatchDigitalTwinRequest,
-  ResendInvitationRequest,
-  TokenIntrospectRequest,
+  CheckInvitationStateResponse,
+  CheckOAuth2ConsentChallengeRequest,
+  CheckOAuth2ConsentChallengeResponse,
   CreateConsentRequest,
   CreateConsentResponse,
-  RevokeConsentRequest,
+  CreateInvitationRequest,
+  CreateOAuth2ConsentVerifierRequest,
+  CreateOAuth2ConsentVerifierResponse,
+  DeleteDigitalTwinRequest,
+  ListDigitalTwinsRequest,
+  EnrichTokenRequest,
+  GetDigitalTwinRequest,
   ListConsentsRequest,
+  PatchDigitalTwinRequest,
   RegisterDigitalTwinWithoutCredentialRequest,
+  RegisterDigitalTwinWithoutCredentialResponse,
+  ResendInvitationRequest,
+  RevokeConsentRequest,
+  TokenIntrospectRequest,
 } from '../grpc/indykite/identity/v1beta2/identity_management_api';
-import {
-  DigitalTwin,
-  DigitalTwinIdentifier,
-  DigitalTwinKind,
-  IdentityTokenInfo,
-} from '../grpc/indykite/identity/v1beta2/model';
+import { DigitalTwin, DigitalTwinIdentifier } from '../grpc/indykite/identity/v1beta2/model';
 import * as sdkTypes from './model';
+import type { GetDigitalTwinResponse } from '../grpc/indykite/identity/v1beta2/identity_management_api';
 
 import { SdkErrorCode, SdkError } from './error';
-import { Utils } from './utils/utils';
-import {
-  ConsentChallenge,
-  ConsentChallengeDenial,
-  DigitalTwinCore,
-  PatchResult,
-  Property,
-} from './model';
 import { SdkClient } from './client/client';
 import { IdentityManagementAPIClient } from '../grpc/indykite/identity/v1beta2/identity_management_api.grpc-client';
-import { Invitation } from './model/invitation';
-import { JsonValue } from '@protobuf-ts/runtime';
 import {
+  BatchOperationResult,
+  PropertyBatchOperation,
+  PropertyFilter,
+  PropertyMask,
+} from '../grpc/indykite/identity/v1beta2/attributes';
+import { Utils } from './utils/utils';
+import { PatchResult, Property } from './model';
+import {
+  ImportDigitalTwin,
   ImportDigitalTwinsRequest,
   ImportDigitalTwinsResponse,
 } from '../grpc/indykite/identity/v1beta2/import';
-import { HashAlgorithm } from './model/hash_algorithm';
-import { ImportDigitalTwin, ImportResult } from './model/import_digitaltwin';
 import { Readable } from 'stream';
 import { IndexFixer, streamSplitter } from './utils/stream';
-import { Value } from '../grpc/indykite/objects/v1beta1/struct';
 
 /**
  * @category Clients
@@ -62,15 +56,6 @@ export class IdentityClient {
     this.client = sdk.client as IdentityManagementAPIClient;
   }
 
-  /**
-   * @decrecated Use createInstance instead
-   * @param appCredential
-   * @returns
-   */
-  static newClient(appCredential?: string | unknown): Promise<IdentityClient> {
-    return this.createInstance(appCredential);
-  }
-
   static createInstance(appCredential?: string | unknown): Promise<IdentityClient> {
     return new Promise<IdentityClient>((resolve, reject) => {
       SdkClient.createIdentityInstance(IdentityManagementAPIClient, appCredential)
@@ -83,6 +68,25 @@ export class IdentityClient {
     });
   }
 
+  /**
+   * Validate the token and return information about it.
+   * @since 0.4.1
+   * @example
+   * async function example(sdk: IdentityClient) {
+   *   const tokenInfo = await sdk.introspectToken(USER_ACCESS_TOKEN);
+   *   if (!tokenInfo.active) {
+   *     console.error('Invalid token');
+   *     return;
+   *   }
+   *   const dtId = tokenInfo.tokenInfo?.subject?.id;
+   *   const tenantId = tokenInfo.tokenInfo?.subject?.tenantId;
+   *   if (!dtId || !tenantId) {
+   *     console.error('Unknown subject');
+   *     return;
+   *   }
+   *   const dt = await sdk.getDigitalTwin(new DigitalTwinBuilder(dtId, tenantId));
+   * }
+   */
   introspectToken(token: string): Promise<sdkTypes.TokenInfo> {
     // Build request message
     const request = TokenIntrospectRequest.fromJson({ token });
@@ -105,158 +109,110 @@ export class IdentityClient {
   }
 
   /**
-   * @deprecated since 0.4.2 Use the equivalent function in the knowledge package.
+   * Receive all properties for given digital twin.
+   * @since 0.4.1
+   * @example
+   * async function example(sdk: IdentityClient) {
+   *   const dt = await sdk.getDigitalTwin(
+   *     DigitalTwin.create({
+   *       id: DIGITAL_TWIN_ID,
+   *       tenantId: TENANT_ID,
+   *     }),
+   *     [
+   *       grpcIdentityAttributes.PropertyMask.create({
+   *         definition: {
+   *           property: 'email',
+   *         },
+   *       }),
+   *     ],
+   *   );
+   *   console.log(JSON.stringify(dt, null, 2));
+   * }
    */
   getDigitalTwin(
-    digitalTwinId: string,
-    tenantId: string,
-    properties: string[],
-  ): Promise<{ digitalTwin?: sdkTypes.DigitalTwin; tokenInfo?: sdkTypes.TokenInfo }> {
-    const dtId = digitalTwinId;
-    const tId = tenantId;
-    const request = GetDigitalTwinRequest.fromJson({
-      id: Utils.createDigitalTwinId(dtId, tId),
-      properties: Property.fromPropertiesList(properties),
-    });
-
-    return new Promise((resolve, reject) => {
-      this.client.getDigitalTwin(request, (err, response) => {
-        if (err) reject(err);
-        else {
-          try {
-            const dtResponse: {
-              digitalTwin?: sdkTypes.DigitalTwin;
-              tokenInfo?: sdkTypes.TokenInfo;
-            } = {};
-            if (response && response.digitalTwin) {
-              dtResponse.digitalTwin = sdkTypes.DigitalTwin.deserialize(response);
-            }
-
-            if (response && response.tokenInfo) {
-              dtResponse.tokenInfo = sdkTypes.TokenInfo.deserialize(
-                response.tokenInfo as IdentityTokenInfo,
-              );
-            }
-            resolve(dtResponse);
-          } catch (err) {
-            reject(err);
-          }
-        }
-      });
-    });
+    digitalTwin: DigitalTwin,
+    properties?: PropertyMask[],
+  ): Promise<GetDigitalTwinResponse> {
+    return this.processGetDigitalTwinRequest(
+      {
+        filter: {
+          oneofKind: 'digitalTwin',
+          digitalTwin,
+        },
+      },
+      properties,
+    );
   }
 
   /**
-   * @deprecated sincer 0.4.2 Use the equivalent function in the knowledge package.
+   * Receive all properties for given digital twin.
+   * @since O.4.1
+   * @example
+   * async function example(sdk: IdentityClient) {
+   *   const dt = await sdk.getDigitalTwinByToken(
+   *     USER_ACCESS_TOKEN,
+   *     [
+   *       grpcIdentityAttributes.PropertyMask.create({
+   *         definition: {
+   *           property: 'email',
+   *         },
+   *       }),
+   *     ],
+   *   );
+   *   console.log(JSON.stringify(dt, null, 2));
+   * }
    */
   getDigitalTwinByToken(
     token: string,
-    properties: string[],
-  ): Promise<{ digitalTwin?: sdkTypes.DigitalTwin; tokenInfo?: sdkTypes.TokenInfo }> {
-    if (token.length < 32) {
-      throw new Error('Token must be 32 chars or more.');
-    }
-    const request = GetDigitalTwinRequest.fromJson({
-      id: Utils.createDigitalTwinIdFromToken(token),
-      properties: Property.fromPropertiesList(properties),
-    });
-
-    return new Promise((resolve, reject) => {
-      this.client.getDigitalTwin(request, (err, response) => {
-        if (err) reject(err);
-        else {
-          try {
-            const dtResponse: {
-              digitalTwin?: sdkTypes.DigitalTwin;
-              tokenInfo?: sdkTypes.TokenInfo;
-            } = {};
-            if (!response) {
-              reject(new SdkError(SdkErrorCode.SDK_CODE_1, 'Missing digital twin response'));
-              return;
-            }
-            if (response.digitalTwin) {
-              dtResponse.digitalTwin = sdkTypes.DigitalTwin.deserialize(response);
-            }
-
-            if (response.tokenInfo) {
-              dtResponse.tokenInfo = sdkTypes.TokenInfo.deserialize(
-                response.tokenInfo as IdentityTokenInfo,
-              );
-            }
-            resolve(dtResponse);
-          } catch (err) {
-            reject(err);
-          }
-        }
-      });
-    });
+    properties?: PropertyMask[],
+  ): Promise<GetDigitalTwinResponse> {
+    return this.processGetDigitalTwinRequest(
+      {
+        filter: {
+          oneofKind: 'accessToken',
+          accessToken: token,
+        },
+      },
+      properties,
+    );
   }
 
   /**
-   * @deprecated sincer 0.4.2 Use the equivalent function in the knowledge package.
-   * Gets a DigitalTwin and requested properties.
-   * @since 0.3.5
-   * @param properties The list of requested properties to get
+   * **
+   * Receive all properties for given digital twin.
+   * @since 0.4.1
    * @example
-   * const digitalTwin = await identitySdk.getDigitalTwinByProperty(
-   *   'gid:AAAAA4Q3HC-juEL3npOxIUwx_sM',
-   *   'email',
-   *   'user@example.com',
-   *   ['mobile']
-   * );
+   * async function example(sdk: IdentityClient) {
+   *   const dt = await sdk.getDigitalTwinByProperty(
+   *     grpcIdentityAttributes.PropertyFilter.create({
+   *       tenantId: TENANT_ID,
+   *       type: 'email',
+   *       value: grpcStruct.Value.fromJson({ stringValue: 'user@example.com' }),
+   *     }),
+   *     [
+   *       grpcIdentityAttributes.PropertyMask.create({
+   *         definition: {
+   *           property: 'email',
+   *         },
+   *       }),
+   *     ],
+   *   );
+   *   console.log(JSON.stringify(dt, null, 2));
+   * }
    */
   getDigitalTwinByProperty(
-    tenantId: string,
-    propertyName: string,
-    propertyValue: unknown,
-    properties: string[] = [],
-  ): Promise<{ digitalTwin?: sdkTypes.DigitalTwin; tokenInfo?: sdkTypes.TokenInfo }> {
-    return new Promise((resolve, reject) => {
-      this.client.getDigitalTwin(
-        {
-          id: {
-            filter: {
-              oneofKind: 'propertyFilter',
-              propertyFilter: {
-                tenantId,
-                type: propertyName,
-                value: Value.fromJson(Utils.objectToJsonValue(propertyValue)),
-              },
-            },
-          },
-          properties: properties.map((property) => ({
-            definition: {
-              property,
-              context: '',
-              type: '',
-            },
-          })),
+    propertyFilter: PropertyFilter,
+    properties?: PropertyMask[],
+  ): Promise<GetDigitalTwinResponse> {
+    return this.processGetDigitalTwinRequest(
+      {
+        filter: {
+          oneofKind: 'propertyFilter',
+          propertyFilter,
         },
-        (err, response) => {
-          if (err) reject(err);
-          else {
-            try {
-              const dtResponse: {
-                digitalTwin?: sdkTypes.DigitalTwin;
-                tokenInfo?: sdkTypes.TokenInfo;
-              } = {};
-              if (response && response.digitalTwin) {
-                dtResponse.digitalTwin = sdkTypes.DigitalTwin.deserialize(response);
-              }
-
-              if (response && response.tokenInfo) {
-                dtResponse.tokenInfo = sdkTypes.TokenInfo.deserialize(
-                  response.tokenInfo as IdentityTokenInfo,
-                );
-              }
-              resolve(dtResponse);
-            } catch (err) {
-              reject(err);
-            }
-          }
-        },
-      );
-    });
+      },
+      properties,
+    );
   }
 
   /**
@@ -354,121 +310,206 @@ export class IdentityClient {
     return this.patch(request);
   }
 
-  deleteDigitalTwin(digitalTwinId: string, tenantId: string): Promise<sdkTypes.DigitalTwin> {
-    const digitalTwin = Utils.createDigitalTwinId(digitalTwinId, tenantId);
-    const request = DeleteDigitalTwinRequest.fromJson({
-      id: digitalTwin,
-    });
-
-    return new Promise<sdkTypes.DigitalTwin>((resolve, reject) => {
-      this.client.deleteDigitalTwin(request, (err, response) => {
-        if (err) reject(err);
-        else {
-          if (response && response.digitalTwin) {
-            const dt = response.digitalTwin;
-            resolve(new sdkTypes.DigitalTwin(dt.id, dt.tenantId, dt.kind, dt.state, dt.tags));
-          } else {
-            reject(new SdkError(SdkErrorCode.SDK_CODE_1, 'Missing delete response'));
-          }
-        }
-      });
-    });
-  }
-
-  deleteDigitalTwinByToken(token: string): Promise<sdkTypes.DigitalTwin> {
-    if (token.length < 32) {
-      throw new Error('Token must be 32 chars or more.');
-    }
-    const request = DeleteDigitalTwinRequest.fromJson({
-      id: Utils.createDigitalTwinIdFromToken(token),
-    });
-
-    return new Promise<sdkTypes.DigitalTwin>((resolve, reject) => {
-      this.client.deleteDigitalTwin(request, (err, response) => {
-        if (err) reject(err);
-        else {
-          if (response && response.digitalTwin) {
-            const dt = response.digitalTwin;
-            resolve(new sdkTypes.DigitalTwin(dt.id, dt.tenantId, dt.kind, dt.state, dt.tags));
-          } else {
-            reject(new SdkError(SdkErrorCode.SDK_CODE_1, 'Missing delete response'));
-          }
-        }
-      });
-    });
-  }
-
-  checkConsentChallenge(challenge: string): Promise<ConsentChallenge> {
-    const request = CheckOAuth2ConsentChallengeRequest.fromJson({
-      challenge,
-    });
+  /**
+   * @since 0.4.1
+   * @example
+   * // Add a new 'email' property with 'user@example.com' value
+   * async function example(sdk: IdentityClient, dt: DigitalTwin) {
+   *   const opResult = await sdk.patchDigitalTwin(dt, [
+   *     {
+   *       operation: {
+   *         oneofKind: 'add',
+   *         add: {
+   *           id: '',
+   *           definition: {
+   *             property: 'email',
+   *             context: '',
+   *             type: '',
+   *           },
+   *           value: {
+   *             oneofKind: 'objectValue',
+   *             objectValue: {
+   *               value: { oneofKind: 'stringValue', stringValue: 'user@example.com' },
+   *             },
+   *           },
+   *         },
+   *       },
+   *     },
+   *   ]);
+   *   console.log(JSON.stringify(opResult, null, 2));
+   * }
+   */
+  patchDigitalTwin(
+    digitalTwin: DigitalTwin,
+    operations: PropertyBatchOperation[],
+    forceDelete = false,
+  ): Promise<BatchOperationResult> {
+    const request: PatchDigitalTwinRequest = {
+      id: {
+        filter: {
+          oneofKind: 'digitalTwin',
+          digitalTwin,
+        },
+      },
+      adminToken: '',
+      forceDelete,
+      operations,
+    };
 
     return new Promise((resolve, reject) => {
-      this.client.checkOAuth2ConsentChallenge(request, (err, response) => {
+      this.client.patchDigitalTwin(request, (err, response) => {
         if (err) reject(err);
-        else if (!response) {
-          reject(new SdkError(SdkErrorCode.SDK_CODE_1, 'Missing check consent challenge response'));
-        } else {
-          resolve(ConsentChallenge.deserialize(response, challenge));
+        else if (!response)
+          reject(new SdkError(SdkErrorCode.SDK_CODE_1, 'No patch operation result response'));
+        else {
+          resolve(response.result[0]);
         }
       });
     });
   }
 
-  createConsentVerifier(consentChallenge: ConsentChallenge): Promise<{
-    authorizationEndpoint: string;
-    verifier: string;
-  }>;
+  /**
+   * @since 0.4.1
+   * @example
+   * // Add a new 'email' property with 'user@example.com' value
+   * async function example(sdk: IdentityClient, accessToken: string) {
+   *   const opResult = await sdk.patchDigitalTwinByToken(accessToken, [
+   *     {
+   *       operation: {
+   *         oneofKind: 'add',
+   *         add: {
+   *           id: '',
+   *           definition: {
+   *             property: 'email',
+   *             context: '',
+   *             type: '',
+   *           },
+   *           value: {
+   *             oneofKind: 'objectValue',
+   *             objectValue: {
+   *               value: { oneofKind: 'stringValue', stringValue: 'user@example.com' },
+   *             },
+   *           },
+   *         },
+   *       },
+   *     },
+   *   ]);
+   *   console.log(JSON.stringify(opResult, null, 2));
+   * }
+   */
+  patchDigitalTwinByToken(
+    token: string,
+    operations: PropertyBatchOperation[],
+    forceDelete = false,
+  ): Promise<BatchOperationResult> {
+    const request: PatchDigitalTwinRequest = {
+      id: {
+        filter: {
+          oneofKind: 'accessToken',
+          accessToken: token,
+        },
+      },
+      adminToken: '',
+      forceDelete,
+      operations,
+    };
 
-  createConsentVerifier(
-    consentChallenge: string,
-    denialReason?: ConsentChallengeDenial,
-  ): Promise<{
-    authorizationEndpoint: string;
-    verifier: string;
-  }>;
-
-  createConsentVerifier(
-    consentChallenge: string,
-    scopes?: string[],
-    audiences?: string[],
-    session?: ConsentRequestSessionData,
-    remember?: boolean,
-    rememberFor?: string,
-  ): Promise<{
-    authorizationEndpoint: string;
-    verifier: string;
-  }>;
-
-  createConsentVerifier(
-    consentChallenge: string | ConsentChallenge,
-    scopesOrDenialReason?: ConsentChallengeDenial | string[],
-    audiences?: string[],
-    session?: ConsentRequestSessionData,
-    remember?: boolean,
-    rememberFor?: string,
-  ): Promise<{
-    authorizationEndpoint: string;
-    verifier: string;
-  }> {
-    if (typeof consentChallenge !== 'string') {
-      return this.createConsentVerifierFromInstance(consentChallenge);
-    }
-
-    if (scopesOrDenialReason !== undefined && !Array.isArray(scopesOrDenialReason)) {
-      return this.createDeniedConsentVerifier(consentChallenge, scopesOrDenialReason);
-    }
-
-    return this.createApprovedConsentVerifier(
-      consentChallenge,
-      scopesOrDenialReason,
-      audiences,
-      session,
-      remember,
-      rememberFor,
-    );
+    return new Promise((resolve, reject) => {
+      this.client.patchDigitalTwin(request, (err, response) => {
+        if (err) reject(err);
+        else if (!response)
+          reject(new SdkError(SdkErrorCode.SDK_CODE_1, 'No patch operation result response'));
+        else {
+          resolve(response.result[0]);
+        }
+      });
+    });
   }
 
+  /**
+   * This function deletes the digital twin.
+   * @since 0.4.1
+   * @example
+   * async function example(sdk: IdentityClient) {
+   *   await sdk.deleteDigitalTwin({
+   *     id: 'gid:digitaltwin-id',
+   *     tenantId: 'gid:tenant-id',
+   *     state: DigitalTwinState.ACTIVE,
+   *     kind: DigitalTwinKind.PERSON,
+   *     tags: [],
+   *   });
+   * }
+   */
+  deleteDigitalTwin(digitalTwin: DigitalTwin): Promise<DigitalTwin> {
+    const request: DeleteDigitalTwinRequest = {
+      id: {
+        filter: {
+          oneofKind: 'digitalTwin',
+          digitalTwin,
+        },
+      },
+      adminToken: '',
+    };
+
+    return new Promise<DigitalTwin>((resolve, reject) => {
+      this.client.deleteDigitalTwin(request, (err, response) => {
+        if (err) reject(err);
+        else {
+          if (response && response.digitalTwin) {
+            resolve(response.digitalTwin);
+          } else {
+            reject(new SdkError(SdkErrorCode.SDK_CODE_1, 'Missing delete response'));
+          }
+        }
+      });
+    });
+  }
+
+  /**
+   * This function deletes the digital twin.
+   * @since 0.4.1
+   * @example
+   * async function example(sdk: IdentityClient) {
+   *   await sdk.deleteDigitalTwinByToken('access-token');
+   * }
+   */
+  deleteDigitalTwinByToken(token: string): Promise<DigitalTwin> {
+    const request: DeleteDigitalTwinRequest = {
+      id: {
+        filter: {
+          oneofKind: 'accessToken',
+          accessToken: token,
+        },
+      },
+      adminToken: '',
+    };
+
+    return new Promise<DigitalTwin>((resolve, reject) => {
+      this.client.deleteDigitalTwin(request, (err, response) => {
+        if (err) reject(err);
+        else {
+          if (response && response.digitalTwin) {
+            resolve(response.digitalTwin);
+          } else {
+            reject(new SdkError(SdkErrorCode.SDK_CODE_1, 'Missing delete response'));
+          }
+        }
+      });
+    });
+  }
+
+  /**
+   * This function sends invitation token to invitee.
+   * @since 0.4.1
+   * @example
+   * async function example(sdk: IdentityClient) {
+   *   await sdk.createEmailInvitation(
+   *     'user@example.com',
+   *     'gid:tenant-id',
+   *     'custom-unique-reference-id',
+   *   );
+   * }
+   */
   createEmailInvitation(
     invitee: string,
     tenantId: string,
@@ -477,21 +518,19 @@ export class IdentityClient {
     inviteAtTime?: Date,
     messageAttributes?: Record<string, unknown>,
   ): Promise<void> {
-    return new Promise((resolve, reject) => {
-      const request = CreateInvitationRequest.fromJson({
-        tenantId: tenantId,
-        referenceId,
+    const request: CreateInvitationRequest = {
+      invitee: {
+        oneofKind: 'email',
         email: invitee,
-      });
+      },
+      tenantId,
+      referenceId,
+    };
 
-      if (expireTime) {
-        request.expireTime = Utils.dateToTimestamp(expireTime);
-      }
+    if (inviteAtTime) request.inviteAtTime = Utils.dateToTimestamp(inviteAtTime);
+    if (expireTime) request.expireTime = Utils.dateToTimestamp(expireTime);
 
-      if (inviteAtTime) {
-        request.inviteAtTime = Utils.dateToTimestamp(inviteAtTime);
-      }
-
+    return new Promise<void>((resolve, reject) => {
       if (messageAttributes) {
         const attributesValue = Utils.objectToValue(messageAttributes);
         if (attributesValue.value.oneofKind !== 'mapValue') {
@@ -557,66 +596,82 @@ export class IdentityClient {
     });
   }
 
-  checkInvitationState({
-    referenceId,
-    invitationToken,
-  }: {
-    referenceId?: string;
-    invitationToken?: string;
-  }): Promise<Invitation> {
+  /**
+   * This function checks the status of invitation.
+   * @since 0.4.1
+   * @example
+   * async function example(sdk: IdentityClient) {
+   *   await sdk.createEmailInvitation(
+   *     'user@example.com',
+   *     'gid:tenant-id',
+   *     'custom-unique-reference-id',
+   *   );
+   *   const state = await sdk.checkInvitationState('custom-unique-reference-id');
+   *   console.log(JSON.stringify(state, null, 2));
+   * }
+   */
+  checkInvitationState(referenceId: string): Promise<CheckInvitationStateResponse> {
     return new Promise((resolve, reject) => {
-      const request = CheckInvitationStateRequest.create();
-
-      if (!referenceId && !invitationToken) {
-        reject(
-          new SdkError(
-            SdkErrorCode.SDK_CODE_1,
-            'You have not specified neither reference ID nor invitation token',
-          ),
-        );
-        return;
-      }
-
-      if (referenceId && invitationToken) {
-        reject(
-          new SdkError(
-            SdkErrorCode.SDK_CODE_1,
-            'You can not specify both the reference ID and the invitation token',
-          ),
-        );
-        return;
-      }
-
-      if (referenceId) {
-        request.identifier = {
+      const request: CheckInvitationStateRequest = {
+        identifier: {
           oneofKind: 'referenceId',
           referenceId,
-        };
-      }
-
-      if (invitationToken) {
-        request.identifier = {
-          oneofKind: 'invitationToken',
-          invitationToken,
-        };
-      }
+        },
+      };
 
       this.client.checkInvitationState(request, (err, response) => {
         if (err) reject(err);
         else if (!response)
           reject(new SdkError(SdkErrorCode.SDK_CODE_1, 'Missing check invitation response'));
         else {
-          resolve(Invitation.deserialize(response));
+          resolve(response);
         }
       });
     });
   }
 
+  /**
+   * This function checks the status of invitation.
+   * @since 0.4.1
+   * @example
+   * async function example(sdk: IdentityClient) {
+   *   const state = await sdk.checkInvitationState('token-sent-to-email');
+   *   console.log(JSON.stringify(state, null, 2));
+   * }
+   */
+  checkInvitationToken(invitationToken: string): Promise<CheckInvitationStateResponse> {
+    return new Promise((resolve, reject) => {
+      const request: CheckInvitationStateRequest = {
+        identifier: {
+          oneofKind: 'invitationToken',
+          invitationToken,
+        },
+      };
+
+      this.client.checkInvitationState(request, (err, response) => {
+        if (err) reject(err);
+        else if (!response)
+          reject(new SdkError(SdkErrorCode.SDK_CODE_1, 'Missing check invitation response'));
+        else {
+          resolve(response);
+        }
+      });
+    });
+  }
+
+  /**
+   * This function sends invitation token to invitee.
+   * @since 0.4.1
+   * @example
+   * async function example(sdk: IdentityClient) {
+   *   await sdk.resendInvitation('custom-unique-reference-id');
+   * }
+   */
   resendInvitation(referenceId: string): Promise<void> {
     return new Promise((resolve, reject) => {
-      const request = ResendInvitationRequest.fromJson({
+      const request: ResendInvitationRequest = {
         referenceId,
-      });
+      };
 
       this.client.resendInvitation(request, (err) => {
         if (err) reject(err);
@@ -625,11 +680,19 @@ export class IdentityClient {
     });
   }
 
+  /**
+   * This function revokes a pending invitation identified by referenceID.
+   * @since 0.4.1
+   * @example
+   * async function example(sdk: IdentityClient) {
+   *   await sdk.cancelInvitation('custom-unique-reference-id');
+   * }
+   */
   cancelInvitation(referenceId: string): Promise<void> {
     return new Promise((resolve, reject) => {
-      const request = CancelInvitationRequest.fromJson({
+      const request: ResendInvitationRequest = {
         referenceId,
-      });
+      };
 
       this.client.cancelInvitation(request, (err) => {
         if (err) reject(err);
@@ -638,23 +701,47 @@ export class IdentityClient {
     });
   }
 
-  enrichToken(
-    accessToken: string,
-    tokenClaims?: Record<string, unknown>,
-    sessionClaims?: Record<string, unknown>,
-  ): Promise<void> {
+  /**
+   * @since 0.4.1
+   * @example
+   * async function example(sdk: IdentityClient) {
+   *   await sdk.enrichToken({
+   *     accessToken: userToken,
+   *     tokenClaims: {
+   *       fields: {
+   *         myTokenValue: {
+   *           kind: {
+   *             oneofKind: 'stringValue',
+   *             stringValue: 'abc',
+   *           },
+   *         },
+   *       },
+   *     },
+   *     sessionClaims: {
+   *       fields: {
+   *         mySessionValue: {
+   *           kind: {
+   *             oneofKind: 'numberValue',
+   *             numberValue: 44,
+   *           },
+   *         },
+   *       },
+   *     },
+   *   });
+   * }
+   */
+  enrichToken(req: EnrichTokenRequest): Promise<void> {
     return new Promise((resolve, reject) => {
-      const jsonValue: JsonValue = { accessToken };
-
-      if (tokenClaims) {
-        jsonValue.tokenClaims = tokenClaims as JsonValue;
+      const request: EnrichTokenRequest = {
+        accessToken: req.accessToken,
+      };
+      if (req.tokenClaims) {
+        request.tokenClaims = req.tokenClaims;
+      }
+      if (req.sessionClaims) {
+        request.sessionClaims = req.sessionClaims;
       }
 
-      if (sessionClaims) {
-        jsonValue.sessionClaims = sessionClaims as JsonValue;
-      }
-
-      const request = EnrichTokenRequest.fromJson(jsonValue);
       this.client.enrichToken(request, (err) => {
         if (err) reject(err);
         else resolve();
@@ -662,10 +749,124 @@ export class IdentityClient {
     });
   }
 
+  /**
+   * @since 0.4.1
+   * @example
+   * async function example(sdk: IdentityClient) {
+   *   const consentChallengeInfo = await sdk.checkConsentChallenge({
+   *     challenge: 'consent-challenge-token',
+   *   });
+   *   console.log(JSON.stringify(consentChallengeInfo, null, 2));
+   * }
+   */
+  checkConsentChallenge(
+    request: CheckOAuth2ConsentChallengeRequest,
+  ): Promise<CheckOAuth2ConsentChallengeResponse | undefined> {
+    return new Promise((resolve, reject) => {
+      this.client.checkOAuth2ConsentChallenge(request, (err, response) => {
+        if (err) reject(err);
+        else resolve(response);
+      });
+    });
+  }
+
+  /**
+   * @since 0.4.1
+   * @example
+   * async function example(sdk: IdentityClient) {
+   *   const consentVerifier = await sdk.createConsentVerifier({
+   *     consentChallenge: 'consent-challenge-token',
+   *     result: {
+   *       oneofKind: 'approval',
+   *       approval: {
+   *         grantedAudiences: [],
+   *         grantScopes: ['openid', 'email'],
+   *         remember: true,
+   *         rememberFor: '0',
+   *       },
+   *     },
+   *   });
+   *   console.log(JSON.stringify(consentVerifier, null, 2));
+   * }
+   */
+  createConsentVerifier(
+    request: CreateOAuth2ConsentVerifierRequest,
+  ): Promise<CreateOAuth2ConsentVerifierResponse | undefined> {
+    return new Promise((resolve, reject) => {
+      this.client.createOAuth2ConsentVerifier(request, (err, response) => {
+        if (err) reject(err);
+        else resolve(response);
+      });
+    });
+  }
+
+  /**
+   * @since 0.4.1
+   * @example
+   * import * as bcrypt from 'bcrypt';
+   *
+   * async function example(sdk: IdentityClient) {
+   *  const saltRounds = 10;
+   *  const myPlaintextPassword = 'password-of-user';
+   *
+   *  const [salt, hash]: string[] = await new Promise((resolve, reject) => {
+   *    bcrypt.genSalt(saltRounds, function (err, salt) {
+   *      if (err) {
+   *        reject(err);
+   *        return;
+   *      }
+   *
+   *      bcrypt.hash(myPlaintextPassword, salt, function (err, hash) {
+   *        if (err) {
+   *          reject(err);
+   *          return;
+   *        }
+   *        resolve([salt, hash]);
+   *      });
+   *    });
+   *  });
+   *
+   *  const password: PasswordCredential = {
+   *    password: {
+   *      hash: {
+   *        passwordHash: Buffer.from(hash),
+   *        salt: Buffer.from(salt),
+   *      },
+   *      oneofKind: 'hash',
+   *    },
+   *    uid: {
+   *      oneofKind: 'email',
+   *      email: {
+   *        email: 'user@example.com',
+   *        verified: true,
+   *      },
+   *    },
+   *  };
+   *
+   *  const result = await sdk.importDigitalTwins(
+   *    [
+   *      {
+   *        id: '',
+   *        tenantId: 'gid:AAAAAxe5-tWaWUufnFqaMnFwsRk',
+   *        kind: DigitalTwinKind.PERSON,
+   *        state: DigitalTwinState.ACTIVE,
+   *        providerUserInfo: [],
+   *        tags: [],
+   *        password,
+   *      },
+   *    ],
+   *    {
+   *      oneofKind: 'bcrypt',
+   *      bcrypt: {},
+   *    },
+   *  );
+   *  console.log(JSON.stringify(result, null, 2));
+   *}
+   */
   importDigitalTwins(
     digitalTwins: ImportDigitalTwin[] | Readable,
-    hashAlgorithm: HashAlgorithm,
-  ): Promise<ImportResult[]> {
+    hashAlgorithm: ImportDigitalTwinsRequest['hashAlgorithm'],
+  ): Promise<ImportDigitalTwinsResponse> {
     if (!Array.isArray(digitalTwins)) {
       return this.importStreamedDigitalTwins(digitalTwins, hashAlgorithm);
     }
@@ -675,10 +876,10 @@ export class IdentityClient {
 
   private importStreamedDigitalTwins(
     digitalTwinStream: Readable,
-    hashAlgorithm: HashAlgorithm,
-  ): Promise<ImportResult[]> {
+    hashAlgorithm: ImportDigitalTwinsRequest['hashAlgorithm'],
+  ): Promise<ImportDigitalTwinsResponse> {
     return new Promise((resolve, reject) => {
-      const results: ImportResult[] = [];
+      const results: ImportDigitalTwinsResponse['results'] = [];
 
       const output = streamSplitter(
         digitalTwinStream,
@@ -686,29 +887,19 @@ export class IdentityClient {
         1000,
         (chunks: unknown[]) => {
           return ImportDigitalTwinsRequest.create({
-            hashAlgorithm: hashAlgorithm.marshal(),
-            entities: chunks.map((chunk) => {
-              if (!(chunk instanceof ImportDigitalTwin)) {
-                throw new SdkError(SdkErrorCode.SDK_CODE_1, 'Incorrect stream object');
-              }
-
-              return chunk.marshal();
-            }),
+            hashAlgorithm,
+            entities: chunks as ImportDigitalTwin[],
           });
         },
         [new IndexFixer('results.index')],
       );
 
       output.on('data', (res: ImportDigitalTwinsResponse) => {
-        results.push(
-          ...res.results
-            .map((result) => ImportResult.deserialize(result))
-            .filter((result): result is ImportResult => result !== null),
-        );
+        results.push(...res.results);
       });
 
       output.on('end', () => {
-        resolve(results);
+        resolve({ results });
       });
 
       output.on('error', (err) => {
@@ -717,6 +908,67 @@ export class IdentityClient {
     });
   }
 
+  /**
+   * RegisterDigitalTwinWithoutCredential creates a DigitalTwin without credentials, but with properties
+   * This is a protected operation and it can be accessed only with valid agent credentials!
+   * @since 0.4.1
+   * @example
+   * async function example(sdk: IdentityClient) {
+   *   const result = sdk.registerDigitalTwinWithoutCredential({
+   *     tenantId: 'gid:tenant-id',
+   *     digitalTwinKind: grpcIdentityModel.DigitalTwinKind.PERSON,
+   *     digitalTwinTags: ['Employer'],
+   *     properties: [
+   *       {
+   *         definition: {
+   *           property: 'email',
+   *           context: '',
+   *           type: '',
+   *         },
+   *         id: 'property-id',
+   *         value: {
+   *           oneofKind: 'objectValue',
+   *           objectValue: {
+   *             value: {
+   *               oneofKind: 'stringValue',
+   *               stringValue: 'employer@example.com',
+   *             },
+   *           },
+   *         },
+   *       },
+   *     ],
+   *     bookmarks: [],
+   *   });
+   *   console.log(JSON.stringify(result, null, 2));
+   * }
+   */
+  registerDigitalTwinWithoutCredential(
+    request: RegisterDigitalTwinWithoutCredentialRequest,
+  ): Promise<RegisterDigitalTwinWithoutCredentialResponse> {
+    return new Promise((resolve, reject) => {
+      this.client.registerDigitalTwinWithoutCredential(request, (err, response) => {
+        if (err) reject(err);
+        else if (!response) {
+          reject(new SdkError(SdkErrorCode.SDK_CODE_1, 'Missing register digital twin response'));
+        } else {
+          resolve(response);
+        }
+      });
+    });
+  }
+
+  /**
+   * @since 0.4.1
+   * @example
+   * async function example(sdk: IdentityClient) {
+   *   const result = await sdk.createConsent({
+   *     piiPrincipalId: 'gid:principal-id',
+   *     piiProcessorId: 'gid:processor-id',
+   *     properties: ['parking-lot'],
+   *   });
+   *   console.log(JSON.stringify(result, null, 2));
+   * }
+   */
   createConsent(
     piiProcessorId: string,
     piiPrincipalId: string,
@@ -740,6 +992,17 @@ export class IdentityClient {
     });
   }
 
+  /**
+   * @since 0.4.1
+   * @example
+   * async function example(sdk: IdentityClient) {
+   *   const result = await sdk.revokeConsent({
+   *     piiPrincipalId: 'gid:principal-id',
+   *     consentIds: ['consent-id1', 'consent-id2'],
+   *   });
+   *   console.log(JSON.stringify(result, null, 2));
+   * }
+   */
   revokeConsent(piiPrincipalId: string, consentIds: string[]): Promise<void> {
     const request = RevokeConsentRequest.create({
       piiPrincipalId,
@@ -758,6 +1021,18 @@ export class IdentityClient {
     });
   }
 
+  /**
+   * @since 0.4.1
+   * @example
+   * async function example(sdk: IdentityClient) {
+   *   const stream = sdk.listConsents({
+   *     piiPrincipalId: 'gid:principal-id',
+   *   });
+   *   stream.on('data', (record: grpcIdentityAPI.ListConsentsResponse) => {
+   *     console.log(JSON.stringify(record.consentReceipt, null, 2));
+   *   });
+   * }
+   */
   listConsents(piiPrincipalId: string): Promise<{ consents: sdkTypes.Consent[] }> {
     const request = ListConsentsRequest.create({
       piiPrincipalId,
@@ -782,132 +1057,21 @@ export class IdentityClient {
     });
   }
 
-  /**
-   * RegisterDigitalTwinWithoutCredential creates a DigitalTwin without credentials, but with properties
-   * This is a protected operation and it can be accessed only with valid agent credentials!
-   * @since 0.2.3
-   */
-  registerDigitalTwinWithoutCredential(
-    tenantId: string,
-    digitalTwinKind: DigitalTwinKind,
-    properties: Property[],
-    tags?: string[],
-    bookmarks?: string[],
-  ): Promise<{ digitalTwin?: DigitalTwinCore; patchResults: PatchResult[] }> {
-    const request = RegisterDigitalTwinWithoutCredentialRequest.create({
-      tenantId,
-      digitalTwinKind,
-      properties: properties.map((property) => property.marshal()),
-      bookmarks: [],
-    });
-
-    if (tags) request.digitalTwinTags = tags;
-    if (bookmarks) request.bookmarks = bookmarks;
-
-    return new Promise((resolve, reject) => {
-      this.client.registerDigitalTwinWithoutCredential(request, (err, response) => {
-        if (err) reject(err);
-        else if (!response) {
-          reject(new SdkError(SdkErrorCode.SDK_CODE_1, 'Missing register digital twin response'));
-        } else {
-          const patchResults = response.results.map(PatchResult.deserialize);
-          if (!response.digitalTwin) {
-            resolve({ patchResults });
-            return;
-          }
-          const digitalTwin = sdkTypes.DigitalTwinCore.deserializeCore(response.digitalTwin);
-          resolve({ patchResults, digitalTwin });
-        }
-      });
-    });
-  }
-
-  private createConsentVerifierFromInstance(consentChallenge: ConsentChallenge): Promise<{
-    authorizationEndpoint: string;
-    verifier: string;
-  }> {
-    if (consentChallenge.isDenied()) {
-      const denialReason = consentChallenge.getDenialReason();
-      if (denialReason) {
-        return this.createConsentVerifier(consentChallenge.challenge, denialReason);
-      }
-    }
-
-    return this.createConsentVerifier(
-      consentChallenge.challenge,
-      consentChallenge.getApprovedScopeNames(),
-      consentChallenge.getApprovedAudiences(),
-      consentChallenge.getSession(),
-      consentChallenge.getRemember(),
-      consentChallenge.getRememberFor(),
-    );
-  }
-
-  private createDeniedConsentVerifier(
-    consentChallenge: string,
-    denialReason: ConsentChallengeDenial,
-  ): Promise<{
-    authorizationEndpoint: string;
-    verifier: string;
-  }> {
-    const request = CreateOAuth2ConsentVerifierRequest.fromJson({
-      consentChallenge,
-    });
-
-    request.result = {
-      oneofKind: 'denial',
-      denial: {
-        ...denialReason,
-        statusCode: denialReason.statusCode.toString(),
-      },
+  private async processGetDigitalTwinRequest(
+    dtId: DigitalTwinIdentifier,
+    properties?: PropertyMask[],
+  ): Promise<GetDigitalTwinResponse> {
+    const request: GetDigitalTwinRequest = {
+      id: dtId,
+      properties: properties ?? [],
     };
 
     return new Promise((resolve, reject) => {
-      this.client.createOAuth2ConsentVerifier(request, (err, response) => {
+      this.client.getDigitalTwin(request, (err, response) => {
         if (err) reject(err);
-        else if (!response) {
-          reject(new SdkError(SdkErrorCode.SDK_CODE_1, 'Missing denied consent verifier response'));
-        } else {
-          resolve(response);
-        }
-      });
-    });
-  }
-
-  private createApprovedConsentVerifier(
-    consentChallenge: string,
-    scopes?: string[],
-    audiences?: string[],
-    session?: ConsentRequestSessionData,
-    remember = false,
-    rememberFor = '0',
-  ): Promise<{
-    authorizationEndpoint: string;
-    verifier: string;
-  }> {
-    const request = CreateOAuth2ConsentVerifierRequest.fromJson({
-      consentChallenge,
-    });
-
-    request.result = {
-      oneofKind: 'approval',
-      approval: {
-        session,
-        grantedAudiences: audiences ?? [],
-        grantScopes: scopes ?? [],
-        remember,
-        rememberFor,
-      },
-    };
-
-    return new Promise((resolve, reject) => {
-      this.client.createOAuth2ConsentVerifier(request, (err, response) => {
-        if (err) reject(err);
-        else if (!response) {
-          reject(
-            new SdkError(SdkErrorCode.SDK_CODE_1, 'Missing approved consent verifier response'),
-          );
-        } else {
+        else if (!response)
+          reject(new SdkError(SdkErrorCode.SDK_CODE_1, 'No Digital Twin response'));
+        else {
           resolve(response);
         }
       });
