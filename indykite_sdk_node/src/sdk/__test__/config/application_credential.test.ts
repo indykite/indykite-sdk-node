@@ -2,6 +2,8 @@ import { CallOptions, Metadata } from '@grpc/grpc-js';
 import { ServiceError, SurfaceCall } from '@grpc/grpc-js/build/src/call';
 import { Status } from '@grpc/grpc-js/build/src/constants';
 import {
+  CreateApplicationAgentResponse,
+  CreateApplicationResponse,
   DeleteApplicationAgentCredentialResponse,
   ReadApplicationAgentCredentialResponse,
   RegisterApplicationAgentCredentialResponse,
@@ -10,15 +12,14 @@ import { ConfigClient } from '../../config';
 import { Utils } from '../../utils/utils';
 import { ApplicationAgentCredential } from '../../model/config/application_agent_credential';
 import { serviceAccountTokenMock } from '../../utils/test_utils';
-import { Application, ApplicationAgent } from '../../model';
 
 afterEach(() => {
   jest.clearAllMocks();
 });
 
-describe('registerApplicationCredential', () => {
+describe('registerApplicationAgentCredential', () => {
   describe('when no error is returned', () => {
-    let applicationAgentCredential: ApplicationAgentCredential;
+    let registerApplicationAgentCredentialResponse: RegisterApplicationAgentCredentialResponse;
     let registerApplicationAgentCredentialSpy: jest.SpyInstance;
     let sdk: ConfigClient;
 
@@ -49,7 +50,7 @@ describe('registerApplicationCredential', () => {
                     'utf-8',
                   ),
                 ),
-                createTime: Utils.dateToTimestamp(new Date(2022, 5, 20, 11, 27)),
+                createTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 5, 20, 11, 27))),
                 expireTime: req.expireTime,
                 bookmark: 'bookmark-token',
               });
@@ -61,10 +62,12 @@ describe('registerApplicationCredential', () => {
 
     describe('when necessary values are sent only', () => {
       beforeEach(async () => {
-        applicationAgentCredential = await sdk.registerApplicationCredential(
-          'app-agent-id',
-          'Agent Credentials',
-          'default-tenant-id',
+        registerApplicationAgentCredentialResponse = await sdk.registerApplicationAgentCredential(
+          ConfigClient.newRegisterApplicationAgentCredentialRequest(
+            'app-agent-id',
+            'Agent Credentials',
+            'default-tenant-id',
+          ),
         );
       });
 
@@ -82,37 +85,39 @@ describe('registerApplicationCredential', () => {
       });
 
       it('returns a correct instance', () => {
-        expect(applicationAgentCredential.id).toBe('new-app-agent-credentials-id');
-        expect(applicationAgentCredential.kid).toBe('kid-id');
-        expect(applicationAgentCredential.applicationAgentId).toBe('app-agent-id');
-        expect(applicationAgentCredential.agentConfig).toBe(
+        expect(registerApplicationAgentCredentialResponse.id).toBe('new-app-agent-credentials-id');
+        expect(registerApplicationAgentCredentialResponse.applicationAgentId).toBe('app-agent-id');
+        expect(registerApplicationAgentCredentialResponse.kid).toBe('kid-id');
+        expect(
+          new TextDecoder().decode(registerApplicationAgentCredentialResponse.agentConfig),
+        ).toBe(
           '{"baseUrl":"https://jarvis-dev.indykite.com","applicationId":"00112233-a551-4b82-8648-939def7e3607" /* SKIPPED REST VALUES */}',
         );
-        expect(applicationAgentCredential.appSpaceId).toBeUndefined();
-        expect(applicationAgentCredential.applicationId).toBeUndefined();
-        expect(applicationAgentCredential.createTime?.toString()).toBe(
-          new Date(2022, 5, 20, 11, 27).toString(),
+        expect(registerApplicationAgentCredentialResponse.createTime?.toString()).toBe(
+          Utils.dateToTimestamp(new Date(Date.UTC(2022, 5, 20, 11, 27))).toString(),
         );
-        expect(applicationAgentCredential.customerId).toBeUndefined();
-        expect(applicationAgentCredential.deleteTime).toBeUndefined();
-        expect(applicationAgentCredential.destroyTime).toBeUndefined();
-        expect(applicationAgentCredential.displayName).toBe('Agent Credentials');
-        expect(applicationAgentCredential.expireTime).toBeUndefined();
+        expect(registerApplicationAgentCredentialResponse.expireTime).toBeUndefined();
+        expect(registerApplicationAgentCredentialResponse.displayName).toBe(
+          'Application Agent Credential',
+        );
+        expect(registerApplicationAgentCredentialResponse.bookmark).toBe('bookmark-token');
       });
     });
 
     describe('when all possible values are sent (JWK variant)', () => {
       const publicKey = Buffer.from('mocked-jwk-key');
-      const expireTime = new Date(2022, 11, 31, 23, 59, 59);
+      const expireTime = new Date(Date.UTC(2022, 11, 31, 23, 59, 59));
 
       beforeEach(async () => {
-        applicationAgentCredential = await sdk.registerApplicationCredential(
-          'app-agent-id',
-          'Agent Credentials',
-          'default-tenant-id',
-          'jwk',
-          publicKey,
-          expireTime,
+        registerApplicationAgentCredentialResponse = await sdk.registerApplicationAgentCredential(
+          ConfigClient.newRegisterApplicationAgentCredentialRequest(
+            'app-agent-id',
+            'Agent Credentials',
+            'default-tenant-id',
+            'jwk',
+            publicKey,
+            expireTime,
+          ),
         );
       });
 
@@ -131,39 +136,41 @@ describe('registerApplicationCredential', () => {
       });
 
       it('returns a correct instance', () => {
-        expect(applicationAgentCredential.id).toBe('new-app-agent-credentials-id');
-        expect(applicationAgentCredential.kid).toBe('kid-id');
-        expect(applicationAgentCredential.applicationAgentId).toBe('app-agent-id');
-        expect(applicationAgentCredential.agentConfig).toBe(
+        expect(registerApplicationAgentCredentialResponse.id).toBe('new-app-agent-credentials-id');
+        expect(registerApplicationAgentCredentialResponse.applicationAgentId).toBe('app-agent-id');
+        expect(registerApplicationAgentCredentialResponse.kid).toBe('kid-id');
+        expect(
+          new TextDecoder().decode(registerApplicationAgentCredentialResponse.agentConfig),
+        ).toBe(
           '{"baseUrl":"https://jarvis-dev.indykite.com","applicationId":"00112233-a551-4b82-8648-939def7e3607" /* SKIPPED REST VALUES */}',
         );
-        expect(applicationAgentCredential.appSpaceId).toBeUndefined();
-        expect(applicationAgentCredential.applicationId).toBeUndefined();
-        expect(applicationAgentCredential.createTime?.toString()).toBe(
-          new Date(2022, 5, 20, 11, 27).toString(),
+        expect(registerApplicationAgentCredentialResponse.createTime?.toString()).toBe(
+          Utils.dateToTimestamp(new Date(Date.UTC(2022, 5, 20, 11, 27))).toString(),
         );
-        expect(applicationAgentCredential.customerId).toBeUndefined();
-        expect(applicationAgentCredential.deleteTime).toBeUndefined();
-        expect(applicationAgentCredential.destroyTime).toBeUndefined();
-        expect(applicationAgentCredential.displayName).toBe('Agent Credentials');
-        expect(applicationAgentCredential.expireTime?.toString()).toBe(
-          new Date(2022, 11, 31, 23, 59, 59).toString(),
+        expect(registerApplicationAgentCredentialResponse.expireTime?.toString()).toBe(
+          Utils.dateToTimestamp(new Date(Date.UTC(2022, 11, 31, 23, 59, 59))).toString(),
         );
+        expect(registerApplicationAgentCredentialResponse.displayName).toBe(
+          'Application Agent Credential',
+        );
+        expect(registerApplicationAgentCredentialResponse.bookmark).toBe('bookmark-token');
       });
     });
 
     describe('when all possible values are sent (PEM variant)', () => {
       const publicKey = Buffer.from('mocked-pem-key');
-      const expireTime = new Date(2022, 11, 31, 23, 59, 59);
+      const expireTime = new Date(Date.UTC(2022, 11, 31, 23, 59, 59));
 
       beforeEach(async () => {
-        applicationAgentCredential = await sdk.registerApplicationCredential(
-          'app-agent-id',
-          'Agent Credentials',
-          'default-tenant-id',
-          'pem',
-          publicKey,
-          expireTime,
+        registerApplicationAgentCredentialResponse = await sdk.registerApplicationAgentCredential(
+          ConfigClient.newRegisterApplicationAgentCredentialRequest(
+            'app-agent-id',
+            'Agent Credentials',
+            'default-tenant-id',
+            'pem',
+            publicKey,
+            expireTime,
+          ),
         );
       });
 
@@ -182,24 +189,24 @@ describe('registerApplicationCredential', () => {
       });
 
       it('returns a correct instance', () => {
-        expect(applicationAgentCredential.id).toBe('new-app-agent-credentials-id');
-        expect(applicationAgentCredential.kid).toBe('kid-id');
-        expect(applicationAgentCredential.applicationAgentId).toBe('app-agent-id');
-        expect(applicationAgentCredential.agentConfig).toBe(
+        expect(registerApplicationAgentCredentialResponse.id).toBe('new-app-agent-credentials-id');
+        expect(registerApplicationAgentCredentialResponse.applicationAgentId).toBe('app-agent-id');
+        expect(registerApplicationAgentCredentialResponse.kid).toBe('kid-id');
+        expect(
+          new TextDecoder().decode(registerApplicationAgentCredentialResponse.agentConfig),
+        ).toBe(
           '{"baseUrl":"https://jarvis-dev.indykite.com","applicationId":"00112233-a551-4b82-8648-939def7e3607" /* SKIPPED REST VALUES */}',
         );
-        expect(applicationAgentCredential.appSpaceId).toBeUndefined();
-        expect(applicationAgentCredential.applicationId).toBeUndefined();
-        expect(applicationAgentCredential.createTime?.toString()).toBe(
-          new Date(2022, 5, 20, 11, 27).toString(),
+        expect(registerApplicationAgentCredentialResponse.createTime?.toString()).toBe(
+          Utils.dateToTimestamp(new Date(Date.UTC(2022, 5, 20, 11, 27))).toString(),
         );
-        expect(applicationAgentCredential.customerId).toBeUndefined();
-        expect(applicationAgentCredential.deleteTime).toBeUndefined();
-        expect(applicationAgentCredential.destroyTime).toBeUndefined();
-        expect(applicationAgentCredential.displayName).toBe('Agent Credentials');
-        expect(applicationAgentCredential.expireTime?.toString()).toBe(
-          new Date(2022, 11, 31, 23, 59, 59).toString(),
+        expect(registerApplicationAgentCredentialResponse.expireTime?.toString()).toBe(
+          Utils.dateToTimestamp(new Date(Date.UTC(2022, 11, 31, 23, 59, 59))).toString(),
         );
+        expect(registerApplicationAgentCredentialResponse.displayName).toBe(
+          'Application Agent Credential',
+        );
+        expect(registerApplicationAgentCredentialResponse.bookmark).toBe('bookmark-token');
       });
     });
   });
@@ -234,7 +241,13 @@ describe('registerApplicationCredential', () => {
           },
         );
       sdk
-        .registerApplicationCredential('app-agent-id', 'Agent Credentials', 'default-tenant-id')
+        .registerApplicationAgentCredential(
+          ConfigClient.newRegisterApplicationAgentCredentialRequest(
+            'app-agent-id',
+            'Agent Credentials',
+            'default-tenant-id',
+          ),
+        )
         .catch((err) => {
           thrownError = err;
         });
@@ -270,14 +283,20 @@ describe('registerApplicationCredential', () => {
           },
         );
       sdk
-        .registerApplicationCredential('app-agent-id', 'Agent Credentials', 'default-tenant-id')
+        .registerApplicationAgentCredential(
+          ConfigClient.newRegisterApplicationAgentCredentialRequest(
+            'app-agent-id',
+            'Agent Credentials',
+            'default-tenant-id',
+          ),
+        )
         .catch((err) => {
           thrownError = err;
         });
     });
 
     it('throws an error', () => {
-      expect(thrownError.message).toBe('No application agent credential response');
+      expect(thrownError.message).toBe('No ApplicationAgentCredential response.');
     });
   });
 });
@@ -313,16 +332,20 @@ describe('readApplicationAgentCredential', () => {
                   customerId: 'customer-id',
                   displayName: 'Application Agent Credential',
                   createdBy: 'Lorem ipsum - creator',
-                  createTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 13)),
-                  deleteTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 14)),
-                  destroyTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 15)),
+                  createTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 2, 15, 13, 13))),
+                  deleteTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 2, 15, 13, 14))),
+                  destroyTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 2, 15, 13, 15))),
                 },
               });
             }
             return {} as SurfaceCall;
           },
         );
-      credential = await sdk.readApplicationAgentCredential('app-agent-credential-id');
+      credential = ApplicationAgentCredential.deserialize(
+        await sdk.readApplicationAgentCredential(
+          ConfigClient.newReadApplicationAgentCredentialRequest('app-agent-credential-id'),
+        ),
+      );
     });
 
     it('sends correct request', () => {
@@ -343,9 +366,15 @@ describe('readApplicationAgentCredential', () => {
       expect(credential.applicationAgentId).toBe('app-agent-id');
       expect(credential.customerId).toBe('customer-id');
       expect(credential.displayName).toBe('Application Agent Credential');
-      expect(credential.createTime?.toString()).toBe(new Date(2022, 2, 15, 13, 13).toString());
-      expect(credential.deleteTime?.toString()).toBe(new Date(2022, 2, 15, 13, 14).toString());
-      expect(credential.destroyTime?.toString()).toBe(new Date(2022, 2, 15, 13, 15).toString());
+      expect(credential.createTime?.toString()).toBe(
+        new Date(Date.UTC(2022, 2, 15, 13, 13)).toString(),
+      );
+      expect(credential.deleteTime?.toString()).toBe(
+        new Date(Date.UTC(2022, 2, 15, 13, 14)).toString(),
+      );
+      expect(credential.destroyTime?.toString()).toBe(
+        new Date(Date.UTC(2022, 2, 15, 13, 15)).toString(),
+      );
     });
   });
 
@@ -378,9 +407,13 @@ describe('readApplicationAgentCredential', () => {
             return {} as SurfaceCall;
           },
         );
-      sdk.readApplicationAgentCredential('app-agent-credential-id').catch((err) => {
-        thrownError = err;
-      });
+      sdk
+        .readApplicationAgentCredential(
+          ConfigClient.newReadApplicationAgentCredentialRequest('app-agent-credential-id'),
+        )
+        .catch((err) => {
+          thrownError = err;
+        });
     });
 
     it('throws an error', () => {
@@ -412,13 +445,17 @@ describe('readApplicationAgentCredential', () => {
             return {} as SurfaceCall;
           },
         );
-      sdk.readApplicationAgentCredential('app-agent-credential-id').catch((err) => {
-        thrownError = err;
-      });
+      sdk
+        .readApplicationAgentCredential(
+          ConfigClient.newReadApplicationAgentCredentialRequest('app-agent-credential-id'),
+        )
+        .catch((err) => {
+          thrownError = err;
+        });
     });
 
     it('throws an error', () => {
-      expect(thrownError.message).toBe('No application agent credential response');
+      expect(thrownError.message).toBe('No ApplicationAgentCredential response.');
     });
   });
 });
@@ -451,7 +488,9 @@ describe('deleteApplicationAgentCredential', () => {
             return {} as SurfaceCall;
           },
         );
-      return sdk.deleteApplicationAgentCredential('app-agent-credential-id');
+      return sdk.deleteApplicationAgentCredential(
+        ConfigClient.newDeleteApplicationAgentCredentialRequest('app-agent-credential-id'),
+      );
     });
 
     it('sends correct request', () => {
@@ -494,9 +533,13 @@ describe('deleteApplicationAgentCredential', () => {
             return {} as SurfaceCall;
           },
         );
-      sdk.deleteApplicationAgentCredential('app-agent-credential-id').catch((err) => {
-        thrownError = err;
-      });
+      sdk
+        .deleteApplicationAgentCredential(
+          ConfigClient.newDeleteApplicationAgentCredentialRequest('app-agent-credential-id'),
+        )
+        .catch((err) => {
+          thrownError = err;
+        });
     });
 
     it('throws an error', () => {
@@ -528,13 +571,17 @@ describe('deleteApplicationAgentCredential', () => {
             return {} as SurfaceCall;
           },
         );
-      sdk.deleteApplicationAgentCredential('app-agent-credential-id').catch((err) => {
-        thrownError = err;
-      });
+      sdk
+        .deleteApplicationAgentCredential(
+          ConfigClient.newDeleteApplicationAgentCredentialRequest('app-agent-credential-id'),
+        )
+        .catch((err) => {
+          thrownError = err;
+        });
     });
 
     it('throws an error', () => {
-      expect(thrownError.message).toBe('No application agent credential response');
+      expect(thrownError.message).toBe('No ApplicationAgentCredential response.');
     });
   });
 });
@@ -544,25 +591,53 @@ describe('createApplicationWithAgentCredentials', () => {
   let createApplicationMock: jest.SpyInstance;
   let createApplicationAgentMock: jest.SpyInstance;
   let registerApplicationCredentialMock: jest.SpyInstance;
-  let returnedValue: Awaited<
-    ReturnType<(typeof ConfigClient)['prototype']['createApplicationWithAgentCredentials']>
-  >;
+  let returnedValue: Awaited<ReturnType<typeof sdk.createApplicationWithAgentCredentials>>;
 
   describe('when all of the instances are created', () => {
     beforeEach(async () => {
       sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
       createApplicationMock = jest.spyOn(sdk, 'createApplication').mockImplementation(async () => {
-        return new Application('app-id', 'app-name', 'app-space-id');
+        return {
+          id: 'app-id',
+          createTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 5, 20, 11, 27))),
+          createdBy: 'Lorem ipsum - creator',
+          updateTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 5, 20, 11, 27))),
+          updatedBy: 'Lorem ipsum - updater',
+          etag: '111',
+          bookmark: 'bookmark-token',
+        } as CreateApplicationResponse;
       });
       createApplicationAgentMock = jest
         .spyOn(sdk, 'createApplicationAgent')
         .mockImplementation(async () => {
-          return new ApplicationAgent('app-agent-id', 'app-agent-name', 'app-id');
+          return {
+            id: 'app-agent-id',
+            createTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 5, 20, 11, 27))),
+            createdBy: 'Lorem ipsum - creator',
+            updateTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 5, 20, 11, 27))),
+            updatedBy: 'Lorem ipsum - updater',
+            etag: '111',
+            bookmark: 'bookmark-token',
+          } as CreateApplicationAgentResponse;
         });
       registerApplicationCredentialMock = jest
-        .spyOn(sdk, 'registerApplicationCredential')
+        .spyOn(sdk, 'registerApplicationAgentCredential')
         .mockImplementation(async () => {
-          return new ApplicationAgentCredential('app-agent-credential-id', 'ked', 'app-agent-id');
+          return {
+            id: 'RegisterApplicationAgentCredentialResponse-1',
+            applicationAgentId: 'app-agent-id',
+            kid: 'kid-id',
+            agentConfig: new Uint8Array(
+              Buffer.from(
+                '{"baseUrl":"https://jarvis-dev.indykite.com","applicationId":"00112233-a551-4b82-8648-939def7e3607" /* SKIPPED REST VALUES */}',
+                'utf-8',
+              ),
+            ),
+            createTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 5, 20, 11, 27))),
+            expireTime: undefined,
+            displayName: 'Agent Credentials',
+            bookmark: 'bookmark-token',
+          } as RegisterApplicationAgentCredentialResponse;
         });
 
       returnedValue = await sdk.createApplicationWithAgentCredentials(
@@ -583,22 +658,34 @@ describe('createApplicationWithAgentCredentials', () => {
     });
 
     it('returns correct values', async () => {
-      expect(returnedValue.application?.id).toBe('app-id');
-      expect(returnedValue.applicationAgent?.id).toBe('app-agent-id');
-      expect(returnedValue.applicationAgentCredentials?.id).toBe('app-agent-credential-id');
-      expect(returnedValue.error).toBeUndefined();
+      expect(returnedValue).toHaveProperty('application');
+      expect(returnedValue).toHaveProperty('application.id', 'app-id');
+      expect(returnedValue).toHaveProperty('applicationAgent');
+      expect(returnedValue).toHaveProperty('applicationAgent.id', 'app-agent-id');
+      expect(returnedValue).toHaveProperty('applicationAgentCredentials');
+      expect(returnedValue).toHaveProperty(
+        'applicationAgentCredentials.id',
+        'RegisterApplicationAgentCredentialResponse-1',
+      );
+      expect(returnedValue).not.toHaveProperty('error');
     });
 
     it('calls correct functions', async () => {
-      expect(createApplicationMock).toBeCalledWith('app-space-id', 'app-name');
-      expect(createApplicationAgentMock).toBeCalledWith('app-id', 'app-agent-name');
+      expect(createApplicationMock).toBeCalledWith(
+        ConfigClient.newCreateApplicationRequest('app-space-id', 'app-name'),
+      );
+      expect(createApplicationAgentMock).toBeCalledWith(
+        ConfigClient.newCreateApplicationAgentRequest('app-id', 'app-agent-name'),
+      );
       expect(registerApplicationCredentialMock).toBeCalledWith(
-        'app-agent-id',
-        'app-agent-credential-name',
-        'default-tenant-id',
-        undefined,
-        undefined,
-        undefined,
+        ConfigClient.newRegisterApplicationAgentCredentialRequest(
+          'app-agent-id',
+          'app-agent-credential-name',
+          'default-tenant-id',
+          undefined,
+          undefined,
+          undefined,
+        ),
       );
     });
   });
@@ -609,15 +696,31 @@ describe('createApplicationWithAgentCredentials', () => {
     beforeEach(async () => {
       sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
       createApplicationMock = jest.spyOn(sdk, 'createApplication').mockImplementation(async () => {
-        return new Application('app-id', 'app-name', 'app-space-id');
+        return {
+          id: 'app-id',
+          createTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 5, 20, 11, 27))),
+          createdBy: 'Lorem ipsum - creator',
+          updateTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 5, 20, 11, 27))),
+          updatedBy: 'Lorem ipsum - updater',
+          etag: '111',
+          bookmark: 'bookmark-token',
+        } as CreateApplicationResponse;
       });
       createApplicationAgentMock = jest
         .spyOn(sdk, 'createApplicationAgent')
         .mockImplementation(async () => {
-          return new ApplicationAgent('app-agent-id', 'app-agent-name', 'app-id');
+          return {
+            id: 'app-agent-id',
+            createTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 5, 20, 11, 27))),
+            createdBy: 'Lorem ipsum - creator',
+            updateTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 5, 20, 11, 27))),
+            updatedBy: 'Lorem ipsum - updater',
+            etag: '111',
+            bookmark: 'bookmark-token',
+          } as CreateApplicationAgentResponse;
         });
       registerApplicationCredentialMock = jest
-        .spyOn(sdk, 'registerApplicationCredential')
+        .spyOn(sdk, 'registerApplicationAgentCredential')
         .mockImplementation(async () => {
           throw error;
         });
@@ -640,22 +743,31 @@ describe('createApplicationWithAgentCredentials', () => {
     });
 
     it('returns correct values', async () => {
-      expect(returnedValue.application?.id).toBe('app-id');
-      expect(returnedValue.applicationAgent?.id).toBe('app-agent-id');
-      expect(returnedValue.applicationAgentCredentials).toBeUndefined();
-      expect(returnedValue.error).toBe(error);
+      expect(returnedValue).toHaveProperty('application');
+      expect(returnedValue).toHaveProperty('application.id', 'app-id');
+      expect(returnedValue).toHaveProperty('applicationAgent');
+      expect(returnedValue).toHaveProperty('applicationAgent.id', 'app-agent-id');
+      expect(returnedValue).not.toHaveProperty('applicationAgentCredentials');
+      expect(returnedValue).toHaveProperty('error');
+      expect(returnedValue).toHaveProperty('error', error);
     });
 
     it('calls correct functions', async () => {
-      expect(createApplicationMock).toBeCalledWith('app-space-id', 'app-name');
-      expect(createApplicationAgentMock).toBeCalledWith('app-id', 'app-agent-name');
+      expect(createApplicationMock).toBeCalledWith(
+        ConfigClient.newCreateApplicationRequest('app-space-id', 'app-name'),
+      );
+      expect(createApplicationAgentMock).toBeCalledWith(
+        ConfigClient.newCreateApplicationAgentRequest('app-id', 'app-agent-name'),
+      );
       expect(registerApplicationCredentialMock).toBeCalledWith(
-        'app-agent-id',
-        'app-agent-credential-name',
-        'default-tenant-id',
-        undefined,
-        undefined,
-        undefined,
+        ConfigClient.newRegisterApplicationAgentCredentialRequest(
+          'app-agent-id',
+          'app-agent-credential-name',
+          'default-tenant-id',
+          undefined,
+          undefined,
+          undefined,
+        ),
       );
     });
   });
@@ -666,7 +778,15 @@ describe('createApplicationWithAgentCredentials', () => {
     beforeEach(async () => {
       sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
       createApplicationMock = jest.spyOn(sdk, 'createApplication').mockImplementation(async () => {
-        return new Application('app-id', 'app-name', 'app-space-id');
+        return {
+          id: 'app-id',
+          createTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 5, 20, 11, 27))),
+          createdBy: 'Lorem ipsum - creator',
+          updateTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 5, 20, 11, 27))),
+          updatedBy: 'Lorem ipsum - updater',
+          etag: '111',
+          bookmark: 'bookmark-token',
+        } as CreateApplicationResponse;
       });
       createApplicationAgentMock = jest
         .spyOn(sdk, 'createApplicationAgent')
@@ -674,7 +794,7 @@ describe('createApplicationWithAgentCredentials', () => {
           throw error;
         });
       registerApplicationCredentialMock = jest
-        .spyOn(sdk, 'registerApplicationCredential')
+        .spyOn(sdk, 'registerApplicationAgentCredential')
         .mockImplementation(async () => {
           throw new Error('This should not be called');
         });
@@ -697,15 +817,21 @@ describe('createApplicationWithAgentCredentials', () => {
     });
 
     it('returns correct values', async () => {
-      expect(returnedValue.application?.id).toBe('app-id');
-      expect(returnedValue.applicationAgent).toBeUndefined();
-      expect(returnedValue.applicationAgentCredentials).toBeUndefined();
-      expect(returnedValue.error).toBe(error);
+      expect(returnedValue).toHaveProperty('application');
+      expect(returnedValue).toHaveProperty('application.id', 'app-id');
+      expect(returnedValue).not.toHaveProperty('applicationAgent');
+      expect(returnedValue).not.toHaveProperty('applicationAgentCredentials');
+      expect(returnedValue).toHaveProperty('error');
+      expect(returnedValue).toHaveProperty('error', error);
     });
 
     it('calls correct functions', async () => {
-      expect(createApplicationMock).toBeCalledWith('app-space-id', 'app-name');
-      expect(createApplicationAgentMock).toBeCalledWith('app-id', 'app-agent-name');
+      expect(createApplicationMock).toBeCalledWith(
+        ConfigClient.newCreateApplicationRequest('app-space-id', 'app-name'),
+      );
+      expect(createApplicationAgentMock).toBeCalledWith(
+        ConfigClient.newCreateApplicationAgentRequest('app-id', 'app-agent-name'),
+      );
       expect(registerApplicationCredentialMock).toBeCalledTimes(0);
     });
   });
@@ -724,7 +850,7 @@ describe('createApplicationWithAgentCredentials', () => {
           throw new Error('This should not be called');
         });
       registerApplicationCredentialMock = jest
-        .spyOn(sdk, 'registerApplicationCredential')
+        .spyOn(sdk, 'registerApplicationAgentCredential')
         .mockImplementation(async () => {
           throw new Error('This should not be called');
         });
@@ -747,14 +873,17 @@ describe('createApplicationWithAgentCredentials', () => {
     });
 
     it('returns correct values', async () => {
-      expect(returnedValue.application).toBeUndefined();
-      expect(returnedValue.applicationAgent).toBeUndefined();
-      expect(returnedValue.applicationAgentCredentials).toBeUndefined();
-      expect(returnedValue.error).toBe(error);
+      expect(returnedValue).not.toHaveProperty('application');
+      expect(returnedValue).not.toHaveProperty('applicationAgent');
+      expect(returnedValue).not.toHaveProperty('applicationAgentCredentials');
+      expect(returnedValue).toHaveProperty('error');
+      expect(returnedValue).toHaveProperty('error', error);
     });
 
     it('calls correct functions', async () => {
-      expect(createApplicationMock).toBeCalledWith('app-space-id', 'app-name');
+      expect(createApplicationMock).toBeCalledWith(
+        ConfigClient.newCreateApplicationRequest('app-space-id', 'app-name'),
+      );
       expect(createApplicationAgentMock).toBeCalledTimes(0);
       expect(registerApplicationCredentialMock).toBeCalledTimes(0);
     });

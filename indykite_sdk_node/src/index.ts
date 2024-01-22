@@ -5,7 +5,6 @@ export * from './sdk/authorization';
 export { type InputParameters } from './sdk/authorization';
 export * from './sdk/identity';
 export { ConfigClient } from './sdk/config';
-export { ConfigClientV2 } from './sdk/config_v2';
 export { IdentityKnowledgeClient } from './sdk/knowledge';
 export { HTTPClient, HTTPResponse } from './sdk/http';
 export * from './sdk/ingest';

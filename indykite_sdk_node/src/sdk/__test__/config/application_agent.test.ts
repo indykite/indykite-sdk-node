@@ -3,9 +3,11 @@ import { CallOptions, Metadata } from '@grpc/grpc-js';
 import { ClientReadableStream, ServiceError, SurfaceCall } from '@grpc/grpc-js/build/src/call';
 import { Status } from '@grpc/grpc-js/build/src/constants';
 import {
+  CreateApplicationAgentResponse,
   CreateApplicationResponse,
   DeleteApplicationAgentResponse,
   ListApplicationAgentsResponse,
+  ReadApplicationAgentRequest,
   ReadApplicationAgentResponse,
   UpdateApplicationAgentResponse,
 } from '../../../grpc/indykite/config/v1beta1/config_management_api';
@@ -20,9 +22,25 @@ afterEach(() => {
   jest.restoreAllMocks();
 });
 
+describe('ApplicationAgent', () => {
+  describe('newReadApplicationAgentRequest with empty config is returned', () => {
+    const response: ReadApplicationAgentRequest = ConfigClient.newReadApplicationAgentRequest(
+      'name', //kind
+      'app-space-id',
+      'app-agent-name',
+    );
+    expect(response.identifier?.oneofKind).toBe('name');
+    expect(response.identifier).toHaveProperty('name');
+    if (response.identifier?.oneofKind === 'name') {
+      expect(response.identifier?.name?.name).toBe('app-agent-name');
+      expect(response.identifier?.name?.location).toBe('app-space-id');
+    }
+  });
+});
+
 describe('createApplicationAgent', () => {
   describe('when no error is returned', () => {
-    let applicationAgent: ApplicationAgent;
+    let applicationAgent: CreateApplicationAgentResponse;
     let createApplicationAgentSpy: jest.SpyInstance;
     let sdk: ConfigClient;
 
@@ -45,6 +63,8 @@ describe('createApplicationAgent', () => {
                 bookmark: 'bookmark-token',
                 createdBy: 'Lorem ipsum - creator',
                 updatedBy: 'Lorem ipsum - updater',
+                createTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 2, 15, 13, 12))),
+                updateTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 2, 15, 13, 13))),
               });
             }
             return {} as SurfaceCall;
@@ -54,7 +74,9 @@ describe('createApplicationAgent', () => {
 
     describe('when necessary values are sent only', () => {
       beforeEach(async () => {
-        applicationAgent = await sdk.createApplicationAgent('application-id', 'app-agent-name');
+        applicationAgent = await sdk.createApplicationAgent(
+          ConfigClient.newCreateApplicationAgentRequest('application-id', 'app-agent-name'),
+        );
       });
 
       it('sends correct request', () => {
@@ -70,21 +92,27 @@ describe('createApplicationAgent', () => {
 
       it('returns a correct instance', () => {
         expect(applicationAgent.id).toBe('new-app-agent-id');
+        expect(applicationAgent.createTime?.toString()).toBe(
+          Utils.dateToTimestamp(new Date(Date.UTC(2022, 2, 15, 13, 12))).toString(),
+        );
+        expect(applicationAgent.createdBy).toBe('Lorem ipsum - creator');
+        expect(applicationAgent.updateTime?.toString()).toBe(
+          Utils.dateToTimestamp(new Date(Date.UTC(2022, 2, 15, 13, 13))).toString(),
+        );
+        expect(applicationAgent.updatedBy).toBe('Lorem ipsum - updater');
         expect(applicationAgent.etag).toBe('111');
-        expect(applicationAgent.applicationId).toBe('application-id');
-        expect(applicationAgent.name).toBe('app-agent-name');
-        expect(applicationAgent.displayName).toBeUndefined();
-        expect(applicationAgent.description).toBeUndefined();
       });
     });
 
     describe('when all possible values are sent', () => {
       beforeEach(async () => {
         applicationAgent = await sdk.createApplicationAgent(
-          'application-id',
-          'app-agent-name',
-          'My Application Agent',
-          'Application Agent description',
+          ConfigClient.newCreateApplicationAgentRequest(
+            'application-id',
+            'app-agent-name',
+            'My Application Agent',
+            'Application Agent description',
+          ),
         );
       });
 
@@ -103,11 +131,15 @@ describe('createApplicationAgent', () => {
 
       it('returns a correct instance', () => {
         expect(applicationAgent.id).toBe('new-app-agent-id');
+        expect(applicationAgent.createTime?.toString()).toBe(
+          Utils.dateToTimestamp(new Date(Date.UTC(2022, 2, 15, 13, 12))).toString(),
+        );
+        expect(applicationAgent.createdBy).toBe('Lorem ipsum - creator');
+        expect(applicationAgent.updateTime?.toString()).toBe(
+          Utils.dateToTimestamp(new Date(Date.UTC(2022, 2, 15, 13, 12))).toString(),
+        );
+        expect(applicationAgent.updatedBy).toBe('Lorem ipsum - updater');
         expect(applicationAgent.etag).toBe('111');
-        expect(applicationAgent.applicationId).toBe('application-id');
-        expect(applicationAgent.name).toBe('app-agent-name');
-        expect(applicationAgent.displayName).toBe('My Application Agent');
-        expect(applicationAgent.description).toBe('Application Agent description');
       });
     });
   });
@@ -140,10 +172,12 @@ describe('createApplicationAgent', () => {
         );
       sdk
         .createApplicationAgent(
-          'application-id',
-          'app-agent-name',
-          'My Application Agent',
-          'Application Agent description',
+          ConfigClient.newCreateApplicationAgentRequest(
+            'application-id',
+            'app-agent-name',
+            'My Application Agent',
+            'Application Agent description',
+          ),
         )
         .catch((err) => {
           thrownError = err;
@@ -178,10 +212,12 @@ describe('createApplicationAgent', () => {
         );
       sdk
         .createApplicationAgent(
-          'application-id',
-          'app-agent-name',
-          'My Application Agent',
-          'Application Agent description',
+          ConfigClient.newCreateApplicationAgentRequest(
+            'application-id',
+            'app-agent-name',
+            'My Application Agent',
+            'Application Agent description',
+          ),
         )
         .catch((err) => {
           thrownError = err;
@@ -189,7 +225,7 @@ describe('createApplicationAgent', () => {
     });
 
     it('throws an error', () => {
-      expect(thrownError.message).toBe('No application agent response');
+      expect(thrownError.message).toBe('No ApplicationAgent response.');
     });
   });
 });
@@ -224,17 +260,21 @@ describe('readApplicationAgentById', () => {
                   etag: '5432',
                   createdBy: 'Lorem ipsum - creator',
                   updatedBy: 'Lorem ipsum - updater',
-                  createTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 12)),
-                  updateTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 13)),
-                  deleteTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 14)),
-                  destroyTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 15)),
+                  createTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 2, 15, 13, 12))),
+                  updateTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 2, 15, 13, 13))),
+                  deleteTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 2, 15, 13, 14))),
+                  destroyTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 2, 15, 13, 15))),
                 },
               });
             }
             return {} as SurfaceCall;
           },
         );
-      applicationAgent = await sdk.readApplicationAgentById('app-agent-id-request');
+      applicationAgent = ApplicationAgent.deserialize(
+        await sdk.readApplicationAgent(
+          ConfigClient.newReadApplicationAgentRequest('id', 'app-agent-id-request'),
+        ),
+      );
     });
 
     it('sends correct request', () => {
@@ -260,16 +300,16 @@ describe('readApplicationAgentById', () => {
       expect(applicationAgent.displayName).toBe('Application Agent Name');
       expect(applicationAgent.etag).toBe('5432');
       expect(applicationAgent.createTime?.toString()).toBe(
-        new Date(2022, 2, 15, 13, 12).toString(),
+        new Date(Date.UTC(2022, 2, 15, 13, 12)).toString(),
       );
       expect(applicationAgent.updateTime?.toString()).toBe(
-        new Date(2022, 2, 15, 13, 13).toString(),
+        new Date(Date.UTC(2022, 2, 15, 13, 13)).toString(),
       );
       expect(applicationAgent.deleteTime?.toString()).toBe(
-        new Date(2022, 2, 15, 13, 14).toString(),
+        new Date(Date.UTC(2022, 2, 15, 13, 14)).toString(),
       );
       expect(applicationAgent.destroyTime?.toString()).toBe(
-        new Date(2022, 2, 15, 13, 15).toString(),
+        new Date(Date.UTC(2022, 2, 15, 13, 15)).toString(),
       );
     });
   });
@@ -300,9 +340,13 @@ describe('readApplicationAgentById', () => {
             return {} as SurfaceCall;
           },
         );
-      sdk.readApplicationAgentById('app-agent-id-request').catch((err) => {
-        thrownError = err;
-      });
+      sdk
+        .readApplicationAgent(
+          ConfigClient.newReadApplicationAgentRequest('id', 'app-agent-id-request'),
+        )
+        .catch((err) => {
+          thrownError = err;
+        });
     });
 
     it('throws an error', () => {
@@ -331,13 +375,17 @@ describe('readApplicationAgentById', () => {
             return {} as SurfaceCall;
           },
         );
-      sdk.readApplicationAgentById('app-agent-id-request').catch((err) => {
-        thrownError = err;
-      });
+      sdk
+        .readApplicationAgent(
+          ConfigClient.newReadApplicationAgentRequest('id', 'app-agent-id-request'),
+        )
+        .catch((err) => {
+          thrownError = err;
+        });
     });
 
     it('throws an error', () => {
-      expect(thrownError.message).toBe('No application agent response');
+      expect(thrownError.message).toBe('No ApplicationAgent response.');
     });
   });
 });
@@ -372,19 +420,24 @@ describe('readApplicationAgentByName', () => {
                   etag: '5432',
                   createdBy: 'Lorem ipsum - creator',
                   updatedBy: 'Lorem ipsum - updater',
-                  createTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 12)),
-                  updateTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 13)),
-                  deleteTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 14)),
-                  destroyTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 15)),
+                  createTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 2, 15, 13, 12))),
+                  updateTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 2, 15, 13, 13))),
+                  deleteTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 2, 15, 13, 14))),
+                  destroyTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 2, 15, 13, 15))),
                 },
               });
             }
             return {} as SurfaceCall;
           },
         );
-      applicationAgent = await sdk.readApplicationAgentByName(
-        'app-space-id-request',
-        'application-name-request',
+      applicationAgent = ApplicationAgent.deserialize(
+        await sdk.readApplicationAgent(
+          ConfigClient.newReadApplicationRequest(
+            'name',
+            'app-space-id-request',
+            'application-name-request',
+          ),
+        ),
       );
     });
 
@@ -414,16 +467,16 @@ describe('readApplicationAgentByName', () => {
       expect(applicationAgent.displayName).toBe('Application Agent Name');
       expect(applicationAgent.etag).toBe('5432');
       expect(applicationAgent.createTime?.toString()).toBe(
-        new Date(2022, 2, 15, 13, 12).toString(),
+        new Date(Date.UTC(2022, 2, 15, 13, 12)).toString(),
       );
       expect(applicationAgent.updateTime?.toString()).toBe(
-        new Date(2022, 2, 15, 13, 13).toString(),
+        new Date(Date.UTC(2022, 2, 15, 13, 13)).toString(),
       );
       expect(applicationAgent.deleteTime?.toString()).toBe(
-        new Date(2022, 2, 15, 13, 14).toString(),
+        new Date(Date.UTC(2022, 2, 15, 13, 14)).toString(),
       );
       expect(applicationAgent.destroyTime?.toString()).toBe(
-        new Date(2022, 2, 15, 13, 15).toString(),
+        new Date(Date.UTC(2022, 2, 15, 13, 15)).toString(),
       );
     });
   });
@@ -455,7 +508,13 @@ describe('readApplicationAgentByName', () => {
           },
         );
       sdk
-        .readApplicationAgentByName('app-space-id-request', 'app-agent-name-request')
+        .readApplicationAgent(
+          ConfigClient.newReadApplicationRequest(
+            'name',
+            'app-space-id-request',
+            'app-agent-name-request',
+          ),
+        )
         .catch((err) => {
           thrownError = err;
         });
@@ -488,21 +547,27 @@ describe('readApplicationAgentByName', () => {
           },
         );
       sdk
-        .readApplicationAgentByName('app-space-id-request', 'app-agent-name-request')
+        .readApplicationAgent(
+          ConfigClient.newReadApplicationRequest(
+            'name',
+            'app-space-id-request',
+            'app-agent-name-request',
+          ),
+        )
         .catch((err) => {
           thrownError = err;
         });
     });
 
     it('throws an error', () => {
-      expect(thrownError.message).toBe('No application agent response');
+      expect(thrownError.message).toBe('No ApplicationAgent response.');
     });
   });
 });
 
 describe('updateApplicationAgent', () => {
   describe('when no error is returned', () => {
-    let updatedApplicationAgent: ApplicationAgent;
+    let updateApplicationAgentResponse: UpdateApplicationAgentResponse;
     let updateApplicationAgentSpy: jest.SpyInstance;
     let sdk: ConfigClient;
 
@@ -524,7 +589,7 @@ describe('updateApplicationAgent', () => {
                 id: 'app-agent-id',
                 createdBy: 'Lorem ipsum - creator',
                 updatedBy: 'Lorem ipsum - updater',
-                updateTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 16)),
+                updateTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 2, 15, 13, 16))),
                 bookmark: 'bookmark-token',
               });
             }
@@ -540,7 +605,9 @@ describe('updateApplicationAgent', () => {
           'app-agent-name',
           'application-id',
         );
-        updatedApplicationAgent = await sdk.updateApplicationAgent(applicationAgent);
+        updateApplicationAgentResponse = await sdk.updateApplicationAgent(
+          ConfigClient.newUpdateApplicationAgentRequest(applicationAgent),
+        );
       });
 
       it('sends correct request', () => {
@@ -554,20 +621,15 @@ describe('updateApplicationAgent', () => {
       });
 
       it('returns a correct instance', () => {
-        expect(updatedApplicationAgent.id).toBe('app-agent-id');
-        expect(updatedApplicationAgent.appSpaceId).toBeUndefined();
-        expect(updatedApplicationAgent.applicationId).toBe('application-id');
-        expect(updatedApplicationAgent.customerId).toBeUndefined();
-        expect(updatedApplicationAgent.name).toBe('app-agent-name');
-        expect(updatedApplicationAgent.description).toBeUndefined();
-        expect(updatedApplicationAgent.displayName).toBeUndefined();
-        expect(updatedApplicationAgent.etag).toBe('new-etag-id');
-        expect(updatedApplicationAgent.createTime).toBeUndefined();
-        expect(updatedApplicationAgent.updateTime?.toString()).toBe(
-          new Date(2022, 2, 15, 13, 16).toString(),
+        expect(updateApplicationAgentResponse.id).toBe('app-agent-id');
+        expect(updateApplicationAgentResponse.createTime).toBeUndefined();
+        expect(updateApplicationAgentResponse.createdBy).toBe('Lorem ipsum - creator');
+        expect(updateApplicationAgentResponse.updateTime?.toString()).toBe(
+          Utils.dateToTimestamp(new Date(Date.UTC(2022, 2, 15, 13, 16))).toString(),
         );
-        expect(updatedApplicationAgent.deleteTime).toBeUndefined();
-        expect(updatedApplicationAgent.destroyTime).toBeUndefined();
+        expect(updateApplicationAgentResponse.updatedBy).toBe('Lorem ipsum - updater');
+        expect(updateApplicationAgentResponse.etag).toBe('new-etag-id');
+        expect(updateApplicationAgentResponse.bookmark).toBe('bookmark-token');
       });
     });
 
@@ -582,9 +644,16 @@ describe('updateApplicationAgent', () => {
           'customer-id',
           'etag-id',
           'Agent Description',
-          new Date(2022, 2, 15, 13, 15),
+          new Date(Date.UTC(2022, 2, 15, 13, 15)),
+          new Date(Date.UTC(2022, 2, 15, 13, 16)),
+          undefined,
+          undefined,
+          'Lorem ipsum - creator',
+          'Lorem ipsum - updater',
         );
-        updatedApplicationAgent = await sdk.updateApplicationAgent(applicationAgent);
+        updateApplicationAgentResponse = await sdk.updateApplicationAgent(
+          ConfigClient.newUpdateApplicationAgentRequest(applicationAgent),
+        );
       });
 
       it('sends correct request', () => {
@@ -601,22 +670,15 @@ describe('updateApplicationAgent', () => {
       });
 
       it('returns a correct instance', () => {
-        expect(updatedApplicationAgent.id).toBe('app-agent-id');
-        expect(updatedApplicationAgent.appSpaceId).toBe('app-space-id');
-        expect(updatedApplicationAgent.applicationId).toBe('application-id');
-        expect(updatedApplicationAgent.customerId).toBe('customer-id');
-        expect(updatedApplicationAgent.name).toBe('app-agent-name');
-        expect(updatedApplicationAgent.description).toBe('Agent Description');
-        expect(updatedApplicationAgent.displayName).toBe('Application Agent Name');
-        expect(updatedApplicationAgent.etag).toBe('new-etag-id');
-        expect(updatedApplicationAgent.createTime?.toString()).toBe(
-          new Date(2022, 2, 15, 13, 15).toString(),
+        expect(updateApplicationAgentResponse.id).toBe('app-agent-id');
+        expect(updateApplicationAgentResponse.createTime).toBeUndefined();
+        expect(updateApplicationAgentResponse.createdBy).toBe('Lorem ipsum - creator');
+        expect(updateApplicationAgentResponse.updateTime?.toString()).toBe(
+          Utils.dateToTimestamp(new Date(Date.UTC(2022, 2, 15, 13, 16))).toString(),
         );
-        expect(updatedApplicationAgent.updateTime?.toString()).toBe(
-          new Date(2022, 2, 15, 13, 16).toString(),
-        );
-        expect(updatedApplicationAgent.deleteTime).toBeUndefined();
-        expect(updatedApplicationAgent.destroyTime).toBeUndefined();
+        expect(updateApplicationAgentResponse.updatedBy).toBe('Lorem ipsum - updater');
+        expect(updateApplicationAgentResponse.etag).toBe('new-etag-id');
+        expect(updateApplicationAgentResponse.bookmark).toBe('bookmark-token');
       });
     });
   });
@@ -642,7 +704,7 @@ describe('updateApplicationAgent', () => {
                 id: 'different-app-agent-id',
                 createdBy: 'Lorem ipsum - creator',
                 updatedBy: 'Lorem ipsum - updater',
-                updateTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 16)),
+                updateTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 2, 15, 13, 16))),
                 bookmark: 'bookmark-token',
               });
             }
@@ -659,13 +721,15 @@ describe('updateApplicationAgent', () => {
         'etag-id',
         'Agent Description',
       );
-      return sdk.updateApplicationAgent(applicationAgent).catch((err) => (thrownError = err));
+      return sdk
+        .updateApplicationAgent(ConfigClient.newUpdateApplicationAgentRequest(applicationAgent))
+        .catch((err) => (thrownError = err));
     });
 
     it('throws an error', () => {
-      expect(thrownError.code).toEqual(SdkErrorCode.SDK_CODE_1);
+      expect(thrownError.code).toEqual(SdkErrorCode.SDK_CODE_4);
       expect(thrownError.description).toBe(
-        'Update returned with different id: req.iq=app-agent-id, res.id=different-app-agent-id',
+        'Update returned with different id: request.id=app-agent-id, response.id=different-app-agent-id.',
       );
     });
   });
@@ -706,9 +770,11 @@ describe('updateApplicationAgent', () => {
         'etag-id',
         'Agent Description',
       );
-      sdk.updateApplicationAgent(applicationAgent).catch((err) => {
-        thrownError = err;
-      });
+      sdk
+        .updateApplicationAgent(ConfigClient.newUpdateApplicationAgentRequest(applicationAgent))
+        .catch((err) => {
+          thrownError = err;
+        });
     });
 
     it('throws an error', () => {
@@ -747,69 +813,86 @@ describe('updateApplicationAgent', () => {
         'etag-id',
         'Agent Description',
       );
-      sdk.updateApplicationAgent(applicationAgent).catch((err) => {
-        thrownError = err;
-      });
+      sdk
+        .updateApplicationAgent(ConfigClient.newUpdateApplicationAgentRequest(applicationAgent))
+        .catch((err) => {
+          thrownError = err;
+        });
     });
 
     it('throws an error', () => {
       expect(thrownError.message).toBe(
-        'Update returned with different id: req.iq=app-agent-id, res.id=undefined',
+        'Update returned with different id: request.id=app-agent-id, response.id=undefined.',
       );
     });
   });
 });
 
 describe('readApplicationAgentList', () => {
+  let applicationAgents: ApplicationAgent[] = [];
+  let listApplicationAgentsSpy: jest.SpyInstance;
   describe('when no error is returned', () => {
-    let applicationAgents: ApplicationAgent[];
-    let listApplicationAgentsSpy: jest.SpyInstance;
-
     beforeEach(async () => {
       const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
-      const eventEmitter = Object.assign(new EventEmitter(), {});
+      const eventEmitter = Object.assign(new EventEmitter(), {
+        read: () => {
+          return {
+            applicationAgent: {
+              id: 'app-agent-id',
+              appSpaceId: 'app-space-id',
+              applicationId: 'application-id',
+              customerId: 'customer-id',
+              name: 'app-agent-name',
+              description: StringValue.create({ value: 'Application Agent description' }),
+              displayName: 'Application Agent Name',
+              etag: 'etag-id',
+              createTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 2, 15, 13, 12))),
+              updateTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 2, 15, 13, 13))),
+              deleteTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 2, 15, 13, 14))),
+              destroyTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 2, 15, 13, 15))),
+            },
+          };
+        },
+      });
       listApplicationAgentsSpy = jest
         .spyOn(sdk['client'], 'listApplicationAgents')
         .mockImplementation(() => {
-          setTimeout(
-            () =>
-              eventEmitter.emit('data', {
-                applicationAgent: {
-                  id: 'app-agent-id',
-                  appSpaceId: 'app-space-id',
-                  applicationId: 'application-id',
-                  customerId: 'customer-id',
-                  name: 'app-agent-name',
-                  description: StringValue.create({ value: 'Application Agent description' }),
-                  displayName: 'Application Agent Name',
-                  etag: 'etag-id',
-                  createTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 12)),
-                  updateTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 13)),
-                  deleteTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 14)),
-                  destroyTime: Utils.dateToTimestamp(new Date(2022, 2, 15, 13, 15)),
-                },
-              }),
-            0,
-          );
+          setTimeout(() => eventEmitter.emit('readable'), 0);
+          setTimeout(() => eventEmitter.emit('readable'), 0);
           setTimeout(() => eventEmitter.emit('end'), 0);
+          setTimeout(() => eventEmitter.emit('close'), 1);
           return eventEmitter as unknown as ClientReadableStream<ListApplicationAgentsResponse>;
         });
-
-      applicationAgents = await sdk.readApplicationAgentList('app-space-id-request', [
-        'app-agent-name',
-      ]);
+      applicationAgents = await new Promise((resolve, reject) => {
+        const tmp: ApplicationAgent[] = [];
+        sdk
+          .listApplicationAgents(
+            ConfigClient.newListApplicationAgentsRequest('app-space-id-request', [
+              'app-agent-name',
+            ]),
+          )
+          .on('error', (err) => {
+            reject(err);
+          })
+          .on('data', (data) => {
+            if (data && data.applicationAgent) {
+              tmp.push(ApplicationAgent.deserialize(data));
+            }
+          })
+          .on('end', () => {
+            resolve(tmp);
+          });
+      });
     });
-
-    it('sends correct request', () => {
+    it('check expect call', async () => {
       expect(listApplicationAgentsSpy).toBeCalledWith({
         appSpaceId: 'app-space-id-request',
         match: ['app-agent-name'],
         bookmarks: [],
       });
     });
-
-    it('returns a correct instance', () => {
-      expect(applicationAgents.length).toBe(1);
+    it('returns correct data', async () => {
+      expect(applicationAgents.length).toBe(2);
       expect(applicationAgents[0].id).toBe('app-agent-id');
       expect(applicationAgents[0].appSpaceId).toBe('app-space-id');
       expect(applicationAgents[0].applicationId).toBe('application-id');
@@ -819,43 +902,90 @@ describe('readApplicationAgentList', () => {
       expect(applicationAgents[0].displayName).toBe('Application Agent Name');
       expect(applicationAgents[0].etag).toBe('etag-id');
       expect(applicationAgents[0].createTime?.toString()).toBe(
-        new Date(2022, 2, 15, 13, 12).toString(),
+        new Date(Date.UTC(2022, 2, 15, 13, 12)).toString(),
       );
       expect(applicationAgents[0].updateTime?.toString()).toBe(
-        new Date(2022, 2, 15, 13, 13).toString(),
+        new Date(Date.UTC(2022, 2, 15, 13, 13)).toString(),
       );
       expect(applicationAgents[0].deleteTime?.toString()).toBe(
-        new Date(2022, 2, 15, 13, 14).toString(),
+        new Date(Date.UTC(2022, 2, 15, 13, 14)).toString(),
       );
       expect(applicationAgents[0].destroyTime?.toString()).toBe(
-        new Date(2022, 2, 15, 13, 15).toString(),
+        new Date(Date.UTC(2022, 2, 15, 13, 15)).toString(),
       );
     });
   });
 
   describe('when an error is returned', () => {
+    let result: ServiceError | string;
     const error = {
       code: Status.NOT_FOUND,
       details: 'DETAILS',
       metadata: {},
     } as ServiceError;
-    let thrownError: Error;
+    let sdk: ConfigClient;
 
     beforeEach(async () => {
-      const sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
+      sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
       const eventEmitter = Object.assign(new EventEmitter(), { read: jest.fn() });
       jest.spyOn(sdk['client'], 'listApplicationAgents').mockImplementation(() => {
         setTimeout(() => eventEmitter.emit('error', error), 0);
         return eventEmitter as unknown as ClientReadableStream<ListApplicationAgentsResponse>;
       });
-
-      return sdk
-        .readApplicationAgentList('app-space-id-request', ['app-agent-name'])
-        .catch((err) => (thrownError = err));
+      result = await new Promise((resolve, reject) => {
+        sdk
+          .listApplicationAgents(
+            ConfigClient.newListApplicationAgentsRequest('app-space-id-request', [
+              'app-agent-name',
+            ]),
+          )
+          .on('error', (err) => {
+            reject(err);
+          })
+          .on('data', () => {
+            // Nothing to do here.
+          })
+          .on('end', () => {
+            resolve('');
+          });
+      })
+        .then((x) => x as string)
+        .catch((errs) => {
+          return errs as ServiceError;
+        });
     });
 
     it('throws an error', () => {
-      expect(thrownError).toBe(error);
+      expect(result).toBe(error);
+    });
+  });
+
+  describe('when a close event is triggered', () => {
+    let sdk: ConfigClient;
+
+    beforeEach(async () => {
+      sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
+      const eventEmitter = Object.assign(new EventEmitter(), { read: jest.fn() });
+      jest.spyOn(sdk['client'], 'listApplicationAgents').mockImplementation(() => {
+        setTimeout(() => eventEmitter.emit('close'), 0);
+        return eventEmitter as unknown as ClientReadableStream<ListApplicationAgentsResponse>;
+      });
+    });
+
+    it('close has been triggered', () => {
+      sdk
+        .listApplicationAgents(
+          ConfigClient.newListApplicationAgentsRequest('app-space-id-request', ['app-agent-name']),
+        )
+        .on('close', () => {
+          expect(true).toBe(true);
+        })
+        .on('data', () => {
+          // Nothing to do here.
+        })
+        .on('end', () => {
+          // Nothing to do here.
+        });
     });
   });
 });
@@ -885,7 +1015,9 @@ describe('deleteApplicationAgent', () => {
             return {} as SurfaceCall;
           },
         );
-      return sdk.deleteApplicationAgent('app-agent-id');
+      return sdk.deleteApplicationAgent(
+        ConfigClient.newDeleteApplicationAgentRequest('app-agent-id'),
+      );
     });
 
     it('sends correct request', () => {
@@ -925,9 +1057,11 @@ describe('deleteApplicationAgent', () => {
             return {} as SurfaceCall;
           },
         );
-      sdk.deleteApplicationAgent('app-agent-id').catch((err) => {
-        thrownError = err;
-      });
+      sdk
+        .deleteApplicationAgent(ConfigClient.newDeleteApplicationAgentRequest('app-agent-id'))
+        .catch((err) => {
+          thrownError = err;
+        });
     });
 
     it('throws an error', () => {
@@ -956,13 +1090,15 @@ describe('deleteApplicationAgent', () => {
             return {} as SurfaceCall;
           },
         );
-      sdk.deleteApplicationAgent('app-agent-id').catch((err) => {
-        thrownError = err;
-      });
+      sdk
+        .deleteApplicationAgent(ConfigClient.newDeleteApplicationAgentRequest('app-agent-id'))
+        .catch((err) => {
+          thrownError = err;
+        });
     });
 
     it('throws an error', () => {
-      expect(thrownError.message).toBe('No application agent response');
+      expect(thrownError.message).toBe('No ApplicationAgent response.');
     });
   });
 });
