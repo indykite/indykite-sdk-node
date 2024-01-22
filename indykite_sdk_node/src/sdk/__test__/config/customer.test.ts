@@ -42,7 +42,9 @@ describe('readCustomerById', () => {
             return {} as SurfaceCall;
           },
         );
-      customer = await sdk.readCustomerById('customer-id-request');
+      customer = Customer.deserialize(
+        await sdk.readCustomer(ConfigClient.newReadCustomerRequest('id', 'customer-id-request')),
+      );
     });
 
     it('sends correct request', () => {
@@ -92,9 +94,11 @@ describe('readCustomerById', () => {
             return {} as SurfaceCall;
           },
         );
-      sdk.readCustomerById('customer-id-request').catch((err) => {
-        thrownError = err;
-      });
+      sdk
+        .readCustomer(ConfigClient.newReadCustomerRequest('id', 'customer-id-request'))
+        .catch((err) => {
+          thrownError = err;
+        });
     });
 
     it('throws an error', () => {
@@ -123,13 +127,15 @@ describe('readCustomerById', () => {
             return {} as SurfaceCall;
           },
         );
-      sdk.readCustomerById('customer-id-request').catch((err) => {
-        thrownError = err;
-      });
+      sdk
+        .readCustomer(ConfigClient.newReadCustomerRequest('id', 'customer-id-request'))
+        .catch((err) => {
+          thrownError = err;
+        });
     });
 
     it('throws an error', () => {
-      expect(thrownError.message).toBe('No customer response');
+      expect(thrownError.message).toBe('No Customer response.');
     });
   });
 });
@@ -166,7 +172,11 @@ describe('readCustomerByName', () => {
             return {} as SurfaceCall;
           },
         );
-      customer = await sdk.readCustomerByName('customer-name-request');
+      customer = Customer.deserialize(
+        await sdk.readCustomer(
+          ConfigClient.newReadCustomerRequest('name', 'customer-name-request'),
+        ),
+      );
     });
 
     it('sends correct request', () => {
@@ -216,9 +226,11 @@ describe('readCustomerByName', () => {
             return {} as SurfaceCall;
           },
         );
-      sdk.readCustomerByName('customer-name-request').catch((err) => {
-        thrownError = err;
-      });
+      sdk
+        .readCustomer(ConfigClient.newReadCustomerRequest('name', 'customer-name-request'))
+        .catch((err) => {
+          thrownError = err;
+        });
     });
 
     it('throws an error', () => {
@@ -247,13 +259,15 @@ describe('readCustomerByName', () => {
             return {} as SurfaceCall;
           },
         );
-      sdk.readCustomerByName('customer-name-request').catch((err) => {
-        thrownError = err;
-      });
+      sdk
+        .readCustomer(ConfigClient.newReadCustomerRequest('name', 'customer-name-request'))
+        .catch((err) => {
+          thrownError = err;
+        });
     });
 
     it('throws an error', () => {
-      expect(thrownError.message).toBe('No customer response');
+      expect(thrownError.message).toBe('No Customer response.');
     });
   });
 });
