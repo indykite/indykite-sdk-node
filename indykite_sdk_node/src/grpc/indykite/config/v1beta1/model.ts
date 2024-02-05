@@ -990,12 +990,6 @@ export interface ConfigNode {
          */
         authorizationPolicyConfig: AuthorizationPolicyConfig;
     } | {
-        oneofKind: "knowledgeGraphSchemaConfig";
-        /**
-         * @generated from protobuf field: indykite.config.v1beta1.KnowledgeGraphSchemaConfig knowledge_graph_schema_config = 24;
-         */
-        knowledgeGraphSchemaConfig: KnowledgeGraphSchemaConfig;
-    } | {
         oneofKind: undefined;
     };
     /**
@@ -2260,28 +2254,6 @@ export enum AuthorizationPolicyConfig_Status {
      * @generated from protobuf enum value: STATUS_INACTIVE = 2;
      */
     INACTIVE = 2
-}
-/**
- * @generated from protobuf message indykite.config.v1beta1.KnowledgeGraphSchemaConfig
- */
-export interface KnowledgeGraphSchemaConfig {
-    /**
-     * @generated from protobuf field: string schema = 1;
-     */
-    schema: string;
-}
-/**
- * @generated from protobuf message indykite.config.v1beta1.KnowledgeGraphSchemaHelpers
- */
-export interface KnowledgeGraphSchemaHelpers {
-    /**
-     * @generated from protobuf field: string definitions = 1;
-     */
-    definitions: string;
-    /**
-     * @generated from protobuf field: string directives = 2;
-     */
-    directives: string;
 }
 /**
  * @generated from protobuf message indykite.config.v1beta1.AuditSinkConfig
@@ -4058,7 +4030,6 @@ class ConfigNode$Type extends MessageType<ConfigNode> {
             { no: 19, name: "webauthn_provider_config", kind: "message", oneof: "config", T: () => WebAuthnProviderConfig, options: { "validate.rules": { message: { required: true } } } },
             { no: 21, name: "safr_provider_config", kind: "message", oneof: "config", T: () => SAFRProviderConfig, options: { "validate.rules": { message: { required: true } } } },
             { no: 23, name: "authorization_policy_config", kind: "message", oneof: "config", T: () => AuthorizationPolicyConfig, options: { "validate.rules": { message: { required: true } } } },
-            { no: 24, name: "knowledge_graph_schema_config", kind: "message", oneof: "config", T: () => KnowledgeGraphSchemaConfig, options: { "validate.rules": { message: { required: true } } } },
             { no: 29, name: "version", kind: "scalar", T: 3 /*ScalarType.INT64*/ }
         ]);
     }
@@ -4164,12 +4135,6 @@ class ConfigNode$Type extends MessageType<ConfigNode> {
                         authorizationPolicyConfig: AuthorizationPolicyConfig.internalBinaryRead(reader, reader.uint32(), options, (message.config as any).authorizationPolicyConfig)
                     };
                     break;
-                case /* indykite.config.v1beta1.KnowledgeGraphSchemaConfig knowledge_graph_schema_config */ 24:
-                    message.config = {
-                        oneofKind: "knowledgeGraphSchemaConfig",
-                        knowledgeGraphSchemaConfig: KnowledgeGraphSchemaConfig.internalBinaryRead(reader, reader.uint32(), options, (message.config as any).knowledgeGraphSchemaConfig)
-                    };
-                    break;
                 case /* int64 version */ 29:
                     message.version = reader.int64().toString();
                     break;
@@ -4251,9 +4216,6 @@ class ConfigNode$Type extends MessageType<ConfigNode> {
         /* indykite.config.v1beta1.AuthorizationPolicyConfig authorization_policy_config = 23; */
         if (message.config.oneofKind === "authorizationPolicyConfig")
             AuthorizationPolicyConfig.internalBinaryWrite(message.config.authorizationPolicyConfig, writer.tag(23, WireType.LengthDelimited).fork(), options).join();
-        /* indykite.config.v1beta1.KnowledgeGraphSchemaConfig knowledge_graph_schema_config = 24; */
-        if (message.config.oneofKind === "knowledgeGraphSchemaConfig")
-            KnowledgeGraphSchemaConfig.internalBinaryWrite(message.config.knowledgeGraphSchemaConfig, writer.tag(24, WireType.LengthDelimited).fork(), options).join();
         /* int64 version = 29; */
         if (message.version !== "0")
             writer.tag(29, WireType.Varint).int64(message.version);
@@ -6760,107 +6722,6 @@ class AuthorizationPolicyConfig$Type extends MessageType<AuthorizationPolicyConf
  * @generated MessageType for protobuf message indykite.config.v1beta1.AuthorizationPolicyConfig
  */
 export const AuthorizationPolicyConfig = new AuthorizationPolicyConfig$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class KnowledgeGraphSchemaConfig$Type extends MessageType<KnowledgeGraphSchemaConfig> {
-    constructor() {
-        super("indykite.config.v1beta1.KnowledgeGraphSchemaConfig", [
-            { no: 1, name: "schema", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "1" } } } }
-        ]);
-    }
-    create(value?: PartialMessage<KnowledgeGraphSchemaConfig>): KnowledgeGraphSchemaConfig {
-        const message = { schema: "" };
-        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
-        if (value !== undefined)
-            reflectionMergePartial<KnowledgeGraphSchemaConfig>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: KnowledgeGraphSchemaConfig): KnowledgeGraphSchemaConfig {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* string schema */ 1:
-                    message.schema = reader.string();
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: KnowledgeGraphSchemaConfig, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* string schema = 1; */
-        if (message.schema !== "")
-            writer.tag(1, WireType.LengthDelimited).string(message.schema);
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message indykite.config.v1beta1.KnowledgeGraphSchemaConfig
- */
-export const KnowledgeGraphSchemaConfig = new KnowledgeGraphSchemaConfig$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class KnowledgeGraphSchemaHelpers$Type extends MessageType<KnowledgeGraphSchemaHelpers> {
-    constructor() {
-        super("indykite.config.v1beta1.KnowledgeGraphSchemaHelpers", [
-            { no: 1, name: "definitions", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "1" } } } },
-            { no: 2, name: "directives", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "1" } } } }
-        ]);
-    }
-    create(value?: PartialMessage<KnowledgeGraphSchemaHelpers>): KnowledgeGraphSchemaHelpers {
-        const message = { definitions: "", directives: "" };
-        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
-        if (value !== undefined)
-            reflectionMergePartial<KnowledgeGraphSchemaHelpers>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: KnowledgeGraphSchemaHelpers): KnowledgeGraphSchemaHelpers {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* string definitions */ 1:
-                    message.definitions = reader.string();
-                    break;
-                case /* string directives */ 2:
-                    message.directives = reader.string();
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: KnowledgeGraphSchemaHelpers, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* string definitions = 1; */
-        if (message.definitions !== "")
-            writer.tag(1, WireType.LengthDelimited).string(message.definitions);
-        /* string directives = 2; */
-        if (message.directives !== "")
-            writer.tag(2, WireType.LengthDelimited).string(message.directives);
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message indykite.config.v1beta1.KnowledgeGraphSchemaHelpers
- */
-export const KnowledgeGraphSchemaHelpers = new KnowledgeGraphSchemaHelpers$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class AuditSinkConfig$Type extends MessageType<AuditSinkConfig> {
     constructor() {

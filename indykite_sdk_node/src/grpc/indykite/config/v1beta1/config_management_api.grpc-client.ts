@@ -19,8 +19,6 @@
 import { ConfigManagementAPI } from "./config_management_api";
 import type { BinaryWriteOptions } from "@protobuf-ts/runtime";
 import type { BinaryReadOptions } from "@protobuf-ts/runtime";
-import type { GetSchemaHelpersResponse } from "./config_management_api";
-import type { GetSchemaHelpersRequest } from "./config_management_api";
 import type { ListPermissionsResponse } from "./config_management_api";
 import type { ListPermissionsRequest } from "./config_management_api";
 import type { RevokePermissionsResponse } from "./config_management_api";
@@ -614,15 +612,6 @@ export interface IConfigManagementAPIClient {
     listPermissions(input: ListPermissionsRequest, metadata: grpc.Metadata, callback: (err: grpc.ServiceError | null, value?: ListPermissionsResponse) => void): grpc.ClientUnaryCall;
     listPermissions(input: ListPermissionsRequest, options: grpc.CallOptions, callback: (err: grpc.ServiceError | null, value?: ListPermissionsResponse) => void): grpc.ClientUnaryCall;
     listPermissions(input: ListPermissionsRequest, callback: (err: grpc.ServiceError | null, value?: ListPermissionsResponse) => void): grpc.ClientUnaryCall;
-    /**
-     * GetSchemaHelpers for knowledge graph schema
-     *
-     * @generated from protobuf rpc: GetSchemaHelpers(indykite.config.v1beta1.GetSchemaHelpersRequest) returns (indykite.config.v1beta1.GetSchemaHelpersResponse);
-     */
-    getSchemaHelpers(input: GetSchemaHelpersRequest, metadata: grpc.Metadata, options: grpc.CallOptions, callback: (err: grpc.ServiceError | null, value?: GetSchemaHelpersResponse) => void): grpc.ClientUnaryCall;
-    getSchemaHelpers(input: GetSchemaHelpersRequest, metadata: grpc.Metadata, callback: (err: grpc.ServiceError | null, value?: GetSchemaHelpersResponse) => void): grpc.ClientUnaryCall;
-    getSchemaHelpers(input: GetSchemaHelpersRequest, options: grpc.CallOptions, callback: (err: grpc.ServiceError | null, value?: GetSchemaHelpersResponse) => void): grpc.ClientUnaryCall;
-    getSchemaHelpers(input: GetSchemaHelpersRequest, callback: (err: grpc.ServiceError | null, value?: GetSchemaHelpersResponse) => void): grpc.ClientUnaryCall;
 }
 /**
  * ConfigManagementAPI provides the operations to mange the IndyKite platform configurations.
@@ -1122,14 +1111,5 @@ export class ConfigManagementAPIClient extends grpc.Client implements IConfigMan
     listPermissions(input: ListPermissionsRequest, metadata: grpc.Metadata | grpc.CallOptions | ((err: grpc.ServiceError | null, value?: ListPermissionsResponse) => void), options?: grpc.CallOptions | ((err: grpc.ServiceError | null, value?: ListPermissionsResponse) => void), callback?: ((err: grpc.ServiceError | null, value?: ListPermissionsResponse) => void)): grpc.ClientUnaryCall {
         const method = ConfigManagementAPI.methods[52];
         return this.makeUnaryRequest<ListPermissionsRequest, ListPermissionsResponse>(`/${ConfigManagementAPI.typeName}/${method.name}`, (value: ListPermissionsRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): ListPermissionsResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), (options as any), (callback as any));
-    }
-    /**
-     * GetSchemaHelpers for knowledge graph schema
-     *
-     * @generated from protobuf rpc: GetSchemaHelpers(indykite.config.v1beta1.GetSchemaHelpersRequest) returns (indykite.config.v1beta1.GetSchemaHelpersResponse);
-     */
-    getSchemaHelpers(input: GetSchemaHelpersRequest, metadata: grpc.Metadata | grpc.CallOptions | ((err: grpc.ServiceError | null, value?: GetSchemaHelpersResponse) => void), options?: grpc.CallOptions | ((err: grpc.ServiceError | null, value?: GetSchemaHelpersResponse) => void), callback?: ((err: grpc.ServiceError | null, value?: GetSchemaHelpersResponse) => void)): grpc.ClientUnaryCall {
-        const method = ConfigManagementAPI.methods[53];
-        return this.makeUnaryRequest<GetSchemaHelpersRequest, GetSchemaHelpersResponse>(`/${ConfigManagementAPI.typeName}/${method.name}`, (value: GetSchemaHelpersRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): GetSchemaHelpersResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), (options as any), (callback as any));
     }
 }
