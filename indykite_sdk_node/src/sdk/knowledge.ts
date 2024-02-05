@@ -43,6 +43,7 @@ export class IdentityKnowledgeClient {
   /**
    *
    * @since 0.4.1
+   * @deprecated since 0.6.0 Use knowledgev2
    * @example
    *  const dt = await sdk.identityKnowledge(
    *    {
@@ -75,6 +76,7 @@ export class IdentityKnowledgeClient {
 
   /**
    * @since 0.4.2
+   * @deprecated since 0.6.0 Use knowledgev2
    */
   private parseSingleNodeFromPaths(paths: Path[]): Node {
     if (!paths?.length || !paths[0].nodes?.length) {
@@ -88,6 +90,7 @@ export class IdentityKnowledgeClient {
 
   /**
    * @since 0.4.2
+   * @deprecated since 0.6.0 Use knowledgev2
    */
   private parseMultipleNodesFromPaths(paths: Path[]): Node[] {
     if (paths) {
@@ -102,6 +105,7 @@ export class IdentityKnowledgeClient {
   /**
    * Read sends a READ operation to the Identity Knowledge API, with the desired path and optional conditions.
    * @since 0.4.2
+   * @deprecated since 0.6.0 Use knowledgev2
    */
   read(
     path: string,
@@ -120,6 +124,7 @@ export class IdentityKnowledgeClient {
   /**
    * GetDigitalTwinByID is a helper function that queries for a DigitalTwin node by its id.
    * @since 0.4.2
+   * @deprecated since 0.6.0 Use knowledgev2
    */
   getDigitalTwinByID(id: string): Promise<Node> {
     return this.getNodeByID(id, NODE_TYPE.DIGITAL_TWIN);
@@ -129,6 +134,7 @@ export class IdentityKnowledgeClient {
    * GetDigitalTwinByIdentifier is a helper function that queries for a DigitalTwin node
    * by its externalID + type combination.
    * @since 0.4.2
+   * @deprecated since 0.6.0 Use knowledgev2
    */
   getDigitalTwinByIdentifier(identifier: Identifier): Promise<Node> {
     return this.getNodeByIdentifier(NODE_TYPE.DIGITAL_TWIN, identifier);
@@ -137,6 +143,7 @@ export class IdentityKnowledgeClient {
   /**
    * GetResourceByID is a helper function that queries for a Resource node by its id.
    * @since 0.4.2
+   * @deprecated since 0.6.0 Use knowledgev2
    */
   getResourceByID(id: string): Promise<Node> {
     return this.getNodeByID(id, NODE_TYPE.RESOURCE);
@@ -146,6 +153,7 @@ export class IdentityKnowledgeClient {
    * GetResourceByIdentifier is a helper function that queries for a Resource node
    * by its externalID + type combination.
    * @since 0.4.2
+   * @deprecated since 0.6.0 Use knowledgev2
    */
   getResourceByIdentifier(identifier: Identifier): Promise<Node> {
     return this.getNodeByIdentifier(NODE_TYPE.RESOURCE, identifier);
@@ -155,6 +163,7 @@ export class IdentityKnowledgeClient {
    * ListDigitalTwinsByProperty is a helper function that lists all DigitalTwin nodes
    * that have the specified property.
    * @since 0.4.2
+   * @deprecated since 0.6.0 Use knowledgev2
    */
   listDigitalTwinsByProperty(property: Property): Promise<Node[]> {
     return this.listNodesByProperty(NODE_TYPE.DIGITAL_TWIN, property);
@@ -164,6 +173,7 @@ export class IdentityKnowledgeClient {
    * ListResourcesByProperty is a helper function that lists all Resource nodes.
    * that have the specified property.
    * @since 0.4.2
+   * @deprecated since 0.6.0 Use knowledgev2
    */
   listResourcesByProperty(property: Property): Promise<Node[]> {
     return this.listNodesByProperty(NODE_TYPE.RESOURCE, property);
@@ -172,6 +182,7 @@ export class IdentityKnowledgeClient {
   /**
    * ListDigitalTwins is a helper function that lists all DigitalTwin nodes.
    * @since 0.4.2
+   * @deprecated since 0.6.0 Use knowledgev2
    */
   listDigitalTwins(): Promise<Node[]> {
     return this.listNodes(NODE_TYPE.DIGITAL_TWIN);
@@ -181,6 +192,7 @@ export class IdentityKnowledgeClient {
    * ListResources is a helper function that lists all Resource nodes.
    * that have the specified property.
    * @since 0.4.2
+   * @deprecated since 0.6.0 Use knowledgev2
    */
   listResources(): Promise<Node[]> {
     return this.listNodes(NODE_TYPE.RESOURCE);
@@ -189,6 +201,7 @@ export class IdentityKnowledgeClient {
   /**
    * ListNodes is a helper function that lists all nodes by type, regardless of whether they are DigitalTwins
    * or Resources. The nodeType argument should be in PascalCase.
+   * @deprecated since 0.6.0 Use knowledgev2
    */
   listNodes(nodeType: string): Promise<Node[]> {
     const request: IdentityKnowledgeRequest = {
@@ -207,6 +220,7 @@ export class IdentityKnowledgeClient {
   /**
    * ListNodesByProperty is a helper function that lists all nodes that have the specified type and property.
    * @since 0.4.2
+   * @deprecated since 0.6.0 Use knowledgev2
    */
   listNodesByProperty(nodeType: string, property: Property): Promise<Node[]> {
     const request: IdentityKnowledgeRequest = {
@@ -226,6 +240,7 @@ export class IdentityKnowledgeClient {
 
   /**
    * @since 0.4.2
+   * @deprecated since 0.6.0 Use knowledgev2
    */
   getNodeByID(id: string, nodeType: string): Promise<Node> {
     const request: IdentityKnowledgeRequest = {
@@ -245,6 +260,7 @@ export class IdentityKnowledgeClient {
 
   /**
    * @since 0.4.2
+   * @deprecated since 0.6.0 Use knowledgev2
    */
   getNodeByIdentifier(nodeType: string, identifier: Identifier): Promise<Node> {
     const request: IdentityKnowledgeRequest = {
@@ -265,6 +281,7 @@ export class IdentityKnowledgeClient {
 
   /**
    * delete all nodes of defined type
+   * @deprecated since 0.6.0 Use knowledgev2
    */
   async deleteAllWithNodeType(nodeType: string) {
     const nodes: Node[] = await this.listNodes(nodeType);

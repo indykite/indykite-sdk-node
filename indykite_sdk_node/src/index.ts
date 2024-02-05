@@ -6,6 +6,7 @@ export { type InputParameters } from './sdk/authorization';
 export * from './sdk/identity';
 export { ConfigClient } from './sdk/config';
 export { IdentityKnowledgeClient } from './sdk/knowledge';
+export * from './sdk/knowledgev2';
 export { HTTPClient, HTTPResponse } from './sdk/http';
 export * from './sdk/ingest';
 export * from './sdk/model';

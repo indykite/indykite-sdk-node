@@ -2,31 +2,31 @@ import { IngestClient, IngestRecord } from '../sdk/ingest';
 
 IngestClient.createInstance().then((sdk) => {
   const input = [
-    IngestRecord.upsert('recordId-33')
+    IngestRecord.upsert('recordId-330')
       .node.digitalTwin({
         id: '',
-        externalId: '784512',
-        type: 'Individual',
+        externalId: '748596',
+        type: 'Person',
         properties: {
-          employeeId: '63259',
-          name: 'Rufus Molecule',
-          email: 'mol@yahoo.uk',
+          employeeId: '65241',
+          name: 'Ren Molecule',
+          email: 'ren@yahoo.uk',
         },
       })
       .getRecord(),
-    IngestRecord.upsert('recordId-34')
+    IngestRecord.upsert('recordId-340')
       .node.resource({
-        externalId: '654789',
-        type: 'UserGroup',
+        externalId: '986532',
+        type: 'Organization',
         properties: {
           name: 'west',
         },
       })
       .getRecord(),
-    IngestRecord.upsert('recordId-35')
+    IngestRecord.upsert('recordId-350')
       .relation({
-        sourceMatch: { externalId: '784512', type: 'Individual' },
-        targetMatch: { externalId: '654789', type: 'UserGroup' },
+        sourceMatch: { externalId: '748596', type: 'Individual' },
+        targetMatch: { externalId: '986532', type: 'Organization' },
         type: 'BELONGS',
       })
       .getRecord(),

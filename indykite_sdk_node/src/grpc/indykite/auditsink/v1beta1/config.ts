@@ -30,6 +30,23 @@ import { Value } from "../../objects/v1beta1/struct";
 import { Timestamp } from "../../../google/protobuf/timestamp";
 import { Duration } from "../../../google/protobuf/duration";
 /**
+ * @generated from protobuf message indykite.auditsink.v1beta1.ContainersPath
+ */
+export interface ContainersPath {
+    /**
+     * @generated from protobuf field: string customer_id = 1;
+     */
+    customerId: string;
+    /**
+     * @generated from protobuf field: string application_space_id = 2;
+     */
+    applicationSpaceId: string;
+    /**
+     * @generated from protobuf field: string tenant_id = 3;
+     */
+    tenantId: string;
+}
+/**
  * @generated from protobuf message indykite.auditsink.v1beta1.CreatedConfig
  */
 export interface CreatedConfig {
@@ -45,6 +62,10 @@ export interface CreatedConfig {
      * @generated from protobuf field: indykite.auditsink.v1beta1.CreatedConfig.Location location = 3;
      */
     location?: CreatedConfig_Location;
+    /**
+     * @generated from protobuf field: indykite.auditsink.v1beta1.ContainersPath containers_path = 5;
+     */
+    containersPath?: ContainersPath;
     /**
      * @generated from protobuf field: indykite.auditsink.v1beta1.ConfigDetail detail = 4;
      */
@@ -86,6 +107,10 @@ export interface ReadConfig {
         oneofKind: undefined;
     };
     /**
+     * @generated from protobuf field: indykite.auditsink.v1beta1.ContainersPath containers_path = 4;
+     */
+    containersPath?: ContainersPath;
+    /**
      * @generated from protobuf field: indykite.auditsink.v1beta1.ConfigType type = 3;
      */
     type: ConfigType;
@@ -124,6 +149,10 @@ export interface UpdatedConfig {
      */
     type: ConfigType;
     /**
+     * @generated from protobuf field: indykite.auditsink.v1beta1.ContainersPath containers_path = 5;
+     */
+    containersPath?: ContainersPath;
+    /**
      * @generated from protobuf field: indykite.auditsink.v1beta1.ConfigDetail before = 3;
      */
     before?: ConfigDetail;
@@ -144,6 +173,10 @@ export interface DeletedConfig {
      * @generated from protobuf field: indykite.auditsink.v1beta1.ConfigType type = 2;
      */
     type: ConfigType;
+    /**
+     * @generated from protobuf field: indykite.auditsink.v1beta1.ContainersPath containers_path = 3;
+     */
+    containersPath?: ContainersPath;
 }
 /**
  * @generated from protobuf message indykite.auditsink.v1beta1.ConfigDetail
@@ -1477,11 +1510,7 @@ export enum ConfigType {
     /**
      * @generated from protobuf enum value: CONFIG_TYPE_AUTHORIZATION_POLICY = 22;
      */
-    AUTHORIZATION_POLICY = 22,
-    /**
-     * @generated from protobuf enum value: CONFIG_TYPE_KNOWLEDGE_GRAPH_SCHEMA = 23;
-     */
-    KNOWLEDGE_GRAPH_SCHEMA = 23
+    AUTHORIZATION_POLICY = 22
 }
 /**
  * @generated from protobuf enum indykite.auditsink.v1beta1.OAuth2GrantType
@@ -1559,12 +1588,74 @@ export enum OAuth2TokenEndpointAuthMethod {
     NONE = 4
 }
 // @generated message type with reflection information, may provide speed optimized methods
+class ContainersPath$Type extends MessageType<ContainersPath> {
+    constructor() {
+        super("indykite.auditsink.v1beta1.ContainersPath", [
+            { no: 1, name: "customer_id", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 2, name: "application_space_id", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 3, name: "tenant_id", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+        ]);
+    }
+    create(value?: PartialMessage<ContainersPath>): ContainersPath {
+        const message = { customerId: "", applicationSpaceId: "", tenantId: "" };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<ContainersPath>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ContainersPath): ContainersPath {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string customer_id */ 1:
+                    message.customerId = reader.string();
+                    break;
+                case /* string application_space_id */ 2:
+                    message.applicationSpaceId = reader.string();
+                    break;
+                case /* string tenant_id */ 3:
+                    message.tenantId = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ContainersPath, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string customer_id = 1; */
+        if (message.customerId !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.customerId);
+        /* string application_space_id = 2; */
+        if (message.applicationSpaceId !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.applicationSpaceId);
+        /* string tenant_id = 3; */
+        if (message.tenantId !== "")
+            writer.tag(3, WireType.LengthDelimited).string(message.tenantId);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message indykite.auditsink.v1beta1.ContainersPath
+ */
+export const ContainersPath = new ContainersPath$Type();
+// @generated message type with reflection information, may provide speed optimized methods
 class CreatedConfig$Type extends MessageType<CreatedConfig> {
     constructor() {
         super("indykite.auditsink.v1beta1.CreatedConfig", [
             { no: 1, name: "id", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 2, name: "type", kind: "enum", T: () => ["indykite.auditsink.v1beta1.ConfigType", ConfigType, "CONFIG_TYPE_"] },
             { no: 3, name: "location", kind: "message", T: () => CreatedConfig_Location },
+            { no: 5, name: "containers_path", kind: "message", T: () => ContainersPath },
             { no: 4, name: "detail", kind: "message", T: () => ConfigDetail }
         ]);
     }
@@ -1588,6 +1679,9 @@ class CreatedConfig$Type extends MessageType<CreatedConfig> {
                     break;
                 case /* indykite.auditsink.v1beta1.CreatedConfig.Location location */ 3:
                     message.location = CreatedConfig_Location.internalBinaryRead(reader, reader.uint32(), options, message.location);
+                    break;
+                case /* indykite.auditsink.v1beta1.ContainersPath containers_path */ 5:
+                    message.containersPath = ContainersPath.internalBinaryRead(reader, reader.uint32(), options, message.containersPath);
                     break;
                 case /* indykite.auditsink.v1beta1.ConfigDetail detail */ 4:
                     message.detail = ConfigDetail.internalBinaryRead(reader, reader.uint32(), options, message.detail);
@@ -1613,6 +1707,9 @@ class CreatedConfig$Type extends MessageType<CreatedConfig> {
         /* indykite.auditsink.v1beta1.CreatedConfig.Location location = 3; */
         if (message.location)
             CreatedConfig_Location.internalBinaryWrite(message.location, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        /* indykite.auditsink.v1beta1.ContainersPath containers_path = 5; */
+        if (message.containersPath)
+            ContainersPath.internalBinaryWrite(message.containersPath, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
         /* indykite.auditsink.v1beta1.ConfigDetail detail = 4; */
         if (message.detail)
             ConfigDetail.internalBinaryWrite(message.detail, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
@@ -1686,6 +1783,7 @@ class ReadConfig$Type extends MessageType<ReadConfig> {
         super("indykite.auditsink.v1beta1.ReadConfig", [
             { no: 1, name: "id", kind: "scalar", oneof: "identifier", T: 9 /*ScalarType.STRING*/ },
             { no: 2, name: "name", kind: "message", oneof: "identifier", T: () => ReadConfig_NameIdentifier },
+            { no: 4, name: "containers_path", kind: "message", T: () => ContainersPath },
             { no: 3, name: "type", kind: "enum", T: () => ["indykite.auditsink.v1beta1.ConfigType", ConfigType, "CONFIG_TYPE_"] }
         ]);
     }
@@ -1713,6 +1811,9 @@ class ReadConfig$Type extends MessageType<ReadConfig> {
                         name: ReadConfig_NameIdentifier.internalBinaryRead(reader, reader.uint32(), options, (message.identifier as any).name)
                     };
                     break;
+                case /* indykite.auditsink.v1beta1.ContainersPath containers_path */ 4:
+                    message.containersPath = ContainersPath.internalBinaryRead(reader, reader.uint32(), options, message.containersPath);
+                    break;
                 case /* indykite.auditsink.v1beta1.ConfigType type */ 3:
                     message.type = reader.int32();
                     break;
@@ -1734,6 +1835,9 @@ class ReadConfig$Type extends MessageType<ReadConfig> {
         /* indykite.auditsink.v1beta1.ReadConfig.NameIdentifier name = 2; */
         if (message.identifier.oneofKind === "name")
             ReadConfig_NameIdentifier.internalBinaryWrite(message.identifier.name, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* indykite.auditsink.v1beta1.ContainersPath containers_path = 4; */
+        if (message.containersPath)
+            ContainersPath.internalBinaryWrite(message.containersPath, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
         /* indykite.auditsink.v1beta1.ConfigType type = 3; */
         if (message.type !== 0)
             writer.tag(3, WireType.Varint).int32(message.type);
@@ -1814,6 +1918,7 @@ class UpdatedConfig$Type extends MessageType<UpdatedConfig> {
         super("indykite.auditsink.v1beta1.UpdatedConfig", [
             { no: 1, name: "id", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 2, name: "type", kind: "enum", T: () => ["indykite.auditsink.v1beta1.ConfigType", ConfigType, "CONFIG_TYPE_"] },
+            { no: 5, name: "containers_path", kind: "message", T: () => ContainersPath },
             { no: 3, name: "before", kind: "message", T: () => ConfigDetail },
             { no: 4, name: "after", kind: "message", T: () => ConfigDetail }
         ]);
@@ -1835,6 +1940,9 @@ class UpdatedConfig$Type extends MessageType<UpdatedConfig> {
                     break;
                 case /* indykite.auditsink.v1beta1.ConfigType type */ 2:
                     message.type = reader.int32();
+                    break;
+                case /* indykite.auditsink.v1beta1.ContainersPath containers_path */ 5:
+                    message.containersPath = ContainersPath.internalBinaryRead(reader, reader.uint32(), options, message.containersPath);
                     break;
                 case /* indykite.auditsink.v1beta1.ConfigDetail before */ 3:
                     message.before = ConfigDetail.internalBinaryRead(reader, reader.uint32(), options, message.before);
@@ -1860,6 +1968,9 @@ class UpdatedConfig$Type extends MessageType<UpdatedConfig> {
         /* indykite.auditsink.v1beta1.ConfigType type = 2; */
         if (message.type !== 0)
             writer.tag(2, WireType.Varint).int32(message.type);
+        /* indykite.auditsink.v1beta1.ContainersPath containers_path = 5; */
+        if (message.containersPath)
+            ContainersPath.internalBinaryWrite(message.containersPath, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
         /* indykite.auditsink.v1beta1.ConfigDetail before = 3; */
         if (message.before)
             ConfigDetail.internalBinaryWrite(message.before, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
@@ -1881,7 +1992,8 @@ class DeletedConfig$Type extends MessageType<DeletedConfig> {
     constructor() {
         super("indykite.auditsink.v1beta1.DeletedConfig", [
             { no: 1, name: "id", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 2, name: "type", kind: "enum", T: () => ["indykite.auditsink.v1beta1.ConfigType", ConfigType, "CONFIG_TYPE_"] }
+            { no: 2, name: "type", kind: "enum", T: () => ["indykite.auditsink.v1beta1.ConfigType", ConfigType, "CONFIG_TYPE_"] },
+            { no: 3, name: "containers_path", kind: "message", T: () => ContainersPath }
         ]);
     }
     create(value?: PartialMessage<DeletedConfig>): DeletedConfig {
@@ -1902,6 +2014,9 @@ class DeletedConfig$Type extends MessageType<DeletedConfig> {
                 case /* indykite.auditsink.v1beta1.ConfigType type */ 2:
                     message.type = reader.int32();
                     break;
+                case /* indykite.auditsink.v1beta1.ContainersPath containers_path */ 3:
+                    message.containersPath = ContainersPath.internalBinaryRead(reader, reader.uint32(), options, message.containersPath);
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -1920,6 +2035,9 @@ class DeletedConfig$Type extends MessageType<DeletedConfig> {
         /* indykite.auditsink.v1beta1.ConfigType type = 2; */
         if (message.type !== 0)
             writer.tag(2, WireType.Varint).int32(message.type);
+        /* indykite.auditsink.v1beta1.ContainersPath containers_path = 3; */
+        if (message.containersPath)
+            ContainersPath.internalBinaryWrite(message.containersPath, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
