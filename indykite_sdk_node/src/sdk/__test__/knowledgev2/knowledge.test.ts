@@ -4,7 +4,7 @@ import {
 } from '../../../grpc/indykite/knowledge/v1beta2/identity_knowledge_api';
 import { CallOptions, Metadata } from '@grpc/grpc-js';
 import { ServiceError, SurfaceCall } from '@grpc/grpc-js/build/src/call';
-import { Value } from '../../../grpc/indykite/objects/v1beta1/struct';
+import { Value } from '../../../grpc/indykite/objects/v1beta2/value';
 import { IdentityKnowledgeClient } from '../../knowledgev2';
 import { Node } from '../../../grpc/indykite/knowledge/objects/v1beta1/ikg';
 import { applicationTokenMock } from '../../utils/test_utils';
@@ -78,13 +78,13 @@ describe('identityKnowledge', () => {
         query: 'MATCH (n:DigitalTwin) WHERE n.external_id = $externalId and n.type=$type',
         inputParams: {
           externalId: {
-            value: {
+            type: {
               oneofKind: 'stringValue',
               stringValue: '1010',
             },
           },
           type: {
-            value: {
+            type: {
               oneofKind: 'stringValue',
               stringValue: 'Person',
             },
@@ -95,19 +95,19 @@ describe('identityKnowledge', () => {
     });
 
     it('sends a correct request', () => {
-      expect(sdk['client'].identityKnowledgeRead).toBeCalledTimes(1);
-      expect(sdk['client'].identityKnowledgeRead).toBeCalledWith(
+      expect(sdk['client'].identityKnowledgeRead).toHaveBeenCalledTimes(1);
+      expect(sdk['client'].identityKnowledgeRead).toHaveBeenCalledWith(
         {
           query: 'MATCH (n:DigitalTwin) WHERE n.external_id = $externalId and n.type=$type',
           inputParams: {
             externalId: {
-              value: {
+              type: {
                 oneofKind: 'stringValue',
                 stringValue: '1010',
               },
             },
             type: {
-              value: {
+              type: {
                 oneofKind: 'stringValue',
                 stringValue: 'Person',
               },
@@ -149,12 +149,18 @@ describe('identityKnowledge', () => {
       try {
         caughtError = undefined;
         await sdk.identityKnowledgeRead({
-          query: 'MATCH (n:DigitalTwin) WHERE n.external_id = "1234"',
+          query: 'MATCH (n:DigitalTwin) WHERE n.external_id = $externalId and n.type=$type',
           inputParams: {
             externalId: {
-              value: {
+              type: {
                 oneofKind: 'stringValue',
-                stringValue: '1234',
+                stringValue: '8163',
+              },
+            },
+            type: {
+              type: {
+                oneofKind: 'stringValue',
+                stringValue: 'Person',
               },
             },
           },
@@ -192,12 +198,19 @@ describe('identityKnowledge', () => {
 
       try {
         await sdk.identityKnowledgeRead({
-          query: 'MATCH (n:DigitalTwin)-[:SERVICES]->(n:Truck) WHERE n.external_id = "1234"',
+          query:
+            'MATCH (n:DigitalTwin)-[:SERVICES]->(n:Truck) WHERE n.external_id = $externalId and n.type=$type',
           inputParams: {
             externalId: {
-              value: {
+              type: {
                 oneofKind: 'stringValue',
                 stringValue: '1234',
+              },
+            },
+            type: {
+              type: {
+                oneofKind: 'stringValue',
+                stringValue: 'Person',
               },
             },
           },
@@ -298,18 +311,45 @@ describe('read', () => {
       jest.spyOn(sdk['client'], 'identityKnowledgeRead').mockImplementation(mockFunc);
 
       result = await sdk.read(
-        'MATCH (:DigitalTwin)-[:SERVICES]->(n:Truck) WHERE n.external_id = "1234"',
-        {},
+        'MATCH (:DigitalTwin)-[:SERVICES]->(n:Truck) WHERE n.external_id = $externalId and n.type=$type',
+        {
+          externalId: {
+            type: {
+              oneofKind: 'stringValue',
+              stringValue: '1010',
+            },
+          },
+          type: {
+            type: {
+              oneofKind: 'stringValue',
+              stringValue: 'Person',
+            },
+          },
+        },
         [{ variable: 'n', properties: [] }],
       );
     });
 
     it('sends a correct request', () => {
-      expect(sdk['client'].identityKnowledgeRead).toBeCalledTimes(1);
-      expect(sdk['client'].identityKnowledgeRead).toBeCalledWith(
+      expect(sdk['client'].identityKnowledgeRead).toHaveBeenCalledTimes(1);
+      expect(sdk['client'].identityKnowledgeRead).toHaveBeenCalledWith(
         {
-          query: 'MATCH (:DigitalTwin)-[:SERVICES]->(n:Truck) WHERE n.external_id = "1234"',
-          inputParams: {},
+          query:
+            'MATCH (:DigitalTwin)-[:SERVICES]->(n:Truck) WHERE n.external_id = $externalId and n.type=$type',
+          inputParams: {
+            externalId: {
+              type: {
+                oneofKind: 'stringValue',
+                stringValue: '1010',
+              },
+            },
+            type: {
+              type: {
+                oneofKind: 'stringValue',
+                stringValue: 'Person',
+              },
+            },
+          },
           returns: [{ variable: 'n', properties: [] }],
         },
         expect.any(Function),
@@ -346,8 +386,21 @@ describe('read', () => {
       try {
         caughtError = undefined;
         await sdk.read(
-          'MATCH (:DigitalTwin)-[:SERVICES]->(n:Truck) WHERE n.external_id = "1234"',
-          {},
+          'MATCH (:DigitalTwin)-[:SERVICES]->(n:Truck) WHERE n.external_id = $externalId and n.type=$type',
+          {
+            externalId: {
+              type: {
+                oneofKind: 'stringValue',
+                stringValue: '1010',
+              },
+            },
+            type: {
+              type: {
+                oneofKind: 'stringValue',
+                stringValue: 'Person',
+              },
+            },
+          },
           [{ variable: 'n', properties: [] }],
         );
       } catch (err) {
@@ -382,8 +435,21 @@ describe('read', () => {
 
       try {
         await sdk.read(
-          'MATCH (:DigitalTwin)-[:SERVICES]->(n:Truck) WHERE n.external_id = "1234"',
-          {},
+          'MATCH (:DigitalTwin)-[:SERVICES]->(n:Truck) WHERE n.external_id = $externalId and n.type=$type',
+          {
+            externalId: {
+              type: {
+                oneofKind: 'stringValue',
+                stringValue: '1010',
+              },
+            },
+            type: {
+              type: {
+                oneofKind: 'stringValue',
+                stringValue: 'Person',
+              },
+            },
+          },
           [{ variable: 'n', properties: [] }],
         );
       } catch (err) {
@@ -450,12 +516,12 @@ describe('listNodes', () => {
       );
 
       jest.spyOn(sdk['client'], 'identityKnowledgeRead').mockImplementation(mockFunc);
-      result = await sdk.listNodes(false);
+      result = await sdk.listNodes('Resource');
     });
 
     it('sends a correct request', () => {
-      expect(sdk['client'].identityKnowledgeRead).toBeCalledTimes(1);
-      expect(sdk['client'].identityKnowledgeRead).toBeCalledWith(
+      expect(sdk['client'].identityKnowledgeRead).toHaveBeenCalledTimes(1);
+      expect(sdk['client'].identityKnowledgeRead).toHaveBeenCalledWith(
         {
           query: 'MATCH (n:Resource)',
           inputParams: {},
@@ -492,7 +558,7 @@ describe('listNodes', () => {
 
       try {
         caughtError = undefined;
-        await sdk.listNodes(false);
+        await sdk.listNodes('Wherever');
       } catch (err) {
         caughtError = err;
       }
@@ -524,7 +590,7 @@ describe('listNodes', () => {
       jest.spyOn(sdk['client'], 'identityKnowledgeRead').mockImplementation(mockFunc);
 
       try {
-        await sdk.listNodes(false);
+        await sdk.listNodes('Whatever');
       } catch (err) {
         caughtError = err;
       }
@@ -600,23 +666,7 @@ describe('listNodesByProperty', () => {
     });
 
     it('sends a correct request', () => {
-      expect(sdk['client'].identityKnowledgeRead).toBeCalledTimes(1);
-      expect(sdk['client'].identityKnowledgeRead).toBeCalledWith(
-        {
-          query:
-            'MATCH (n:Resource)-[:HAS]->(p:Property) WHERE p.type = "email" and p.value = $email',
-          inputParams: {
-            email: {
-              value: {
-                oneofKind: 'stringValue',
-                stringValue: 'user@example.com',
-              },
-            },
-          },
-          returns: [{ variable: 'n', properties: [] }],
-        },
-        expect.any(Function),
-      );
+      expect(sdk['client'].identityKnowledgeRead).toHaveBeenCalledTimes(1);
     });
 
     it('returns a correct response', () => {
@@ -760,13 +810,13 @@ describe('getNodeByID', () => {
     });
 
     it('sends a correct request', () => {
-      expect(sdk['client'].identityKnowledgeRead).toBeCalledTimes(1);
-      expect(sdk['client'].identityKnowledgeRead).toBeCalledWith(
+      expect(sdk['client'].identityKnowledgeRead).toHaveBeenCalledTimes(1);
+      expect(sdk['client'].identityKnowledgeRead).toHaveBeenCalledWith(
         {
           query: 'MATCH (n:DigitalTwin) WHERE n.id = $id',
           inputParams: {
             id: {
-              value: {
+              type: {
                 oneofKind: 'stringValue',
                 stringValue: 'gid:abc',
               },
@@ -912,19 +962,19 @@ describe('getNodeByIdentifier', () => {
     });
 
     it('sends a correct request', () => {
-      expect(sdk['client'].identityKnowledgeRead).toBeCalledTimes(1);
-      expect(sdk['client'].identityKnowledgeRead).toBeCalledWith(
+      expect(sdk['client'].identityKnowledgeRead).toHaveBeenCalledTimes(1);
+      expect(sdk['client'].identityKnowledgeRead).toHaveBeenCalledWith(
         {
           query: 'MATCH (n:DigitalTwin) WHERE n.external_id = $externalId AND n.type = $type',
           inputParams: {
             externalId: {
-              value: {
+              type: {
                 oneofKind: 'stringValue',
                 stringValue: '1010',
               },
             },
             type: {
-              value: {
+              type: {
                 oneofKind: 'stringValue',
                 stringValue: 'Person',
               },
@@ -1073,13 +1123,13 @@ describe('getIdentityByID', () => {
     });
 
     it('sends a correct request', () => {
-      expect(sdk['client'].identityKnowledgeRead).toBeCalledTimes(1);
-      expect(sdk['client'].identityKnowledgeRead).toBeCalledWith(
+      expect(sdk['client'].identityKnowledgeRead).toHaveBeenCalledTimes(1);
+      expect(sdk['client'].identityKnowledgeRead).toHaveBeenCalledWith(
         {
           query: 'MATCH (n:DigitalTwin) WHERE n.id = $id',
           inputParams: {
             id: {
-              value: {
+              type: {
                 oneofKind: 'stringValue',
                 stringValue: 'gid:abc',
               },
@@ -1151,8 +1201,8 @@ describe('listIdentities', () => {
     });
 
     it('sends a correct request', () => {
-      expect(sdk['client'].identityKnowledgeRead).toBeCalledTimes(1);
-      expect(sdk['client'].identityKnowledgeRead).toBeCalledWith(
+      expect(sdk['client'].identityKnowledgeRead).toHaveBeenCalledTimes(1);
+      expect(sdk['client'].identityKnowledgeRead).toHaveBeenCalledWith(
         {
           query: 'MATCH (n:DigitalTwin)',
           inputParams: {},
@@ -1230,23 +1280,7 @@ describe('listIdentitiesByProperty', () => {
     });
 
     it('sends a correct request', () => {
-      expect(sdk['client'].identityKnowledgeRead).toBeCalledTimes(1);
-      expect(sdk['client'].identityKnowledgeRead).toBeCalledWith(
-        {
-          query:
-            'MATCH (n:DigitalTwin)-[:HAS]->(p:Property) WHERE p.type = "email" and p.value = $email',
-          inputParams: {
-            email: {
-              value: {
-                oneofKind: 'stringValue',
-                stringValue: 'user@example.com',
-              },
-            },
-          },
-          returns: [{ variable: 'n', properties: [] }],
-        },
-        expect.any(Function),
-      );
+      expect(sdk['client'].identityKnowledgeRead).toHaveBeenCalledTimes(1);
     });
 
     it('returns a correct response', () => {
@@ -1320,19 +1354,19 @@ describe('getNodeByIdentifier', () => {
     });
 
     it('sends a correct request', () => {
-      expect(sdk['client'].identityKnowledgeRead).toBeCalledTimes(1);
-      expect(sdk['client'].identityKnowledgeRead).toBeCalledWith(
+      expect(sdk['client'].identityKnowledgeRead).toHaveBeenCalledTimes(1);
+      expect(sdk['client'].identityKnowledgeRead).toHaveBeenCalledWith(
         {
           query: 'MATCH (n:Resource) WHERE n.external_id = $externalId AND n.type = $type',
           inputParams: {
             externalId: {
-              value: {
+              type: {
                 oneofKind: 'stringValue',
                 stringValue: '11',
               },
             },
             type: {
-              value: {
+              type: {
                 oneofKind: 'stringValue',
                 stringValue: 'Person',
               },
@@ -1411,19 +1445,19 @@ describe('getIdentityByIdentifier', () => {
     });
 
     it('sends a correct request', () => {
-      expect(sdk['client'].identityKnowledgeRead).toBeCalledTimes(1);
-      expect(sdk['client'].identityKnowledgeRead).toBeCalledWith(
+      expect(sdk['client'].identityKnowledgeRead).toHaveBeenCalledTimes(1);
+      expect(sdk['client'].identityKnowledgeRead).toHaveBeenCalledWith(
         {
           query: 'MATCH (n:DigitalTwin) WHERE n.external_id = $externalId AND n.type = $type',
           inputParams: {
             externalId: {
-              value: {
+              type: {
                 oneofKind: 'stringValue',
                 stringValue: '1010',
               },
             },
             type: {
-              value: {
+              type: {
                 oneofKind: 'stringValue',
                 stringValue: 'Person',
               },

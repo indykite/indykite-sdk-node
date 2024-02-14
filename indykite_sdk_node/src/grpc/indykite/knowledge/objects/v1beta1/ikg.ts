@@ -26,7 +26,7 @@ import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MESSAGE_TYPE } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
-import { Value } from "../../../objects/v1beta1/struct";
+import { Value } from "../../../objects/v1beta2/value";
 import { Timestamp } from "../../../../google/protobuf/timestamp";
 /**
  * @generated from protobuf message indykite.knowledge.objects.v1beta1.Node
@@ -94,7 +94,7 @@ export interface Relationship {
      */
     updateTime?: Timestamp; // read-only
     /**
-     * @generated from protobuf field: map<string, indykite.objects.v1beta1.Value> properties = 7;
+     * @generated from protobuf field: map<string, indykite.objects.v1beta2.Value> properties = 7;
      */
     properties: {
         [key: string]: Value;
@@ -109,7 +109,7 @@ export interface Property {
      */
     type: string;
     /**
-     * @generated from protobuf field: indykite.objects.v1beta1.Value value = 2;
+     * @generated from protobuf field: indykite.objects.v1beta2.Value value = 2;
      */
     value?: Value; // todo: add metadata for properties
 }
@@ -252,7 +252,7 @@ class Relationship$Type extends MessageType<Relationship> {
                 case /* google.protobuf.Timestamp update_time */ 6:
                     message.updateTime = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.updateTime);
                     break;
-                case /* map<string, indykite.objects.v1beta1.Value> properties */ 7:
+                case /* map<string, indykite.objects.v1beta2.Value> properties */ 7:
                     this.binaryReadMap7(message.properties, reader, options);
                     break;
                 default:
@@ -301,7 +301,7 @@ class Relationship$Type extends MessageType<Relationship> {
         /* google.protobuf.Timestamp update_time = 6; */
         if (message.updateTime)
             Timestamp.internalBinaryWrite(message.updateTime, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
-        /* map<string, indykite.objects.v1beta1.Value> properties = 7; */
+        /* map<string, indykite.objects.v1beta2.Value> properties = 7; */
         for (let k of Object.keys(message.properties)) {
             writer.tag(7, WireType.LengthDelimited).fork().tag(1, WireType.LengthDelimited).string(k);
             writer.tag(2, WireType.LengthDelimited).fork();
@@ -341,7 +341,7 @@ class Property$Type extends MessageType<Property> {
                 case /* string type */ 1:
                     message.type = reader.string();
                     break;
-                case /* indykite.objects.v1beta1.Value value */ 2:
+                case /* indykite.objects.v1beta2.Value value */ 2:
                     message.value = Value.internalBinaryRead(reader, reader.uint32(), options, message.value);
                     break;
                 default:
@@ -359,7 +359,7 @@ class Property$Type extends MessageType<Property> {
         /* string type = 1; */
         if (message.type !== "")
             writer.tag(1, WireType.LengthDelimited).string(message.type);
-        /* indykite.objects.v1beta1.Value value = 2; */
+        /* indykite.objects.v1beta2.Value value = 2; */
         if (message.value)
             Value.internalBinaryWrite(message.value, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;

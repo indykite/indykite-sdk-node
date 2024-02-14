@@ -1,6 +1,4 @@
-import * as grpcIdentity from '../../grpc/indykite/identity/v1beta2/identity_management_api';
 import * as grpcModel from '../../grpc/indykite/identity/v1beta2/model';
-import { Utils } from '../utils/utils';
 import { DigitalTwinCore } from './digitaltwin';
 
 export type ProviderType =
@@ -57,35 +55,26 @@ export class TokenInfo {
   constructor(active?: boolean) {
     if (active !== undefined) this.active = active;
   }
+}
 
-  static deserialize(
-    message: grpcIdentity.TokenIntrospectResponse | grpcModel.IdentityTokenInfo,
-  ): TokenInfo {
-    const tokenInfo = 'active' in message ? new TokenInfo(message.active) : new TokenInfo();
-    const msgTokenInfo = 'active' in message ? message.tokenInfo : message;
-    if (msgTokenInfo) {
-      tokenInfo.appSpaceId = msgTokenInfo.appSpaceId;
-      tokenInfo.applicationId = msgTokenInfo.applicationId;
-      tokenInfo.authenticationTime = Utils.timestampToDate(msgTokenInfo.authenticationTime);
-      tokenInfo.customerId = msgTokenInfo.customerId;
-      tokenInfo.expireTime = Utils.timestampToDate(msgTokenInfo.expireTime);
-      if (msgTokenInfo.impersonated) {
-        const dt = msgTokenInfo.impersonated;
-        tokenInfo.impersonated = new DigitalTwinCore(
-          dt.id,
-          dt.tenantId,
-          dt.kind,
-          dt.state,
-          dt.tags,
-        );
-      }
-      tokenInfo.issueTime = Utils.timestampToDate(msgTokenInfo.issueTime);
-      if (msgTokenInfo.subject) {
-        const dt = msgTokenInfo.subject;
-        tokenInfo.subject = new DigitalTwinCore(dt.id, dt.tenantId, dt.kind, dt.state, dt.tags);
-      }
-      tokenInfo.providerInfo = msgTokenInfo.providerInfo.map((v) => ProviderInfo.deserialize(v));
-    }
-    return tokenInfo;
+export class IdentityTokenInfo {
+  active?: boolean;
+  tokenInfo?: {
+    oneofKind: 'identityToken';
+    identityToken: {
+      customerId?: string;
+      appSpaceId?: string;
+      applicationId?: string;
+      subject?: DigitalTwinCore;
+      impersonated?: DigitalTwinCore;
+      issueTime?: Date;
+      expireTime?: Date;
+      authenticationTime?: Date;
+      providerInfo?: ProviderInfo[];
+    };
+  };
+
+  constructor(active?: boolean) {
+    if (active !== undefined) this.active = active;
   }
 }

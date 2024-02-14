@@ -1333,7 +1333,11 @@ export enum AuthorizationPolicyConfig_Status {
     /**
      * @generated from protobuf enum value: STATUS_INACTIVE = 2;
      */
-    INACTIVE = 2
+    INACTIVE = 2,
+    /**
+     * @generated from protobuf enum value: STATUS_DRAFT = 3;
+     */
+    DRAFT = 3
 }
 /**
  * @generated from protobuf message indykite.auditsink.v1beta1.AssignConfigPermissions

@@ -46,6 +46,7 @@ import { PropertyMask } from "./attributes";
 import { DigitalTwinIdentifier } from "./model";
 import { MapValue } from "../../objects/v1beta1/struct";
 import { DigitalTwin } from "./model";
+import { ThirdPartyIdentityTokenInfo } from "./model";
 import { IdentityTokenInfo } from "./model";
 /**
  * @generated from protobuf message indykite.identity.v1beta2.TokenIntrospectRequest
@@ -74,9 +75,23 @@ export interface TokenIntrospectResponse {
      */
     active: boolean;
     /**
-     * @generated from protobuf field: indykite.identity.v1beta2.IdentityTokenInfo token_info = 2;
+     * @generated from protobuf oneof: token_info
      */
-    tokenInfo?: IdentityTokenInfo;
+    tokenInfo: {
+        oneofKind: "identityToken";
+        /**
+         * @generated from protobuf field: indykite.identity.v1beta2.IdentityTokenInfo identity_token = 2;
+         */
+        identityToken: IdentityTokenInfo;
+    } | {
+        oneofKind: "thirdPartyIdentityToken";
+        /**
+         * @generated from protobuf field: indykite.identity.v1beta2.ThirdPartyIdentityTokenInfo third_party_identity_token = 3;
+         */
+        thirdPartyIdentityToken: ThirdPartyIdentityTokenInfo;
+    } | {
+        oneofKind: undefined;
+    };
 }
 /**
  * @generated from protobuf message indykite.identity.v1beta2.StartForgottenPasswordFlowRequest
@@ -1250,11 +1265,12 @@ class TokenIntrospectResponse$Type extends MessageType<TokenIntrospectResponse> 
     constructor() {
         super("indykite.identity.v1beta2.TokenIntrospectResponse", [
             { no: 1, name: "active", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 2, name: "token_info", kind: "message", T: () => IdentityTokenInfo }
+            { no: 2, name: "identity_token", kind: "message", oneof: "tokenInfo", T: () => IdentityTokenInfo },
+            { no: 3, name: "third_party_identity_token", kind: "message", oneof: "tokenInfo", T: () => ThirdPartyIdentityTokenInfo }
         ]);
     }
     create(value?: PartialMessage<TokenIntrospectResponse>): TokenIntrospectResponse {
-        const message = { active: false };
+        const message = { active: false, tokenInfo: { oneofKind: undefined } };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<TokenIntrospectResponse>(this, message, value);
@@ -1268,8 +1284,17 @@ class TokenIntrospectResponse$Type extends MessageType<TokenIntrospectResponse> 
                 case /* bool active */ 1:
                     message.active = reader.bool();
                     break;
-                case /* indykite.identity.v1beta2.IdentityTokenInfo token_info */ 2:
-                    message.tokenInfo = IdentityTokenInfo.internalBinaryRead(reader, reader.uint32(), options, message.tokenInfo);
+                case /* indykite.identity.v1beta2.IdentityTokenInfo identity_token */ 2:
+                    message.tokenInfo = {
+                        oneofKind: "identityToken",
+                        identityToken: IdentityTokenInfo.internalBinaryRead(reader, reader.uint32(), options, (message.tokenInfo as any).identityToken)
+                    };
+                    break;
+                case /* indykite.identity.v1beta2.ThirdPartyIdentityTokenInfo third_party_identity_token */ 3:
+                    message.tokenInfo = {
+                        oneofKind: "thirdPartyIdentityToken",
+                        thirdPartyIdentityToken: ThirdPartyIdentityTokenInfo.internalBinaryRead(reader, reader.uint32(), options, (message.tokenInfo as any).thirdPartyIdentityToken)
+                    };
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -1286,9 +1311,12 @@ class TokenIntrospectResponse$Type extends MessageType<TokenIntrospectResponse> 
         /* bool active = 1; */
         if (message.active !== false)
             writer.tag(1, WireType.Varint).bool(message.active);
-        /* indykite.identity.v1beta2.IdentityTokenInfo token_info = 2; */
-        if (message.tokenInfo)
-            IdentityTokenInfo.internalBinaryWrite(message.tokenInfo, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* indykite.identity.v1beta2.IdentityTokenInfo identity_token = 2; */
+        if (message.tokenInfo.oneofKind === "identityToken")
+            IdentityTokenInfo.internalBinaryWrite(message.tokenInfo.identityToken, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* indykite.identity.v1beta2.ThirdPartyIdentityTokenInfo third_party_identity_token = 3; */
+        if (message.tokenInfo.oneofKind === "thirdPartyIdentityToken")
+            ThirdPartyIdentityTokenInfo.internalBinaryWrite(message.tokenInfo.thirdPartyIdentityToken, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

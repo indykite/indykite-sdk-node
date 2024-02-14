@@ -30,7 +30,7 @@ import { MessageType } from "@protobuf-ts/runtime";
 import { Relationship } from "../objects/v1beta1/ikg";
 import { Node } from "../objects/v1beta1/ikg";
 import { Return } from "./model";
-import { InputParam } from "./model";
+import { Value } from "../../objects/v1beta2/value";
 /**
  * @generated from protobuf message indykite.knowledge.v1beta2.IdentityKnowledgeReadRequest
  */
@@ -40,10 +40,10 @@ export interface IdentityKnowledgeReadRequest {
      */
     query: string;
     /**
-     * @generated from protobuf field: map<string, indykite.knowledge.v1beta2.InputParam> input_params = 2;
+     * @generated from protobuf field: map<string, indykite.objects.v1beta2.Value> input_params = 2;
      */
     inputParams: {
-        [key: string]: InputParam;
+        [key: string]: Value;
     };
     /**
      * @generated from protobuf field: repeated indykite.knowledge.v1beta2.Return returns = 3;
@@ -68,7 +68,7 @@ class IdentityKnowledgeReadRequest$Type extends MessageType<IdentityKnowledgeRea
     constructor() {
         super("indykite.knowledge.v1beta2.IdentityKnowledgeReadRequest", [
             { no: 1, name: "query", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "512000" } } } },
-            { no: 2, name: "input_params", kind: "map", K: 9 /*ScalarType.STRING*/, V: { kind: "message", T: () => InputParam } },
+            { no: 2, name: "input_params", kind: "map", K: 9 /*ScalarType.STRING*/, V: { kind: "message", T: () => Value } },
             { no: 3, name: "returns", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Return, options: { "validate.rules": { repeated: { minItems: "1", maxItems: "20" } } } }
         ]);
     }
@@ -87,7 +87,7 @@ class IdentityKnowledgeReadRequest$Type extends MessageType<IdentityKnowledgeRea
                 case /* string query */ 1:
                     message.query = reader.string();
                     break;
-                case /* map<string, indykite.knowledge.v1beta2.InputParam> input_params */ 2:
+                case /* map<string, indykite.objects.v1beta2.Value> input_params */ 2:
                     this.binaryReadMap2(message.inputParams, reader, options);
                     break;
                 case /* repeated indykite.knowledge.v1beta2.Return returns */ 3:
@@ -113,22 +113,22 @@ class IdentityKnowledgeReadRequest$Type extends MessageType<IdentityKnowledgeRea
                     key = reader.string();
                     break;
                 case 2:
-                    val = InputParam.internalBinaryRead(reader, reader.uint32(), options);
+                    val = Value.internalBinaryRead(reader, reader.uint32(), options);
                     break;
                 default: throw new globalThis.Error("unknown map entry field for field indykite.knowledge.v1beta2.IdentityKnowledgeReadRequest.input_params");
             }
         }
-        map[key ?? ""] = val ?? InputParam.create();
+        map[key ?? ""] = val ?? Value.create();
     }
     internalBinaryWrite(message: IdentityKnowledgeReadRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* string query = 1; */
         if (message.query !== "")
             writer.tag(1, WireType.LengthDelimited).string(message.query);
-        /* map<string, indykite.knowledge.v1beta2.InputParam> input_params = 2; */
+        /* map<string, indykite.objects.v1beta2.Value> input_params = 2; */
         for (let k of Object.keys(message.inputParams)) {
             writer.tag(2, WireType.LengthDelimited).fork().tag(1, WireType.LengthDelimited).string(k);
             writer.tag(2, WireType.LengthDelimited).fork();
-            InputParam.internalBinaryWrite(message.inputParams[k], writer, options);
+            Value.internalBinaryWrite(message.inputParams[k], writer, options);
             writer.join().join();
         }
         /* repeated indykite.knowledge.v1beta2.Return returns = 3; */

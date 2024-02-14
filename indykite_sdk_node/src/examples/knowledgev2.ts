@@ -1,5 +1,5 @@
 import { IdentityKnowledgeClient } from '../sdk/knowledgev2';
-import { Value } from '../grpc/indykite/objects/v1beta1/struct';
+import { Value } from '../grpc/indykite/objects/v1beta2/value';
 import { Utils } from '../sdk/utils/utils';
 
 IdentityKnowledgeClient.createInstance().then((sdk) => {
