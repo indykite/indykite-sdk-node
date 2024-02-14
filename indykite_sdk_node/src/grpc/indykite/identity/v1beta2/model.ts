@@ -26,6 +26,7 @@ import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MESSAGE_TYPE } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
+import { Value as Value$ } from "../../objects/v1beta2/value";
 import { Struct } from "../../../google/protobuf/struct";
 import { MapValue } from "../../objects/v1beta1/struct";
 import { Value } from "../../../google/protobuf/struct";
@@ -534,6 +535,68 @@ export interface IdentityTokenInfo {
      * @generated from protobuf field: google.protobuf.Struct token_claims = 11;
      */
     tokenClaims?: Struct;
+}
+/**
+ * @generated from protobuf message indykite.identity.v1beta2.ThirdPartyIdentityTokenInfo
+ */
+export interface ThirdPartyIdentityTokenInfo {
+    /**
+     * UUID of the top level Customer.
+     *
+     * @generated from protobuf field: string customer_id = 1;
+     */
+    customerId: string;
+    /**
+     * UUID of Application Space in Customer.
+     *
+     * @generated from protobuf field: string app_space_id = 2;
+     */
+    appSpaceId: string;
+    /**
+     * DigitalTwin of the Subject in Application Space.
+     *
+     * @generated from protobuf field: indykite.identity.v1beta2.DigitalTwin subject = 3;
+     */
+    subject?: DigitalTwin;
+    /**
+     * DigitalTwin of impersonated subject in Application Space.
+     * See: https://datatracker.ietf.org/doc/html/rfc8693
+     *
+     * @generated from protobuf field: indykite.identity.v1beta2.DigitalTwin impersonated = 4;
+     */
+    impersonated?: DigitalTwin;
+    /**
+     * Original issuer of 3rd party token.
+     *
+     * @generated from protobuf field: string original_issuer = 5;
+     */
+    originalIssuer: string;
+    /**
+     * Original subject, that was specified in the token.
+     *
+     * @generated from protobuf field: string original_subject = 6;
+     */
+    originalSubject: string;
+    /**
+     * IssueTime indicating when this token was originally issued.
+     *
+     * @generated from protobuf field: google.protobuf.Timestamp issue_time = 7;
+     */
+    issueTime?: Timestamp;
+    /**
+     * Expiration time of token
+     *
+     * @generated from protobuf field: google.protobuf.Timestamp expire_time = 8;
+     */
+    expireTime?: Timestamp;
+    /**
+     * Token claims is a collection of all claims that were specified in the original token.
+     *
+     * @generated from protobuf field: map<string, indykite.objects.v1beta2.Value> token_claims = 9;
+     */
+    tokenClaims: {
+        [key: string]: Value$;
+    };
 }
 /**
  * ProviderInfo contains information about credential which can be used to
@@ -1749,6 +1812,129 @@ class IdentityTokenInfo$Type extends MessageType<IdentityTokenInfo> {
  * @generated MessageType for protobuf message indykite.identity.v1beta2.IdentityTokenInfo
  */
 export const IdentityTokenInfo = new IdentityTokenInfo$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ThirdPartyIdentityTokenInfo$Type extends MessageType<ThirdPartyIdentityTokenInfo> {
+    constructor() {
+        super("indykite.identity.v1beta2.ThirdPartyIdentityTokenInfo", [
+            { no: 1, name: "customer_id", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 2, name: "app_space_id", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 3, name: "subject", kind: "message", T: () => DigitalTwin },
+            { no: 4, name: "impersonated", kind: "message", T: () => DigitalTwin },
+            { no: 5, name: "original_issuer", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 6, name: "original_subject", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 7, name: "issue_time", kind: "message", T: () => Timestamp },
+            { no: 8, name: "expire_time", kind: "message", T: () => Timestamp },
+            { no: 9, name: "token_claims", kind: "map", K: 9 /*ScalarType.STRING*/, V: { kind: "message", T: () => Value$ } }
+        ]);
+    }
+    create(value?: PartialMessage<ThirdPartyIdentityTokenInfo>): ThirdPartyIdentityTokenInfo {
+        const message = { customerId: "", appSpaceId: "", originalIssuer: "", originalSubject: "", tokenClaims: {} };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<ThirdPartyIdentityTokenInfo>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ThirdPartyIdentityTokenInfo): ThirdPartyIdentityTokenInfo {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string customer_id */ 1:
+                    message.customerId = reader.string();
+                    break;
+                case /* string app_space_id */ 2:
+                    message.appSpaceId = reader.string();
+                    break;
+                case /* indykite.identity.v1beta2.DigitalTwin subject */ 3:
+                    message.subject = DigitalTwin.internalBinaryRead(reader, reader.uint32(), options, message.subject);
+                    break;
+                case /* indykite.identity.v1beta2.DigitalTwin impersonated */ 4:
+                    message.impersonated = DigitalTwin.internalBinaryRead(reader, reader.uint32(), options, message.impersonated);
+                    break;
+                case /* string original_issuer */ 5:
+                    message.originalIssuer = reader.string();
+                    break;
+                case /* string original_subject */ 6:
+                    message.originalSubject = reader.string();
+                    break;
+                case /* google.protobuf.Timestamp issue_time */ 7:
+                    message.issueTime = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.issueTime);
+                    break;
+                case /* google.protobuf.Timestamp expire_time */ 8:
+                    message.expireTime = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.expireTime);
+                    break;
+                case /* map<string, indykite.objects.v1beta2.Value> token_claims */ 9:
+                    this.binaryReadMap9(message.tokenClaims, reader, options);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    private binaryReadMap9(map: ThirdPartyIdentityTokenInfo["tokenClaims"], reader: IBinaryReader, options: BinaryReadOptions): void {
+        let len = reader.uint32(), end = reader.pos + len, key: keyof ThirdPartyIdentityTokenInfo["tokenClaims"] | undefined, val: ThirdPartyIdentityTokenInfo["tokenClaims"][any] | undefined;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case 1:
+                    key = reader.string();
+                    break;
+                case 2:
+                    val = Value$.internalBinaryRead(reader, reader.uint32(), options);
+                    break;
+                default: throw new globalThis.Error("unknown map entry field for field indykite.identity.v1beta2.ThirdPartyIdentityTokenInfo.token_claims");
+            }
+        }
+        map[key ?? ""] = val ?? Value$.create();
+    }
+    internalBinaryWrite(message: ThirdPartyIdentityTokenInfo, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string customer_id = 1; */
+        if (message.customerId !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.customerId);
+        /* string app_space_id = 2; */
+        if (message.appSpaceId !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.appSpaceId);
+        /* indykite.identity.v1beta2.DigitalTwin subject = 3; */
+        if (message.subject)
+            DigitalTwin.internalBinaryWrite(message.subject, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        /* indykite.identity.v1beta2.DigitalTwin impersonated = 4; */
+        if (message.impersonated)
+            DigitalTwin.internalBinaryWrite(message.impersonated, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+        /* string original_issuer = 5; */
+        if (message.originalIssuer !== "")
+            writer.tag(5, WireType.LengthDelimited).string(message.originalIssuer);
+        /* string original_subject = 6; */
+        if (message.originalSubject !== "")
+            writer.tag(6, WireType.LengthDelimited).string(message.originalSubject);
+        /* google.protobuf.Timestamp issue_time = 7; */
+        if (message.issueTime)
+            Timestamp.internalBinaryWrite(message.issueTime, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
+        /* google.protobuf.Timestamp expire_time = 8; */
+        if (message.expireTime)
+            Timestamp.internalBinaryWrite(message.expireTime, writer.tag(8, WireType.LengthDelimited).fork(), options).join();
+        /* map<string, indykite.objects.v1beta2.Value> token_claims = 9; */
+        for (let k of Object.keys(message.tokenClaims)) {
+            writer.tag(9, WireType.LengthDelimited).fork().tag(1, WireType.LengthDelimited).string(k);
+            writer.tag(2, WireType.LengthDelimited).fork();
+            Value$.internalBinaryWrite(message.tokenClaims[k], writer, options);
+            writer.join().join();
+        }
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message indykite.identity.v1beta2.ThirdPartyIdentityTokenInfo
+ */
+export const ThirdPartyIdentityTokenInfo = new ThirdPartyIdentityTokenInfo$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class ProviderInfo$Type extends MessageType<ProviderInfo> {
     constructor() {

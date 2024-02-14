@@ -1,8 +1,9 @@
 import { SdkError, SdkErrorCode, SkdErrorText } from './error';
 import { SdkClient } from './client/client';
 import { IdentityKnowledgeAPIClient as IdentityKnowledgeReadAPIClient } from '../grpc/indykite/knowledge/v1beta2/identity_knowledge_api.grpc-client';
-import { Return, InputParam } from '../grpc/indykite/knowledge/v1beta2/model';
+import { Return } from '../grpc/indykite/knowledge/v1beta2/model';
 import { Node, Property } from '../grpc/indykite/knowledge/objects/v1beta1/ikg';
+import { Value } from '../grpc/indykite/objects/v1beta2/value';
 import {
   IdentityKnowledgeReadRequest,
   IdentityKnowledgeReadResponse,
@@ -89,12 +90,12 @@ export class IdentityKnowledgeClient {
   }
 
   /**
-   * Read sends a READ operation to the Identity Knowledge API, with the desired path and optional conditions.
+   * Read sends a READ operation to the Identity Knowledge API, with the desired query and input params
    * @since 0.6.0
    */
   read(
     query: string,
-    inputParams: { [key: string]: InputParam },
+    inputParams: { [key: string]: Value },
     returns: Return[],
   ): Promise<IdentityKnowledgeReadResponse> {
     const request: IdentityKnowledgeReadRequest = {
@@ -131,7 +132,7 @@ export class IdentityKnowledgeClient {
         ? `MATCH (n:DigitalTwin) WHERE n.id = $id`
         : `MATCH (n:Resource) WHERE n.id = $id`,
       inputParams: {
-        id: InputParam.fromJson(Utils.objectToJsonValue(id)),
+        id: Value.fromJson(Utils.objectToJsonValue(id)),
       },
       returns: [{ variable: 'n', properties: [] }],
     } as IdentityKnowledgeReadRequest;
@@ -151,8 +152,8 @@ export class IdentityKnowledgeClient {
         ? `MATCH (n:DigitalTwin) WHERE n.external_id = $externalId AND n.type = $type`
         : `MATCH (n:Resource) WHERE n.external_id = $externalId AND n.type = $type`,
       inputParams: {
-        externalId: InputParam.fromJson(Utils.objectToJsonValue(identifier.externalId)),
-        type: InputParam.fromJson(Utils.objectToJsonValue(identifier.type)),
+        externalId: Value.fromJson(Utils.objectToJsonValue(identifier.externalId)),
+        type: Value.fromJson(Utils.objectToJsonValue(identifier.type)),
       },
       returns: [{ variable: 'n', properties: [] }],
     } as IdentityKnowledgeReadRequest;
@@ -177,16 +178,16 @@ export class IdentityKnowledgeClient {
    * @since 0.6.0
    */
   listIdentities(): Promise<Node[]> {
-    return this.listNodes(true);
+    return this.listNodes('DigitalTwin');
   }
 
   /**
    * ListNodes is a helper function that lists all nodes by type, regardless of whether they are Identities
    * or Resources. The nodeType argument should be in PascalCase.
    */
-  listNodes(isIdentity?: boolean): Promise<Node[]> {
+  listNodes(nodeType: string): Promise<Node[]> {
     const request: IdentityKnowledgeReadRequest = {
-      query: isIdentity ? `MATCH (n:DigitalTwin)` : `MATCH (n:Resource)`,
+      query: `MATCH (n:${nodeType})`,
       inputParams: {},
       returns: [{ variable: 'n', properties: [] }],
     } as IdentityKnowledgeReadRequest;

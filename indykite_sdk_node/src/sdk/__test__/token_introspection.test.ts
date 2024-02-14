@@ -11,9 +11,8 @@ import {
   ProviderType,
 } from '../../grpc/indykite/identity/v1beta2/model';
 import { IdentityClient } from '../identity';
-import { TokenInfo } from '../model';
+import { IdentityTokenInfo } from '../model';
 import { applicationTokenMock } from '../utils/test_utils';
-import { Utils } from '../utils/utils';
 
 let sdk: IdentityClient;
 const userToken = 'user-token-token-token-token-token';
@@ -50,9 +49,18 @@ describe('Introspection', () => {
   });
 
   it('Invalid token', async () => {
-    const mockResponse: TokenIntrospectResponse = {
-      active: false,
-    };
+    const mockResponse = TokenIntrospectResponse.fromJson({
+      active: true,
+      identityToken: {
+        customerId: '',
+        appSpaceId: '',
+        applicationId: '',
+        authenticationTime: new Date().toISOString(),
+        expireTime: new Date(Date.now() + 1 * 3600 * 1000).toISOString(),
+        issueTime: new Date().toISOString(),
+        providerInfo: [{ type: ProviderType.PASSWORD, issuer: 'indykite.id' }],
+      },
+    });
     const mockFunc = jest.fn(
       (
         request: TokenIntrospectRequest,
@@ -70,7 +78,7 @@ describe('Introspection', () => {
 
     const resp = await sdk.introspectToken('BAD_TOKEN');
     expect(mockFunc).toHaveBeenCalled();
-    expect(resp).toBeInstanceOf(TokenInfo);
+    expect(resp.customerId).toBeUndefined();
   });
 
   it('Valid token', () => {
@@ -94,21 +102,16 @@ describe('Introspection', () => {
     ['subject', 'impersonated'].forEach(async (dtType) => {
       const mockResponse = TokenIntrospectResponse.fromJson({
         active: true,
-        tokenInfo: {
-          appSpaceId,
-          applicationId,
-          customerId,
+        identityToken: {
+          customerId: customerId,
+          appSpaceId: appSpaceId,
+          applicationId: applicationId,
           authenticationTime: new Date().toISOString(),
           expireTime: new Date(Date.now() + 1 * 3600 * 1000).toISOString(),
           issueTime: new Date().toISOString(),
           providerInfo: [{ type: ProviderType.PASSWORD, issuer: 'indykite.id' }],
         },
       });
-      if (mockResponse.tokenInfo) {
-        const ext: { [key: string]: unknown } = {};
-        ext[dtType] = dt;
-        mockResponse.tokenInfo = Object.assign(mockResponse.tokenInfo, ext);
-      }
 
       const mockFunc = jest.fn(
         (
@@ -123,27 +126,36 @@ describe('Introspection', () => {
         },
       );
       jest.spyOn(sdk['client'], 'tokenIntrospect').mockImplementation(mockFunc);
-      if (mockResponse.tokenInfo) {
+      const mockExt = mockResponse.tokenInfo.oneofKind;
+
+      if (mockExt == 'identityToken') {
         let expected = {
           active: mockResponse.active,
-          appSpaceId,
-          applicationId: mockResponse.tokenInfo.applicationId,
-          customerId: mockResponse.tokenInfo.customerId,
-          authenticationTime: Utils.timestampToDate(mockResponse.tokenInfo.authenticationTime),
-          expireTime: Utils.timestampToDate(mockResponse.tokenInfo.expireTime),
-          issueTime: Utils.timestampToDate(mockResponse.tokenInfo.issueTime),
-
-          providerInfo: [{ type: 'password', issuer: 'indykite.id' }],
-        } as TokenInfo;
+          tokenInfo: {
+            oneofKind: 'identityToken',
+            identityToken: {
+              customerId: mockResponse.tokenInfo.identityToken.customerId,
+              appSpaceId: mockResponse.tokenInfo.identityToken.appSpaceId,
+              applicationId: mockResponse.tokenInfo.identityToken.applicationId,
+              authenticationTime: mockResponse.tokenInfo.identityToken.authenticationTime,
+              expireTime: mockResponse.tokenInfo.identityToken.expireTime,
+              issueTime: mockResponse.tokenInfo.identityToken.issueTime,
+              providerInfo: mockResponse.tokenInfo.identityToken.providerInfo,
+            },
+          } as IdentityTokenInfo,
+        };
         const ext: { [key: string]: unknown } = {};
         ext[dtType] = expectedDt;
 
         expected = Object.assign(expected, ext);
-
         const resp = await sdk.introspectToken(userToken);
         expect(mockFunc).toHaveBeenCalled();
-        expect(resp).toBeInstanceOf(TokenInfo);
-        expect(resp).toEqual(expected);
+        expect(resp.active).toEqual(expected.active);
+        expect(resp.customerId).toEqual(expected.tokenInfo.tokenInfo?.identityToken.customerId);
+        expect(resp.providerInfo).toEqual(expected.tokenInfo.tokenInfo?.identityToken.providerInfo);
+        expect(resp.authenticationTime).toEqual(
+          expected.tokenInfo.tokenInfo?.identityToken.authenticationTime,
+        );
       }
     });
   });

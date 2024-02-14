@@ -100,7 +100,7 @@ export class IdentityClient {
             reject(new SdkError(SdkErrorCode.SDK_CODE_1, 'Missing token introspect response'));
             return;
           }
-          resolve(sdkTypes.TokenInfo.deserialize(response));
+          resolve(response);
         } catch (err) {
           reject(err);
         }
