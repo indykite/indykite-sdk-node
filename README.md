@@ -21,7 +21,7 @@ Use these instructions to install the SDK and configure your environment.
 
 ### Prerequisites
 * An installation of Node.js. See https://nodejs.org for instructions for how to install Node.js on your specific operating system.
-* AppAgent credentials and Service account credentials. These can be obtained from the [Admin Console](https://indykite.id).
+* AppAgent credentials and Service account credentials. These can be obtained from the [Hub](https://indykite.id).
 
 
 ### Installation 
