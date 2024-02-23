@@ -1,4 +1,28 @@
 # Changelog
+## [0.6.0](https://github.com/indykite/indykite-sdk-node/compare/v0.5.0...v0.6.0) (2024-02-23)
+
+
+### ⚠ BREAKING CHANGES
+
+* ENG-2910
+* ENG-2650
+* ENG-2651
+* ENG-2457
+
+### Features
+
+* add knowledge v2 ([1287666](https://github.com/indykite/indykite-sdk-node/commit/12876667372df30205b45419ceec25ef8642a492))
+* add objectsv2 ([35dfc83](https://github.com/indykite/indykite-sdk-node/commit/35dfc83f3b976443e974802cf02a1b68016c6e33))
+* deprecate and remove unused params ([386209f](https://github.com/indykite/indykite-sdk-node/commit/386209fd6cf9601d71493af249dcd736fd7b291b))
+* merge 2 identity services ([f5f5ae9](https://github.com/indykite/indykite-sdk-node/commit/f5f5ae980aa4e5c598156dc9fcbf857b830d74be))
+* merge config services ([87ebb94](https://github.com/indykite/indykite-sdk-node/commit/87ebb945ec1f435cd675e23fb8d4f56d9070629b))
+* replace ingest v2 by ingestv3 ([59bcf21](https://github.com/indykite/indykite-sdk-node/commit/59bcf2107936ec10ba07c908bfa95d4451247932))
+
+
+### Bug Fixes
+
+* repair doc-generate ([b1c76f6](https://github.com/indykite/indykite-sdk-node/commit/b1c76f65ad0a9a69e161b5e531a2cfccd3980ee4))
+
 ## [0.5.0](https://github.com/indykite/indykite-sdk-node/compare/v0.4.7...v0.5.0) (2023-12-14)
 
 
