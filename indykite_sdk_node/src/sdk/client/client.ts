@@ -14,7 +14,7 @@ import { SdkErrorCode, SdkError } from '../error';
 import { LIB_VERSION } from '../../version';
 import { IdentityManagementAPIClient } from '../../grpc/indykite/identity/v1beta2/identity_management_api.grpc-client';
 import { ConfigManagementAPIClient } from '../../grpc/indykite/config/v1beta1/config_management_api.grpc-client';
-import { IngestAPIClient } from '../../grpc/indykite/ingest/v1beta2/ingest_api.grpc-client';
+import { IngestAPIClient } from '../../grpc/indykite/ingest/v1beta3/ingest_api.grpc-client';
 import { ApplicationCredential } from '../utils/application_credential';
 import { ServiceAccountCredential } from '../utils/service_account_credential';
 import { AuthorizationAPIClient } from '../../grpc/indykite/authorization/v1beta1/authorization_service.grpc-client';

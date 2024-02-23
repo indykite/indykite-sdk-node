@@ -2,32 +2,48 @@ import { IngestClient, IngestRecord } from '../sdk/ingest';
 
 IngestClient.createInstance().then((sdk) => {
   const input = [
-    IngestRecord.upsert('recordId-330')
-      .node.digitalTwin({
+    IngestRecord.upsert('recordId-331')
+      .node({
         id: '',
         externalId: '748596',
         type: 'Person',
-        properties: {
-          employeeId: '65241',
-          name: 'Ren Molecule',
-          email: 'ren@yahoo.uk',
-        },
+        isIdentity: true,
+        properties: [
+          {
+            type: 'email',
+            value: {
+              type: {
+                oneofKind: 'stringValue',
+                stringValue: 'email@example.com',
+              },
+            },
+          },
+        ],
       })
       .getRecord(),
-    IngestRecord.upsert('recordId-340')
-      .node.resource({
+    IngestRecord.upsert('recordId-341')
+      .node({
         externalId: '986532',
         type: 'Organization',
-        properties: {
-          name: 'west',
-        },
+        properties: [
+          {
+            type: 'name',
+            value: {
+              type: {
+                oneofKind: 'stringValue',
+                stringValue: 'west',
+              },
+            },
+          },
+        ],
       })
       .getRecord(),
-    IngestRecord.upsert('recordId-350')
-      .relation({
-        sourceMatch: { externalId: '748596', type: 'Individual' },
-        targetMatch: { externalId: '986532', type: 'Organization' },
+    IngestRecord.upsert('recordId-351')
+      .relationship({
+        source: { externalId: '748596', type: 'Individual' },
+        target: { externalId: '986532', type: 'Organization' },
         type: 'BELONGS',
+        properties:[]
       })
       .getRecord(),
   ];
@@ -37,12 +53,20 @@ IngestClient.createInstance().then((sdk) => {
   console.log(JSON.stringify(output));
   sdk
     .ingestRecord(
-      IngestRecord.upsert('recordId-36').node.resource({
+      IngestRecord.upsert('recordId-36').node({
         externalId: 'loollolol',
         type: 'ParkingLot',
-        properties: {
-          customProp: '42',
-        },
+        properties: [
+          {
+            type: 'customprop',
+            value: {
+              type: {
+                oneofKind: 'integerValue',
+                integerValue: '42',
+              },
+            },
+          },
+        ],
       }),
     )
     .then((response) => {

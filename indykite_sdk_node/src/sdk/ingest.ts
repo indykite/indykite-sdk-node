@@ -1,26 +1,24 @@
 import { SdkClient } from './client/client';
-import { Utils } from './utils/utils';
-import { IngestAPIClient } from '../grpc/indykite/ingest/v1beta2/ingest_api.grpc-client';
+import { IngestAPIClient } from '../grpc/indykite/ingest/v1beta3/ingest_api.grpc-client';
 import {
   IngestRecordRequest,
   IngestRecordResponse,
   StreamRecordsRequest,
   StreamRecordsResponse,
-} from '../grpc/indykite/ingest/v1beta2/ingest_api';
+} from '../grpc/indykite/ingest/v1beta3/ingest_api';
 import { Readable } from 'stream';
 import { SdkError, SdkErrorCode, SkdErrorText } from './error';
 import { IndexFixer, streamKeeper } from './utils/stream';
-import { Record as RecordModel } from '../grpc/indykite/ingest/v1beta2/model';
+import { NodeMatch, Record as RecordModel } from '../grpc/indykite/ingest/v1beta3/model';
+import { Property } from '../grpc/indykite/knowledge/objects/v1beta1/ikg';
 
-export interface IngestResourceRecord {
+export interface IngestNodeRecord {
   externalId: string;
   type: string;
   tags?: string[];
-  properties?: Record<string, unknown>;
-}
-
-export interface IngestDigitalTwinRecord extends IngestResourceRecord {
-  id: string;
+  properties?: Property[];
+  id?: string;
+  isIdentity?: boolean;
 }
 
 export interface IngestNodeMatch {
@@ -28,10 +26,18 @@ export interface IngestNodeMatch {
   type: string;
 }
 
-export interface IngestRelationMatch {
-  sourceMatch: IngestNodeMatch;
-  targetMatch: IngestNodeMatch;
+export interface IngestRelationship {
+  source: IngestNodeMatch;
+  target: IngestNodeMatch;
   type: string;
+  properties?: Property[];
+}
+
+export interface IngestRelationshipProperty {
+  source: IngestNodeMatch;
+  target: IngestNodeMatch;
+  type: string;
+  propertyType: string;
 }
 
 export class IngestRecord {
@@ -91,42 +97,54 @@ export class IngestRecordUpsert extends IngestRecord {
    * @since 0.3.4
    * @example
    * ingestSdk.ingestRecord(
-   *   IngestRecord.upsert('record-id').node.resource({
+   *   IngestRecord.upsert('record-id').node({
    *     externalId: 'lot-1',
    *     type: 'ParkingLot'
    *   })
    * );
    */
-  get node() {
-    return new IngestRecordUpsertNode(this.request);
+  node(node: IngestNodeRecord) {
+    const defaultRecord = new IngestRecord(this.request);
+    if (!this.request.record) return defaultRecord;
+
+    const operation = this.request.record.operation;
+    if (operation.oneofKind !== 'upsert') return defaultRecord;
+
+    operation.upsert.data = {
+      oneofKind: 'node',
+      node: {
+        ...node,
+        tags: node.tags ?? [],
+        properties: node.properties ?? [],
+        id: node.id ?? '',
+        isIdentity: node.isIdentity ?? false,
+      },
+    };
+
+    return new IngestRecord(this.request);
   }
 
   /**
    * @since 0.3.4
    * @example
    * ingestSdk.ingestRecord(
-   *   IngestRecord.upsert('record-id').relation({
-   *     sourceMatch: { externalId: 'vehicle-1', type: 'Vehicle' },
-   *     targetMatch: { externalId: 'lot-1', type: 'ParkingLot' },
-   *     type: 'CanUse',
+   *   IngestRecord.upsert('record-id').relationship({
+   *     source: { externalId: 'vehicle-1', type: 'Vehicle' },
+   *     target: { externalId: 'lot-1', type: 'ParkingLot' },
+   *     type: 'CAN_USE'
    *   })
    * );
    */
-  relation(match: IngestRelationMatch, properties?: Record<string, unknown>) {
+  relationship(relationship: IngestRelationship) {
     if (!this.request.record) return new IngestRecord(this.request);
 
     const operation = this.request.record.operation;
     if (operation.oneofKind === 'upsert') {
       operation.upsert.data = {
-        oneofKind: 'relation',
-        relation: {
-          match,
-          properties: !properties
-            ? []
-            : Object.keys(properties).map((propertyKey) => ({
-                key: propertyKey,
-                value: Utils.objectToValue(properties[propertyKey]),
-              })),
+        oneofKind: 'relationship',
+        relationship: {
+          ...relationship,
+          properties: relationship.properties ?? [],
         },
       };
     }
@@ -189,7 +207,7 @@ export class IngestRecordDelete extends IngestRecord {
    *   )
    * );
    */
-  nodeProperty(node: IngestNodeMatch, key: string) {
+  nodeProperty(match: NodeMatch, propertyType: string) {
     const defaultRecord = new IngestRecord(this.request);
     if (!this.request.record) return defaultRecord;
 
@@ -199,8 +217,8 @@ export class IngestRecordDelete extends IngestRecord {
     operation.delete.data = {
       oneofKind: 'nodeProperty',
       nodeProperty: {
-        match: node,
-        key,
+        match: match,
+        propertyType: propertyType,
       },
     };
 
@@ -211,14 +229,15 @@ export class IngestRecordDelete extends IngestRecord {
    * @since 0.3.4
    * @example
    * ingestSdk.ingestRecord(
-   *   IngestRecord.delete('record-id').relation({
-   *     sourceMatch: { externalId: 'vehicle-1', type: 'Vehicle' },
-   *     targetMatch: { externalId: 'lot-1', type: 'ParkingLot' },
-   *     type: 'CanUse',
+   *   IngestRecord.delete('record-id').relationship({
+   *     source: { externalId: 'vehicle-1', type: 'Vehicle' },
+   *     target: { externalId: 'lot-1', type: 'ParkingLot' },
+   *     type: 'CAN_USE',
+   *     properties: []
    *   })
    * );
    */
-  relation(relation: IngestRelationMatch) {
+  relationship(relationship: IngestRelationship) {
     const defaultRecord = new IngestRecord(this.request);
     if (!this.request.record) return defaultRecord;
 
@@ -226,8 +245,11 @@ export class IngestRecordDelete extends IngestRecord {
     if (operation.oneofKind !== 'delete') return defaultRecord;
 
     operation.delete.data = {
-      oneofKind: 'relation',
-      relation,
+      oneofKind: 'relationship',
+      relationship: {
+        ...relationship,
+        properties: relationship.properties ?? [],
+      },
     };
 
     return new IngestRecord(this.request);
@@ -237,17 +259,17 @@ export class IngestRecordDelete extends IngestRecord {
    * @since 0.3.4
    * @example
    * ingestSdk.ingestRecord(
-   *   IngestRecord.delete('record-id').relationProperty(
+   *   IngestRecord.delete('record-id').relationshipProperty(
    *     {
-   *       sourceMatch: { externalId: 'vehicle-1', type: 'Vehicle' },
-   *       targetMatch: { externalId: 'lot-1', type: 'ParkingLot' },
-   *       type: 'CanUse',
+   *       source: { externalId: 'vehicle-1', type: 'Vehicle' },
+   *       target: { externalId: 'lot-1', type: 'ParkingLot' },
+   *       type: 'CAN_USE',
+   *       propertyType: 'relationPropertyName'
    *     },
-   *     'relationPropertyName'
    *   )
    * );
    */
-  relationProperty(relation: IngestRelationMatch, key: string) {
+  relationshipProperty(relationshipProperty: IngestRelationshipProperty) {
     const defaultRecord = new IngestRecord(this.request);
     if (!this.request.record) return defaultRecord;
 
@@ -255,107 +277,11 @@ export class IngestRecordDelete extends IngestRecord {
     if (operation.oneofKind !== 'delete') return defaultRecord;
 
     operation.delete.data = {
-      oneofKind: 'relationProperty',
-      relationProperty: {
-        match: relation,
-        key,
+      oneofKind: 'relationshipProperty',
+      relationshipProperty: {
+        ...relationshipProperty,
       },
     };
-
-    return new IngestRecord(this.request);
-  }
-}
-
-export class IngestRecordUpsertNode extends IngestRecord {
-  constructor(request: IngestRecordRequest) {
-    super(request);
-    if (!this.request.record) return;
-
-    const operation = this.request.record.operation;
-    if (operation.oneofKind === 'upsert') {
-      operation.upsert.data = {
-        oneofKind: 'node',
-        node: {
-          type: {
-            oneofKind: undefined,
-          },
-        },
-      };
-    }
-  }
-
-  /**
-   * @since 0.3.4
-   * @example
-   * ingestSdk.ingestRecord(
-   *   IngestRecord.upsert('record-id').node.digitalTwin({
-   *     externalId: 'external-dt-id',
-   *     type: 'CarOwner'
-   *   })
-   * );
-   */
-  digitalTwin(dt: IngestDigitalTwinRecord) {
-    if (!this.request.record) return new IngestRecord(this.request);
-    const properties = dt.properties;
-
-    const operation = this.request.record.operation;
-    if (operation.oneofKind === 'upsert') {
-      const data = operation.upsert.data;
-      if (data.oneofKind === 'node') {
-        data.node.type = {
-          oneofKind: 'digitalTwin',
-          digitalTwin: {
-            ...dt,
-            tags: dt.tags ?? [],
-            properties: !properties
-              ? []
-              : Object.keys(properties).map((propertyKey) => ({
-                  key: propertyKey,
-                  value: Utils.objectToValue(properties[propertyKey]),
-                })),
-            tenantId: '',
-            identityProperties: [],
-          },
-        };
-      }
-    }
-
-    return new IngestRecord(this.request);
-  }
-
-  /**
-   * @since 0.3.4
-   * @example
-   * ingestSdk.ingestRecord(
-   *   IngestRecord.upsert('record-id').node.resource({
-   *     externalId: 'lot-1',
-   *     type: 'ParkingLot'
-   *   })
-   * );
-   */
-  resource(resource: IngestResourceRecord) {
-    if (!this.request.record) return new IngestRecord(this.request);
-    const properties = resource.properties;
-
-    const operation = this.request.record.operation;
-    if (operation.oneofKind === 'upsert') {
-      const data = operation.upsert.data;
-      if (data.oneofKind === 'node') {
-        data.node.type = {
-          oneofKind: 'resource',
-          resource: {
-            ...resource,
-            tags: resource.tags ?? [],
-            properties: !properties
-              ? []
-              : Object.keys(properties).map((propertyKey) => ({
-                  key: propertyKey,
-                  value: Utils.objectToValue(properties[propertyKey]),
-                })),
-          },
-        };
-      }
-    }
 
     return new IngestRecord(this.request);
   }
@@ -418,27 +344,27 @@ export class IngestClient {
    * @example
    * const input = Readable.from(
    *   [
-   *     IngestRecord.upsert('recordId-1').node.resource({
+   *     IngestRecord.upsert('recordId-1').node({
    *       externalId: 'lotA',
    *       type: 'ParkingLot',
    *     }),
-   *     IngestRecord.upsert('recordId-2').node.resource({
+   *     IngestRecord.upsert('recordId-2').node({
    *       externalId: 'vehicleA',
    *       type: 'Vehicle',
    *     }),
-   *     IngestRecord.upsert('recordId-3').node.digitalTwin({
+   *     IngestRecord.upsert('recordId-3').node({
    *       externalId: 'person1',
    *       type: 'Person',
    *       properties: {
    *         customProp: '42',
    *       },
    *     }),
-   *     IngestRecord.upsert('recordId-4').relation({
+   *     IngestRecord.upsert('recordId-4').relationship({
    *       sourceMatch: { externalId: 'person1', type: 'Person' },
    *       targetMatch: { externalId: 'vehicleA', type: 'Vehicle' },
    *       type: 'OWNS',
    *     }),
-   *     IngestRecord.upsert('recordId-5').relation({
+   *     IngestRecord.upsert('recordId-5').relationship({
    *       sourceMatch: { externalId: 'vehicleA', type: 'Vehicle' },
    *       targetMatch: { externalId: 'lotA', type: 'ParkingLot' },
    *       type: 'CAN_PARK',
@@ -471,22 +397,23 @@ export class IngestClient {
    * @since 0.4.1
    * @example
    *   const input = [
-   *     IngestRecord.upsert('recordId-3').node.digitalTwin({
+   *     IngestRecord.upsert('recordId-3').node({
    *       externalId: 'tom',
    *       type: 'Person',
    *       properties: {
    *         employeeId: '123',
    *         name: "Tom Doe"
    *       },
+   *       isIdentity: true
    *     }).getRecord(),
-   *     IngestRecord.upsert('recordId-3').node.resource({
+   *     IngestRecord.upsert('recordId-3').node({
    *       externalId: 'w_west_g1',
    *       type: 'UserGroup',
    *       properties: {
    *         name: "west"
    *       }
    *     }).getRecord(),
-   *     IngestRecord.upsert('recordId-3').relation({
+   *     IngestRecord.upsert('recordId-3').relationship({
    *       sourceMatch: { externalId: 'tom', type: 'Person' },
    *       targetMatch: { externalId: 'w_west_g1', type: 'UserGroup' },
    *       type: 'BELONGS',
