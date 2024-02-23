@@ -7,7 +7,7 @@ import {
   IngestRecordRequest,
   IngestRecordResponse,
   StreamRecordsResponse,
-} from '../../../grpc/indykite/ingest/v1beta2/ingest_api';
+} from '../../../grpc/indykite/ingest/v1beta3/ingest_api';
 import { SurfaceCall } from '@grpc/grpc-js/build/src/call';
 import { Status } from '@grpc/grpc-js/build/src/constants';
 import { streamKeeper } from '../../utils/stream';
@@ -66,7 +66,7 @@ describe('ingestRecord', () => {
   let response: IngestRecordResponse | undefined;
 
   beforeEach(() => {
-    record = IngestRecord.upsert('record-id').node.resource({
+    record = IngestRecord.upsert('record-id').node({
       externalId: 'lot-1',
       type: 'ParkingLot',
     });
@@ -91,9 +91,6 @@ describe('ingestRecord', () => {
           ) => {
             if (typeof res === 'function') {
               res(null, {
-                error: {
-                  oneofKind: undefined,
-                },
                 recordId: 'record-id',
               });
             }
@@ -105,7 +102,7 @@ describe('ingestRecord', () => {
     });
 
     it('sends correct request', () => {
-      expect(ingestRecordSpy).toBeCalledWith(
+      expect(ingestRecordSpy).toHaveBeenCalledWith(
         {
           record: {
             id: 'record-id',
@@ -115,15 +112,12 @@ describe('ingestRecord', () => {
                 data: {
                   oneofKind: 'node',
                   node: {
-                    type: {
-                      oneofKind: 'resource',
-                      resource: {
-                        externalId: 'lot-1',
-                        type: 'ParkingLot',
-                        tags: [],
-                        properties: [],
-                      },
-                    },
+                    externalId: 'lot-1',
+                    type: 'ParkingLot',
+                    tags: [],
+                    properties: [],
+                    id: "",
+                    isIdentity: false,
                   },
                 },
               },
@@ -135,7 +129,6 @@ describe('ingestRecord', () => {
     });
 
     it('returns a correct response', () => {
-      expect(response?.error.oneofKind).toBeUndefined();
       expect(response?.recordId).toBe('record-id');
     });
   });
@@ -243,13 +236,13 @@ describe('streamRecords', () => {
       read: jest.fn(),
     });
     stream.push(
-      IngestRecord.upsert('record-1').node.resource({
+      IngestRecord.upsert('record-1').node({
         externalId: 'lot-1',
         type: 'ParkingLot',
       }),
     );
     stream.push(
-      IngestRecord.upsert('record-2').node.resource({
+      IngestRecord.upsert('record-2').node({
         externalId: 'lot-2',
         type: 'ParkingLot',
       }),
@@ -270,8 +263,8 @@ describe('streamRecords', () => {
   });
 
   it('sends a correct request', () => {
-    expect(mockedWrite).toBeCalledTimes(2);
-    expect(mockedWrite).nthCalledWith(1, {
+    expect(mockedWrite).toHaveBeenCalledTimes(2);
+    expect(mockedWrite).toHaveBeenNthCalledWith(1, {
       record: {
         id: 'record-1',
         operation: {
@@ -280,22 +273,19 @@ describe('streamRecords', () => {
             data: {
               oneofKind: 'node',
               node: {
-                type: {
-                  oneofKind: 'resource',
-                  resource: {
-                    externalId: 'lot-1',
-                    type: 'ParkingLot',
-                    tags: [],
-                    properties: [],
-                  },
-                },
+                externalId: 'lot-1',
+                type: 'ParkingLot',
+                tags: [],
+                properties: [],
+                id: "",
+                isIdentity: false,
               },
             },
           },
         },
       },
     });
-    expect(mockedWrite).nthCalledWith(2, {
+    expect(mockedWrite).toHaveBeenNthCalledWith(2, {
       record: {
         id: 'record-2',
         operation: {
@@ -304,15 +294,12 @@ describe('streamRecords', () => {
             data: {
               oneofKind: 'node',
               node: {
-                type: {
-                  oneofKind: 'resource',
-                  resource: {
-                    externalId: 'lot-2',
-                    type: 'ParkingLot',
-                    tags: [],
-                    properties: [],
-                  },
-                },
+                externalId: 'lot-2',
+                type: 'ParkingLot',
+                tags: [],
+                properties: [],
+                id: "",
+                isIdentity: false,
               },
             },
           },
@@ -365,13 +352,13 @@ describe('streamRecordsArray', () => {
 
     returnedData = await sdk.streamRecordsArray([
       IngestRecord.upsert('record-1')
-        .node.resource({
+        .node({
           externalId: 'lot-1',
           type: 'ParkingLot',
         })
         .getRecord(),
       IngestRecord.upsert('record-2')
-        .node.resource({
+        .node({
           externalId: 'lot-2',
           type: 'ParkingLot',
         })
@@ -380,7 +367,7 @@ describe('streamRecordsArray', () => {
   });
 
   it('sends a correct request', () => {
-    expect(streamRecordsSpy).toBeCalledTimes(1);
+    expect(streamRecordsSpy).toHaveBeenCalledTimes(1);
   });
 
   it('returns correct response', () => {
@@ -425,7 +412,7 @@ describe('IngestRecord builder', () => {
       });
     });
 
-    describe('relation', () => {
+    describe('relationship', () => {
       it('no record', () => {
         const upsert = IngestRecord.upsert('record-id');
         const upsertRequest = (upsert as unknown as { request: IngestRecordRequest }).request;
@@ -433,16 +420,16 @@ describe('IngestRecord builder', () => {
 
         expect(
           upsert
-            .relation({
-              sourceMatch: {
+            .relationship({
+              source: {
                 externalId: 'vehicle-1',
                 type: 'Vehicle',
               },
-              targetMatch: {
+              target: {
                 externalId: 'lot-1',
                 type: 'ParkingLot',
               },
-              type: 'CanUse',
+              type: 'CAN_USE',
             })
             .marshal(),
         ).toEqual({
@@ -461,16 +448,16 @@ describe('IngestRecord builder', () => {
 
         expect(
           upsert
-            .relation({
-              sourceMatch: {
+            .relationship({
+              source: {
                 externalId: 'vehicle-1',
                 type: 'Vehicle',
               },
-              targetMatch: {
+              target: {
                 externalId: 'lot-1',
                 type: 'ParkingLot',
               },
-              type: 'CanUse',
+              type: 'CAN_USE',
             })
             .marshal(),
         ).toEqual({
@@ -488,16 +475,27 @@ describe('IngestRecord builder', () => {
 
         expect(
           upsert
-            .relation({
-              sourceMatch: {
+            .relationship({
+              source: {
                 externalId: 'vehicle-1',
                 type: 'Vehicle',
               },
-              targetMatch: {
+              target: {
                 externalId: 'lot-1',
                 type: 'ParkingLot',
               },
-              type: 'CanUse',
+              type: 'CAN_USE',
+              properties: [
+                {
+                  type: 'propertyType',
+                  value: {
+                    type: {
+                      oneofKind: 'stringValue',
+                      stringValue: 'propertyValue',
+                    },
+                  },
+                },
+              ]
             })
             .marshal(),
         ).toEqual({
@@ -507,20 +505,28 @@ describe('IngestRecord builder', () => {
               oneofKind: 'upsert',
               upsert: {
                 data: {
-                  oneofKind: 'relation',
-                  relation: {
-                    match: {
-                      sourceMatch: {
-                        externalId: 'vehicle-1',
-                        type: 'Vehicle',
-                      },
-                      targetMatch: {
-                        externalId: 'lot-1',
-                        type: 'ParkingLot',
-                      },
-                      type: 'CanUse',
+                  oneofKind: 'relationship',
+                  relationship: {
+                    source: {
+                      externalId: 'vehicle-1',
+                      type: 'Vehicle',
                     },
-                    properties: [],
+                    target: {
+                      externalId: 'lot-1',
+                      type: 'ParkingLot',
+                    },
+                    type: 'CAN_USE',
+                    properties: [
+                      {
+                        type: 'propertyType',
+                        value: {
+                          type: {
+                            oneofKind: 'stringValue',
+                            stringValue: 'propertyValue',
+                          },
+                        },
+                      },
+                    ],
                   },
                 },
               },
@@ -530,22 +536,28 @@ describe('IngestRecord builder', () => {
 
         expect(
           upsert
-            .relation(
-              {
-                sourceMatch: {
-                  externalId: 'vehicle-1',
-                  type: 'Vehicle',
-                },
-                targetMatch: {
-                  externalId: 'lot-1',
-                  type: 'ParkingLot',
-                },
-                type: 'CanUse',
+            .relationship({
+              source: {
+                externalId: 'vehicle-1',
+                type: 'Vehicle',
               },
-              {
-                propertyKey: 'propertyValue',
+              target: {
+                externalId: 'lot-1',
+                type: 'ParkingLot',
               },
-            )
+              type: 'CAN_USE',
+              properties: [
+                {
+                  type: 'propertyType',
+                  value: {
+                    type: {
+                      oneofKind: 'stringValue',
+                      stringValue: 'propertyValue',
+                    },
+                  },
+                },
+              ],
+            })
             .marshal(),
         ).toEqual({
           record: {
@@ -554,24 +566,22 @@ describe('IngestRecord builder', () => {
               oneofKind: 'upsert',
               upsert: {
                 data: {
-                  oneofKind: 'relation',
-                  relation: {
-                    match: {
-                      sourceMatch: {
-                        externalId: 'vehicle-1',
-                        type: 'Vehicle',
-                      },
-                      targetMatch: {
-                        externalId: 'lot-1',
-                        type: 'ParkingLot',
-                      },
-                      type: 'CanUse',
+                  oneofKind: 'relationship',
+                  relationship: {
+                    source: {
+                      externalId: 'vehicle-1',
+                      type: 'Vehicle',
                     },
+                    target: {
+                      externalId: 'lot-1',
+                      type: 'ParkingLot',
+                    },
+                    type: 'CAN_USE',
                     properties: [
                       {
-                        key: 'propertyKey',
+                        type: 'propertyType',
                         value: {
-                          value: {
+                          type: {
                             oneofKind: 'stringValue',
                             stringValue: 'propertyValue',
                           },
@@ -595,8 +605,8 @@ describe('IngestRecord builder', () => {
           upsertRequest.record = undefined;
 
           expect(
-            upsert.node
-              .resource({
+            upsert
+              .node({
                 externalId: 'lot-1',
                 type: 'ParkingLot',
               })
@@ -616,8 +626,8 @@ describe('IngestRecord builder', () => {
           upsertRequest.record.operation = { oneofKind: undefined };
 
           expect(
-            upsert.node
-              .resource({
+            upsert
+              .node({
                 externalId: 'lot-1',
                 type: 'ParkingLot',
               })
@@ -636,8 +646,8 @@ describe('IngestRecord builder', () => {
           const upsert = IngestRecord.upsert('record-id');
 
           expect(
-            upsert.node
-              .resource({
+            upsert
+              .node({
                 externalId: 'lot-1',
                 type: 'ParkingLot',
               })
@@ -651,15 +661,12 @@ describe('IngestRecord builder', () => {
                   data: {
                     oneofKind: 'node',
                     node: {
-                      type: {
-                        oneofKind: 'resource',
-                        resource: {
-                          externalId: 'lot-1',
-                          type: 'ParkingLot',
-                          tags: [],
-                          properties: [],
-                        },
-                      },
+                      externalId: 'lot-1',
+                      type: 'ParkingLot',
+                      tags: [],
+                      properties: [],
+                      id: "",
+                      isIdentity: false,
                     },
                   },
                 },
@@ -668,14 +675,24 @@ describe('IngestRecord builder', () => {
           });
 
           expect(
-            upsert.node
-              .resource({
+            upsert
+              .node({
                 externalId: 'lot-1',
                 type: 'ParkingLot',
                 tags: ['MyTag'],
-                properties: {
-                  propertyKey: 'property-value',
-                },
+                properties: [
+                  {
+                    type: 'propertyType',
+                    value: {
+                      type: {
+                        oneofKind: 'stringValue',
+                        stringValue: 'property-value',
+                      },
+                    },
+                  },
+                ],
+                id: "",
+                isIdentity: false,
               })
               .marshal(),
           ).toEqual({
@@ -687,25 +704,22 @@ describe('IngestRecord builder', () => {
                   data: {
                     oneofKind: 'node',
                     node: {
-                      type: {
-                        oneofKind: 'resource',
-                        resource: {
-                          externalId: 'lot-1',
-                          type: 'ParkingLot',
-                          tags: ['MyTag'],
-                          properties: [
-                            {
-                              key: 'propertyKey',
-                              value: {
-                                value: {
-                                  oneofKind: 'stringValue',
-                                  stringValue: 'property-value',
-                                },
-                              },
+                      externalId: 'lot-1',
+                      type: 'ParkingLot',
+                      tags: ['MyTag'],
+                      properties: [
+                        {
+                          type: 'propertyType',
+                          value: {
+                            type: {
+                              oneofKind: 'stringValue',
+                              stringValue: 'property-value',
                             },
-                          ],
+                          },
                         },
-                      },
+                      ],
+                      id: "",
+                      isIdentity: false,
                     },
                   },
                 },
@@ -722,11 +736,12 @@ describe('IngestRecord builder', () => {
           upsertRequest.record = undefined;
 
           expect(
-            upsert.node
-              .digitalTwin({
+            upsert
+              .node({
                 id: '',
                 externalId: 'person-id',
                 type: 'Owner',
+                isIdentity: true,
               })
               .marshal(),
           ).toEqual({
@@ -744,8 +759,8 @@ describe('IngestRecord builder', () => {
           upsertRequest.record.operation = { oneofKind: undefined };
 
           expect(
-            upsert.node
-              .resource({
+            upsert
+              .node({
                 externalId: 'lot-1',
                 type: 'ParkingLot',
               })
@@ -764,11 +779,12 @@ describe('IngestRecord builder', () => {
           const upsert = IngestRecord.upsert('record-id');
 
           expect(
-            upsert.node
-              .digitalTwin({
+            upsert
+              .node({
                 id: '',
                 externalId: 'person-id',
                 type: 'Owner',
+                isIdentity: true,
               })
               .marshal(),
           ).toEqual({
@@ -780,18 +796,12 @@ describe('IngestRecord builder', () => {
                   data: {
                     oneofKind: 'node',
                     node: {
-                      type: {
-                        oneofKind: 'digitalTwin',
-                        digitalTwin: {
-                          externalId: 'person-id',
-                          id: '',
-                          identityProperties: [],
-                          properties: [],
-                          tags: [],
-                          tenantId: '',
-                          type: 'Owner',
-                        },
-                      },
+                      externalId: 'person-id',
+                      id: '',
+                      properties: [],
+                      tags: [],
+                      type: 'Owner',
+                      isIdentity: true,
                     },
                   },
                 },
@@ -800,15 +810,24 @@ describe('IngestRecord builder', () => {
           });
 
           expect(
-            upsert.node
-              .digitalTwin({
+            upsert
+              .node({
                 id: '',
                 externalId: 'person-id',
                 type: 'Owner',
                 tags: ['MyTag'],
-                properties: {
-                  propertyKey: 'property-value',
-                },
+                properties: [
+                  {
+                    type: 'propertyType',
+                    value: {
+                      type: {
+                        oneofKind: 'stringValue',
+                        stringValue: 'property-value',
+                      },
+                    },
+                  },
+                ],
+                isIdentity: true,
               })
               .marshal(),
           ).toEqual({
@@ -820,28 +839,22 @@ describe('IngestRecord builder', () => {
                   data: {
                     oneofKind: 'node',
                     node: {
-                      type: {
-                        oneofKind: 'digitalTwin',
-                        digitalTwin: {
-                          id: '',
-                          externalId: 'person-id',
-                          type: 'Owner',
-                          tags: ['MyTag'],
-                          tenantId: '',
-                          properties: [
-                            {
-                              key: 'propertyKey',
-                              value: {
-                                value: {
-                                  oneofKind: 'stringValue',
-                                  stringValue: 'property-value',
-                                },
-                              },
+                      id: '',
+                      externalId: 'person-id',
+                      type: 'Owner',
+                      tags: ['MyTag'],
+                      properties: [
+                        {
+                          type: 'propertyType',
+                          value: {
+                            type: {
+                              oneofKind: 'stringValue',
+                              stringValue: 'property-value',
                             },
-                          ],
-                          identityProperties: [],
+                          },
                         },
-                      },
+                      ],
+                      isIdentity: true,
                     },
                   },
                 },
@@ -955,7 +968,7 @@ describe('IngestRecord builder', () => {
                 externalId: 'lot-1',
                 type: 'ParkingLot',
               },
-              'propertyKey',
+              'propertyType',
             )
             .marshal(),
         ).toEqual({
@@ -979,7 +992,7 @@ describe('IngestRecord builder', () => {
                 externalId: 'lot-1',
                 type: 'ParkingLot',
               },
-              'propertyKey',
+              'propertyType',
             )
             .marshal(),
         ).toEqual({
@@ -1000,7 +1013,7 @@ describe('IngestRecord builder', () => {
                 externalId: 'lot-1',
                 type: 'ParkingLot',
               },
-              'propertyKey',
+              'propertyType',
             )
             .marshal(),
         ).toEqual({
@@ -1012,7 +1025,7 @@ describe('IngestRecord builder', () => {
                 data: {
                   oneofKind: 'nodeProperty',
                   nodeProperty: {
-                    key: 'propertyKey',
+                    propertyType: 'propertyType',
                     match: {
                       externalId: 'lot-1',
                       type: 'ParkingLot',
@@ -1026,7 +1039,7 @@ describe('IngestRecord builder', () => {
       });
     });
 
-    describe('relation', () => {
+    describe('relationship', () => {
       it('no record', () => {
         const deleteRecord = IngestRecord.delete('record-id');
         const deleteRequest = (deleteRecord as unknown as { request: IngestRecordRequest }).request;
@@ -1034,10 +1047,10 @@ describe('IngestRecord builder', () => {
 
         expect(
           deleteRecord
-            .relation({
-              sourceMatch: { externalId: 'vehicle-1', type: 'Vehicle' },
-              targetMatch: { externalId: 'lot-1', type: 'ParkingLot' },
-              type: 'CanUse',
+            .relationship({
+              source: { externalId: 'vehicle-1', type: 'Vehicle' },
+              target: { externalId: 'lot-1', type: 'ParkingLot' },
+              type: 'CAN_USE',
             })
             .marshal(),
         ).toEqual({
@@ -1056,10 +1069,10 @@ describe('IngestRecord builder', () => {
 
         expect(
           deleteRecord
-            .relation({
-              sourceMatch: { externalId: 'vehicle-1', type: 'Vehicle' },
-              targetMatch: { externalId: 'lot-1', type: 'ParkingLot' },
-              type: 'CanUse',
+            .relationship({
+              source: { externalId: 'vehicle-1', type: 'Vehicle' },
+              target: { externalId: 'lot-1', type: 'ParkingLot' },
+              type: 'CAN_USE',
             })
             .marshal(),
         ).toEqual({
@@ -1075,10 +1088,10 @@ describe('IngestRecord builder', () => {
       it('with operation', () => {
         expect(
           IngestRecord.delete('record-id')
-            .relation({
-              sourceMatch: { externalId: 'vehicle-1', type: 'Vehicle' },
-              targetMatch: { externalId: 'lot-1', type: 'ParkingLot' },
-              type: 'CanUse',
+            .relationship({
+              source: { externalId: 'vehicle-1', type: 'Vehicle' },
+              target: { externalId: 'lot-1', type: 'ParkingLot' },
+              type: 'CAN_USE',
             })
             .marshal(),
         ).toEqual({
@@ -1088,17 +1101,18 @@ describe('IngestRecord builder', () => {
               oneofKind: 'delete',
               delete: {
                 data: {
-                  oneofKind: 'relation',
-                  relation: {
-                    sourceMatch: {
+                  oneofKind: 'relationship',
+                  relationship: {
+                    source: {
                       externalId: 'vehicle-1',
                       type: 'Vehicle',
                     },
-                    targetMatch: {
+                    target: {
                       externalId: 'lot-1',
                       type: 'ParkingLot',
                     },
-                    type: 'CanUse',
+                    type: 'CAN_USE',
+                    properties: []
                   },
                 },
               },
@@ -1108,7 +1122,7 @@ describe('IngestRecord builder', () => {
       });
     });
 
-    describe('relationProperty', () => {
+    describe('relationshipProperty', () => {
       it('no record', () => {
         const deleteRecord = IngestRecord.delete('record-id');
         const deleteRequest = (deleteRecord as unknown as { request: IngestRecordRequest }).request;
@@ -1116,14 +1130,12 @@ describe('IngestRecord builder', () => {
 
         expect(
           deleteRecord
-            .relationProperty(
-              {
-                sourceMatch: { externalId: 'vehicle-1', type: 'Vehicle' },
-                targetMatch: { externalId: 'lot-1', type: 'ParkingLot' },
-                type: 'CanUse',
-              },
-              'relationPropertyKey',
-            )
+            .relationshipProperty({
+              source: { externalId: 'vehicle-1', type: 'Vehicle' },
+              target: { externalId: 'lot-1', type: 'ParkingLot' },
+              type: 'CAN_USE',
+              propertyType: 'relationshipPropertyType',
+            })
             .marshal(),
         ).toEqual({
           record: undefined,
@@ -1141,14 +1153,12 @@ describe('IngestRecord builder', () => {
 
         expect(
           deleteRecord
-            .relationProperty(
-              {
-                sourceMatch: { externalId: 'vehicle-1', type: 'Vehicle' },
-                targetMatch: { externalId: 'lot-1', type: 'ParkingLot' },
-                type: 'CanUse',
-              },
-              'relationPropertyKey',
-            )
+            .relationshipProperty({
+              source: { externalId: 'vehicle-1', type: 'Vehicle' },
+              target: { externalId: 'lot-1', type: 'ParkingLot' },
+              type: 'CAN_USE',
+              propertyType: 'relationshipPropertyType',
+            })
             .marshal(),
         ).toEqual({
           record: {
@@ -1163,14 +1173,12 @@ describe('IngestRecord builder', () => {
       it('with operation', () => {
         expect(
           IngestRecord.delete('record-id')
-            .relationProperty(
-              {
-                sourceMatch: { externalId: 'vehicle-1', type: 'Vehicle' },
-                targetMatch: { externalId: 'lot-1', type: 'ParkingLot' },
-                type: 'CanUse',
-              },
-              'relationPropertyKey',
-            )
+            .relationshipProperty({
+              source: { externalId: 'vehicle-1', type: 'Vehicle' },
+              target: { externalId: 'lot-1', type: 'ParkingLot' },
+              type: 'CAN_USE',
+              propertyType: 'relationshipPropertyType',
+            })
             .marshal(),
         ).toEqual({
           record: {
@@ -1179,20 +1187,18 @@ describe('IngestRecord builder', () => {
               oneofKind: 'delete',
               delete: {
                 data: {
-                  oneofKind: 'relationProperty',
-                  relationProperty: {
-                    key: 'relationPropertyKey',
-                    match: {
-                      sourceMatch: {
-                        externalId: 'vehicle-1',
-                        type: 'Vehicle',
-                      },
-                      targetMatch: {
-                        externalId: 'lot-1',
-                        type: 'ParkingLot',
-                      },
-                      type: 'CanUse',
+                  oneofKind: 'relationshipProperty',
+                  relationshipProperty: {
+                    source: {
+                      externalId: 'vehicle-1',
+                      type: 'Vehicle',
                     },
+                    target: {
+                      externalId: 'lot-1',
+                      type: 'ParkingLot',
+                    },
+                    type: 'CAN_USE',
+                    propertyType: 'relationshipPropertyType',
                   },
                 },
               },

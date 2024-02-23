@@ -1,4 +1,4 @@
-import { IngestAPIClient } from '../../../grpc/indykite/ingest/v1beta2/ingest_api.grpc-client';
+import { IngestAPIClient } from '../../../grpc/indykite/ingest/v1beta3/ingest_api.grpc-client';
 import { SdkClient } from '../../client/client';
 import { IngestClient } from '../../ingest';
 import { applicationTokenMock } from '../../utils/test_utils';
@@ -20,7 +20,7 @@ describe('when a new client is created', () => {
     });
 
     it('creates a new instance', () => {
-      expect(SdkClient.createIdentityInstance).toBeCalledWith(
+      expect(SdkClient.createIdentityInstance).toHaveBeenCalledWith(
         IngestAPIClient,
         JSON.stringify(applicationTokenMock),
       );
@@ -44,7 +44,7 @@ describe('when a new client is created', () => {
     });
 
     it('throws an error', () => {
-      expect(SdkClient.createIdentityInstance).toBeCalledWith(
+      expect(SdkClient.createIdentityInstance).toHaveBeenCalledWith(
         IngestAPIClient,
         JSON.stringify(applicationTokenMock),
       );
