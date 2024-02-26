@@ -22,18 +22,18 @@ export interface Identifier {
   type: string;
 }
 
-export class IdentityKnowledgeClient {
+export class IdentityKnowledgeReadClient {
   private client: IdentityKnowledgeReadAPIClient;
 
   constructor(sdk: SdkClient) {
     this.client = sdk.client as IdentityKnowledgeReadAPIClient;
   }
 
-  static createInstance(appCredential?: string | unknown): Promise<IdentityKnowledgeClient> {
-    return new Promise<IdentityKnowledgeClient>((resolve, reject) => {
+  static createInstance(appCredential?: string | unknown): Promise<IdentityKnowledgeReadClient> {
+    return new Promise<IdentityKnowledgeReadClient>((resolve, reject) => {
       SdkClient.createIdentityInstance(IdentityKnowledgeReadAPIClient, appCredential)
         .then((sdk) => {
-          resolve(new IdentityKnowledgeClient(sdk));
+          resolve(new IdentityKnowledgeReadClient(sdk));
         })
         .catch((err) => {
           reject(err);
@@ -65,7 +65,7 @@ export class IdentityKnowledgeClient {
             reject(
               new SdkError(
                 SdkErrorCode.SDK_CODE_3,
-                SkdErrorText.SDK_CODE_3(IdentityKnowledgeClient.name),
+                SkdErrorText.SDK_CODE_3(IdentityKnowledgeReadClient.name),
               ),
             );
           } else {
@@ -83,7 +83,7 @@ export class IdentityKnowledgeClient {
     if (!nodes?.length || !nodes[0]) {
       throw new SdkError(
         SdkErrorCode.SDK_CODE_3,
-        SkdErrorText.SDK_CODE_3(IdentityKnowledgeClient.name),
+        SkdErrorText.SDK_CODE_3(IdentityKnowledgeReadClient.name),
       );
     }
     return nodes[0];

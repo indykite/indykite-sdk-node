@@ -43,7 +43,7 @@ IngestClient.createInstance().then((sdk) => {
         source: { externalId: '748596', type: 'Individual' },
         target: { externalId: '986532', type: 'Organization' },
         type: 'BELONGS',
-        properties:[]
+        properties: [],
       })
       .getRecord(),
   ];

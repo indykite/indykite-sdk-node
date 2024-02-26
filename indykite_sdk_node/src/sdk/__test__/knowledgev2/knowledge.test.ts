@@ -5,15 +5,15 @@ import {
 import { CallOptions, Metadata } from '@grpc/grpc-js';
 import { ServiceError, SurfaceCall } from '@grpc/grpc-js/build/src/call';
 import { Value } from '../../../grpc/indykite/objects/v1beta2/value';
-import { IdentityKnowledgeClient } from '../../knowledgev2';
+import { IdentityKnowledgeReadClient } from '../../knowledgev2';
 import { Node } from '../../../grpc/indykite/knowledge/objects/v1beta1/ikg';
 import { applicationTokenMock } from '../../utils/test_utils';
 import { Utils } from '../../utils/utils';
 
-let sdk: IdentityKnowledgeClient;
+let sdk: IdentityKnowledgeReadClient;
 
 beforeAll(async () => {
-  sdk = await IdentityKnowledgeClient.createInstance(applicationTokenMock);
+  sdk = await IdentityKnowledgeReadClient.createInstance(applicationTokenMock);
 });
 
 afterEach(() => {
@@ -172,7 +172,7 @@ describe('identityKnowledge', () => {
     });
 
     it('throws an error', () => {
-      expect((caughtError as Error).message).toEqual('No IdentityKnowledgeClient response.');
+      expect((caughtError as Error).message).toEqual('No IdentityKnowledgeReadClient response.');
     });
   });
 
@@ -409,7 +409,7 @@ describe('read', () => {
     });
 
     it('throws an error', () => {
-      expect((caughtError as Error).message).toEqual('No IdentityKnowledgeClient response.');
+      expect((caughtError as Error).message).toEqual('No IdentityKnowledgeReadClient response.');
     });
   });
 
@@ -565,7 +565,7 @@ describe('listNodes', () => {
     });
 
     it('throws an error', () => {
-      expect((caughtError as Error).message).toEqual('No IdentityKnowledgeClient response.');
+      expect((caughtError as Error).message).toEqual('No IdentityKnowledgeReadClient response.');
     });
   });
 
@@ -709,7 +709,7 @@ describe('listNodesByProperty', () => {
     });
 
     it('throws an error', () => {
-      expect((caughtError as Error).message).toEqual('No IdentityKnowledgeClient response.');
+      expect((caughtError as Error).message).toEqual('No IdentityKnowledgeReadClient response.');
     });
   });
 
@@ -861,7 +861,7 @@ describe('getNodeByID', () => {
     });
 
     it('throws an error', () => {
-      expect((caughtError as Error).message).toEqual('No IdentityKnowledgeClient response.');
+      expect((caughtError as Error).message).toEqual('No IdentityKnowledgeReadClient response.');
     });
   });
 
@@ -1025,7 +1025,7 @@ describe('getNodeByIdentifier', () => {
     });
 
     it('throws an error', () => {
-      expect((caughtError as Error).message).toEqual('No IdentityKnowledgeClient response.');
+      expect((caughtError as Error).message).toEqual('No IdentityKnowledgeReadClient response.');
     });
   });
 
