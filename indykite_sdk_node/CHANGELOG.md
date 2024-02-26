@@ -1,4 +1,11 @@
 # Changelog
+## [0.6.1](https://github.com/indykite/indykite-sdk-node/compare/v0.6.0...v0.6.1) (2024-02-26)
+
+
+### Features
+
+* add missing types ([490accf](https://github.com/indykite/indykite-sdk-node/commit/490accf216136fd370608b83197af868eed10fa2))
+
 ## [0.6.0](https://github.com/indykite/indykite-sdk-node/compare/v0.5.0...v0.6.0) (2024-02-23)
 
 
