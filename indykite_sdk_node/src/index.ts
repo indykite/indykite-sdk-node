@@ -1,7 +1,16 @@
 export * as grpcIdentityModel from './grpc/indykite/identity/v1beta2/model';
 export * as grpcIdentityAPI from './grpc/indykite/identity/v1beta2/identity_management_api';
 export * as grpcIdentityAttributes from './grpc/indykite/identity/v1beta2/attributes';
-export * from './sdk/authorization';
+export * as grpcKnowledgeModel from './grpc/indykite/knowledge/v1beta2/model';
+export * as grpcKnowledgeApi from './grpc/indykite/knowledge/v1beta2/identity_knowledge_api';
+export * as grpcKnowledgeObjects from './grpc/indykite/knowledge/objects/v1beta1/ikg';
+export * as grpcIngestModel from './grpc/indykite/ingest/v1beta3/model';
+export * as grpcIngestApi from './grpc/indykite/ingest/v1beta3/ingest_api';
+export * as grpcObjectsValue from './grpc/indykite/objects/v1beta2/value';
+export * as grpcConfigModel from './grpc/indykite/config/v1beta1/model';
+export * as grpcConfigApi from './grpc/indykite/config/v1beta1/config_management_api';
+export * as grpcAuthorizationModel from './grpc/indykite/authorization/v1beta1/model';
+export * as grpcAuthorizationService from './grpc/indykite/authorization/v1beta1/authorization_service';
 export * from './sdk/authorization';
 export * from './sdk/identity';
 export * from './sdk/config';
