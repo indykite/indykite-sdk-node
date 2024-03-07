@@ -1,17 +1,19 @@
+import { SurfaceCall } from '@grpc/grpc-js/build/src/call';
+import { Status } from '@grpc/grpc-js/build/src/constants';
+import { CallOptions, Metadata, ServiceError } from '@grpc/grpc-js';
+import { Stream } from 'stream';
+
 import { EventEmitter } from 'events';
 import { SdkClient } from '../../client/client';
 import { IngestClient, IngestRecord } from '../../ingest';
 import { applicationTokenMock } from '../../utils/test_utils';
-import { CallOptions, Metadata, ServiceError } from '@grpc/grpc-js';
 import {
   IngestRecordRequest,
   IngestRecordResponse,
   StreamRecordsResponse,
 } from '../../../grpc/indykite/ingest/v1beta3/ingest_api';
-import { SurfaceCall } from '@grpc/grpc-js/build/src/call';
-import { Status } from '@grpc/grpc-js/build/src/constants';
+import { Utils } from '../../utils/utils';
 import { streamKeeper } from '../../utils/stream';
-import { Stream } from 'stream';
 
 class ClientMock extends EventEmitter {
   end() {
@@ -472,6 +474,7 @@ describe('IngestRecord builder', () => {
 
       it('with operation', () => {
         const upsert = IngestRecord.upsert('record-id');
+        const datetmp = Utils.dateToTimestamp(new Date());
 
         expect(
           upsert
@@ -488,10 +491,13 @@ describe('IngestRecord builder', () => {
               properties: [
                 {
                   type: 'propertyType',
-                  value: {
-                    type: {
-                      oneofKind: 'stringValue',
-                      stringValue: 'propertyValue',
+                  value: 'propertyValue',
+                  metadata: {
+                    assuranceLevel: 1,
+                    verificationTime: datetmp,
+                    source: 'Myself',
+                    customMetadata: {
+                      customdata: 'SomeCustomData',
                     },
                   },
                 },
@@ -525,6 +531,19 @@ describe('IngestRecord builder', () => {
                             stringValue: 'propertyValue',
                           },
                         },
+                        metadata: {
+                          assuranceLevel: 1,
+                          verificationTime: datetmp,
+                          source: 'Myself',
+                          customMetadata: {
+                            customdata: {
+                              type: {
+                                oneofKind: 'stringValue',
+                                stringValue: 'SomeCustomData',
+                              },
+                            },
+                          },
+                        },
                       },
                     ],
                   },
@@ -549,12 +568,7 @@ describe('IngestRecord builder', () => {
               properties: [
                 {
                   type: 'propertyType',
-                  value: {
-                    type: {
-                      oneofKind: 'stringValue',
-                      stringValue: 'propertyValue',
-                    },
-                  },
+                  value: 'propertyValue',
                 },
               ],
             })
@@ -683,12 +697,7 @@ describe('IngestRecord builder', () => {
                 properties: [
                   {
                     type: 'propertyType',
-                    value: {
-                      type: {
-                        oneofKind: 'stringValue',
-                        stringValue: 'property-value',
-                      },
-                    },
+                    value: 'property-value',
                   },
                 ],
                 id: '',
@@ -716,6 +725,7 @@ describe('IngestRecord builder', () => {
                               stringValue: 'property-value',
                             },
                           },
+                          metadata: undefined,
                         },
                       ],
                       id: '',
@@ -819,12 +829,7 @@ describe('IngestRecord builder', () => {
                 properties: [
                   {
                     type: 'propertyType',
-                    value: {
-                      type: {
-                        oneofKind: 'stringValue',
-                        stringValue: 'property-value',
-                      },
-                    },
+                    value: 'property-value',
                   },
                 ],
                 isIdentity: true,
@@ -852,6 +857,7 @@ describe('IngestRecord builder', () => {
                               stringValue: 'property-value',
                             },
                           },
+                          metadata: undefined,
                         },
                       ],
                       isIdentity: true,

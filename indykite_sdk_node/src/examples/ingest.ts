@@ -1,4 +1,5 @@
 import { IngestClient, IngestRecord } from '../sdk/ingest';
+import { Utils } from '../sdk/utils/utils';
 
 IngestClient.createInstance().then((sdk) => {
   const input = [
@@ -11,10 +12,13 @@ IngestClient.createInstance().then((sdk) => {
         properties: [
           {
             type: 'email',
-            value: {
-              type: {
-                oneofKind: 'stringValue',
-                stringValue: 'email@example.com',
+            value: 'email@example.com',
+            metadata: {
+              assuranceLevel: 1,
+              verificationTime: Utils.dateToTimestamp(new Date()),
+              source: 'Myself',
+              customMetadata: {
+                customdata: 'SomeCustomData',
               },
             },
           },
@@ -28,12 +32,7 @@ IngestClient.createInstance().then((sdk) => {
         properties: [
           {
             type: 'name',
-            value: {
-              type: {
-                oneofKind: 'stringValue',
-                stringValue: 'west',
-              },
-            },
+            value: 'west',
           },
         ],
       })
@@ -51,6 +50,7 @@ IngestClient.createInstance().then((sdk) => {
     for (const item of response) console.log(JSON.stringify(item), item.error, item.info);
   });
   console.log(JSON.stringify(output));
+
   sdk
     .ingestRecord(
       IngestRecord.upsert('recordId-36').node({
@@ -59,12 +59,7 @@ IngestClient.createInstance().then((sdk) => {
         properties: [
           {
             type: 'customprop',
-            value: {
-              type: {
-                oneofKind: 'integerValue',
-                integerValue: '42',
-              },
-            },
+            value: 42,
           },
         ],
       }),

@@ -111,7 +111,34 @@ export interface Property {
     /**
      * @generated from protobuf field: indykite.objects.v1beta2.Value value = 2;
      */
-    value?: Value; // todo: add metadata for properties
+    value?: Value;
+    /**
+     * @generated from protobuf field: indykite.knowledge.objects.v1beta1.Metadata metadata = 3;
+     */
+    metadata?: Metadata;
+}
+/**
+ * @generated from protobuf message indykite.knowledge.objects.v1beta1.Metadata
+ */
+export interface Metadata {
+    /**
+     * @generated from protobuf field: int32 assurance_level = 1;
+     */
+    assuranceLevel: number;
+    /**
+     * @generated from protobuf field: google.protobuf.Timestamp verification_time = 2;
+     */
+    verificationTime?: Timestamp;
+    /**
+     * @generated from protobuf field: string source = 3;
+     */
+    source: string;
+    /**
+     * @generated from protobuf field: map<string, indykite.objects.v1beta2.Value> custom_metadata = 4;
+     */
+    customMetadata: {
+        [key: string]: Value;
+    };
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class Node$Type extends MessageType<Node> {
@@ -322,8 +349,9 @@ export const Relationship = new Relationship$Type();
 class Property$Type extends MessageType<Property> {
     constructor() {
         super("indykite.knowledge.objects.v1beta1.Property", [
-            { no: 1, name: "type", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "256", pattern: "^[a-zA-Z_][a-zA-Z0-9_]+$", ignoreEmpty: true } } } },
-            { no: 2, name: "value", kind: "message", T: () => Value }
+            { no: 1, name: "type", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "256", pattern: "^[a-zA-Z_][a-zA-Z0-9_]+$" } } } },
+            { no: 2, name: "value", kind: "message", T: () => Value },
+            { no: 3, name: "metadata", kind: "message", T: () => Metadata }
         ]);
     }
     create(value?: PartialMessage<Property>): Property {
@@ -344,6 +372,9 @@ class Property$Type extends MessageType<Property> {
                 case /* indykite.objects.v1beta2.Value value */ 2:
                     message.value = Value.internalBinaryRead(reader, reader.uint32(), options, message.value);
                     break;
+                case /* indykite.knowledge.objects.v1beta1.Metadata metadata */ 3:
+                    message.metadata = Metadata.internalBinaryRead(reader, reader.uint32(), options, message.metadata);
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -362,6 +393,9 @@ class Property$Type extends MessageType<Property> {
         /* indykite.objects.v1beta2.Value value = 2; */
         if (message.value)
             Value.internalBinaryWrite(message.value, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* indykite.knowledge.objects.v1beta1.Metadata metadata = 3; */
+        if (message.metadata)
+            Metadata.internalBinaryWrite(message.metadata, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -372,3 +406,91 @@ class Property$Type extends MessageType<Property> {
  * @generated MessageType for protobuf message indykite.knowledge.objects.v1beta1.Property
  */
 export const Property = new Property$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class Metadata$Type extends MessageType<Metadata> {
+    constructor() {
+        super("indykite.knowledge.objects.v1beta1.Metadata", [
+            { no: 1, name: "assurance_level", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { in: [1, 2, 3], ignoreEmpty: true } } } },
+            { no: 2, name: "verification_time", kind: "message", T: () => Timestamp },
+            { no: 3, name: "source", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "128" } } } },
+            { no: 4, name: "custom_metadata", kind: "map", K: 9 /*ScalarType.STRING*/, V: { kind: "message", T: () => Value } }
+        ]);
+    }
+    create(value?: PartialMessage<Metadata>): Metadata {
+        const message = { assuranceLevel: 0, source: "", customMetadata: {} };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<Metadata>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: Metadata): Metadata {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* int32 assurance_level */ 1:
+                    message.assuranceLevel = reader.int32();
+                    break;
+                case /* google.protobuf.Timestamp verification_time */ 2:
+                    message.verificationTime = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.verificationTime);
+                    break;
+                case /* string source */ 3:
+                    message.source = reader.string();
+                    break;
+                case /* map<string, indykite.objects.v1beta2.Value> custom_metadata */ 4:
+                    this.binaryReadMap4(message.customMetadata, reader, options);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    private binaryReadMap4(map: Metadata["customMetadata"], reader: IBinaryReader, options: BinaryReadOptions): void {
+        let len = reader.uint32(), end = reader.pos + len, key: keyof Metadata["customMetadata"] | undefined, val: Metadata["customMetadata"][any] | undefined;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case 1:
+                    key = reader.string();
+                    break;
+                case 2:
+                    val = Value.internalBinaryRead(reader, reader.uint32(), options);
+                    break;
+                default: throw new globalThis.Error("unknown map entry field for field indykite.knowledge.objects.v1beta1.Metadata.custom_metadata");
+            }
+        }
+        map[key ?? ""] = val ?? Value.create();
+    }
+    internalBinaryWrite(message: Metadata, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* int32 assurance_level = 1; */
+        if (message.assuranceLevel !== 0)
+            writer.tag(1, WireType.Varint).int32(message.assuranceLevel);
+        /* google.protobuf.Timestamp verification_time = 2; */
+        if (message.verificationTime)
+            Timestamp.internalBinaryWrite(message.verificationTime, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* string source = 3; */
+        if (message.source !== "")
+            writer.tag(3, WireType.LengthDelimited).string(message.source);
+        /* map<string, indykite.objects.v1beta2.Value> custom_metadata = 4; */
+        for (let k of Object.keys(message.customMetadata)) {
+            writer.tag(4, WireType.LengthDelimited).fork().tag(1, WireType.LengthDelimited).string(k);
+            writer.tag(2, WireType.LengthDelimited).fork();
+            Value.internalBinaryWrite(message.customMetadata[k], writer, options);
+            writer.join().join();
+        }
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message indykite.knowledge.objects.v1beta1.Metadata
+ */
+export const Metadata = new Metadata$Type();

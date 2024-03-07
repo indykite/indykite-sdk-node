@@ -9,14 +9,17 @@ import {
 import { Readable } from 'stream';
 import { SdkError, SdkErrorCode, SkdErrorText } from './error';
 import { IndexFixer, streamKeeper } from './utils/stream';
+import { Utils } from './utils/utils';
 import { NodeMatch, Record as RecordModel } from '../grpc/indykite/ingest/v1beta3/model';
-import { Property } from '../grpc/indykite/knowledge/objects/v1beta1/ikg';
+import { Metadata, Property } from '../grpc/indykite/knowledge/objects/v1beta1/ikg';
+import { Value } from '../grpc/indykite/objects/v1beta2/value';
+import { Timestamp } from '../grpc/google/protobuf/timestamp';
 
 export interface IngestNodeRecord {
   externalId: string;
   type: string;
   tags?: string[];
-  properties?: Property[];
+  properties?: IngestProperty[];
   id?: string;
   isIdentity?: boolean;
 }
@@ -30,7 +33,7 @@ export interface IngestRelationship {
   source: IngestNodeMatch;
   target: IngestNodeMatch;
   type: string;
-  properties?: Property[];
+  properties?: IngestProperty[];
 }
 
 export interface IngestRelationshipProperty {
@@ -38,6 +41,34 @@ export interface IngestRelationshipProperty {
   target: IngestNodeMatch;
   type: string;
   propertyType: string;
+}
+
+/* eslint-disable  @typescript-eslint/no-explicit-any */
+export interface IngestProperty {
+  type: string;
+  value: any;
+  metadata?: IngestMetadata;
+}
+
+export interface IngestMetadata {
+  assuranceLevel: 1 | 2 | 3;
+  verificationTime: Timestamp;
+  source: string;
+  customMetadata: { [key: string]: string };
+}
+
+export interface DeleteRelationship {
+  source: IngestNodeMatch;
+  target: IngestNodeMatch;
+  type: string;
+  properties?: DeleteProperty[];
+}
+
+/* eslint-disable  @typescript-eslint/no-explicit-any */
+export interface DeleteProperty {
+  type: string;
+  value: any;
+  metadata?: Metadata;
 }
 
 export class IngestRecord {
@@ -100,6 +131,18 @@ export class IngestRecordUpsert extends IngestRecord {
    *   IngestRecord.upsert('record-id').node({
    *     externalId: 'lot-1',
    *     type: 'ParkingLot'
+   *     properties: [{
+   *         type: "customProp",
+   *         value: '42',
+   *         metadata: {
+   *            assuranceLevel: 1,
+   *            verificationTime: Utils.dateToTimestamp(new Date()),
+   *            source: "Myself",
+   *            customMetadata: {
+   *                "customdata":'SomeCustomData'
+   *            },
+   *          }
+   *       }],
    *   })
    * );
    */
@@ -110,12 +153,40 @@ export class IngestRecordUpsert extends IngestRecord {
     const operation = this.request.record.operation;
     if (operation.oneofKind !== 'upsert') return defaultRecord;
 
+    const properties = [] as Property[];
+    if (node.properties) {
+      for (const property of node.properties) {
+        const metadata = {} as Metadata;
+
+        if (property.metadata?.assuranceLevel) {
+          metadata['assuranceLevel'] = property.metadata.assuranceLevel;
+        }
+        if (property.metadata?.verificationTime) {
+          metadata['verificationTime'] = property.metadata.verificationTime;
+        }
+        if (property.metadata?.source) {
+          metadata['source'] = property.metadata.source;
+        }
+        if (property.metadata?.customMetadata) {
+          const listCustom: { [key: string]: Value } = {};
+          for (const [key, value] of Object.entries(property.metadata?.customMetadata)) {
+            listCustom[key] = Value.fromJson(Utils.objectToJsonValue(value));
+          }
+          metadata['customMetadata'] = listCustom;
+        }
+        properties.push({
+          type: property.type,
+          value: Value.fromJson(Utils.objectToJsonValue(property.value)),
+          metadata: property.metadata ? metadata : undefined,
+        });
+      }
+    }
     operation.upsert.data = {
       oneofKind: 'node',
       node: {
         ...node,
         tags: node.tags ?? [],
-        properties: node.properties ?? [],
+        properties: properties ?? [],
         id: node.id ?? '',
         isIdentity: node.isIdentity ?? false,
       },
@@ -140,11 +211,40 @@ export class IngestRecordUpsert extends IngestRecord {
 
     const operation = this.request.record.operation;
     if (operation.oneofKind === 'upsert') {
+      const properties = [] as Property[];
+      if (relationship.properties) {
+        for (const property of relationship.properties) {
+          const metadata = {} as Metadata;
+
+          if (property.metadata?.assuranceLevel) {
+            metadata['assuranceLevel'] = property.metadata.assuranceLevel;
+          }
+          if (property.metadata?.verificationTime) {
+            metadata['verificationTime'] = property.metadata.verificationTime;
+          }
+          if (property.metadata?.source) {
+            metadata['source'] = property.metadata.source;
+          }
+          if (property.metadata?.customMetadata) {
+            const listCustom: { [key: string]: Value } = {};
+            for (const [key, value] of Object.entries(property.metadata?.customMetadata)) {
+              listCustom[key] = Value.fromJson(Utils.objectToJsonValue(value));
+            }
+            metadata['customMetadata'] = listCustom;
+          }
+          properties.push({
+            type: property.type,
+            value: Value.fromJson(Utils.objectToJsonValue(property.value)),
+            metadata: property.metadata ? metadata : undefined,
+          });
+        }
+      }
+
       operation.upsert.data = {
         oneofKind: 'relationship',
         relationship: {
           ...relationship,
-          properties: relationship.properties ?? [],
+          properties: properties ?? [],
         },
       };
     }
@@ -237,7 +337,7 @@ export class IngestRecordDelete extends IngestRecord {
    *   })
    * );
    */
-  relationship(relationship: IngestRelationship) {
+  relationship(relationship: DeleteRelationship) {
     const defaultRecord = new IngestRecord(this.request);
     if (!this.request.record) return defaultRecord;
 
@@ -355,9 +455,18 @@ export class IngestClient {
    *     IngestRecord.upsert('recordId-3').node({
    *       externalId: 'person1',
    *       type: 'Person',
-   *       properties: {
-   *         customProp: '42',
-   *       },
+   *       properties: [{
+   *         type: "customProp",
+   *         value: '42',
+   *         metadata: {
+   *            assuranceLevel: 1,
+   *            verificationTime: Utils.dateToTimestamp(new Date()),
+   *            source: "Myself",
+   *            customMetadata: {
+   *                "customdata": 'SomeCustomData'
+   *            },
+   *          }
+   *       }],
    *     }),
    *     IngestRecord.upsert('recordId-4').relationship({
    *       sourceMatch: { externalId: 'person1', type: 'Person' },
@@ -400,18 +509,28 @@ export class IngestClient {
    *     IngestRecord.upsert('recordId-3').node({
    *       externalId: 'tom',
    *       type: 'Person',
-   *       properties: {
-   *         employeeId: '123',
-   *         name: "Tom Doe"
+   *       properties: [
+   *         {
+   *            type: "employeeId",
+   *            value: 123
+   *         },
+   *         {
+   *          type: "name",
+   *          value: "Tom Doe"
+   *         }
+   *        ]
    *       },
    *       isIdentity: true
    *     }).getRecord(),
    *     IngestRecord.upsert('recordId-3').node({
    *       externalId: 'w_west_g1',
    *       type: 'UserGroup',
-   *       properties: {
-   *         name: "west"
-   *       }
+   *       properties: [
+   *          {
+   *            type: "name",
+   *            value: "west"
+   *          }
+   *       ]
    *     }).getRecord(),
    *     IngestRecord.upsert('recordId-3').relationship({
    *       sourceMatch: { externalId: 'tom', type: 'Person' },

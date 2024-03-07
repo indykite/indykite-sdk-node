@@ -1,9 +1,10 @@
+import { CallOptions, Metadata } from '@grpc/grpc-js';
+import { ServiceError, SurfaceCall } from '@grpc/grpc-js/build/src/call';
+
 import {
   IdentityKnowledgeReadRequest,
   IdentityKnowledgeReadResponse,
 } from '../../../grpc/indykite/knowledge/v1beta2/identity_knowledge_api';
-import { CallOptions, Metadata } from '@grpc/grpc-js';
-import { ServiceError, SurfaceCall } from '@grpc/grpc-js/build/src/call';
 import { Value } from '../../../grpc/indykite/objects/v1beta2/value';
 import { IdentityKnowledgeReadClient } from '../../knowledgev2';
 import { Node } from '../../../grpc/indykite/knowledge/objects/v1beta1/ikg';
@@ -45,6 +46,19 @@ describe('identityKnowledge', () => {
                     {
                       type: 'abc',
                       value: Value.fromJson(Utils.objectToJsonValue('something')),
+                      metadata: {
+                        assuranceLevel: 1,
+                        verificationTime: Utils.dateToTimestamp(new Date()),
+                        source: 'Myself',
+                        customMetadata: {
+                          customdata: {
+                            type: {
+                              oneofKind: 'stringValue',
+                              stringValue: 'SomeCustomData',
+                            },
+                          },
+                        },
+                      },
                     },
                   ],
                   isIdentity: true,
@@ -122,6 +136,7 @@ describe('identityKnowledge', () => {
     it('returns a correct response', () => {
       expect(result.nodes.length).toEqual(2);
       expect(result.nodes[0].id).toEqual('gid:abc');
+      expect(result.nodes[0].properties[0].metadata?.assuranceLevel).toEqual(1);
       expect(result.relationships.length).toEqual(1);
       expect(result.relationships[0].id).toEqual('gid:xxx');
     });
@@ -281,6 +296,19 @@ describe('read', () => {
                     {
                       type: 'abc',
                       value: Value.fromJson(Utils.objectToJsonValue('something')),
+                      metadata: {
+                        assuranceLevel: 1,
+                        verificationTime: Utils.dateToTimestamp(new Date()),
+                        source: 'Myself',
+                        customMetadata: {
+                          customdata: {
+                            type: {
+                              oneofKind: 'stringValue',
+                              stringValue: 'SomeCustomData',
+                            },
+                          },
+                        },
+                      },
                     },
                   ],
                   isIdentity: true,
@@ -313,18 +341,8 @@ describe('read', () => {
       result = await sdk.read(
         'MATCH (:DigitalTwin)-[:SERVICES]->(n:Truck) WHERE n.external_id = $externalId and n.type=$type',
         {
-          externalId: {
-            type: {
-              oneofKind: 'stringValue',
-              stringValue: '1010',
-            },
-          },
-          type: {
-            type: {
-              oneofKind: 'stringValue',
-              stringValue: 'Person',
-            },
-          },
+          externalId: '1010',
+          type: 'Person',
         },
         [{ variable: 'n', properties: [] }],
       );
@@ -359,6 +377,7 @@ describe('read', () => {
     it('returns a correct response', () => {
       expect(result.nodes.length).toEqual(2);
       expect(result.nodes[0].id).toEqual('gid:abc');
+      expect(result.nodes[0].properties[0].metadata?.assuranceLevel).toEqual(1);
       expect(result.relationships.length).toEqual(1);
       expect(result.relationships[0].id).toEqual('gid:xxx');
     });
@@ -388,18 +407,8 @@ describe('read', () => {
         await sdk.read(
           'MATCH (:DigitalTwin)-[:SERVICES]->(n:Truck) WHERE n.external_id = $externalId and n.type=$type',
           {
-            externalId: {
-              type: {
-                oneofKind: 'stringValue',
-                stringValue: '1010',
-              },
-            },
-            type: {
-              type: {
-                oneofKind: 'stringValue',
-                stringValue: 'Person',
-              },
-            },
+            externalId: '1010',
+            type: 'Person',
           },
           [{ variable: 'n', properties: [] }],
         );
@@ -437,18 +446,8 @@ describe('read', () => {
         await sdk.read(
           'MATCH (:DigitalTwin)-[:SERVICES]->(n:Truck) WHERE n.external_id = $externalId and n.type=$type',
           {
-            externalId: {
-              type: {
-                oneofKind: 'stringValue',
-                stringValue: '1010',
-              },
-            },
-            type: {
-              type: {
-                oneofKind: 'stringValue',
-                stringValue: 'Person',
-              },
-            },
+            externalId: '1010',
+            type: 'Person',
           },
           [{ variable: 'n', properties: [] }],
         );
@@ -488,6 +487,19 @@ describe('listNodes', () => {
                     {
                       type: 'abc',
                       value: Value.fromJson(Utils.objectToJsonValue('something')),
+                      metadata: {
+                        assuranceLevel: 1,
+                        verificationTime: Utils.dateToTimestamp(new Date()),
+                        source: 'Myself',
+                        customMetadata: {
+                          customdata: {
+                            type: {
+                              oneofKind: 'stringValue',
+                              stringValue: 'SomeCustomData',
+                            },
+                          },
+                        },
+                      },
                     },
                   ],
                   isIdentity: true,
@@ -534,6 +546,7 @@ describe('listNodes', () => {
     it('returns a correct response', () => {
       expect(result.length).toEqual(4);
       expect(result[0].id).toEqual('gid:abc');
+      expect(result[0].properties[0].metadata?.assuranceLevel).toEqual(1);
     });
   });
 
@@ -627,6 +640,19 @@ describe('listNodesByProperty', () => {
                     {
                       type: 'abc',
                       value: Value.fromJson(Utils.objectToJsonValue('something')),
+                      metadata: {
+                        assuranceLevel: 1,
+                        verificationTime: Utils.dateToTimestamp(new Date()),
+                        source: 'Myself',
+                        customMetadata: {
+                          customdata: {
+                            type: {
+                              oneofKind: 'stringValue',
+                              stringValue: 'SomeCustomData',
+                            },
+                          },
+                        },
+                      },
                     },
                   ],
                   isIdentity: true,
@@ -672,6 +698,7 @@ describe('listNodesByProperty', () => {
     it('returns a correct response', () => {
       expect(result.length).toEqual(4);
       expect(result[0].id).toEqual('gid:abc');
+      expect(result[0].properties[0].metadata?.assuranceLevel).toEqual(1);
     });
   });
 
@@ -777,6 +804,19 @@ describe('getNodeByID', () => {
                     {
                       type: 'abc',
                       value: Value.fromJson(Utils.objectToJsonValue('something')),
+                      metadata: {
+                        assuranceLevel: 1,
+                        verificationTime: Utils.dateToTimestamp(new Date()),
+                        source: 'BRI',
+                        customMetadata: {
+                          othercustomerdata: {
+                            type: {
+                              oneofKind: 'stringValue',
+                              stringValue: 'SomeOtherCustomData',
+                            },
+                          },
+                        },
+                      },
                     },
                   ],
                   isIdentity: true,
@@ -1409,6 +1449,19 @@ describe('getIdentityByIdentifier', () => {
                     {
                       type: 'abc',
                       value: Value.fromJson(Utils.objectToJsonValue('something')),
+                      metadata: {
+                        assuranceLevel: 1,
+                        verificationTime: Utils.dateToTimestamp(new Date()),
+                        source: 'BRI',
+                        customMetadata: {
+                          othercustomerdata: {
+                            type: {
+                              oneofKind: 'stringValue',
+                              stringValue: 'SomeOtherCustomData',
+                            },
+                          },
+                        },
+                      },
                     },
                   ],
                   isIdentity: true,
