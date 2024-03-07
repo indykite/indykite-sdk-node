@@ -47,8 +47,8 @@ export class IdentityKnowledgeReadClient {
    * @example
    *  const dt = await sdk.identityKnowledgeRead(
    *    {
-   *      query = "MATCH (n:Resource) WHERE n.external_id = $external_id"
-   *      input_params = {"external_id": "CJnoXYgnPNDAiMg"}
+   *      query = "MATCH (n:Resource) WHERE n.external_id = $external_id and n.type = $type"
+   *      input_params = {"external_id": "CJnoXYgnPNDAiMg", "type": "Asset"}
    *      returns =  [({"variable":"n", "properties":[]})]
    *    } as IdentityKnowledgeReadRequest
    *  )
@@ -95,9 +95,13 @@ export class IdentityKnowledgeReadClient {
    */
   read(
     query: string,
-    inputParams: { [key: string]: Value },
+    input: { [key: string]: string },
     returns: Return[],
   ): Promise<IdentityKnowledgeReadResponse> {
+    const inputParams: { [key: string]: Value } = {};
+    for (const [key, value] of Object.entries(input)) {
+      inputParams[key] = Value.fromJson(Utils.objectToJsonValue(value));
+    }
     const request: IdentityKnowledgeReadRequest = {
       query,
       inputParams,
