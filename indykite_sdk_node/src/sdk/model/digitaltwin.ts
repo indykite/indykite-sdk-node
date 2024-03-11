@@ -1,4 +1,3 @@
-import { PropertyBatchOperation } from '../../grpc/indykite/identity/v1beta2/attributes';
 import {
   DigitalEntity as DigitalEntityModel,
   DigitalTwin as DigitalTwinModel,
@@ -117,75 +116,5 @@ export class DigitalTwin extends DigitalTwinCore {
     } else {
       this.properties.set(property.property, [property]);
     }
-  }
-
-  addProperty(property: Property): void {
-    this.addPropertyNoPatch(property);
-    this.patchBuilder.addProperty(property);
-  }
-
-  deleteProperty(property: Property): void {
-    const properties = this.properties.get(property.property);
-    if (properties) {
-      const prop = properties.find((p) => p.id === property.id);
-      if (prop) {
-        this.properties.set(
-          property.property,
-          properties.filter((p) => p.id !== property.id),
-        );
-        this.patchBuilder.deleteProperty(prop);
-      }
-    }
-  }
-
-  updatePropertyValue(property: Property, value: unknown): void {
-    const properties = this.properties.get(property.property);
-    if (properties) {
-      const prop = properties.find((p) => p.id === property.id);
-      if (prop) {
-        prop.withValue(value);
-        this.patchBuilder.updateProperty(prop);
-      }
-    }
-  }
-
-  updatePropertyMetadata(property: Property, primary: boolean): void {
-    const properties = this.properties.get(property.property);
-    if (properties) {
-      const prop = properties.find((p) => p.id === property.id);
-      if (prop) {
-        prop.withMetadata(primary);
-        this.patchBuilder.updateProperty(prop);
-      }
-    }
-  }
-
-  updateProperty(property: Property): void {
-    const properties = this.properties.get(property.property);
-    if (properties) {
-      const idx = properties.findIndex((p) => p.id === property.id);
-      if (idx != -1) {
-        properties[idx] = property;
-        this.patchBuilder.updateProperty(property);
-      }
-    }
-  }
-
-  resetOperations(): void {
-    this.patchBuilder = PatchPropertiesBuilder.newBuilder();
-  }
-
-  getPatchOperation(): PropertyBatchOperation[] {
-    return this.patchBuilder.build();
-  }
-
-  getPatchOperationsAndReset(): PropertyBatchOperation[] {
-    const ops = [...this.getPatchOperation()];
-    this.resetOperations();
-    return ops;
-  }
-
-  getOperationsBuilder(): PatchPropertiesBuilder {
-    return this.patchBuilder;
   }
 }
