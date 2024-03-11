@@ -1,4 +1,16 @@
 # Changelog
+## [0.7.0](https://github.com/indykite/indykite-sdk-node/compare/v0.6.1...v0.7.0) (2024-03-11)
+
+
+### ⚠ BREAKING CHANGES
+
+* ENG-3022
+
+### Features
+
+* add property metadata ([73f6701](https://github.com/indykite/indykite-sdk-node/commit/73f6701b9092ff4367118dd81b3c6d1852d0fcf9))
+* remove deprecated methods ([7b76864](https://github.com/indykite/indykite-sdk-node/commit/7b7686458b17bcc1c9ab66ab4d75ff11060c92ac))
+
 ## [0.6.1](https://github.com/indykite/indykite-sdk-node/compare/v0.6.0...v0.6.1) (2024-02-26)
 
 
