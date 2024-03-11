@@ -1,4 +1,4 @@
-import { IdentityKnowledgeReadClient } from '../sdk/knowledgev2';
+import { IdentityKnowledgeReadClient } from '../sdk/knowledge';
 import { Value } from '../grpc/indykite/objects/v1beta2/value';
 import { Utils } from '../sdk/utils/utils';
 

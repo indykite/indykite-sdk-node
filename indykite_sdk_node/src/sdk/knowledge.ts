@@ -1,12 +1,13 @@
 import { SdkError, SdkErrorCode, SkdErrorText } from './error';
 import { SdkClient } from './client/client';
-import { IdentityKnowledgeAPIClient } from '../grpc/indykite/knowledge/v1beta1/identity_knowledge_api.grpc-client';
-import { Path, Node, Operation, Property } from '../grpc/indykite/knowledge/v1beta1/model';
+import { IdentityKnowledgeAPIClient as IdentityKnowledgeReadAPIClient } from '../grpc/indykite/knowledge/v1beta2/identity_knowledge_api.grpc-client';
+import { Return } from '../grpc/indykite/knowledge/v1beta2/model';
+import { Node, Property } from '../grpc/indykite/knowledge/objects/v1beta1/ikg';
+import { Value } from '../grpc/indykite/objects/v1beta2/value';
 import {
-  IdentityKnowledgeRequest,
-  IdentityKnowledgeResponse,
-} from '../grpc/indykite/knowledge/v1beta1/identity_knowledge_api';
-import { InputParam } from '../grpc/indykite/authorization/v1beta1/model';
+  IdentityKnowledgeReadRequest,
+  IdentityKnowledgeReadResponse,
+} from '../grpc/indykite/knowledge/v1beta2/identity_knowledge_api';
 import { Utils } from './utils/utils';
 import { IngestRecord } from './ingest';
 import { v4 } from 'uuid';
@@ -21,18 +22,18 @@ export interface Identifier {
   type: string;
 }
 
-export class IdentityKnowledgeClient {
-  private client: IdentityKnowledgeAPIClient;
+export class IdentityKnowledgeReadClient {
+  private client: IdentityKnowledgeReadAPIClient;
 
   constructor(sdk: SdkClient) {
-    this.client = sdk.client as IdentityKnowledgeAPIClient;
+    this.client = sdk.client as IdentityKnowledgeReadAPIClient;
   }
 
-  static createInstance(appCredential?: string | unknown): Promise<IdentityKnowledgeClient> {
-    return new Promise<IdentityKnowledgeClient>((resolve, reject) => {
-      SdkClient.createIdentityInstance(IdentityKnowledgeAPIClient, appCredential)
+  static createInstance(appCredential?: string | unknown): Promise<IdentityKnowledgeReadClient> {
+    return new Promise<IdentityKnowledgeReadClient>((resolve, reject) => {
+      SdkClient.createIdentityInstance(IdentityKnowledgeReadAPIClient, appCredential)
         .then((sdk) => {
-          resolve(new IdentityKnowledgeClient(sdk));
+          resolve(new IdentityKnowledgeReadClient(sdk));
         })
         .catch((err) => {
           reject(err);
@@ -42,20 +43,21 @@ export class IdentityKnowledgeClient {
 
   /**
    *
-   * @since 0.4.1
-   * @deprecated since 0.6.0 Use knowledgev2
+   * @since 0.6.0
    * @example
-   *  const dt = await sdk.identityKnowledge(
+   *  const dt = await sdk.identityKnowledgeRead(
    *    {
-   *      operation: Operation.READ,
-   *      path: "(:DigitalTwin)-[:SERVICES]->(n:Truck)",
-   *      conditions: "WHERE n.external_id = \"1234\"",
-   *    } as IdentityKnowledgeRequest
+   *      query = "MATCH (n:Resource) WHERE n.external_id = $external_id and n.type = $type"
+   *      input_params = {"external_id": "CJnoXYgnPNDAiMg", "type": "Asset"}
+   *      returns =  [({"variable":"n", "properties":[]})]
+   *    } as IdentityKnowledgeReadRequest
    *  )
    */
-  identityKnowledge(input: IdentityKnowledgeRequest): Promise<IdentityKnowledgeResponse> {
+  identityKnowledgeRead(
+    input: IdentityKnowledgeReadRequest,
+  ): Promise<IdentityKnowledgeReadResponse> {
     return new Promise((resolve, reject) => {
-      this.client.identityKnowledge(input, (err, response) => {
+      this.client.identityKnowledgeRead(input, (err, response) => {
         if (err) {
           reject(err);
         } else {
@@ -63,7 +65,7 @@ export class IdentityKnowledgeClient {
             reject(
               new SdkError(
                 SdkErrorCode.SDK_CODE_3,
-                SkdErrorText.SDK_CODE_3(IdentityKnowledgeClient.name),
+                SkdErrorText.SDK_CODE_3(IdentityKnowledgeReadClient.name),
               ),
             );
           } else {
@@ -75,223 +77,188 @@ export class IdentityKnowledgeClient {
   }
 
   /**
-   * @since 0.4.2
-   * @deprecated since 0.6.0 Use knowledgev2
+   * @since 0.6.0
    */
-  private parseSingleNodeFromPaths(paths: Path[]): Node {
-    if (!paths?.length || !paths[0].nodes?.length) {
+  private parseSingleNodeFromNodes(nodes: Node[]): Node {
+    if (!nodes?.length || !nodes[0]) {
       throw new SdkError(
         SdkErrorCode.SDK_CODE_3,
-        SkdErrorText.SDK_CODE_3(IdentityKnowledgeClient.name),
+        SkdErrorText.SDK_CODE_3(IdentityKnowledgeReadClient.name),
       );
     }
-    return paths[0].nodes[0];
+    return nodes[0];
   }
 
   /**
-   * @since 0.4.2
-   * @deprecated since 0.6.0 Use knowledgev2
-   */
-  private parseMultipleNodesFromPaths(paths: Path[]): Node[] {
-    if (paths) {
-      return paths.reduce(
-        (acc, path) => (path?.nodes ? acc.concat(path.nodes) : acc),
-        [] as Node[],
-      );
-    }
-    return [];
-  }
-
-  /**
-   * Read sends a READ operation to the Identity Knowledge API, with the desired path and optional conditions.
-   * @since 0.4.2
-   * @deprecated since 0.6.0 Use knowledgev2
+   * Read sends a READ operation to the Identity Knowledge API, with the desired query and input params
+   * @since 0.6.0
    */
   read(
-    path: string,
-    conditions: string,
-    inputParams: { [key: string]: InputParam },
-  ): Promise<IdentityKnowledgeResponse> {
-    const request: IdentityKnowledgeRequest = {
-      operation: Operation.READ,
-      path,
-      conditions,
+    query: string,
+    input: { [key: string]: string },
+    returns: Return[],
+  ): Promise<IdentityKnowledgeReadResponse> {
+    const inputParams: { [key: string]: Value } = {};
+    for (const [key, value] of Object.entries(input)) {
+      inputParams[key] = Value.fromJson(Utils.objectToJsonValue(value));
+    }
+    const request: IdentityKnowledgeReadRequest = {
+      query,
       inputParams,
-    } as IdentityKnowledgeRequest;
-    return this.identityKnowledge(request);
+      returns,
+    } as IdentityKnowledgeReadRequest;
+    return this.identityKnowledgeRead(request);
   }
 
   /**
-   * GetDigitalTwinByID is a helper function that queries for a DigitalTwin node by its id.
-   * @since 0.4.2
-   * @deprecated since 0.6.0 Use knowledgev2
+   * GetIdentityByID is a helper function that queries for an Identity node by its id.
+   * @since 0.6.0
    */
-  getDigitalTwinByID(id: string): Promise<Node> {
-    return this.getNodeByID(id, NODE_TYPE.DIGITAL_TWIN);
+  getIdentityByID(id: string): Promise<Node> {
+    return this.getNodeByID(id, true);
   }
 
   /**
-   * GetDigitalTwinByIdentifier is a helper function that queries for a DigitalTwin node
+   * GetIdentityByIdentifier is a helper function that queries for an Identity node
    * by its externalID + type combination.
-   * @since 0.4.2
-   * @deprecated since 0.6.0 Use knowledgev2
+   * @since 0.6.0
    */
-  getDigitalTwinByIdentifier(identifier: Identifier): Promise<Node> {
-    return this.getNodeByIdentifier(NODE_TYPE.DIGITAL_TWIN, identifier);
+  getIdentityByIdentifier(identifier: Identifier): Promise<Node> {
+    return this.getNodeByIdentifier(identifier, true);
   }
 
   /**
-   * GetResourceByID is a helper function that queries for a Resource node by its id.
-   * @since 0.4.2
-   * @deprecated since 0.6.0 Use knowledgev2
+   * @since 0.6.0
    */
-  getResourceByID(id: string): Promise<Node> {
-    return this.getNodeByID(id, NODE_TYPE.RESOURCE);
+  getNodeByID(id: string, isIdentity?: boolean): Promise<Node> {
+    const request: IdentityKnowledgeReadRequest = {
+      query: isIdentity
+        ? `MATCH (n:DigitalTwin) WHERE n.id = $id`
+        : `MATCH (n:Resource) WHERE n.id = $id`,
+      inputParams: {
+        id: Value.fromJson(Utils.objectToJsonValue(id)),
+      },
+      returns: [{ variable: 'n', properties: [] }],
+    } as IdentityKnowledgeReadRequest;
+    return new Promise((resolve, reject) => {
+      this.identityKnowledgeRead(request)
+        .then((response) => resolve(this.parseSingleNodeFromNodes(response.nodes)))
+        .catch((error) => reject(error));
+    });
   }
 
   /**
-   * GetResourceByIdentifier is a helper function that queries for a Resource node
-   * by its externalID + type combination.
-   * @since 0.4.2
-   * @deprecated since 0.6.0 Use knowledgev2
+   * @since 0.6.0
    */
-  getResourceByIdentifier(identifier: Identifier): Promise<Node> {
-    return this.getNodeByIdentifier(NODE_TYPE.RESOURCE, identifier);
+  getNodeByIdentifier(identifier: Identifier, isIdentity?: boolean): Promise<Node> {
+    const request: IdentityKnowledgeReadRequest = {
+      query: isIdentity
+        ? `MATCH (n:DigitalTwin) WHERE n.external_id = $externalId AND n.type = $type`
+        : `MATCH (n:Resource) WHERE n.external_id = $externalId AND n.type = $type`,
+      inputParams: {
+        externalId: Value.fromJson(Utils.objectToJsonValue(identifier.externalId)),
+        type: Value.fromJson(Utils.objectToJsonValue(identifier.type)),
+      },
+      returns: [{ variable: 'n', properties: [] }],
+    } as IdentityKnowledgeReadRequest;
+    return new Promise((resolve, reject) => {
+      this.identityKnowledgeRead(request)
+        .then((response) => resolve(this.parseSingleNodeFromNodes(response.nodes)))
+        .catch((error) => reject(error));
+    });
   }
 
   /**
-   * ListDigitalTwinsByProperty is a helper function that lists all DigitalTwin nodes
+   * ListIdentitiesByProperty is a helper function that lists all Identity nodes
    * that have the specified property.
-   * @since 0.4.2
-   * @deprecated since 0.6.0 Use knowledgev2
+   * @since 0.6.0
    */
-  listDigitalTwinsByProperty(property: Property): Promise<Node[]> {
-    return this.listNodesByProperty(NODE_TYPE.DIGITAL_TWIN, property);
+  listIdentitiesByProperty(property: Property): Promise<Node[]> {
+    return this.listNodesByProperty(property, true);
   }
 
   /**
-   * ListResourcesByProperty is a helper function that lists all Resource nodes.
-   * that have the specified property.
-   * @since 0.4.2
-   * @deprecated since 0.6.0 Use knowledgev2
+   * ListIdentities is a helper function that lists all Identity nodes.
+   * @since 0.6.0
    */
-  listResourcesByProperty(property: Property): Promise<Node[]> {
-    return this.listNodesByProperty(NODE_TYPE.RESOURCE, property);
+  listIdentities(): Promise<Node[]> {
+    return this.listNodes('DigitalTwin');
   }
 
   /**
-   * ListDigitalTwins is a helper function that lists all DigitalTwin nodes.
-   * @since 0.4.2
-   * @deprecated since 0.6.0 Use knowledgev2
-   */
-  listDigitalTwins(): Promise<Node[]> {
-    return this.listNodes(NODE_TYPE.DIGITAL_TWIN);
-  }
-
-  /**
-   * ListResources is a helper function that lists all Resource nodes.
-   * that have the specified property.
-   * @since 0.4.2
-   * @deprecated since 0.6.0 Use knowledgev2
-   */
-  listResources(): Promise<Node[]> {
-    return this.listNodes(NODE_TYPE.RESOURCE);
-  }
-
-  /**
-   * ListNodes is a helper function that lists all nodes by type, regardless of whether they are DigitalTwins
+   * ListNodes is a helper function that lists all nodes by type, regardless of whether they are Identities
    * or Resources. The nodeType argument should be in PascalCase.
-   * @deprecated since 0.6.0 Use knowledgev2
    */
   listNodes(nodeType: string): Promise<Node[]> {
-    const request: IdentityKnowledgeRequest = {
-      operation: Operation.READ,
-      path: `(:${nodeType})`,
-      conditions: '',
+    const request: IdentityKnowledgeReadRequest = {
+      query: `MATCH (n:${nodeType})`,
       inputParams: {},
-    } as IdentityKnowledgeRequest;
+      returns: [{ variable: 'n', properties: [] }],
+    } as IdentityKnowledgeReadRequest;
     return new Promise((resolve, reject) => {
-      this.identityKnowledge(request)
-        .then((response) => resolve(this.parseMultipleNodesFromPaths(response.paths)))
+      this.identityKnowledgeRead(request)
+        .then((response) =>
+          resolve(
+            response.nodes.reduce(
+              (acc, node) => (node ? acc.concat(response.nodes) : acc),
+              [] as Node[],
+            ),
+          ),
+        )
         .catch((error) => reject(error));
     });
   }
 
   /**
    * ListNodesByProperty is a helper function that lists all nodes that have the specified type and property.
-   * @since 0.4.2
-   * @deprecated since 0.6.0 Use knowledgev2
+   * @since 0.6.0
    */
-  listNodesByProperty(nodeType: string, property: Property): Promise<Node[]> {
-    const request: IdentityKnowledgeRequest = {
-      operation: Operation.READ,
-      path: `(n:${nodeType})`,
-      conditions: `WHERE n.${property.key} = $${property.key}`,
+  listNodesByProperty(property: Property, isIdentity?: boolean): Promise<Node[]> {
+    const request: IdentityKnowledgeReadRequest = {
+      query: isIdentity
+        ? `MATCH (n:DigitalTwin)-[:HAS]->(p:Property) WHERE p.type = "${property.type}" and p.value = $${property.type}`
+        : `MATCH (n:Resource)-[:HAS]->(p:Property) WHERE p.type = "${property.type}" and p.value = $${property.type}`,
       inputParams: {
-        [property.key]: property.value,
+        [property.type]: property.value,
       },
-    } as IdentityKnowledgeRequest;
+      returns: [{ variable: 'n', properties: [] }],
+    } as IdentityKnowledgeReadRequest;
     return new Promise((resolve, reject) => {
-      this.identityKnowledge(request)
-        .then((response) => resolve(this.parseMultipleNodesFromPaths(response.paths)))
-        .catch((error) => reject(error));
-    });
-  }
-
-  /**
-   * @since 0.4.2
-   * @deprecated since 0.6.0 Use knowledgev2
-   */
-  getNodeByID(id: string, nodeType: string): Promise<Node> {
-    const request: IdentityKnowledgeRequest = {
-      operation: Operation.READ,
-      path: `(n:${nodeType})`,
-      conditions: `WHERE n.id = $id`,
-      inputParams: {
-        id: InputParam.fromJson(Utils.objectToJsonValue(id)),
-      },
-    } as IdentityKnowledgeRequest;
-    return new Promise((resolve, reject) => {
-      this.identityKnowledge(request)
-        .then((response) => resolve(this.parseSingleNodeFromPaths(response.paths)))
-        .catch((error) => reject(error));
-    });
-  }
-
-  /**
-   * @since 0.4.2
-   * @deprecated since 0.6.0 Use knowledgev2
-   */
-  getNodeByIdentifier(nodeType: string, identifier: Identifier): Promise<Node> {
-    const request: IdentityKnowledgeRequest = {
-      operation: Operation.READ,
-      path: `(n:${nodeType})`,
-      conditions: `WHERE n.external_id = $externalId AND n.type = $type`,
-      inputParams: {
-        externalId: InputParam.fromJson(Utils.objectToJsonValue(identifier.externalId)),
-        type: InputParam.fromJson(Utils.objectToJsonValue(identifier.type)),
-      },
-    } as IdentityKnowledgeRequest;
-    return new Promise((resolve, reject) => {
-      this.identityKnowledge(request)
-        .then((response) => resolve(this.parseSingleNodeFromPaths(response.paths)))
+      this.identityKnowledgeRead(request)
+        .then((response) =>
+          resolve(
+            response.nodes.reduce(
+              (acc, node) => (node ? acc.concat(response.nodes) : acc),
+              [] as Node[],
+            ),
+          ),
+        )
         .catch((error) => reject(error));
     });
   }
 
   /**
    * delete all nodes of defined type
-   * @deprecated since 0.6.0 Use knowledgev2
    */
   async deleteAllWithNodeType(nodeType: string) {
-    const nodes: Node[] = await this.listNodes(nodeType);
+    const request: IdentityKnowledgeReadRequest = {
+      query: `MATCH (n:${nodeType})`,
+      inputParams: {},
+      returns: [{ variable: 'n' }],
+    } as IdentityKnowledgeReadRequest;
+    const response = await this.identityKnowledgeRead(request);
+
     let records: IngestRecord[] = [];
-    records = nodes.map((node) => {
-      return IngestRecord.delete(Utils.uuidToBase64(v4())).node({
-        externalId: node.externalId,
-        type: node.type,
+    if (response.nodes.length > 0) {
+      const nodes: Node[] = response.nodes;
+      records = nodes.map((node) => {
+        return IngestRecord.delete(Utils.uuidToBase64(v4())).node({
+          externalId: node.externalId,
+          type: node.type,
+        });
       });
-    });
+      return records;
+    }
     return records;
   }
 }

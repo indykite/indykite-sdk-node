@@ -1,19 +1,20 @@
-import {
-  IdentityKnowledgeRequest,
-  IdentityKnowledgeResponse,
-} from '../../../grpc/indykite/knowledge/v1beta1/identity_knowledge_api';
 import { CallOptions, Metadata } from '@grpc/grpc-js';
 import { ServiceError, SurfaceCall } from '@grpc/grpc-js/build/src/call';
-import { Value } from '../../../grpc/indykite/objects/v1beta1/struct';
-import { IdentityKnowledgeClient } from '../../knowledge';
-import { Node, Operation } from '../../../grpc/indykite/knowledge/v1beta1/model';
+
+import {
+  IdentityKnowledgeReadRequest,
+  IdentityKnowledgeReadResponse,
+} from '../../../grpc/indykite/knowledge/v1beta2/identity_knowledge_api';
+import { Value } from '../../../grpc/indykite/objects/v1beta2/value';
+import { IdentityKnowledgeReadClient } from '../../knowledge';
+import { Node } from '../../../grpc/indykite/knowledge/objects/v1beta1/ikg';
 import { applicationTokenMock } from '../../utils/test_utils';
 import { Utils } from '../../utils/utils';
 
-let sdk: IdentityKnowledgeClient;
+let sdk: IdentityKnowledgeReadClient;
 
 beforeAll(async () => {
-  sdk = await IdentityKnowledgeClient.createInstance(applicationTokenMock);
+  sdk = await IdentityKnowledgeReadClient.createInstance(applicationTokenMock);
 });
 
 afterEach(() => {
@@ -22,7 +23,7 @@ afterEach(() => {
 
 describe('identityKnowledge', () => {
   describe('when the response does not contain an error', () => {
-    let result: IdentityKnowledgeResponse;
+    let result: IdentityKnowledgeReadResponse;
 
     beforeEach(async () => {
       const mockFunc = jest.fn(
@@ -31,42 +32,53 @@ describe('identityKnowledge', () => {
           res:
             | Metadata
             | CallOptions
-            | ((err: ServiceError | null, response: IdentityKnowledgeResponse) => void),
+            | ((err: ServiceError | null, response: IdentityKnowledgeReadResponse) => void),
         ): SurfaceCall => {
           if (typeof res === 'function')
             res(null, {
-              paths: [
+              nodes: [
                 {
-                  nodes: [
+                  id: 'gid:abc',
+                  externalId: '1010',
+                  type: 'Person',
+                  tags: [],
+                  properties: [
                     {
-                      id: 'gid:abc',
-                      externalId: '1010',
-                      type: 'Person',
-                      tags: [],
-                      properties: [
-                        {
-                          key: 'abc',
-                          value: Value.fromJson(Utils.objectToJsonValue('something')),
+                      type: 'abc',
+                      value: Value.fromJson(Utils.objectToJsonValue('something')),
+                      metadata: {
+                        assuranceLevel: 1,
+                        verificationTime: Utils.dateToTimestamp(new Date()),
+                        source: 'Myself',
+                        customMetadata: {
+                          customdata: {
+                            type: {
+                              oneofKind: 'stringValue',
+                              stringValue: 'SomeCustomData',
+                            },
+                          },
                         },
-                      ],
-                    },
-                    {
-                      id: 'gid:cba',
-                      externalId: '0101',
-                      type: 'Truck',
-                      properties: [],
-                      tags: [],
+                      },
                     },
                   ],
-                  relationships: [
-                    {
-                      id: 'gid:xxx',
-                      type: 'SERVICES',
-                      source: '',
-                      target: '',
-                      properties: {},
-                    },
-                  ],
+                  isIdentity: true,
+                },
+                {
+                  id: 'gid:cba',
+                  externalId: '0101',
+                  type: 'Truck',
+                  properties: [],
+                  tags: [],
+                  isIdentity: false,
+                },
+              ],
+              relationships: [
+                {
+                  id: 'gid:xxx',
+                  type: 'SERVICES',
+                  source: '',
+                  target: '',
+                  properties: {},
                 },
               ],
             });
@@ -74,35 +86,59 @@ describe('identityKnowledge', () => {
         },
       );
 
-      jest.spyOn(sdk['client'], 'identityKnowledge').mockImplementation(mockFunc);
+      jest.spyOn(sdk['client'], 'identityKnowledgeRead').mockImplementation(mockFunc);
 
-      result = await sdk.identityKnowledge({
-        operation: Operation.READ,
-        path: '(:DigitalTwin)-[:SERVICES]->(n:Truck)',
-        conditions: 'WHERE n.external_id = "1234"',
-        inputParams: {},
-      } as IdentityKnowledgeRequest);
+      result = await sdk.identityKnowledgeRead({
+        query: 'MATCH (n:DigitalTwin) WHERE n.external_id = $externalId and n.type=$type',
+        inputParams: {
+          externalId: {
+            type: {
+              oneofKind: 'stringValue',
+              stringValue: '1010',
+            },
+          },
+          type: {
+            type: {
+              oneofKind: 'stringValue',
+              stringValue: 'Person',
+            },
+          },
+        },
+        returns: [{ variable: 'n', properties: [] }],
+      } as IdentityKnowledgeReadRequest);
     });
 
     it('sends a correct request', () => {
-      expect(sdk['client'].identityKnowledge).toBeCalledTimes(1);
-      expect(sdk['client'].identityKnowledge).toBeCalledWith(
+      expect(sdk['client'].identityKnowledgeRead).toHaveBeenCalledTimes(1);
+      expect(sdk['client'].identityKnowledgeRead).toHaveBeenCalledWith(
         {
-          operation: Operation.READ,
-          path: '(:DigitalTwin)-[:SERVICES]->(n:Truck)',
-          conditions: 'WHERE n.external_id = "1234"',
-          inputParams: {},
+          query: 'MATCH (n:DigitalTwin) WHERE n.external_id = $externalId and n.type=$type',
+          inputParams: {
+            externalId: {
+              type: {
+                oneofKind: 'stringValue',
+                stringValue: '1010',
+              },
+            },
+            type: {
+              type: {
+                oneofKind: 'stringValue',
+                stringValue: 'Person',
+              },
+            },
+          },
+          returns: [{ variable: 'n', properties: [] }],
         },
         expect.any(Function),
       );
     });
 
     it('returns a correct response', () => {
-      expect(result.paths.length).toEqual(1);
-      expect(result.paths[0].nodes.length).toEqual(2);
-      expect(result.paths[0].nodes[0].id).toEqual('gid:abc');
-      expect(result.paths[0].relationships.length).toEqual(1);
-      expect(result.paths[0].relationships[0].id).toEqual('gid:xxx');
+      expect(result.nodes.length).toEqual(2);
+      expect(result.nodes[0].id).toEqual('gid:abc');
+      expect(result.nodes[0].properties[0].metadata?.assuranceLevel).toEqual(1);
+      expect(result.relationships.length).toEqual(1);
+      expect(result.relationships[0].id).toEqual('gid:xxx');
     });
   });
 
@@ -112,34 +148,46 @@ describe('identityKnowledge', () => {
     beforeEach(async () => {
       const mockFunc = jest.fn(
         (
-          request: IdentityKnowledgeRequest,
+          request: IdentityKnowledgeReadRequest,
           callback:
             | Metadata
             | CallOptions
-            | ((error: ServiceError | null, response?: IdentityKnowledgeResponse) => void),
+            | ((error: ServiceError | null, response?: IdentityKnowledgeReadResponse) => void),
         ): SurfaceCall => {
           if (typeof callback === 'function') callback(null);
           return {} as SurfaceCall;
         },
       );
 
-      jest.spyOn(sdk['client'], 'identityKnowledge').mockImplementation(mockFunc);
+      jest.spyOn(sdk['client'], 'identityKnowledgeRead').mockImplementation(mockFunc);
 
       try {
         caughtError = undefined;
-        await sdk.identityKnowledge({
-          operation: Operation.READ,
-          path: '(:DigitalTwin)-[:SERVICES]->(n:Truck)',
-          conditions: 'WHERE n.external_id = "1234"',
-          inputParams: {},
-        } as IdentityKnowledgeRequest);
+        await sdk.identityKnowledgeRead({
+          query: 'MATCH (n:DigitalTwin) WHERE n.external_id = $externalId and n.type=$type',
+          inputParams: {
+            externalId: {
+              type: {
+                oneofKind: 'stringValue',
+                stringValue: '8163',
+              },
+            },
+            type: {
+              type: {
+                oneofKind: 'stringValue',
+                stringValue: 'Person',
+              },
+            },
+          },
+          returns: [{ variable: 'n', properties: [] }],
+        } as IdentityKnowledgeReadRequest);
       } catch (err) {
         caughtError = err;
       }
     });
 
     it('throws an error', () => {
-      expect((caughtError as Error).message).toEqual('No IdentityKnowledgeClient response.');
+      expect((caughtError as Error).message).toEqual('No IdentityKnowledgeReadClient response.');
     });
   });
 
@@ -150,26 +198,39 @@ describe('identityKnowledge', () => {
     beforeEach(async () => {
       const mockFunc = jest.fn(
         (
-          request: IdentityKnowledgeRequest,
+          request: IdentityKnowledgeReadRequest,
           callback:
             | Metadata
             | CallOptions
-            | ((error: ServiceError | null, response?: IdentityKnowledgeResponse) => void),
+            | ((error: ServiceError | null, response?: IdentityKnowledgeReadResponse) => void),
         ): SurfaceCall => {
           if (typeof callback === 'function') callback(error);
           return {} as SurfaceCall;
         },
       );
 
-      jest.spyOn(sdk['client'], 'identityKnowledge').mockImplementation(mockFunc);
+      jest.spyOn(sdk['client'], 'identityKnowledgeRead').mockImplementation(mockFunc);
 
       try {
-        await sdk.identityKnowledge({
-          operation: Operation.READ,
-          path: '(:DigitalTwin)-[:SERVICES]->(n:Truck)',
-          conditions: 'WHERE n.external_id = "1234"',
-          inputParams: {},
-        } as IdentityKnowledgeRequest);
+        await sdk.identityKnowledgeRead({
+          query:
+            'MATCH (n:DigitalTwin)-[:SERVICES]->(n:Truck) WHERE n.external_id = $externalId and n.type=$type',
+          inputParams: {
+            externalId: {
+              type: {
+                oneofKind: 'stringValue',
+                stringValue: '1234',
+              },
+            },
+            type: {
+              type: {
+                oneofKind: 'stringValue',
+                stringValue: 'Person',
+              },
+            },
+          },
+          returns: [{ variable: 'n', properties: [] }],
+        } as IdentityKnowledgeReadRequest);
       } catch (err) {
         caughtError = err;
       }
@@ -181,16 +242,16 @@ describe('identityKnowledge', () => {
   });
 });
 
-describe('parseSingleNodeFromPaths', () => {
+describe('parseSingleNodeFromNodes', () => {
   it('empty', () => {
     const sdkProto = Object.getPrototypeOf(sdk);
     try {
-      sdkProto.parseSingleNodeFromPaths();
+      sdkProto.parseSingleNodeFromNodes();
     } catch (error) {
       expect(error).not.toBeUndefined();
     }
     try {
-      sdkProto.parseSingleNodeFromPaths([
+      sdkProto.parseSingleNodeFromNodes([
         {
           nodes: undefined,
         },
@@ -199,7 +260,7 @@ describe('parseSingleNodeFromPaths', () => {
       expect(error).not.toBeUndefined();
     }
     try {
-      sdkProto.parseSingleNodeFromPaths([
+      sdkProto.parseSingleNodeFromNodes([
         {
           nodes: [],
         },
@@ -208,52 +269,11 @@ describe('parseSingleNodeFromPaths', () => {
       expect(error).not.toBeUndefined();
     }
   });
-
-  it('has data', () => {
-    const sdkProto = Object.getPrototypeOf(sdk);
-    expect(
-      sdkProto.parseSingleNodeFromPaths([
-        {
-          nodes: [
-            {
-              data: 1,
-            },
-          ],
-        },
-      ]),
-    ).toEqual({ data: 1 });
-  });
-});
-
-describe('parseMultipleNodesFromPaths', () => {
-  it('empty', () => {
-    const sdkProto = Object.getPrototypeOf(sdk);
-    expect(sdkProto.parseMultipleNodesFromPaths()).toEqual([]);
-  });
-  it('empty', () => {
-    const sdkProto = Object.getPrototypeOf(sdk);
-    expect(sdkProto.parseMultipleNodesFromPaths([{}])).toEqual([]);
-  });
-
-  it('has data', () => {
-    const sdkProto = Object.getPrototypeOf(sdk);
-    expect(
-      sdkProto.parseMultipleNodesFromPaths([
-        {
-          nodes: [
-            {
-              data: 1,
-            },
-          ],
-        },
-      ]),
-    ).toEqual([{ data: 1 }]);
-  });
 });
 
 describe('read', () => {
   describe('when the response does not contain an error', () => {
-    let result: IdentityKnowledgeResponse;
+    let result: IdentityKnowledgeReadResponse;
 
     beforeEach(async () => {
       const mockFunc = jest.fn(
@@ -262,42 +282,53 @@ describe('read', () => {
           res:
             | Metadata
             | CallOptions
-            | ((err: ServiceError | null, response: IdentityKnowledgeResponse) => void),
+            | ((err: ServiceError | null, response: IdentityKnowledgeReadResponse) => void),
         ): SurfaceCall => {
           if (typeof res === 'function')
             res(null, {
-              paths: [
+              nodes: [
                 {
-                  nodes: [
+                  id: 'gid:abc',
+                  externalId: '1010',
+                  type: 'Person',
+                  tags: [],
+                  properties: [
                     {
-                      id: 'gid:abc',
-                      externalId: '1010',
-                      type: 'Person',
-                      tags: [],
-                      properties: [
-                        {
-                          key: 'abc',
-                          value: Value.fromJson(Utils.objectToJsonValue('something')),
+                      type: 'abc',
+                      value: Value.fromJson(Utils.objectToJsonValue('something')),
+                      metadata: {
+                        assuranceLevel: 1,
+                        verificationTime: Utils.dateToTimestamp(new Date()),
+                        source: 'Myself',
+                        customMetadata: {
+                          customdata: {
+                            type: {
+                              oneofKind: 'stringValue',
+                              stringValue: 'SomeCustomData',
+                            },
+                          },
                         },
-                      ],
-                    },
-                    {
-                      id: 'gid:cba',
-                      externalId: '0101',
-                      type: 'Truck',
-                      properties: [],
-                      tags: [],
+                      },
                     },
                   ],
-                  relationships: [
-                    {
-                      id: 'gid:xxx',
-                      type: 'SERVICES',
-                      source: '',
-                      target: '',
-                      properties: {},
-                    },
-                  ],
+                  isIdentity: true,
+                },
+                {
+                  id: 'gid:cba',
+                  externalId: '0101',
+                  type: 'Truck',
+                  properties: [],
+                  tags: [],
+                  isIdentity: false,
+                },
+              ],
+              relationships: [
+                {
+                  id: 'gid:xxx',
+                  type: 'SERVICES',
+                  source: '',
+                  target: '',
+                  properties: {},
                 },
               ],
             });
@@ -305,34 +336,50 @@ describe('read', () => {
         },
       );
 
-      jest.spyOn(sdk['client'], 'identityKnowledge').mockImplementation(mockFunc);
+      jest.spyOn(sdk['client'], 'identityKnowledgeRead').mockImplementation(mockFunc);
 
       result = await sdk.read(
-        '(:DigitalTwin)-[:SERVICES]->(n:Truck)',
-        'WHERE n.external_id = "1234"',
-        {},
+        'MATCH (:DigitalTwin)-[:SERVICES]->(n:Truck) WHERE n.external_id = $externalId and n.type=$type',
+        {
+          externalId: '1010',
+          type: 'Person',
+        },
+        [{ variable: 'n', properties: [] }],
       );
     });
 
     it('sends a correct request', () => {
-      expect(sdk['client'].identityKnowledge).toBeCalledTimes(1);
-      expect(sdk['client'].identityKnowledge).toBeCalledWith(
+      expect(sdk['client'].identityKnowledgeRead).toHaveBeenCalledTimes(1);
+      expect(sdk['client'].identityKnowledgeRead).toHaveBeenCalledWith(
         {
-          operation: Operation.READ,
-          path: '(:DigitalTwin)-[:SERVICES]->(n:Truck)',
-          conditions: 'WHERE n.external_id = "1234"',
-          inputParams: {},
+          query:
+            'MATCH (:DigitalTwin)-[:SERVICES]->(n:Truck) WHERE n.external_id = $externalId and n.type=$type',
+          inputParams: {
+            externalId: {
+              type: {
+                oneofKind: 'stringValue',
+                stringValue: '1010',
+              },
+            },
+            type: {
+              type: {
+                oneofKind: 'stringValue',
+                stringValue: 'Person',
+              },
+            },
+          },
+          returns: [{ variable: 'n', properties: [] }],
         },
         expect.any(Function),
       );
     });
 
     it('returns a correct response', () => {
-      expect(result.paths.length).toEqual(1);
-      expect(result.paths[0].nodes.length).toEqual(2);
-      expect(result.paths[0].nodes[0].id).toEqual('gid:abc');
-      expect(result.paths[0].relationships.length).toEqual(1);
-      expect(result.paths[0].relationships[0].id).toEqual('gid:xxx');
+      expect(result.nodes.length).toEqual(2);
+      expect(result.nodes[0].id).toEqual('gid:abc');
+      expect(result.nodes[0].properties[0].metadata?.assuranceLevel).toEqual(1);
+      expect(result.relationships.length).toEqual(1);
+      expect(result.relationships[0].id).toEqual('gid:xxx');
     });
   });
 
@@ -342,29 +389,36 @@ describe('read', () => {
     beforeEach(async () => {
       const mockFunc = jest.fn(
         (
-          request: IdentityKnowledgeRequest,
+          request: IdentityKnowledgeReadRequest,
           callback:
             | Metadata
             | CallOptions
-            | ((error: ServiceError | null, response?: IdentityKnowledgeResponse) => void),
+            | ((error: ServiceError | null, response?: IdentityKnowledgeReadResponse) => void),
         ): SurfaceCall => {
           if (typeof callback === 'function') callback(null);
           return {} as SurfaceCall;
         },
       );
 
-      jest.spyOn(sdk['client'], 'identityKnowledge').mockImplementation(mockFunc);
+      jest.spyOn(sdk['client'], 'identityKnowledgeRead').mockImplementation(mockFunc);
 
       try {
         caughtError = undefined;
-        await sdk.read('(:DigitalTwin)-[:SERVICES]->(n:Truck)', 'WHERE n.external_id = "1234"', {});
+        await sdk.read(
+          'MATCH (:DigitalTwin)-[:SERVICES]->(n:Truck) WHERE n.external_id = $externalId and n.type=$type',
+          {
+            externalId: '1010',
+            type: 'Person',
+          },
+          [{ variable: 'n', properties: [] }],
+        );
       } catch (err) {
         caughtError = err;
       }
     });
 
     it('throws an error', () => {
-      expect((caughtError as Error).message).toEqual('No IdentityKnowledgeClient response.');
+      expect((caughtError as Error).message).toEqual('No IdentityKnowledgeReadClient response.');
     });
   });
 
@@ -375,21 +429,28 @@ describe('read', () => {
     beforeEach(async () => {
       const mockFunc = jest.fn(
         (
-          request: IdentityKnowledgeRequest,
+          request: IdentityKnowledgeReadRequest,
           callback:
             | Metadata
             | CallOptions
-            | ((error: ServiceError | null, response?: IdentityKnowledgeResponse) => void),
+            | ((error: ServiceError | null, response?: IdentityKnowledgeReadResponse) => void),
         ): SurfaceCall => {
           if (typeof callback === 'function') callback(error);
           return {} as SurfaceCall;
         },
       );
 
-      jest.spyOn(sdk['client'], 'identityKnowledge').mockImplementation(mockFunc);
+      jest.spyOn(sdk['client'], 'identityKnowledgeRead').mockImplementation(mockFunc);
 
       try {
-        await sdk.read('(:DigitalTwin)-[:SERVICES]->(n:Truck)', 'WHERE n.external_id = "1234"', {});
+        await sdk.read(
+          'MATCH (:DigitalTwin)-[:SERVICES]->(n:Truck) WHERE n.external_id = $externalId and n.type=$type',
+          {
+            externalId: '1010',
+            type: 'Person',
+          },
+          [{ variable: 'n', properties: [] }],
+        );
       } catch (err) {
         caughtError = err;
       }
@@ -412,42 +473,53 @@ describe('listNodes', () => {
           res:
             | Metadata
             | CallOptions
-            | ((err: ServiceError | null, response: IdentityKnowledgeResponse) => void),
+            | ((err: ServiceError | null, response: IdentityKnowledgeReadResponse) => void),
         ): SurfaceCall => {
           if (typeof res === 'function')
             res(null, {
-              paths: [
+              nodes: [
                 {
-                  nodes: [
+                  id: 'gid:abc',
+                  externalId: '1010',
+                  type: 'Person',
+                  tags: [],
+                  properties: [
                     {
-                      id: 'gid:abc',
-                      externalId: '1010',
-                      type: 'Person',
-                      tags: [],
-                      properties: [
-                        {
-                          key: 'abc',
-                          value: Value.fromJson(Utils.objectToJsonValue('something')),
+                      type: 'abc',
+                      value: Value.fromJson(Utils.objectToJsonValue('something')),
+                      metadata: {
+                        assuranceLevel: 1,
+                        verificationTime: Utils.dateToTimestamp(new Date()),
+                        source: 'Myself',
+                        customMetadata: {
+                          customdata: {
+                            type: {
+                              oneofKind: 'stringValue',
+                              stringValue: 'SomeCustomData',
+                            },
+                          },
                         },
-                      ],
-                    },
-                    {
-                      id: 'gid:cba',
-                      externalId: '0101',
-                      type: 'Truck',
-                      properties: [],
-                      tags: [],
+                      },
                     },
                   ],
-                  relationships: [
-                    {
-                      id: 'gid:xxx',
-                      type: 'SERVICES',
-                      source: '',
-                      target: '',
-                      properties: {},
-                    },
-                  ],
+                  isIdentity: true,
+                },
+                {
+                  id: 'gid:cba',
+                  externalId: '0101',
+                  type: 'Truck',
+                  properties: [],
+                  tags: [],
+                  isIdentity: false,
+                },
+              ],
+              relationships: [
+                {
+                  id: 'gid:xxx',
+                  type: 'SERVICES',
+                  source: '',
+                  target: '',
+                  properties: {},
                 },
               ],
             });
@@ -455,27 +527,26 @@ describe('listNodes', () => {
         },
       );
 
-      jest.spyOn(sdk['client'], 'identityKnowledge').mockImplementation(mockFunc);
-
-      result = await sdk.listNodes('DigitalTwin');
+      jest.spyOn(sdk['client'], 'identityKnowledgeRead').mockImplementation(mockFunc);
+      result = await sdk.listNodes('Resource');
     });
 
     it('sends a correct request', () => {
-      expect(sdk['client'].identityKnowledge).toBeCalledTimes(1);
-      expect(sdk['client'].identityKnowledge).toBeCalledWith(
+      expect(sdk['client'].identityKnowledgeRead).toHaveBeenCalledTimes(1);
+      expect(sdk['client'].identityKnowledgeRead).toHaveBeenCalledWith(
         {
-          conditions: '',
+          query: 'MATCH (n:Resource)',
           inputParams: {},
-          operation: Operation.READ,
-          path: '(:DigitalTwin)',
+          returns: [{ variable: 'n', properties: [] }],
         },
         expect.any(Function),
       );
     });
 
     it('returns a correct response', () => {
-      expect(result.length).toEqual(2);
+      expect(result.length).toEqual(4);
       expect(result[0].id).toEqual('gid:abc');
+      expect(result[0].properties[0].metadata?.assuranceLevel).toEqual(1);
     });
   });
 
@@ -485,29 +556,29 @@ describe('listNodes', () => {
     beforeEach(async () => {
       const mockFunc = jest.fn(
         (
-          request: IdentityKnowledgeRequest,
+          request: IdentityKnowledgeReadRequest,
           callback:
             | Metadata
             | CallOptions
-            | ((error: ServiceError | null, response?: IdentityKnowledgeResponse) => void),
+            | ((error: ServiceError | null, response?: IdentityKnowledgeReadResponse) => void),
         ): SurfaceCall => {
           if (typeof callback === 'function') callback(null);
           return {} as SurfaceCall;
         },
       );
 
-      jest.spyOn(sdk['client'], 'identityKnowledge').mockImplementation(mockFunc);
+      jest.spyOn(sdk['client'], 'identityKnowledgeRead').mockImplementation(mockFunc);
 
       try {
         caughtError = undefined;
-        await sdk.listNodes('DigitalTwin');
+        await sdk.listNodes('Wherever');
       } catch (err) {
         caughtError = err;
       }
     });
 
     it('throws an error', () => {
-      expect((caughtError as Error).message).toEqual('No IdentityKnowledgeClient response.');
+      expect((caughtError as Error).message).toEqual('No IdentityKnowledgeReadClient response.');
     });
   });
 
@@ -518,21 +589,21 @@ describe('listNodes', () => {
     beforeEach(async () => {
       const mockFunc = jest.fn(
         (
-          request: IdentityKnowledgeRequest,
+          request: IdentityKnowledgeReadRequest,
           callback:
             | Metadata
             | CallOptions
-            | ((error: ServiceError | null, response?: IdentityKnowledgeResponse) => void),
+            | ((error: ServiceError | null, response?: IdentityKnowledgeReadResponse) => void),
         ): SurfaceCall => {
           if (typeof callback === 'function') callback(error);
           return {} as SurfaceCall;
         },
       );
 
-      jest.spyOn(sdk['client'], 'identityKnowledge').mockImplementation(mockFunc);
+      jest.spyOn(sdk['client'], 'identityKnowledgeRead').mockImplementation(mockFunc);
 
       try {
-        await sdk.listNodes('DigitalTwin');
+        await sdk.listNodes('Whatever');
       } catch (err) {
         caughtError = err;
       }
@@ -555,42 +626,53 @@ describe('listNodesByProperty', () => {
           res:
             | Metadata
             | CallOptions
-            | ((err: ServiceError | null, response: IdentityKnowledgeResponse) => void),
+            | ((err: ServiceError | null, response: IdentityKnowledgeReadResponse) => void),
         ): SurfaceCall => {
           if (typeof res === 'function')
             res(null, {
-              paths: [
+              nodes: [
                 {
-                  nodes: [
+                  id: 'gid:abc',
+                  externalId: '1010',
+                  type: 'Person',
+                  tags: [],
+                  properties: [
                     {
-                      id: 'gid:abc',
-                      externalId: '1010',
-                      type: 'Person',
-                      tags: [],
-                      properties: [
-                        {
-                          key: 'abc',
-                          value: Value.fromJson(Utils.objectToJsonValue('something')),
+                      type: 'abc',
+                      value: Value.fromJson(Utils.objectToJsonValue('something')),
+                      metadata: {
+                        assuranceLevel: 1,
+                        verificationTime: Utils.dateToTimestamp(new Date()),
+                        source: 'Myself',
+                        customMetadata: {
+                          customdata: {
+                            type: {
+                              oneofKind: 'stringValue',
+                              stringValue: 'SomeCustomData',
+                            },
+                          },
                         },
-                      ],
-                    },
-                    {
-                      id: 'gid:cba',
-                      externalId: '0101',
-                      type: 'Truck',
-                      properties: [],
-                      tags: [],
+                      },
                     },
                   ],
-                  relationships: [
-                    {
-                      id: 'gid:xxx',
-                      type: 'SERVICES',
-                      source: '',
-                      target: '',
-                      properties: {},
-                    },
-                  ],
+                  isIdentity: true,
+                },
+                {
+                  id: 'gid:cba',
+                  externalId: '0101',
+                  type: 'Truck',
+                  properties: [],
+                  tags: [],
+                  isIdentity: false,
+                },
+              ],
+              relationships: [
+                {
+                  id: 'gid:xxx',
+                  type: 'SERVICES',
+                  source: '',
+                  target: '',
+                  properties: {},
                 },
               ],
             });
@@ -598,37 +680,25 @@ describe('listNodesByProperty', () => {
         },
       );
 
-      jest.spyOn(sdk['client'], 'identityKnowledge').mockImplementation(mockFunc);
+      jest.spyOn(sdk['client'], 'identityKnowledgeRead').mockImplementation(mockFunc);
 
-      result = await sdk.listNodesByProperty('DigitalTwin', {
-        key: 'email',
-        value: Value.fromJson(Utils.objectToJsonValue('user@example.com')),
-      });
-    });
-
-    it('sends a correct request', () => {
-      expect(sdk['client'].identityKnowledge).toBeCalledTimes(1);
-      expect(sdk['client'].identityKnowledge).toBeCalledWith(
+      result = await sdk.listNodesByProperty(
         {
-          operation: Operation.READ,
-          path: '(n:DigitalTwin)',
-          conditions: 'WHERE n.email = $email',
-          inputParams: {
-            email: {
-              value: {
-                oneofKind: 'stringValue',
-                stringValue: 'user@example.com',
-              },
-            },
-          },
+          type: 'email',
+          value: Value.fromJson(Utils.objectToJsonValue('user@example.com')),
         },
-        expect.any(Function),
+        false,
       );
     });
 
+    it('sends a correct request', () => {
+      expect(sdk['client'].identityKnowledgeRead).toHaveBeenCalledTimes(1);
+    });
+
     it('returns a correct response', () => {
-      expect(result.length).toEqual(2);
+      expect(result.length).toEqual(4);
       expect(result[0].id).toEqual('gid:abc');
+      expect(result[0].properties[0].metadata?.assuranceLevel).toEqual(1);
     });
   });
 
@@ -638,32 +708,35 @@ describe('listNodesByProperty', () => {
     beforeEach(async () => {
       const mockFunc = jest.fn(
         (
-          request: IdentityKnowledgeRequest,
+          request: IdentityKnowledgeReadRequest,
           callback:
             | Metadata
             | CallOptions
-            | ((error: ServiceError | null, response?: IdentityKnowledgeResponse) => void),
+            | ((error: ServiceError | null, response?: IdentityKnowledgeReadResponse) => void),
         ): SurfaceCall => {
           if (typeof callback === 'function') callback(null);
           return {} as SurfaceCall;
         },
       );
 
-      jest.spyOn(sdk['client'], 'identityKnowledge').mockImplementation(mockFunc);
+      jest.spyOn(sdk['client'], 'identityKnowledgeRead').mockImplementation(mockFunc);
 
       try {
         caughtError = undefined;
-        await sdk.listNodesByProperty('DigitalTwin', {
-          key: 'email',
-          value: Value.fromJson(Utils.objectToJsonValue('user@example.com')),
-        });
+        await sdk.listNodesByProperty(
+          {
+            type: 'email',
+            value: Value.fromJson(Utils.objectToJsonValue('user@example.com')),
+          },
+          false,
+        );
       } catch (err) {
         caughtError = err;
       }
     });
 
     it('throws an error', () => {
-      expect((caughtError as Error).message).toEqual('No IdentityKnowledgeClient response.');
+      expect((caughtError as Error).message).toEqual('No IdentityKnowledgeReadClient response.');
     });
   });
 
@@ -674,24 +747,27 @@ describe('listNodesByProperty', () => {
     beforeEach(async () => {
       const mockFunc = jest.fn(
         (
-          request: IdentityKnowledgeRequest,
+          request: IdentityKnowledgeReadRequest,
           callback:
             | Metadata
             | CallOptions
-            | ((error: ServiceError | null, response?: IdentityKnowledgeResponse) => void),
+            | ((error: ServiceError | null, response?: IdentityKnowledgeReadResponse) => void),
         ): SurfaceCall => {
           if (typeof callback === 'function') callback(error);
           return {} as SurfaceCall;
         },
       );
 
-      jest.spyOn(sdk['client'], 'identityKnowledge').mockImplementation(mockFunc);
+      jest.spyOn(sdk['client'], 'identityKnowledgeRead').mockImplementation(mockFunc);
 
       try {
-        await sdk.listNodesByProperty('DigitalTwin', {
-          key: 'email',
-          value: Value.fromJson(Utils.objectToJsonValue('user@example.com')),
-        });
+        await sdk.listNodesByProperty(
+          {
+            type: 'email',
+            value: Value.fromJson(Utils.objectToJsonValue('user@example.com')),
+          },
+          false,
+        );
       } catch (err) {
         caughtError = err;
       }
@@ -714,42 +790,53 @@ describe('getNodeByID', () => {
           res:
             | Metadata
             | CallOptions
-            | ((err: ServiceError | null, response: IdentityKnowledgeResponse) => void),
+            | ((err: ServiceError | null, response: IdentityKnowledgeReadResponse) => void),
         ): SurfaceCall => {
           if (typeof res === 'function')
             res(null, {
-              paths: [
+              nodes: [
                 {
-                  nodes: [
+                  id: 'gid:abc',
+                  externalId: '1010',
+                  type: 'Person',
+                  tags: [],
+                  properties: [
                     {
-                      id: 'gid:abc',
-                      externalId: '1010',
-                      type: 'Person',
-                      tags: [],
-                      properties: [
-                        {
-                          key: 'abc',
-                          value: Value.fromJson(Utils.objectToJsonValue('something')),
+                      type: 'abc',
+                      value: Value.fromJson(Utils.objectToJsonValue('something')),
+                      metadata: {
+                        assuranceLevel: 1,
+                        verificationTime: Utils.dateToTimestamp(new Date()),
+                        source: 'BRI',
+                        customMetadata: {
+                          othercustomerdata: {
+                            type: {
+                              oneofKind: 'stringValue',
+                              stringValue: 'SomeOtherCustomData',
+                            },
+                          },
                         },
-                      ],
-                    },
-                    {
-                      id: 'gid:cba',
-                      externalId: '0101',
-                      type: 'Truck',
-                      properties: [],
-                      tags: [],
+                      },
                     },
                   ],
-                  relationships: [
-                    {
-                      id: 'gid:xxx',
-                      type: 'SERVICES',
-                      source: '',
-                      target: '',
-                      properties: {},
-                    },
-                  ],
+                  isIdentity: true,
+                },
+                {
+                  id: 'gid:cba',
+                  externalId: '0101',
+                  type: 'Truck',
+                  properties: [],
+                  tags: [],
+                  isIdentity: false,
+                },
+              ],
+              relationships: [
+                {
+                  id: 'gid:xxx',
+                  type: 'SERVICES',
+                  source: '',
+                  target: '',
+                  properties: {},
                 },
               ],
             });
@@ -757,26 +844,25 @@ describe('getNodeByID', () => {
         },
       );
 
-      jest.spyOn(sdk['client'], 'identityKnowledge').mockImplementation(mockFunc);
+      jest.spyOn(sdk['client'], 'identityKnowledgeRead').mockImplementation(mockFunc);
 
-      result = await sdk.getNodeByID('gid:abc', 'DigitalTwin');
+      result = await sdk.getNodeByID('gid:abc', true);
     });
 
     it('sends a correct request', () => {
-      expect(sdk['client'].identityKnowledge).toBeCalledTimes(1);
-      expect(sdk['client'].identityKnowledge).toBeCalledWith(
+      expect(sdk['client'].identityKnowledgeRead).toHaveBeenCalledTimes(1);
+      expect(sdk['client'].identityKnowledgeRead).toHaveBeenCalledWith(
         {
-          operation: Operation.READ,
-          path: '(n:DigitalTwin)',
-          conditions: 'WHERE n.id = $id',
+          query: 'MATCH (n:DigitalTwin) WHERE n.id = $id',
           inputParams: {
             id: {
-              value: {
+              type: {
                 oneofKind: 'stringValue',
                 stringValue: 'gid:abc',
               },
             },
           },
+          returns: [{ variable: 'n', properties: [] }],
         },
         expect.any(Function),
       );
@@ -793,29 +879,29 @@ describe('getNodeByID', () => {
     beforeEach(async () => {
       const mockFunc = jest.fn(
         (
-          request: IdentityKnowledgeRequest,
+          request: IdentityKnowledgeReadRequest,
           callback:
             | Metadata
             | CallOptions
-            | ((error: ServiceError | null, response?: IdentityKnowledgeResponse) => void),
+            | ((error: ServiceError | null, response?: IdentityKnowledgeReadResponse) => void),
         ): SurfaceCall => {
           if (typeof callback === 'function') callback(null);
           return {} as SurfaceCall;
         },
       );
 
-      jest.spyOn(sdk['client'], 'identityKnowledge').mockImplementation(mockFunc);
+      jest.spyOn(sdk['client'], 'identityKnowledgeRead').mockImplementation(mockFunc);
 
       try {
         caughtError = undefined;
-        await sdk.getNodeByID('gid:abc', 'DigitalTwin');
+        await sdk.getNodeByID('gid:abc', false);
       } catch (err) {
         caughtError = err;
       }
     });
 
     it('throws an error', () => {
-      expect((caughtError as Error).message).toEqual('No IdentityKnowledgeClient response.');
+      expect((caughtError as Error).message).toEqual('No IdentityKnowledgeReadClient response.');
     });
   });
 
@@ -826,21 +912,21 @@ describe('getNodeByID', () => {
     beforeEach(async () => {
       const mockFunc = jest.fn(
         (
-          request: IdentityKnowledgeRequest,
+          request: IdentityKnowledgeReadRequest,
           callback:
             | Metadata
             | CallOptions
-            | ((error: ServiceError | null, response?: IdentityKnowledgeResponse) => void),
+            | ((error: ServiceError | null, response?: IdentityKnowledgeReadResponse) => void),
         ): SurfaceCall => {
           if (typeof callback === 'function') callback(error);
           return {} as SurfaceCall;
         },
       );
 
-      jest.spyOn(sdk['client'], 'identityKnowledge').mockImplementation(mockFunc);
+      jest.spyOn(sdk['client'], 'identityKnowledgeRead').mockImplementation(mockFunc);
 
       try {
-        await sdk.getNodeByID('gid:abc', 'DigitalTwin');
+        await sdk.getNodeByID('gid:abc', true);
       } catch (err) {
         caughtError = err;
       }
@@ -863,42 +949,40 @@ describe('getNodeByIdentifier', () => {
           res:
             | Metadata
             | CallOptions
-            | ((err: ServiceError | null, response: IdentityKnowledgeResponse) => void),
+            | ((err: ServiceError | null, response: IdentityKnowledgeReadResponse) => void),
         ): SurfaceCall => {
           if (typeof res === 'function')
             res(null, {
-              paths: [
+              nodes: [
                 {
-                  nodes: [
+                  id: 'gid:abc',
+                  externalId: '1010',
+                  type: 'Person',
+                  tags: [],
+                  properties: [
                     {
-                      id: 'gid:abc',
-                      externalId: '1010',
-                      type: 'Person',
-                      tags: [],
-                      properties: [
-                        {
-                          key: 'abc',
-                          value: Value.fromJson(Utils.objectToJsonValue('something')),
-                        },
-                      ],
-                    },
-                    {
-                      id: 'gid:cba',
-                      externalId: '0101',
-                      type: 'Truck',
-                      properties: [],
-                      tags: [],
+                      type: 'abc',
+                      value: Value.fromJson(Utils.objectToJsonValue('something')),
                     },
                   ],
-                  relationships: [
-                    {
-                      id: 'gid:xxx',
-                      type: 'SERVICES',
-                      source: '',
-                      target: '',
-                      properties: {},
-                    },
-                  ],
+                  isIdentity: true,
+                },
+                {
+                  id: 'gid:cba',
+                  externalId: '0101',
+                  type: 'Truck',
+                  properties: [],
+                  tags: [],
+                  isIdentity: false,
+                },
+              ],
+              relationships: [
+                {
+                  id: 'gid:xxx',
+                  type: 'SERVICES',
+                  source: '',
+                  target: '',
+                  properties: {},
                 },
               ],
             });
@@ -906,35 +990,37 @@ describe('getNodeByIdentifier', () => {
         },
       );
 
-      jest.spyOn(sdk['client'], 'identityKnowledge').mockImplementation(mockFunc);
+      jest.spyOn(sdk['client'], 'identityKnowledgeRead').mockImplementation(mockFunc);
 
-      result = await sdk.getNodeByIdentifier('DigitalTwin', {
-        externalId: '11',
-        type: 'string',
-      });
+      result = await sdk.getNodeByIdentifier(
+        {
+          externalId: '1010',
+          type: 'Person',
+        },
+        true,
+      );
     });
 
     it('sends a correct request', () => {
-      expect(sdk['client'].identityKnowledge).toBeCalledTimes(1);
-      expect(sdk['client'].identityKnowledge).toBeCalledWith(
+      expect(sdk['client'].identityKnowledgeRead).toHaveBeenCalledTimes(1);
+      expect(sdk['client'].identityKnowledgeRead).toHaveBeenCalledWith(
         {
-          operation: Operation.READ,
-          path: '(n:DigitalTwin)',
-          conditions: 'WHERE n.external_id = $externalId AND n.type = $type',
+          query: 'MATCH (n:DigitalTwin) WHERE n.external_id = $externalId AND n.type = $type',
           inputParams: {
             externalId: {
-              value: {
+              type: {
                 oneofKind: 'stringValue',
-                stringValue: '11',
+                stringValue: '1010',
               },
             },
             type: {
-              value: {
+              type: {
                 oneofKind: 'stringValue',
-                stringValue: 'string',
+                stringValue: 'Person',
               },
             },
           },
+          returns: [{ variable: 'n', properties: [] }],
         },
         expect.any(Function),
       );
@@ -951,32 +1037,35 @@ describe('getNodeByIdentifier', () => {
     beforeEach(async () => {
       const mockFunc = jest.fn(
         (
-          request: IdentityKnowledgeRequest,
+          request: IdentityKnowledgeReadRequest,
           callback:
             | Metadata
             | CallOptions
-            | ((error: ServiceError | null, response?: IdentityKnowledgeResponse) => void),
+            | ((error: ServiceError | null, response?: IdentityKnowledgeReadResponse) => void),
         ): SurfaceCall => {
           if (typeof callback === 'function') callback(null);
           return {} as SurfaceCall;
         },
       );
 
-      jest.spyOn(sdk['client'], 'identityKnowledge').mockImplementation(mockFunc);
+      jest.spyOn(sdk['client'], 'identityKnowledgeRead').mockImplementation(mockFunc);
 
       try {
         caughtError = undefined;
-        await sdk.getNodeByIdentifier('DigitalTwin', {
-          externalId: '11',
-          type: 'string',
-        });
+        await sdk.getNodeByIdentifier(
+          {
+            externalId: '120',
+            type: 'Person',
+          },
+          true,
+        );
       } catch (err) {
         caughtError = err;
       }
     });
 
     it('throws an error', () => {
-      expect((caughtError as Error).message).toEqual('No IdentityKnowledgeClient response.');
+      expect((caughtError as Error).message).toEqual('No IdentityKnowledgeReadClient response.');
     });
   });
 
@@ -987,24 +1076,27 @@ describe('getNodeByIdentifier', () => {
     beforeEach(async () => {
       const mockFunc = jest.fn(
         (
-          request: IdentityKnowledgeRequest,
+          request: IdentityKnowledgeReadRequest,
           callback:
             | Metadata
             | CallOptions
-            | ((error: ServiceError | null, response?: IdentityKnowledgeResponse) => void),
+            | ((error: ServiceError | null, response?: IdentityKnowledgeReadResponse) => void),
         ): SurfaceCall => {
           if (typeof callback === 'function') callback(error);
           return {} as SurfaceCall;
         },
       );
 
-      jest.spyOn(sdk['client'], 'identityKnowledge').mockImplementation(mockFunc);
+      jest.spyOn(sdk['client'], 'identityKnowledgeRead').mockImplementation(mockFunc);
 
       try {
-        await sdk.getNodeByIdentifier('DigitalTwin', {
-          externalId: '11',
-          type: 'string',
-        });
+        await sdk.getNodeByIdentifier(
+          {
+            externalId: '11',
+            type: 'Person',
+          },
+          true,
+        );
       } catch (err) {
         caughtError = err;
       }
@@ -1016,7 +1108,7 @@ describe('getNodeByIdentifier', () => {
   });
 });
 
-describe('getDigitalTwinByID', () => {
+describe('getIdentityByID', () => {
   describe('when the response does not contain an error', () => {
     beforeEach(async () => {
       const mockFunc = jest.fn(
@@ -1025,42 +1117,40 @@ describe('getDigitalTwinByID', () => {
           res:
             | Metadata
             | CallOptions
-            | ((err: ServiceError | null, response: IdentityKnowledgeResponse) => void),
+            | ((err: ServiceError | null, response: IdentityKnowledgeReadResponse) => void),
         ): SurfaceCall => {
           if (typeof res === 'function')
             res(null, {
-              paths: [
+              nodes: [
                 {
-                  nodes: [
+                  id: 'gid:abc',
+                  externalId: '1010',
+                  type: 'Person',
+                  tags: [],
+                  properties: [
                     {
-                      id: 'gid:abc',
-                      externalId: '1010',
-                      type: 'Person',
-                      tags: [],
-                      properties: [
-                        {
-                          key: 'abc',
-                          value: Value.fromJson(Utils.objectToJsonValue('something')),
-                        },
-                      ],
-                    },
-                    {
-                      id: 'gid:cba',
-                      externalId: '0101',
-                      type: 'Truck',
-                      properties: [],
-                      tags: [],
+                      type: 'abc',
+                      value: Value.fromJson(Utils.objectToJsonValue('something')),
                     },
                   ],
-                  relationships: [
-                    {
-                      id: 'gid:xxx',
-                      type: 'SERVICES',
-                      source: '',
-                      target: '',
-                      properties: {},
-                    },
-                  ],
+                  isIdentity: true,
+                },
+                {
+                  id: 'gid:cba',
+                  externalId: '0101',
+                  type: 'Truck',
+                  properties: [],
+                  tags: [],
+                  isIdentity: false,
+                },
+              ],
+              relationships: [
+                {
+                  id: 'gid:xxx',
+                  type: 'SERVICES',
+                  source: '',
+                  target: '',
+                  properties: {},
                 },
               ],
             });
@@ -1068,25 +1158,24 @@ describe('getDigitalTwinByID', () => {
         },
       );
 
-      jest.spyOn(sdk['client'], 'identityKnowledge').mockImplementation(mockFunc);
-      await sdk.getDigitalTwinByID('gid:abc');
+      jest.spyOn(sdk['client'], 'identityKnowledgeRead').mockImplementation(mockFunc);
+      await sdk.getIdentityByID('gid:abc');
     });
 
     it('sends a correct request', () => {
-      expect(sdk['client'].identityKnowledge).toBeCalledTimes(1);
-      expect(sdk['client'].identityKnowledge).toBeCalledWith(
+      expect(sdk['client'].identityKnowledgeRead).toHaveBeenCalledTimes(1);
+      expect(sdk['client'].identityKnowledgeRead).toHaveBeenCalledWith(
         {
-          operation: Operation.READ,
-          path: '(n:DigitalTwin)',
-          conditions: 'WHERE n.id = $id',
+          query: 'MATCH (n:DigitalTwin) WHERE n.id = $id',
           inputParams: {
             id: {
-              value: {
+              type: {
                 oneofKind: 'stringValue',
                 stringValue: 'gid:abc',
               },
             },
           },
+          returns: [{ variable: 'n', properties: [] }],
         },
         expect.any(Function),
       );
@@ -1094,85 +1183,7 @@ describe('getDigitalTwinByID', () => {
   });
 });
 
-describe('getResourceByID', () => {
-  describe('when the response does not contain an error', () => {
-    beforeEach(async () => {
-      const mockFunc = jest.fn(
-        (
-          req,
-          res:
-            | Metadata
-            | CallOptions
-            | ((err: ServiceError | null, response: IdentityKnowledgeResponse) => void),
-        ): SurfaceCall => {
-          if (typeof res === 'function')
-            res(null, {
-              paths: [
-                {
-                  nodes: [
-                    {
-                      id: 'gid:abc',
-                      externalId: '1010',
-                      type: 'Person',
-                      tags: [],
-                      properties: [
-                        {
-                          key: 'abc',
-                          value: Value.fromJson(Utils.objectToJsonValue('something')),
-                        },
-                      ],
-                    },
-                    {
-                      id: 'gid:cba',
-                      externalId: '0101',
-                      type: 'Truck',
-                      properties: [],
-                      tags: [],
-                    },
-                  ],
-                  relationships: [
-                    {
-                      id: 'gid:xxx',
-                      type: 'SERVICES',
-                      source: '',
-                      target: '',
-                      properties: {},
-                    },
-                  ],
-                },
-              ],
-            });
-          return {} as SurfaceCall;
-        },
-      );
-
-      jest.spyOn(sdk['client'], 'identityKnowledge').mockImplementation(mockFunc);
-      await sdk.getResourceByID('gid:abc');
-    });
-
-    it('sends a correct request', () => {
-      expect(sdk['client'].identityKnowledge).toBeCalledTimes(1);
-      expect(sdk['client'].identityKnowledge).toBeCalledWith(
-        {
-          operation: Operation.READ,
-          path: '(n:Resource)',
-          conditions: 'WHERE n.id = $id',
-          inputParams: {
-            id: {
-              value: {
-                oneofKind: 'stringValue',
-                stringValue: 'gid:abc',
-              },
-            },
-          },
-        },
-        expect.any(Function),
-      );
-    });
-  });
-});
-
-describe('listDigitalTwins', () => {
+describe('listIdentities', () => {
   describe('when the response does not contain an error', () => {
     let result: Node[];
 
@@ -1183,42 +1194,40 @@ describe('listDigitalTwins', () => {
           res:
             | Metadata
             | CallOptions
-            | ((err: ServiceError | null, response: IdentityKnowledgeResponse) => void),
+            | ((err: ServiceError | null, response: IdentityKnowledgeReadResponse) => void),
         ): SurfaceCall => {
           if (typeof res === 'function')
             res(null, {
-              paths: [
+              nodes: [
                 {
-                  nodes: [
+                  id: 'gid:abc',
+                  externalId: '1010',
+                  type: 'Person',
+                  tags: [],
+                  properties: [
                     {
-                      id: 'gid:abc',
-                      externalId: '1010',
-                      type: 'Person',
-                      tags: [],
-                      properties: [
-                        {
-                          key: 'abc',
-                          value: Value.fromJson(Utils.objectToJsonValue('something')),
-                        },
-                      ],
-                    },
-                    {
-                      id: 'gid:cba',
-                      externalId: '0101',
-                      type: 'Truck',
-                      properties: [],
-                      tags: [],
+                      type: 'abc',
+                      value: Value.fromJson(Utils.objectToJsonValue('something')),
                     },
                   ],
-                  relationships: [
-                    {
-                      id: 'gid:xxx',
-                      type: 'SERVICES',
-                      source: '',
-                      target: '',
-                      properties: {},
-                    },
-                  ],
+                  isIdentity: true,
+                },
+                {
+                  id: 'gid:cba',
+                  externalId: '0101',
+                  type: 'Truck',
+                  properties: [],
+                  tags: [],
+                  isIdentity: false,
+                },
+              ],
+              relationships: [
+                {
+                  id: 'gid:xxx',
+                  type: 'SERVICES',
+                  source: '',
+                  target: '',
+                  properties: {},
                 },
               ],
             });
@@ -1226,32 +1235,31 @@ describe('listDigitalTwins', () => {
         },
       );
 
-      jest.spyOn(sdk['client'], 'identityKnowledge').mockImplementation(mockFunc);
+      jest.spyOn(sdk['client'], 'identityKnowledgeRead').mockImplementation(mockFunc);
 
-      result = await sdk.listDigitalTwins();
+      result = await sdk.listIdentities();
     });
 
     it('sends a correct request', () => {
-      expect(sdk['client'].identityKnowledge).toBeCalledTimes(1);
-      expect(sdk['client'].identityKnowledge).toBeCalledWith(
+      expect(sdk['client'].identityKnowledgeRead).toHaveBeenCalledTimes(1);
+      expect(sdk['client'].identityKnowledgeRead).toHaveBeenCalledWith(
         {
-          conditions: '',
+          query: 'MATCH (n:DigitalTwin)',
           inputParams: {},
-          operation: Operation.READ,
-          path: '(:DigitalTwin)',
+          returns: [{ variable: 'n', properties: [] }],
         },
         expect.any(Function),
       );
     });
 
     it('returns a correct response', () => {
-      expect(result.length).toEqual(2);
+      expect(result.length).toEqual(4);
       expect(result[0].id).toEqual('gid:abc');
     });
   });
 });
 
-describe('listResources', () => {
+describe('listIdentitiesByProperty', () => {
   describe('when the response does not contain an error', () => {
     let result: Node[];
 
@@ -1262,42 +1270,40 @@ describe('listResources', () => {
           res:
             | Metadata
             | CallOptions
-            | ((err: ServiceError | null, response: IdentityKnowledgeResponse) => void),
+            | ((err: ServiceError | null, response: IdentityKnowledgeReadResponse) => void),
         ): SurfaceCall => {
           if (typeof res === 'function')
             res(null, {
-              paths: [
+              nodes: [
                 {
-                  nodes: [
+                  id: 'gid:abc',
+                  externalId: '1010',
+                  type: 'Person',
+                  tags: [],
+                  properties: [
                     {
-                      id: 'gid:abc',
-                      externalId: '1010',
-                      type: 'Person',
-                      tags: [],
-                      properties: [
-                        {
-                          key: 'abc',
-                          value: Value.fromJson(Utils.objectToJsonValue('something')),
-                        },
-                      ],
-                    },
-                    {
-                      id: 'gid:cba',
-                      externalId: '0101',
-                      type: 'Truck',
-                      properties: [],
-                      tags: [],
+                      type: 'abc',
+                      value: Value.fromJson(Utils.objectToJsonValue('something')),
                     },
                   ],
-                  relationships: [
-                    {
-                      id: 'gid:xxx',
-                      type: 'SERVICES',
-                      source: '',
-                      target: '',
-                      properties: {},
-                    },
-                  ],
+                  isIdentity: true,
+                },
+                {
+                  id: 'gid:cba',
+                  externalId: '0101',
+                  type: 'Truck',
+                  properties: [],
+                  tags: [],
+                  isIdentity: false,
+                },
+              ],
+              relationships: [
+                {
+                  id: 'gid:xxx',
+                  type: 'SERVICES',
+                  source: '',
+                  target: '',
+                  properties: {},
                 },
               ],
             });
@@ -1305,210 +1311,26 @@ describe('listResources', () => {
         },
       );
 
-      jest.spyOn(sdk['client'], 'identityKnowledge').mockImplementation(mockFunc);
+      jest.spyOn(sdk['client'], 'identityKnowledgeRead').mockImplementation(mockFunc);
 
-      result = await sdk.listResources();
-    });
-
-    it('sends a correct request', () => {
-      expect(sdk['client'].identityKnowledge).toBeCalledTimes(1);
-      expect(sdk['client'].identityKnowledge).toBeCalledWith(
-        {
-          conditions: '',
-          inputParams: {},
-          operation: Operation.READ,
-          path: '(:Resource)',
-        },
-        expect.any(Function),
-      );
-    });
-
-    it('returns a correct response', () => {
-      expect(result.length).toEqual(2);
-      expect(result[0].id).toEqual('gid:abc');
-    });
-  });
-});
-
-describe('listResourcesByProperty', () => {
-  describe('when the response does not contain an error', () => {
-    let result: Node[];
-
-    beforeEach(async () => {
-      const mockFunc = jest.fn(
-        (
-          req,
-          res:
-            | Metadata
-            | CallOptions
-            | ((err: ServiceError | null, response: IdentityKnowledgeResponse) => void),
-        ): SurfaceCall => {
-          if (typeof res === 'function')
-            res(null, {
-              paths: [
-                {
-                  nodes: [
-                    {
-                      id: 'gid:abc',
-                      externalId: '1010',
-                      type: 'Person',
-                      tags: [],
-                      properties: [
-                        {
-                          key: 'abc',
-                          value: Value.fromJson(Utils.objectToJsonValue('something')),
-                        },
-                      ],
-                    },
-                    {
-                      id: 'gid:cba',
-                      externalId: '0101',
-                      type: 'Truck',
-                      properties: [],
-                      tags: [],
-                    },
-                  ],
-                  relationships: [
-                    {
-                      id: 'gid:xxx',
-                      type: 'SERVICES',
-                      source: '',
-                      target: '',
-                      properties: {},
-                    },
-                  ],
-                },
-              ],
-            });
-          return {} as SurfaceCall;
-        },
-      );
-
-      jest.spyOn(sdk['client'], 'identityKnowledge').mockImplementation(mockFunc);
-
-      result = await sdk.listResourcesByProperty({
-        key: 'email',
+      result = await sdk.listIdentitiesByProperty({
+        type: 'email',
         value: Value.fromJson(Utils.objectToJsonValue('user@example.com')),
       });
     });
 
     it('sends a correct request', () => {
-      expect(sdk['client'].identityKnowledge).toBeCalledTimes(1);
-      expect(sdk['client'].identityKnowledge).toBeCalledWith(
-        {
-          operation: Operation.READ,
-          path: '(n:Resource)',
-          conditions: 'WHERE n.email = $email',
-          inputParams: {
-            email: {
-              value: {
-                oneofKind: 'stringValue',
-                stringValue: 'user@example.com',
-              },
-            },
-          },
-        },
-        expect.any(Function),
-      );
+      expect(sdk['client'].identityKnowledgeRead).toHaveBeenCalledTimes(1);
     });
 
     it('returns a correct response', () => {
-      expect(result.length).toEqual(2);
+      expect(result.length).toEqual(4);
       expect(result[0].id).toEqual('gid:abc');
     });
   });
 });
 
-describe('listDigitalTwinsByProperty', () => {
-  describe('when the response does not contain an error', () => {
-    let result: Node[];
-
-    beforeEach(async () => {
-      const mockFunc = jest.fn(
-        (
-          req,
-          res:
-            | Metadata
-            | CallOptions
-            | ((err: ServiceError | null, response: IdentityKnowledgeResponse) => void),
-        ): SurfaceCall => {
-          if (typeof res === 'function')
-            res(null, {
-              paths: [
-                {
-                  nodes: [
-                    {
-                      id: 'gid:abc',
-                      externalId: '1010',
-                      type: 'Person',
-                      tags: [],
-                      properties: [
-                        {
-                          key: 'abc',
-                          value: Value.fromJson(Utils.objectToJsonValue('something')),
-                        },
-                      ],
-                    },
-                    {
-                      id: 'gid:cba',
-                      externalId: '0101',
-                      type: 'Truck',
-                      properties: [],
-                      tags: [],
-                    },
-                  ],
-                  relationships: [
-                    {
-                      id: 'gid:xxx',
-                      type: 'SERVICES',
-                      source: '',
-                      target: '',
-                      properties: {},
-                    },
-                  ],
-                },
-              ],
-            });
-          return {} as SurfaceCall;
-        },
-      );
-
-      jest.spyOn(sdk['client'], 'identityKnowledge').mockImplementation(mockFunc);
-
-      result = await sdk.listDigitalTwinsByProperty({
-        key: 'email',
-        value: Value.fromJson(Utils.objectToJsonValue('user@example.com')),
-      });
-    });
-
-    it('sends a correct request', () => {
-      expect(sdk['client'].identityKnowledge).toBeCalledTimes(1);
-      expect(sdk['client'].identityKnowledge).toBeCalledWith(
-        {
-          operation: Operation.READ,
-          path: '(n:DigitalTwin)',
-          conditions: 'WHERE n.email = $email',
-          inputParams: {
-            email: {
-              value: {
-                oneofKind: 'stringValue',
-                stringValue: 'user@example.com',
-              },
-            },
-          },
-        },
-        expect.any(Function),
-      );
-    });
-
-    it('returns a correct response', () => {
-      expect(result.length).toEqual(2);
-      expect(result[0].id).toEqual('gid:abc');
-    });
-  });
-});
-
-describe('getResourceByIdentifier', () => {
+describe('getNodeByIdentifier', () => {
   describe('when the response does not contain an error', () => {
     let result: Node;
 
@@ -1519,42 +1341,40 @@ describe('getResourceByIdentifier', () => {
           res:
             | Metadata
             | CallOptions
-            | ((err: ServiceError | null, response: IdentityKnowledgeResponse) => void),
+            | ((err: ServiceError | null, response: IdentityKnowledgeReadResponse) => void),
         ): SurfaceCall => {
           if (typeof res === 'function')
             res(null, {
-              paths: [
+              nodes: [
                 {
-                  nodes: [
+                  id: 'gid:abc',
+                  externalId: '1010',
+                  type: 'Person',
+                  tags: [],
+                  properties: [
                     {
-                      id: 'gid:abc',
-                      externalId: '1010',
-                      type: 'Person',
-                      tags: [],
-                      properties: [
-                        {
-                          key: 'abc',
-                          value: Value.fromJson(Utils.objectToJsonValue('something')),
-                        },
-                      ],
-                    },
-                    {
-                      id: 'gid:cba',
-                      externalId: '0101',
-                      type: 'Truck',
-                      properties: [],
-                      tags: [],
+                      type: 'abc',
+                      value: Value.fromJson(Utils.objectToJsonValue('something')),
                     },
                   ],
-                  relationships: [
-                    {
-                      id: 'gid:xxx',
-                      type: 'SERVICES',
-                      source: '',
-                      target: '',
-                      properties: {},
-                    },
-                  ],
+                  isIdentity: true,
+                },
+                {
+                  id: 'gid:cba',
+                  externalId: '0101',
+                  type: 'Truck',
+                  properties: [],
+                  tags: [],
+                  isIdentity: false,
+                },
+              ],
+              relationships: [
+                {
+                  id: 'gid:xxx',
+                  type: 'SERVICES',
+                  source: '',
+                  target: '',
+                  properties: {},
                 },
               ],
             });
@@ -1562,35 +1382,37 @@ describe('getResourceByIdentifier', () => {
         },
       );
 
-      jest.spyOn(sdk['client'], 'identityKnowledge').mockImplementation(mockFunc);
+      jest.spyOn(sdk['client'], 'identityKnowledgeRead').mockImplementation(mockFunc);
 
-      result = await sdk.getResourceByIdentifier({
-        externalId: '11',
-        type: 'string',
-      });
+      result = await sdk.getNodeByIdentifier(
+        {
+          externalId: '11',
+          type: 'Person',
+        },
+        false,
+      );
     });
 
     it('sends a correct request', () => {
-      expect(sdk['client'].identityKnowledge).toBeCalledTimes(1);
-      expect(sdk['client'].identityKnowledge).toBeCalledWith(
+      expect(sdk['client'].identityKnowledgeRead).toHaveBeenCalledTimes(1);
+      expect(sdk['client'].identityKnowledgeRead).toHaveBeenCalledWith(
         {
-          operation: Operation.READ,
-          path: '(n:Resource)',
-          conditions: 'WHERE n.external_id = $externalId AND n.type = $type',
+          query: 'MATCH (n:Resource) WHERE n.external_id = $externalId AND n.type = $type',
           inputParams: {
             externalId: {
-              value: {
+              type: {
                 oneofKind: 'stringValue',
                 stringValue: '11',
               },
             },
             type: {
-              value: {
+              type: {
                 oneofKind: 'stringValue',
-                stringValue: 'string',
+                stringValue: 'Person',
               },
             },
           },
+          returns: [{ variable: 'n', properties: [] }],
         },
         expect.any(Function),
       );
@@ -1602,7 +1424,7 @@ describe('getResourceByIdentifier', () => {
   });
 });
 
-describe('getDigitalTwinByIdentifier', () => {
+describe('getIdentityByIdentifier', () => {
   describe('when the response does not contain an error', () => {
     let result: Node;
 
@@ -1613,42 +1435,53 @@ describe('getDigitalTwinByIdentifier', () => {
           res:
             | Metadata
             | CallOptions
-            | ((err: ServiceError | null, response: IdentityKnowledgeResponse) => void),
+            | ((err: ServiceError | null, response: IdentityKnowledgeReadResponse) => void),
         ): SurfaceCall => {
           if (typeof res === 'function')
             res(null, {
-              paths: [
+              nodes: [
                 {
-                  nodes: [
+                  id: 'gid:abc',
+                  externalId: '1010',
+                  type: 'Person',
+                  tags: [],
+                  properties: [
                     {
-                      id: 'gid:abc',
-                      externalId: '1010',
-                      type: 'Person',
-                      tags: [],
-                      properties: [
-                        {
-                          key: 'abc',
-                          value: Value.fromJson(Utils.objectToJsonValue('something')),
+                      type: 'abc',
+                      value: Value.fromJson(Utils.objectToJsonValue('something')),
+                      metadata: {
+                        assuranceLevel: 1,
+                        verificationTime: Utils.dateToTimestamp(new Date()),
+                        source: 'BRI',
+                        customMetadata: {
+                          othercustomerdata: {
+                            type: {
+                              oneofKind: 'stringValue',
+                              stringValue: 'SomeOtherCustomData',
+                            },
+                          },
                         },
-                      ],
-                    },
-                    {
-                      id: 'gid:cba',
-                      externalId: '0101',
-                      type: 'Truck',
-                      properties: [],
-                      tags: [],
+                      },
                     },
                   ],
-                  relationships: [
-                    {
-                      id: 'gid:xxx',
-                      type: 'SERVICES',
-                      source: '',
-                      target: '',
-                      properties: {},
-                    },
-                  ],
+                  isIdentity: true,
+                },
+                {
+                  id: 'gid:cba',
+                  externalId: '0101',
+                  type: 'Truck',
+                  properties: [],
+                  tags: [],
+                  isIdentity: false,
+                },
+              ],
+              relationships: [
+                {
+                  id: 'gid:xxx',
+                  type: 'SERVICES',
+                  source: '',
+                  target: '',
+                  properties: {},
                 },
               ],
             });
@@ -1656,35 +1489,34 @@ describe('getDigitalTwinByIdentifier', () => {
         },
       );
 
-      jest.spyOn(sdk['client'], 'identityKnowledge').mockImplementation(mockFunc);
+      jest.spyOn(sdk['client'], 'identityKnowledgeRead').mockImplementation(mockFunc);
 
-      result = await sdk.getDigitalTwinByIdentifier({
-        externalId: '11',
-        type: 'string',
+      result = await sdk.getIdentityByIdentifier({
+        externalId: '1010',
+        type: 'Person',
       });
     });
 
     it('sends a correct request', () => {
-      expect(sdk['client'].identityKnowledge).toBeCalledTimes(1);
-      expect(sdk['client'].identityKnowledge).toBeCalledWith(
+      expect(sdk['client'].identityKnowledgeRead).toHaveBeenCalledTimes(1);
+      expect(sdk['client'].identityKnowledgeRead).toHaveBeenCalledWith(
         {
-          operation: Operation.READ,
-          path: '(n:DigitalTwin)',
-          conditions: 'WHERE n.external_id = $externalId AND n.type = $type',
+          query: 'MATCH (n:DigitalTwin) WHERE n.external_id = $externalId AND n.type = $type',
           inputParams: {
             externalId: {
-              value: {
+              type: {
                 oneofKind: 'stringValue',
-                stringValue: '11',
+                stringValue: '1010',
               },
             },
             type: {
-              value: {
+              type: {
                 oneofKind: 'stringValue',
-                stringValue: 'string',
+                stringValue: 'Person',
               },
             },
           },
+          returns: [{ variable: 'n', properties: [] }],
         },
         expect.any(Function),
       );
