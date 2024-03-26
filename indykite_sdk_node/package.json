@@ -26,18 +26,18 @@
     "doc-generate": "typedoc --options typedoc.json && ts-node scripts/fixApiDocLinks.ts"
   },
   "devDependencies": {
-    "@babel/core": "7.24.0",
-    "@babel/preset-env": "7.24.0",
-    "@babel/preset-typescript": "7.23.3",
-    "@types/argparse": "2.0.15",
+    "@babel/core": "7.24.3",
+    "@babel/preset-env": "7.24.3",
+    "@babel/preset-typescript": "7.24.1",
+    "@types/argparse": "2.0.16",
     "@types/bcrypt": "^5.0.2",
     "@types/google-protobuf": "3.15.12",
     "@types/jest": "29.5.12",
     "@types/jsonwebtoken": "9.0.6",
-    "@types/node": "20.11.28",
+    "@types/node": "20.11.30",
     "@types/uuid": "9.0.8",
-    "@typescript-eslint/eslint-plugin": "7.2.0",
-    "@typescript-eslint/parser": "7.2.0",
+    "@typescript-eslint/eslint-plugin": "7.4.0",
+    "@typescript-eslint/parser": "7.4.0",
     "es-check": "7.1.1",
     "eslint": "8.57.0",
     "eslint-config-prettier": "9.1.0",
@@ -53,10 +53,10 @@
     "ts-jest": "29.1.2",
     "ts-node": "^10.9.2",
     "typedoc": "0.25.12",
-    "typescript": "5.4.2"
+    "typescript": "5.4.3"
   },
   "dependencies": {
-    "@grpc/grpc-js": "1.10.3",
+    "@grpc/grpc-js": "1.10.4",
     "@protobuf-ts/runtime": "2.9.4",
     "@protobuf-ts/runtime-rpc": "2.9.4",
     "google-protobuf": "3.21.2",
