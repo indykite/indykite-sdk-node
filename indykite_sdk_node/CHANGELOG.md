@@ -1,4 +1,11 @@
 # Changelog
+## [0.7.2](https://github.com/indykite/indykite-sdk-node/compare/v0.7.1...v0.7.2) (2024-04-09)
+
+
+### Features
+
+* update dependencies and repair examples errors ([ecf023b](https://github.com/indykite/indykite-sdk-node/commit/ecf023b7915bd9c7ffb7ee26bf34949c7bf17eed))
+
 ## [0.7.1](https://github.com/indykite/indykite-sdk-node/compare/v0.7.0...v0.7.1) (2024-03-20)
 
 
