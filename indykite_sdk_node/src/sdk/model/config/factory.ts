@@ -7,6 +7,7 @@ import { ConfigNodeType, ConfigNode as ConfigNodeSDK } from './config_node';
 import { EMAIL_SERVICE_CONFIG, EmailServiceFactory } from './email/factory';
 import { OAUTH2_CLIENT_CONFIG, OAuth2ClientFactory } from './oauth2_client/factory';
 import { WEBAUTHN_PROVIDER_CONFIG, WebAuthnProviderFactory } from './webauthn_provider';
+import { CONSENT_CONFIG, ConsentConfigFactory } from './consent_configuration/factory';
 
 export class ConfigNodeFactory {
   static createInstance(config: ConfigNode | undefined): ConfigNodeType {
@@ -62,6 +63,10 @@ export class ConfigNodeFactory {
           config.name,
           config.config.authorizationPolicyConfig,
         );
+        return Object.assign(flow, meta);
+      }
+      case CONSENT_CONFIG: {
+        const flow = ConsentConfigFactory.createInstance(config.name, config.config.consentConfig);
         return Object.assign(flow, meta);
       }
     }

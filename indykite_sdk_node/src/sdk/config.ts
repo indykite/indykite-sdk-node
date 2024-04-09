@@ -98,6 +98,8 @@ import {
   ConfigNode,
   ConfigNodeFactory,
   ConfigNodeType,
+  CONSENT_CONFIG,
+  ConsentNode,
   Customer,
   EmailServiceConfigType,
   OAUTH2_CLIENT_CONFIG,
@@ -2677,6 +2679,12 @@ export class ConfigClient {
       request.config = {
         oneofKind: AUTHORIZATION_POLICY_CONFIG,
         authorizationPolicyConfig: configNode.marshal(),
+      };
+    }
+    if (configNode instanceof ConsentNode) {
+      request.config = {
+        oneofKind: CONSENT_CONFIG,
+        consentConfig: configNode.marshal(),
       };
     }
     return request;

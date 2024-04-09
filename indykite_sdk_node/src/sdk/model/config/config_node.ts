@@ -12,6 +12,7 @@ import { AuthorizationPolicy } from './authorization_policy';
 import { EmailServiceConfigType } from './email/factory';
 import { OAuth2Client } from './oauth2_client/oauth2_client';
 import { WebAuthnProvider } from './webauthn_provider';
+import { ConsentNode } from './consent_configuration';
 
 /**
  * Docs: https://buf.build/indykite/indykiteapis/docs/main:indykite.config.v1beta1#indykite.config.v1beta1.ConfigNode
@@ -100,6 +101,7 @@ export type ConfigNodeType =
   | WebAuthnProvider
   // | AuthenteqProviderConfig
   // | SAFRProviderConfig
-  | AuthorizationPolicy;
+  | AuthorizationPolicy 
+  | ConsentNode;
 // | KnowledgeGraphSchemaConfig
 // | ReadIDProviderConfig

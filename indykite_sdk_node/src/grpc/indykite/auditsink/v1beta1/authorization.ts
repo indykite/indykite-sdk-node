@@ -149,6 +149,10 @@ export interface IsAuthorized {
      * @generated from protobuf field: google.protobuf.Duration evaluation_time = 6;
      */
     evaluationTime?: Duration;
+    /**
+     * @generated from protobuf field: string error_message = 7;
+     */
+    errorMessage: string;
 }
 /**
  * @generated from protobuf message indykite.auditsink.v1beta1.IsAuthorized.Request
@@ -284,6 +288,10 @@ export interface WhatAuthorized {
      * @generated from protobuf field: google.protobuf.Duration evaluation_time = 6;
      */
     evaluationTime?: Duration;
+    /**
+     * @generated from protobuf field: string error_message = 7;
+     */
+    errorMessage: string;
 }
 /**
  * @generated from protobuf message indykite.auditsink.v1beta1.WhatAuthorized.Request
@@ -415,6 +423,10 @@ export interface WhoAuthorized {
      * @generated from protobuf field: google.protobuf.Duration evaluation_time = 6;
      */
     evaluationTime?: Duration;
+    /**
+     * @generated from protobuf field: string error_message = 7;
+     */
+    errorMessage: string;
 }
 /**
  * @generated from protobuf message indykite.auditsink.v1beta1.WhoAuthorized.Request
@@ -874,11 +886,12 @@ class IsAuthorized$Type extends MessageType<IsAuthorized> {
             { no: 3, name: "response", kind: "message", T: () => IsAuthorized_Response },
             { no: 4, name: "policies_found", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => AuthorizationPolicy },
             { no: 5, name: "deny_reason", kind: "message", T: () => AuthorizationDenyReason },
-            { no: 6, name: "evaluation_time", kind: "message", T: () => Duration }
+            { no: 6, name: "evaluation_time", kind: "message", T: () => Duration },
+            { no: 7, name: "error_message", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
         ]);
     }
     create(value?: PartialMessage<IsAuthorized>): IsAuthorized {
-        const message = { policiesFound: [] };
+        const message = { policiesFound: [], errorMessage: "" };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<IsAuthorized>(this, message, value);
@@ -906,6 +919,9 @@ class IsAuthorized$Type extends MessageType<IsAuthorized> {
                     break;
                 case /* google.protobuf.Duration evaluation_time */ 6:
                     message.evaluationTime = Duration.internalBinaryRead(reader, reader.uint32(), options, message.evaluationTime);
+                    break;
+                case /* string error_message */ 7:
+                    message.errorMessage = reader.string();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -937,6 +953,9 @@ class IsAuthorized$Type extends MessageType<IsAuthorized> {
         /* google.protobuf.Duration evaluation_time = 6; */
         if (message.evaluationTime)
             Duration.internalBinaryWrite(message.evaluationTime, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
+        /* string error_message = 7; */
+        if (message.errorMessage !== "")
+            writer.tag(7, WireType.LengthDelimited).string(message.errorMessage);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -1360,11 +1379,12 @@ class WhatAuthorized$Type extends MessageType<WhatAuthorized> {
             { no: 3, name: "response", kind: "message", T: () => WhatAuthorized_Response },
             { no: 4, name: "policies_found", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => AuthorizationPolicy },
             { no: 5, name: "deny_reason", kind: "message", T: () => AuthorizationDenyReason },
-            { no: 6, name: "evaluation_time", kind: "message", T: () => Duration }
+            { no: 6, name: "evaluation_time", kind: "message", T: () => Duration },
+            { no: 7, name: "error_message", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
         ]);
     }
     create(value?: PartialMessage<WhatAuthorized>): WhatAuthorized {
-        const message = { policiesFound: [] };
+        const message = { policiesFound: [], errorMessage: "" };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<WhatAuthorized>(this, message, value);
@@ -1392,6 +1412,9 @@ class WhatAuthorized$Type extends MessageType<WhatAuthorized> {
                     break;
                 case /* google.protobuf.Duration evaluation_time */ 6:
                     message.evaluationTime = Duration.internalBinaryRead(reader, reader.uint32(), options, message.evaluationTime);
+                    break;
+                case /* string error_message */ 7:
+                    message.errorMessage = reader.string();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -1423,6 +1446,9 @@ class WhatAuthorized$Type extends MessageType<WhatAuthorized> {
         /* google.protobuf.Duration evaluation_time = 6; */
         if (message.evaluationTime)
             Duration.internalBinaryWrite(message.evaluationTime, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
+        /* string error_message = 7; */
+        if (message.errorMessage !== "")
+            writer.tag(7, WireType.LengthDelimited).string(message.errorMessage);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -1819,11 +1845,12 @@ class WhoAuthorized$Type extends MessageType<WhoAuthorized> {
             { no: 3, name: "response", kind: "message", T: () => WhoAuthorized_Response },
             { no: 4, name: "policies_found", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => AuthorizationPolicy },
             { no: 5, name: "deny_reason", kind: "message", T: () => AuthorizationDenyReason },
-            { no: 6, name: "evaluation_time", kind: "message", T: () => Duration }
+            { no: 6, name: "evaluation_time", kind: "message", T: () => Duration },
+            { no: 7, name: "error_message", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
         ]);
     }
     create(value?: PartialMessage<WhoAuthorized>): WhoAuthorized {
-        const message = { policiesFound: [] };
+        const message = { policiesFound: [], errorMessage: "" };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<WhoAuthorized>(this, message, value);
@@ -1851,6 +1878,9 @@ class WhoAuthorized$Type extends MessageType<WhoAuthorized> {
                     break;
                 case /* google.protobuf.Duration evaluation_time */ 6:
                     message.evaluationTime = Duration.internalBinaryRead(reader, reader.uint32(), options, message.evaluationTime);
+                    break;
+                case /* string error_message */ 7:
+                    message.errorMessage = reader.string();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -1882,6 +1912,9 @@ class WhoAuthorized$Type extends MessageType<WhoAuthorized> {
         /* google.protobuf.Duration evaluation_time = 6; */
         if (message.evaluationTime)
             Duration.internalBinaryWrite(message.evaluationTime, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
+        /* string error_message = 7; */
+        if (message.errorMessage !== "")
+            writer.tag(7, WireType.LengthDelimited).string(message.errorMessage);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

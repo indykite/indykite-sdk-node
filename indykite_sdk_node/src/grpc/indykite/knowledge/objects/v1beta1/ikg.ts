@@ -26,6 +26,7 @@ import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MESSAGE_TYPE } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
+import { Value as Value$ } from "../../../objects/v1beta1/struct";
 import { Value } from "../../../objects/v1beta2/value";
 import { Timestamp } from "../../../../google/protobuf/timestamp";
 /**
@@ -139,6 +140,65 @@ export interface Metadata {
     customMetadata: {
         [key: string]: Value;
     };
+}
+/**
+ * Subject to check if is authorized.
+ *
+ * @generated from protobuf message indykite.knowledge.objects.v1beta1.User
+ */
+export interface User {
+    /**
+     * @generated from protobuf oneof: user
+     */
+    user: {
+        oneofKind: "userId";
+        /**
+         * Gid, unique identifier for the user∫
+         *
+         * @generated from protobuf field: string user_id = 1;
+         */
+        userId: string;
+    } | {
+        oneofKind: "property";
+        /**
+         * @generated from protobuf field: indykite.knowledge.objects.v1beta1.User.Property property = 3;
+         */
+        property: User_Property;
+    } | {
+        oneofKind: "externalId";
+        /**
+         * @generated from protobuf field: indykite.knowledge.objects.v1beta1.User.ExternalID external_id = 5;
+         */
+        externalId: User_ExternalID;
+    } | {
+        oneofKind: undefined;
+    };
+}
+/**
+ * @generated from protobuf message indykite.knowledge.objects.v1beta1.User.ExternalID
+ */
+export interface User_ExternalID {
+    /**
+     * @generated from protobuf field: string type = 1;
+     */
+    type: string;
+    /**
+     * @generated from protobuf field: string external_id = 2;
+     */
+    externalId: string;
+}
+/**
+ * @generated from protobuf message indykite.knowledge.objects.v1beta1.User.Property
+ */
+export interface User_Property {
+    /**
+     * @generated from protobuf field: string type = 1;
+     */
+    type: string;
+    /**
+     * @generated from protobuf field: indykite.objects.v1beta1.Value value = 2;
+     */
+    value?: Value$;
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class Node$Type extends MessageType<Node> {
@@ -494,3 +554,181 @@ class Metadata$Type extends MessageType<Metadata> {
  * @generated MessageType for protobuf message indykite.knowledge.objects.v1beta1.Metadata
  */
 export const Metadata = new Metadata$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class User$Type extends MessageType<User> {
+    constructor() {
+        super("indykite.knowledge.objects.v1beta1.User", [
+            { no: 1, name: "user_id", kind: "scalar", oneof: "user", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
+            { no: 3, name: "property", kind: "message", oneof: "user", T: () => User_Property, options: { "validate.rules": { message: { required: true } } } },
+            { no: 5, name: "external_id", kind: "message", oneof: "user", T: () => User_ExternalID, options: { "validate.rules": { message: { required: true } } } }
+        ]);
+    }
+    create(value?: PartialMessage<User>): User {
+        const message = { user: { oneofKind: undefined } };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<User>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: User): User {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string user_id */ 1:
+                    message.user = {
+                        oneofKind: "userId",
+                        userId: reader.string()
+                    };
+                    break;
+                case /* indykite.knowledge.objects.v1beta1.User.Property property */ 3:
+                    message.user = {
+                        oneofKind: "property",
+                        property: User_Property.internalBinaryRead(reader, reader.uint32(), options, (message.user as any).property)
+                    };
+                    break;
+                case /* indykite.knowledge.objects.v1beta1.User.ExternalID external_id */ 5:
+                    message.user = {
+                        oneofKind: "externalId",
+                        externalId: User_ExternalID.internalBinaryRead(reader, reader.uint32(), options, (message.user as any).externalId)
+                    };
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: User, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string user_id = 1; */
+        if (message.user.oneofKind === "userId")
+            writer.tag(1, WireType.LengthDelimited).string(message.user.userId);
+        /* indykite.knowledge.objects.v1beta1.User.Property property = 3; */
+        if (message.user.oneofKind === "property")
+            User_Property.internalBinaryWrite(message.user.property, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        /* indykite.knowledge.objects.v1beta1.User.ExternalID external_id = 5; */
+        if (message.user.oneofKind === "externalId")
+            User_ExternalID.internalBinaryWrite(message.user.externalId, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message indykite.knowledge.objects.v1beta1.User
+ */
+export const User = new User$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class User_ExternalID$Type extends MessageType<User_ExternalID> {
+    constructor() {
+        super("indykite.knowledge.objects.v1beta1.User.ExternalID", [
+            { no: 1, name: "type", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "64", pattern: "^[a-zA-Z]*$" } } } },
+            { no: 2, name: "external_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "1" } } } }
+        ]);
+    }
+    create(value?: PartialMessage<User_ExternalID>): User_ExternalID {
+        const message = { type: "", externalId: "" };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<User_ExternalID>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: User_ExternalID): User_ExternalID {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string type */ 1:
+                    message.type = reader.string();
+                    break;
+                case /* string external_id */ 2:
+                    message.externalId = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: User_ExternalID, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string type = 1; */
+        if (message.type !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.type);
+        /* string external_id = 2; */
+        if (message.externalId !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.externalId);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message indykite.knowledge.objects.v1beta1.User.ExternalID
+ */
+export const User_ExternalID = new User_ExternalID$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class User_Property$Type extends MessageType<User_Property> {
+    constructor() {
+        super("indykite.knowledge.objects.v1beta1.User.Property", [
+            { no: 1, name: "type", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "2", maxLen: "20" } } } },
+            { no: 2, name: "value", kind: "message", T: () => Value$, options: { "validate.rules": { message: { required: true } } } }
+        ]);
+    }
+    create(value?: PartialMessage<User_Property>): User_Property {
+        const message = { type: "" };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<User_Property>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: User_Property): User_Property {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string type */ 1:
+                    message.type = reader.string();
+                    break;
+                case /* indykite.objects.v1beta1.Value value */ 2:
+                    message.value = Value$.internalBinaryRead(reader, reader.uint32(), options, message.value);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: User_Property, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string type = 1; */
+        if (message.type !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.type);
+        /* indykite.objects.v1beta1.Value value = 2; */
+        if (message.value)
+            Value$.internalBinaryWrite(message.value, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message indykite.knowledge.objects.v1beta1.User.Property
+ */
+export const User_Property = new User_Property$Type();

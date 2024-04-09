@@ -1,5 +1,5 @@
 import { JWK } from 'jose';
-import { JARVIS_DEFAULT_ENDPOINT } from '../utils/consts';
+import { DEFAULT_ENDPOINT } from '../utils/consts';
 
 import { SdkErrorCode, SdkError } from '../error';
 import { Utils } from '../utils/utils';
@@ -7,7 +7,7 @@ import { Utils } from '../utils/utils';
 export abstract class Credential {
   static readonly DEFAULT_LIFETIME: string = '1h';
 
-  protected endpoint: string = JARVIS_DEFAULT_ENDPOINT;
+  protected endpoint: string = DEFAULT_ENDPOINT;
   privateKey: JWK;
   protected jwt?: string;
   protected expirationTime?: Date;
