@@ -32,7 +32,7 @@ let sdk: ConfigClient;
 const TEST_TO_EMAIL = { address: 'test+to@indykite.com', name: 'Test To' };
 
 beforeAll(async () => {
-  process.env.JARVIS_ENDPOINT = 'NOT_USED';
+  process.env.ENDPOINT = 'NOT_USED';
   sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
 });
 

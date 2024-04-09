@@ -32,6 +32,8 @@ import { OAuth2ApplicationConfig } from "./model";
 import { OAuth2Provider } from "./model";
 import { OAuth2ProviderConfig } from "./model";
 import { ConfigNode } from "./model";
+import { TokenExchangeConfig } from "./model";
+import { ConsentConfiguration } from "./model";
 import { AuthorizationPolicyConfig } from "./model";
 import { SAFRProviderConfig } from "./model";
 import { WebAuthnProviderConfig } from "./model";
@@ -2277,6 +2279,18 @@ export interface CreateConfigNodeRequest {
          */
         authorizationPolicyConfig: AuthorizationPolicyConfig;
     } | {
+        oneofKind: "consentConfig";
+        /**
+         * @generated from protobuf field: indykite.config.v1beta1.ConsentConfiguration consent_config = 29;
+         */
+        consentConfig: ConsentConfiguration;
+    } | {
+        oneofKind: "tokenExchangeConfig";
+        /**
+         * @generated from protobuf field: indykite.config.v1beta1.TokenExchangeConfig token_exchange_config = 30;
+         */
+        tokenExchangeConfig: TokenExchangeConfig;
+    } | {
         oneofKind: undefined;
     };
     /**
@@ -2463,6 +2477,18 @@ export interface UpdateConfigNodeRequest {
          * @generated from protobuf field: indykite.config.v1beta1.AuthorizationPolicyConfig authorization_policy_config = 25;
          */
         authorizationPolicyConfig: AuthorizationPolicyConfig;
+    } | {
+        oneofKind: "consentConfig";
+        /**
+         * @generated from protobuf field: indykite.config.v1beta1.ConsentConfiguration consent_config = 29;
+         */
+        consentConfig: ConsentConfiguration;
+    } | {
+        oneofKind: "tokenExchangeConfig";
+        /**
+         * @generated from protobuf field: indykite.config.v1beta1.TokenExchangeConfig token_exchange_config = 30;
+         */
+        tokenExchangeConfig: TokenExchangeConfig;
     } | {
         oneofKind: undefined;
     };
@@ -8307,6 +8333,8 @@ class CreateConfigNodeRequest$Type extends MessageType<CreateConfigNodeRequest> 
             { no: 21, name: "webauthn_provider_config", kind: "message", oneof: "config", T: () => WebAuthnProviderConfig, options: { "validate.rules": { message: { required: true } } } },
             { no: 23, name: "safr_provider_config", kind: "message", oneof: "config", T: () => SAFRProviderConfig, options: { "validate.rules": { message: { required: true } } } },
             { no: 25, name: "authorization_policy_config", kind: "message", oneof: "config", T: () => AuthorizationPolicyConfig, options: { "validate.rules": { message: { required: true } } } },
+            { no: 29, name: "consent_config", kind: "message", oneof: "config", T: () => ConsentConfiguration, options: { "validate.rules": { message: { required: true } } } },
+            { no: 30, name: "token_exchange_config", kind: "message", oneof: "config", T: () => TokenExchangeConfig, options: { "validate.rules": { message: { required: true } } } },
             { no: 7, name: "bookmarks", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { items: { string: { minLen: "40", pattern: "^[a-zA-Z0-9_-]{40,}$" } } } } } }
         ]);
     }
@@ -8388,6 +8416,18 @@ class CreateConfigNodeRequest$Type extends MessageType<CreateConfigNodeRequest> 
                         authorizationPolicyConfig: AuthorizationPolicyConfig.internalBinaryRead(reader, reader.uint32(), options, (message.config as any).authorizationPolicyConfig)
                     };
                     break;
+                case /* indykite.config.v1beta1.ConsentConfiguration consent_config */ 29:
+                    message.config = {
+                        oneofKind: "consentConfig",
+                        consentConfig: ConsentConfiguration.internalBinaryRead(reader, reader.uint32(), options, (message.config as any).consentConfig)
+                    };
+                    break;
+                case /* indykite.config.v1beta1.TokenExchangeConfig token_exchange_config */ 30:
+                    message.config = {
+                        oneofKind: "tokenExchangeConfig",
+                        tokenExchangeConfig: TokenExchangeConfig.internalBinaryRead(reader, reader.uint32(), options, (message.config as any).tokenExchangeConfig)
+                    };
+                    break;
                 case /* repeated string bookmarks */ 7:
                     message.bookmarks.push(reader.string());
                     break;
@@ -8442,6 +8482,12 @@ class CreateConfigNodeRequest$Type extends MessageType<CreateConfigNodeRequest> 
         /* indykite.config.v1beta1.AuthorizationPolicyConfig authorization_policy_config = 25; */
         if (message.config.oneofKind === "authorizationPolicyConfig")
             AuthorizationPolicyConfig.internalBinaryWrite(message.config.authorizationPolicyConfig, writer.tag(25, WireType.LengthDelimited).fork(), options).join();
+        /* indykite.config.v1beta1.ConsentConfiguration consent_config = 29; */
+        if (message.config.oneofKind === "consentConfig")
+            ConsentConfiguration.internalBinaryWrite(message.config.consentConfig, writer.tag(29, WireType.LengthDelimited).fork(), options).join();
+        /* indykite.config.v1beta1.TokenExchangeConfig token_exchange_config = 30; */
+        if (message.config.oneofKind === "tokenExchangeConfig")
+            TokenExchangeConfig.internalBinaryWrite(message.config.tokenExchangeConfig, writer.tag(30, WireType.LengthDelimited).fork(), options).join();
         /* repeated string bookmarks = 7; */
         for (let i = 0; i < message.bookmarks.length; i++)
             writer.tag(7, WireType.LengthDelimited).string(message.bookmarks[i]);
@@ -8676,6 +8722,8 @@ class UpdateConfigNodeRequest$Type extends MessageType<UpdateConfigNodeRequest> 
             { no: 21, name: "webauthn_provider_config", kind: "message", oneof: "config", T: () => WebAuthnProviderConfig, options: { "validate.rules": { message: { required: true } } } },
             { no: 23, name: "safr_provider_config", kind: "message", oneof: "config", T: () => SAFRProviderConfig, options: { "validate.rules": { message: { required: true } } } },
             { no: 25, name: "authorization_policy_config", kind: "message", oneof: "config", T: () => AuthorizationPolicyConfig, options: { "validate.rules": { message: { required: true } } } },
+            { no: 29, name: "consent_config", kind: "message", oneof: "config", T: () => ConsentConfiguration, options: { "validate.rules": { message: { required: true } } } },
+            { no: 30, name: "token_exchange_config", kind: "message", oneof: "config", T: () => TokenExchangeConfig, options: { "validate.rules": { message: { required: true } } } },
             { no: 5, name: "bookmarks", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { items: { string: { minLen: "40", pattern: "^[a-zA-Z0-9_-]{40,}$" } } } } } }
         ]);
     }
@@ -8757,6 +8805,18 @@ class UpdateConfigNodeRequest$Type extends MessageType<UpdateConfigNodeRequest> 
                         authorizationPolicyConfig: AuthorizationPolicyConfig.internalBinaryRead(reader, reader.uint32(), options, (message.config as any).authorizationPolicyConfig)
                     };
                     break;
+                case /* indykite.config.v1beta1.ConsentConfiguration consent_config */ 29:
+                    message.config = {
+                        oneofKind: "consentConfig",
+                        consentConfig: ConsentConfiguration.internalBinaryRead(reader, reader.uint32(), options, (message.config as any).consentConfig)
+                    };
+                    break;
+                case /* indykite.config.v1beta1.TokenExchangeConfig token_exchange_config */ 30:
+                    message.config = {
+                        oneofKind: "tokenExchangeConfig",
+                        tokenExchangeConfig: TokenExchangeConfig.internalBinaryRead(reader, reader.uint32(), options, (message.config as any).tokenExchangeConfig)
+                    };
+                    break;
                 case /* repeated string bookmarks */ 5:
                     message.bookmarks.push(reader.string());
                     break;
@@ -8811,6 +8871,12 @@ class UpdateConfigNodeRequest$Type extends MessageType<UpdateConfigNodeRequest> 
         /* indykite.config.v1beta1.AuthorizationPolicyConfig authorization_policy_config = 25; */
         if (message.config.oneofKind === "authorizationPolicyConfig")
             AuthorizationPolicyConfig.internalBinaryWrite(message.config.authorizationPolicyConfig, writer.tag(25, WireType.LengthDelimited).fork(), options).join();
+        /* indykite.config.v1beta1.ConsentConfiguration consent_config = 29; */
+        if (message.config.oneofKind === "consentConfig")
+            ConsentConfiguration.internalBinaryWrite(message.config.consentConfig, writer.tag(29, WireType.LengthDelimited).fork(), options).join();
+        /* indykite.config.v1beta1.TokenExchangeConfig token_exchange_config = 30; */
+        if (message.config.oneofKind === "tokenExchangeConfig")
+            TokenExchangeConfig.internalBinaryWrite(message.config.tokenExchangeConfig, writer.tag(30, WireType.LengthDelimited).fork(), options).join();
         /* repeated string bookmarks = 5; */
         for (let i = 0; i < message.bookmarks.length; i++)
             writer.tag(5, WireType.LengthDelimited).string(message.bookmarks[i]);

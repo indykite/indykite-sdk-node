@@ -1,1 +1,1 @@
-export const JARVIS_DEFAULT_ENDPOINT = 'jarvis.indykite.com';
+export const DEFAULT_ENDPOINT = 'NOT_USED';

@@ -9,6 +9,7 @@ export * from './application_space';
 export * from './application';
 export * from './authorization_policy';
 export * from './config_node';
+export * from './consent_configuration';
 export * from './customer';
 export * from './factory';
 export * from './oauth2_application_config';

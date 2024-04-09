@@ -26,6 +26,7 @@ import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MESSAGE_TYPE } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
+import { PolicyBuilderConfig } from "./policy_builder";
 import { Int64Value } from "../../../google/protobuf/wrappers";
 import { Value } from "../../objects/v1beta1/struct";
 import { Duration } from "../../../google/protobuf/duration";
@@ -990,6 +991,18 @@ export interface ConfigNode {
          */
         authorizationPolicyConfig: AuthorizationPolicyConfig;
     } | {
+        oneofKind: "consentConfig";
+        /**
+         * @generated from protobuf field: indykite.config.v1beta1.ConsentConfiguration consent_config = 30;
+         */
+        consentConfig: ConsentConfiguration;
+    } | {
+        oneofKind: "tokenExchangeConfig";
+        /**
+         * @generated from protobuf field: indykite.config.v1beta1.TokenExchangeConfig token_exchange_config = 31;
+         */
+        tokenExchangeConfig: TokenExchangeConfig;
+    } | {
         oneofKind: undefined;
     };
     /**
@@ -1755,6 +1768,10 @@ export interface EmailServiceConfig {
      * @generated from protobuf field: indykite.config.v1beta1.EmailDefinition one_time_password_message = 13;
      */
     oneTimePasswordMessage?: EmailDefinition;
+    /**
+     * @generated from protobuf field: indykite.config.v1beta1.EmailDefinition app_space_ready_to_use_message = 14;
+     */
+    appSpaceReadyToUseMessage?: EmailDefinition;
 }
 /**
  * Email holds email name and address info.
@@ -2237,6 +2254,12 @@ export interface AuthorizationPolicyConfig {
      * @generated from protobuf field: repeated string tags = 3;
      */
     tags: string[];
+    /**
+     * Optional policy builder config
+     *
+     * @generated from protobuf field: indykite.config.v1beta1.PolicyBuilderConfig builder = 4;
+     */
+    builder?: PolicyBuilderConfig;
 }
 /**
  * @generated from protobuf enum indykite.config.v1beta1.AuthorizationPolicyConfig.Status
@@ -2313,6 +2336,139 @@ export interface KafkaSinkConfig {
      * @generated from protobuf field: string password = 6;
      */
     password: string;
+}
+/**
+ * @generated from protobuf message indykite.config.v1beta1.ConsentConfiguration
+ */
+export interface ConsentConfiguration {
+    /**
+     * Purpose is a human readable description of the purpose of the consent.
+     *
+     * @generated from protobuf field: string purpose = 1;
+     */
+    purpose: string;
+    /**
+     * Data points is a list of properties related to the Digital twin that the consent is for.
+     *
+     * @generated from protobuf field: repeated string data_points = 2;
+     */
+    dataPoints: string[];
+    /**
+     * First iteration the Application is embedded in the config, but that won't be the case in the future
+     * ApplicationId is the id of the application that the consent is for.
+     *
+     * @generated from protobuf field: string application_id = 3;
+     */
+    applicationId: string;
+}
+/**
+ * Token Exchange configuration for AppSpace.
+ * Move this to Public proto once it is aligned and agreed on.
+ *
+ * @generated from protobuf message indykite.config.v1beta1.TokenExchangeConfig
+ */
+export interface TokenExchangeConfig {
+    /**
+     * @generated from protobuf oneof: token_matcher
+     */
+    tokenMatcher: {
+        oneofKind: "jwt";
+        /**
+         * @generated from protobuf field: indykite.config.v1beta1.TokenExchangeConfig.JWT jwt = 1;
+         */
+        jwt: TokenExchangeConfig_JWT;
+    } | {
+        oneofKind: undefined;
+    };
+    /**
+     * @generated from protobuf oneof: validation
+     */
+    validation: {
+        oneofKind: "offline";
+        /**
+         * @generated from protobuf field: indykite.config.v1beta1.TokenExchangeConfig.Offline offline = 3;
+         */
+        offline: TokenExchangeConfig_Offline;
+    } | {
+        oneofKind: undefined;
+    };
+    /**
+     * ClaimsMapping specify which claims from the token should be mapped to IKG Property with given name.
+     * Remember, that 'email' claim is always extracted if exists and stored under 'email' key in IKG.
+     *
+     * Key specify name of property in IKG.
+     * Value specify which claim to map and how.
+     *
+     * @generated from protobuf field: map<string, indykite.config.v1beta1.TokenExchangeConfig.Claim> claims_mapping = 7;
+     */
+    claimsMapping: {
+        [key: string]: TokenExchangeConfig_Claim;
+    };
+    /**
+     * Node type in IKG to which we will try to match sub claim with DT external_id.
+     *
+     * @generated from protobuf field: string ikg_node_type = 5;
+     */
+    ikgNodeType: string;
+    /**
+     * Perform Upsert specify, if we should create and/or update DigitalTwin in IKG if it doesn't exist with.
+     * In future this will perform upsert also on properties that are derived from token.
+     *
+     * @generated from protobuf field: bool perform_upsert = 6;
+     */
+    performUpsert: boolean;
+}
+/**
+ * JWT specifies all attributes to match with received token.
+ *
+ * @generated from protobuf message indykite.config.v1beta1.TokenExchangeConfig.JWT
+ */
+export interface TokenExchangeConfig_JWT {
+    /**
+     * Issuer is used to exact match based on `iss` claim in JWT.
+     *
+     * @generated from protobuf field: string issuer = 1;
+     */
+    issuer: string;
+    /**
+     * Audience is used to exact match based on `aud` claim in JWT.
+     *
+     * @generated from protobuf field: string audience = 2;
+     */
+    audience: string;
+}
+/**
+ * Offline validation works only with JWT.
+ *
+ * @generated from protobuf message indykite.config.v1beta1.TokenExchangeConfig.Offline
+ */
+export interface TokenExchangeConfig_Offline {
+    /**
+     * Public JWK to validate signature of JWT.
+     * If there are no public keys specified, they will be fetched and cached from
+     * jwks_uri at https://jwt-issuer.tld/.well-known/openid-configuration
+     *
+     * @generated from protobuf field: repeated bytes public_jwks = 1;
+     */
+    publicJwks: Uint8Array[];
+}
+/**
+ * Claim specify details about claim that will be mapped to IKG.
+ *
+ * @generated from protobuf message indykite.config.v1beta1.TokenExchangeConfig.Claim
+ */
+export interface TokenExchangeConfig_Claim {
+    /**
+     * JSON selector of property in token claims. Currently just name in top-level object is supported.
+     *
+     * By default we support all standard claims from OpenID specification https://openid.net/specs/openid-connect-core-1_0.html#StandardClaims,
+     * and mapping will fail if claim and data type will not match the standard.
+     *
+     * For non-standard claims the type will be derived from the JSON.
+     *
+     * @generated from protobuf field: string selector = 1;
+     */
+    selector: string;
 }
 // 
 // 
@@ -4034,6 +4190,8 @@ class ConfigNode$Type extends MessageType<ConfigNode> {
             { no: 19, name: "webauthn_provider_config", kind: "message", oneof: "config", T: () => WebAuthnProviderConfig, options: { "validate.rules": { message: { required: true } } } },
             { no: 21, name: "safr_provider_config", kind: "message", oneof: "config", T: () => SAFRProviderConfig, options: { "validate.rules": { message: { required: true } } } },
             { no: 23, name: "authorization_policy_config", kind: "message", oneof: "config", T: () => AuthorizationPolicyConfig, options: { "validate.rules": { message: { required: true } } } },
+            { no: 30, name: "consent_config", kind: "message", oneof: "config", T: () => ConsentConfiguration, options: { "validate.rules": { message: { required: true } } } },
+            { no: 31, name: "token_exchange_config", kind: "message", oneof: "config", T: () => TokenExchangeConfig, options: { "validate.rules": { message: { required: true } } } },
             { no: 29, name: "version", kind: "scalar", T: 3 /*ScalarType.INT64*/ }
         ]);
     }
@@ -4139,6 +4297,18 @@ class ConfigNode$Type extends MessageType<ConfigNode> {
                         authorizationPolicyConfig: AuthorizationPolicyConfig.internalBinaryRead(reader, reader.uint32(), options, (message.config as any).authorizationPolicyConfig)
                     };
                     break;
+                case /* indykite.config.v1beta1.ConsentConfiguration consent_config */ 30:
+                    message.config = {
+                        oneofKind: "consentConfig",
+                        consentConfig: ConsentConfiguration.internalBinaryRead(reader, reader.uint32(), options, (message.config as any).consentConfig)
+                    };
+                    break;
+                case /* indykite.config.v1beta1.TokenExchangeConfig token_exchange_config */ 31:
+                    message.config = {
+                        oneofKind: "tokenExchangeConfig",
+                        tokenExchangeConfig: TokenExchangeConfig.internalBinaryRead(reader, reader.uint32(), options, (message.config as any).tokenExchangeConfig)
+                    };
+                    break;
                 case /* int64 version */ 29:
                     message.version = reader.int64().toString();
                     break;
@@ -4220,6 +4390,12 @@ class ConfigNode$Type extends MessageType<ConfigNode> {
         /* indykite.config.v1beta1.AuthorizationPolicyConfig authorization_policy_config = 23; */
         if (message.config.oneofKind === "authorizationPolicyConfig")
             AuthorizationPolicyConfig.internalBinaryWrite(message.config.authorizationPolicyConfig, writer.tag(23, WireType.LengthDelimited).fork(), options).join();
+        /* indykite.config.v1beta1.ConsentConfiguration consent_config = 30; */
+        if (message.config.oneofKind === "consentConfig")
+            ConsentConfiguration.internalBinaryWrite(message.config.consentConfig, writer.tag(30, WireType.LengthDelimited).fork(), options).join();
+        /* indykite.config.v1beta1.TokenExchangeConfig token_exchange_config = 31; */
+        if (message.config.oneofKind === "tokenExchangeConfig")
+            TokenExchangeConfig.internalBinaryWrite(message.config.tokenExchangeConfig, writer.tag(31, WireType.LengthDelimited).fork(), options).join();
         /* int64 version = 29; */
         if (message.version !== "0")
             writer.tag(29, WireType.Varint).int64(message.version);
@@ -5399,7 +5575,8 @@ class EmailServiceConfig$Type extends MessageType<EmailServiceConfig> {
             { no: 9, name: "invitation_message", kind: "message", T: () => EmailDefinition },
             { no: 10, name: "reset_password_message", kind: "message", T: () => EmailDefinition },
             { no: 11, name: "verification_message", kind: "message", T: () => EmailDefinition },
-            { no: 13, name: "one_time_password_message", kind: "message", T: () => EmailDefinition }
+            { no: 13, name: "one_time_password_message", kind: "message", T: () => EmailDefinition },
+            { no: 14, name: "app_space_ready_to_use_message", kind: "message", T: () => EmailDefinition }
         ]);
     }
     create(value?: PartialMessage<EmailServiceConfig>): EmailServiceConfig {
@@ -5456,6 +5633,9 @@ class EmailServiceConfig$Type extends MessageType<EmailServiceConfig> {
                 case /* indykite.config.v1beta1.EmailDefinition one_time_password_message */ 13:
                     message.oneTimePasswordMessage = EmailDefinition.internalBinaryRead(reader, reader.uint32(), options, message.oneTimePasswordMessage);
                     break;
+                case /* indykite.config.v1beta1.EmailDefinition app_space_ready_to_use_message */ 14:
+                    message.appSpaceReadyToUseMessage = EmailDefinition.internalBinaryRead(reader, reader.uint32(), options, message.appSpaceReadyToUseMessage);
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -5498,6 +5678,9 @@ class EmailServiceConfig$Type extends MessageType<EmailServiceConfig> {
         /* indykite.config.v1beta1.EmailDefinition one_time_password_message = 13; */
         if (message.oneTimePasswordMessage)
             EmailDefinition.internalBinaryWrite(message.oneTimePasswordMessage, writer.tag(13, WireType.LengthDelimited).fork(), options).join();
+        /* indykite.config.v1beta1.EmailDefinition app_space_ready_to_use_message = 14; */
+        if (message.appSpaceReadyToUseMessage)
+            EmailDefinition.internalBinaryWrite(message.appSpaceReadyToUseMessage, writer.tag(14, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -6671,7 +6854,8 @@ class AuthorizationPolicyConfig$Type extends MessageType<AuthorizationPolicyConf
         super("indykite.config.v1beta1.AuthorizationPolicyConfig", [
             { no: 1, name: "policy", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "512000" } } } },
             { no: 2, name: "status", kind: "enum", T: () => ["indykite.config.v1beta1.AuthorizationPolicyConfig.Status", AuthorizationPolicyConfig_Status, "STATUS_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
-            { no: 3, name: "tags", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { unique: true, items: { string: { minLen: "1", maxLen: "20", pattern: "^[a-zA-Z0-9]+$" } }, ignoreEmpty: true } } } }
+            { no: 3, name: "tags", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { unique: true, items: { string: { minLen: "1", maxLen: "20", pattern: "^[a-zA-Z0-9]+$" } }, ignoreEmpty: true } } } },
+            { no: 4, name: "builder", kind: "message", T: () => PolicyBuilderConfig }
         ]);
     }
     create(value?: PartialMessage<AuthorizationPolicyConfig>): AuthorizationPolicyConfig {
@@ -6695,6 +6879,9 @@ class AuthorizationPolicyConfig$Type extends MessageType<AuthorizationPolicyConf
                 case /* repeated string tags */ 3:
                     message.tags.push(reader.string());
                     break;
+                case /* indykite.config.v1beta1.PolicyBuilderConfig builder */ 4:
+                    message.builder = PolicyBuilderConfig.internalBinaryRead(reader, reader.uint32(), options, message.builder);
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -6716,6 +6903,9 @@ class AuthorizationPolicyConfig$Type extends MessageType<AuthorizationPolicyConf
         /* repeated string tags = 3; */
         for (let i = 0; i < message.tags.length; i++)
             writer.tag(3, WireType.LengthDelimited).string(message.tags[i]);
+        /* indykite.config.v1beta1.PolicyBuilderConfig builder = 4; */
+        if (message.builder)
+            PolicyBuilderConfig.internalBinaryWrite(message.builder, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -6858,3 +7048,313 @@ class KafkaSinkConfig$Type extends MessageType<KafkaSinkConfig> {
  * @generated MessageType for protobuf message indykite.config.v1beta1.KafkaSinkConfig
  */
 export const KafkaSinkConfig = new KafkaSinkConfig$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ConsentConfiguration$Type extends MessageType<ConsentConfiguration> {
+    constructor() {
+        super("indykite.config.v1beta1.ConsentConfiguration", [
+            { no: 1, name: "purpose", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "1", maxLen: "1024" } } } },
+            { no: 2, name: "data_points", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { minItems: "1", unique: true, items: { string: { minLen: "1", maxLen: "64" } } } } } },
+            { no: 3, name: "application_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } }
+        ]);
+    }
+    create(value?: PartialMessage<ConsentConfiguration>): ConsentConfiguration {
+        const message = { purpose: "", dataPoints: [], applicationId: "" };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<ConsentConfiguration>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ConsentConfiguration): ConsentConfiguration {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string purpose */ 1:
+                    message.purpose = reader.string();
+                    break;
+                case /* repeated string data_points */ 2:
+                    message.dataPoints.push(reader.string());
+                    break;
+                case /* string application_id */ 3:
+                    message.applicationId = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ConsentConfiguration, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string purpose = 1; */
+        if (message.purpose !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.purpose);
+        /* repeated string data_points = 2; */
+        for (let i = 0; i < message.dataPoints.length; i++)
+            writer.tag(2, WireType.LengthDelimited).string(message.dataPoints[i]);
+        /* string application_id = 3; */
+        if (message.applicationId !== "")
+            writer.tag(3, WireType.LengthDelimited).string(message.applicationId);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message indykite.config.v1beta1.ConsentConfiguration
+ */
+export const ConsentConfiguration = new ConsentConfiguration$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class TokenExchangeConfig$Type extends MessageType<TokenExchangeConfig> {
+    constructor() {
+        super("indykite.config.v1beta1.TokenExchangeConfig", [
+            { no: 1, name: "jwt", kind: "message", oneof: "tokenMatcher", T: () => TokenExchangeConfig_JWT, options: { "validate.rules": { message: { required: true } } } },
+            { no: 3, name: "offline", kind: "message", oneof: "validation", T: () => TokenExchangeConfig_Offline, options: { "validate.rules": { message: { required: true } } } },
+            { no: 7, name: "claims_mapping", kind: "map", K: 9 /*ScalarType.STRING*/, V: { kind: "message", T: () => TokenExchangeConfig_Claim }, options: { "validate.rules": { map: { keys: { string: { maxLen: "256", pattern: "^[a-zA-Z_][a-zA-Z0-9_]+$" } }, values: { message: { required: true } } } } } },
+            { no: 5, name: "ikg_node_type", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "64", pattern: "^([A-Z][a-z]+)+$" } } } },
+            { no: 6, name: "perform_upsert", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+        ]);
+    }
+    create(value?: PartialMessage<TokenExchangeConfig>): TokenExchangeConfig {
+        const message = { tokenMatcher: { oneofKind: undefined }, validation: { oneofKind: undefined }, claimsMapping: {}, ikgNodeType: "", performUpsert: false };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<TokenExchangeConfig>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: TokenExchangeConfig): TokenExchangeConfig {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* indykite.config.v1beta1.TokenExchangeConfig.JWT jwt */ 1:
+                    message.tokenMatcher = {
+                        oneofKind: "jwt",
+                        jwt: TokenExchangeConfig_JWT.internalBinaryRead(reader, reader.uint32(), options, (message.tokenMatcher as any).jwt)
+                    };
+                    break;
+                case /* indykite.config.v1beta1.TokenExchangeConfig.Offline offline */ 3:
+                    message.validation = {
+                        oneofKind: "offline",
+                        offline: TokenExchangeConfig_Offline.internalBinaryRead(reader, reader.uint32(), options, (message.validation as any).offline)
+                    };
+                    break;
+                case /* map<string, indykite.config.v1beta1.TokenExchangeConfig.Claim> claims_mapping */ 7:
+                    this.binaryReadMap7(message.claimsMapping, reader, options);
+                    break;
+                case /* string ikg_node_type */ 5:
+                    message.ikgNodeType = reader.string();
+                    break;
+                case /* bool perform_upsert */ 6:
+                    message.performUpsert = reader.bool();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    private binaryReadMap7(map: TokenExchangeConfig["claimsMapping"], reader: IBinaryReader, options: BinaryReadOptions): void {
+        let len = reader.uint32(), end = reader.pos + len, key: keyof TokenExchangeConfig["claimsMapping"] | undefined, val: TokenExchangeConfig["claimsMapping"][any] | undefined;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case 1:
+                    key = reader.string();
+                    break;
+                case 2:
+                    val = TokenExchangeConfig_Claim.internalBinaryRead(reader, reader.uint32(), options);
+                    break;
+                default: throw new globalThis.Error("unknown map entry field for field indykite.config.v1beta1.TokenExchangeConfig.claims_mapping");
+            }
+        }
+        map[key ?? ""] = val ?? TokenExchangeConfig_Claim.create();
+    }
+    internalBinaryWrite(message: TokenExchangeConfig, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* indykite.config.v1beta1.TokenExchangeConfig.JWT jwt = 1; */
+        if (message.tokenMatcher.oneofKind === "jwt")
+            TokenExchangeConfig_JWT.internalBinaryWrite(message.tokenMatcher.jwt, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* indykite.config.v1beta1.TokenExchangeConfig.Offline offline = 3; */
+        if (message.validation.oneofKind === "offline")
+            TokenExchangeConfig_Offline.internalBinaryWrite(message.validation.offline, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        /* map<string, indykite.config.v1beta1.TokenExchangeConfig.Claim> claims_mapping = 7; */
+        for (let k of Object.keys(message.claimsMapping)) {
+            writer.tag(7, WireType.LengthDelimited).fork().tag(1, WireType.LengthDelimited).string(k);
+            writer.tag(2, WireType.LengthDelimited).fork();
+            TokenExchangeConfig_Claim.internalBinaryWrite(message.claimsMapping[k], writer, options);
+            writer.join().join();
+        }
+        /* string ikg_node_type = 5; */
+        if (message.ikgNodeType !== "")
+            writer.tag(5, WireType.LengthDelimited).string(message.ikgNodeType);
+        /* bool perform_upsert = 6; */
+        if (message.performUpsert !== false)
+            writer.tag(6, WireType.Varint).bool(message.performUpsert);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message indykite.config.v1beta1.TokenExchangeConfig
+ */
+export const TokenExchangeConfig = new TokenExchangeConfig$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class TokenExchangeConfig_JWT$Type extends MessageType<TokenExchangeConfig_JWT> {
+    constructor() {
+        super("indykite.config.v1beta1.TokenExchangeConfig.JWT", [
+            { no: 1, name: "issuer", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { uri: true } } } },
+            { no: 2, name: "audience", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "1", maxLen: "150" } } } }
+        ]);
+    }
+    create(value?: PartialMessage<TokenExchangeConfig_JWT>): TokenExchangeConfig_JWT {
+        const message = { issuer: "", audience: "" };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<TokenExchangeConfig_JWT>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: TokenExchangeConfig_JWT): TokenExchangeConfig_JWT {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string issuer */ 1:
+                    message.issuer = reader.string();
+                    break;
+                case /* string audience */ 2:
+                    message.audience = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: TokenExchangeConfig_JWT, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string issuer = 1; */
+        if (message.issuer !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.issuer);
+        /* string audience = 2; */
+        if (message.audience !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.audience);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message indykite.config.v1beta1.TokenExchangeConfig.JWT
+ */
+export const TokenExchangeConfig_JWT = new TokenExchangeConfig_JWT$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class TokenExchangeConfig_Offline$Type extends MessageType<TokenExchangeConfig_Offline> {
+    constructor() {
+        super("indykite.config.v1beta1.TokenExchangeConfig.Offline", [
+            { no: 1, name: "public_jwks", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 12 /*ScalarType.BYTES*/, options: { "validate.rules": { repeated: { maxItems: "10", items: { bytes: { minLen: "96", maxLen: "8192", prefix: "ew==", suffix: "fQ==" } } } } } }
+        ]);
+    }
+    create(value?: PartialMessage<TokenExchangeConfig_Offline>): TokenExchangeConfig_Offline {
+        const message = { publicJwks: [] };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<TokenExchangeConfig_Offline>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: TokenExchangeConfig_Offline): TokenExchangeConfig_Offline {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* repeated bytes public_jwks */ 1:
+                    message.publicJwks.push(reader.bytes());
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: TokenExchangeConfig_Offline, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* repeated bytes public_jwks = 1; */
+        for (let i = 0; i < message.publicJwks.length; i++)
+            writer.tag(1, WireType.LengthDelimited).bytes(message.publicJwks[i]);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message indykite.config.v1beta1.TokenExchangeConfig.Offline
+ */
+export const TokenExchangeConfig_Offline = new TokenExchangeConfig_Offline$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class TokenExchangeConfig_Claim$Type extends MessageType<TokenExchangeConfig_Claim> {
+    constructor() {
+        super("indykite.config.v1beta1.TokenExchangeConfig.Claim", [
+            { no: 1, name: "selector", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "1", maxLen: "200" } } } }
+        ]);
+    }
+    create(value?: PartialMessage<TokenExchangeConfig_Claim>): TokenExchangeConfig_Claim {
+        const message = { selector: "" };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<TokenExchangeConfig_Claim>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: TokenExchangeConfig_Claim): TokenExchangeConfig_Claim {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string selector */ 1:
+                    message.selector = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: TokenExchangeConfig_Claim, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string selector = 1; */
+        if (message.selector !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.selector);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message indykite.config.v1beta1.TokenExchangeConfig.Claim
+ */
+export const TokenExchangeConfig_Claim = new TokenExchangeConfig_Claim$Type();

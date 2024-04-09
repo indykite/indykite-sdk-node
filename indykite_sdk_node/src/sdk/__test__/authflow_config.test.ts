@@ -24,7 +24,7 @@ import { StringValue } from '../../grpc/google/protobuf/wrappers';
 let sdk: ConfigClient;
 
 beforeAll(async () => {
-  process.env.JARVIS_ENDPOINT = 'NOT_USED';
+  process.env.ENDPOINT = 'NOT_USED';
   sdk = await ConfigClient.createInstance(JSON.stringify(serviceAccountTokenMock));
 });
 
