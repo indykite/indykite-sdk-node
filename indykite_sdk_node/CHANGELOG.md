@@ -1,4 +1,11 @@
 # Changelog
+## [0.7.3](https://github.com/indykite/indykite-sdk-node/compare/v0.7.2...v0.7.3) (2024-04-15)
+
+
+### Features
+
+* separate objects ([087f6a6](https://github.com/indykite/indykite-sdk-node/commit/087f6a657bb1f68220a39190a0c774f75c2468be))
+
 ## [0.7.2](https://github.com/indykite/indykite-sdk-node/compare/v0.7.1...v0.7.2) (2024-04-09)
 
 
