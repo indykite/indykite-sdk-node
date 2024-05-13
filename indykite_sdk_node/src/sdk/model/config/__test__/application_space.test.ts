@@ -2,6 +2,7 @@ import { StringValue } from '../../../../grpc/google/protobuf/wrappers';
 import { SdkError, SkdErrorText, SdkErrorCode } from '../../../error';
 import { Utils } from '../../../utils/utils';
 import { ApplicationSpace } from '../application_space';
+import { AppSpaceIKGStatus } from '../../../../grpc/indykite/config/v1beta1/model';
 
 describe('deserialize', () => {
   describe('when the response contains an application space with description', () => {
@@ -23,6 +24,7 @@ describe('deserialize', () => {
           updateTime: Utils.dateToTimestamp(new Date(2022, 2, 17, 12, 18)),
           deleteTime: Utils.dateToTimestamp(new Date(2022, 2, 17, 12, 19)),
           destroyTime: Utils.dateToTimestamp(new Date(2022, 2, 17, 12, 20)),
+          ikgStatus: AppSpaceIKGStatus.APP_SPACE_IKG_STATUS_STATUS_INVALID,
         },
       });
     });
@@ -41,6 +43,7 @@ describe('deserialize', () => {
       expect(appSpace.destroyTime?.toString()).toBe(new Date(2022, 2, 17, 12, 20).toString());
       expect(appSpace.createdBy).toBe('Lorem ipsum - creator');
       expect(appSpace.updatedBy).toBe('Lorem ipsum - updater');
+      expect(appSpace.ikgStatus).toBe(AppSpaceIKGStatus.APP_SPACE_IKG_STATUS_STATUS_INVALID);
     });
   });
 
@@ -62,6 +65,7 @@ describe('deserialize', () => {
           updateTime: Utils.dateToTimestamp(new Date(2022, 2, 17, 12, 18)),
           deleteTime: Utils.dateToTimestamp(new Date(2022, 2, 17, 12, 19)),
           destroyTime: Utils.dateToTimestamp(new Date(2022, 2, 17, 12, 20)),
+          ikgStatus: AppSpaceIKGStatus.APP_SPACE_IKG_STATUS_STATUS_INVALID,
         },
       });
     });
@@ -80,6 +84,7 @@ describe('deserialize', () => {
       expect(appSpace.destroyTime?.toString()).toBe(new Date(2022, 2, 17, 12, 20).toString());
       expect(appSpace.createdBy).toBe('Lorem ipsum - creator');
       expect(appSpace.updatedBy).toBe('Lorem ipsum - updater');
+      expect(appSpace.ikgStatus).toBe(AppSpaceIKGStatus.APP_SPACE_IKG_STATUS_STATUS_INVALID);
     });
   });
 

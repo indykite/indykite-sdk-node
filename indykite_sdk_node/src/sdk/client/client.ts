@@ -21,6 +21,7 @@ import { AuthorizationAPIClient } from '../../grpc/indykite/authorization/v1beta
 import { Token } from '../utils/token_source/token';
 import { IdentityKnowledgeAPIClient } from '../../grpc/indykite/knowledge/v1beta1/identity_knowledge_api.grpc-client';
 import { IdentityKnowledgeAPIClient as IdentityKnowledgeReadAPIClient } from '../../grpc/indykite/knowledge/v1beta2/identity_knowledge_api.grpc-client';
+import { TrustedDataAccessAPIClient } from '../../grpc/indykite/tda/v1beta1/trusted_data_access_api.grpc-client';
 
 type ClientType =
   | IdentityManagementAPIClient
@@ -28,7 +29,9 @@ type ClientType =
   | IngestAPIClient
   | AuthorizationAPIClient
   | IdentityKnowledgeAPIClient
-  | IdentityKnowledgeReadAPIClient;
+  | IdentityKnowledgeReadAPIClient
+  | TrustedDataAccessAPIClient;
+
 type ClientConstructor = new (
   endpoint: string,
   channelCredential: ChannelCredentials,

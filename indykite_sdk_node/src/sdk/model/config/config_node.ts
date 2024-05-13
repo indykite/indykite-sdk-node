@@ -101,7 +101,7 @@ export type ConfigNodeType =
   | WebAuthnProvider
   // | AuthenteqProviderConfig
   // | SAFRProviderConfig
-  | AuthorizationPolicy 
+  | AuthorizationPolicy
   | ConsentNode;
 // | KnowledgeGraphSchemaConfig
 // | ReadIDProviderConfig

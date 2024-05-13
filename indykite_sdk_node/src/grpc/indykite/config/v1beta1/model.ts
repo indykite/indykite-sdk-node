@@ -244,6 +244,12 @@ export interface ApplicationSpace {
      * @generated from protobuf field: string issuer_id = 11;
      */
     issuerId: string;
+    /**
+     * Read only. Status of the ikg db instance behind the Application Space.
+     *
+     * @generated from protobuf field: indykite.config.v1beta1.AppSpaceIKGStatus ikg_status = 14;
+     */
+    ikgStatus: AppSpaceIKGStatus;
 }
 /**
  * ApplicationSpaceConfig defines the default configuration for the ApplicationSpace.
@@ -2470,6 +2476,31 @@ export interface TokenExchangeConfig_Claim {
      */
     selector: string;
 }
+/**
+ * @generated from protobuf enum indykite.config.v1beta1.AppSpaceIKGStatus
+ */
+export enum AppSpaceIKGStatus {
+    /**
+     * @generated from protobuf enum value: APP_SPACE_IKG_STATUS_STATUS_INVALID = 0;
+     */
+    APP_SPACE_IKG_STATUS_STATUS_INVALID = 0,
+    /**
+     * @generated from protobuf enum value: APP_SPACE_IKG_STATUS_STATUS_PENDING = 1;
+     */
+    APP_SPACE_IKG_STATUS_STATUS_PENDING = 1,
+    /**
+     * @generated from protobuf enum value: APP_SPACE_IKG_STATUS_STATUS_ACTIVE = 2;
+     */
+    APP_SPACE_IKG_STATUS_STATUS_ACTIVE = 2,
+    /**
+     * @generated from protobuf enum value: APP_SPACE_IKG_STATUS_STATUS_FAILED = 3;
+     */
+    APP_SPACE_IKG_STATUS_STATUS_FAILED = 3,
+    /**
+     * @generated from protobuf enum value: APP_SPACE_IKG_STATUS_STATUS_PAUSED = 4;
+     */
+    APP_SPACE_IKG_STATUS_STATUS_PAUSED = 4
+}
 // 
 // 
 // OAuth2 Configurations
@@ -3121,11 +3152,12 @@ class ApplicationSpace$Type extends MessageType<ApplicationSpace> {
             { no: 8, name: "delete_time", kind: "message", T: () => Timestamp },
             { no: 9, name: "etag", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 10, name: "customer_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
-            { no: 11, name: "issuer_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } }
+            { no: 11, name: "issuer_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
+            { no: 14, name: "ikg_status", kind: "enum", T: () => ["indykite.config.v1beta1.AppSpaceIKGStatus", AppSpaceIKGStatus] }
         ]);
     }
     create(value?: PartialMessage<ApplicationSpace>): ApplicationSpace {
-        const message = { id: "", name: "", displayName: "", createdBy: "", updatedBy: "", etag: "", customerId: "", issuerId: "" };
+        const message = { id: "", name: "", displayName: "", createdBy: "", updatedBy: "", etag: "", customerId: "", issuerId: "", ikgStatus: 0 };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<ApplicationSpace>(this, message, value);
@@ -3174,6 +3206,9 @@ class ApplicationSpace$Type extends MessageType<ApplicationSpace> {
                     break;
                 case /* string issuer_id */ 11:
                     message.issuerId = reader.string();
+                    break;
+                case /* indykite.config.v1beta1.AppSpaceIKGStatus ikg_status */ 14:
+                    message.ikgStatus = reader.int32();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -3226,6 +3261,9 @@ class ApplicationSpace$Type extends MessageType<ApplicationSpace> {
         /* string issuer_id = 11; */
         if (message.issuerId !== "")
             writer.tag(11, WireType.LengthDelimited).string(message.issuerId);
+        /* indykite.config.v1beta1.AppSpaceIKGStatus ikg_status = 14; */
+        if (message.ikgStatus !== 0)
+            writer.tag(14, WireType.Varint).int32(message.ikgStatus);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -7052,8 +7090,8 @@ export const KafkaSinkConfig = new KafkaSinkConfig$Type();
 class ConsentConfiguration$Type extends MessageType<ConsentConfiguration> {
     constructor() {
         super("indykite.config.v1beta1.ConsentConfiguration", [
-            { no: 1, name: "purpose", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "1", maxLen: "1024" } } } },
-            { no: 2, name: "data_points", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { minItems: "1", unique: true, items: { string: { minLen: "1", maxLen: "64" } } } } } },
+            { no: 1, name: "purpose", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "1024" } } } },
+            { no: 2, name: "data_points", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { minItems: "1", unique: true, items: { string: { minLen: "1", maxLen: "64", pattern: "^[a-zA-Z_][a-zA-Z0-9_]+$" } } } } } },
             { no: 3, name: "application_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } }
         ]);
     }

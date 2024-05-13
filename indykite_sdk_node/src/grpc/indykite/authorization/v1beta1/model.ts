@@ -158,7 +158,7 @@ export interface InputParam {
 class Subject$Type extends MessageType<Subject> {
     constructor() {
         super("indykite.authorization.v1beta1.Subject", [
-            { no: 1, name: "digital_twin_identifier", kind: "message", oneof: "subject", T: () => DigitalTwinIdentifier, options: { "validate.rules": { message: { required: true } } } },
+            { no: 1, name: "digital_twin_identifier", kind: "message", oneof: "subject", T: () => DigitalTwinIdentifier, options: { "validate.rules": { message: { required: true } }, "gnostic.openapi.v3.property": { deprecated: true } } },
             { no: 2, name: "digital_twin_id", kind: "message", oneof: "subject", T: () => DigitalTwin, options: { "validate.rules": { message: { required: true } } } },
             { no: 3, name: "digital_twin_property", kind: "message", oneof: "subject", T: () => Property, options: { "validate.rules": { message: { required: true } } } },
             { no: 4, name: "indykite_access_token", kind: "scalar", oneof: "subject", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "20" } } } },

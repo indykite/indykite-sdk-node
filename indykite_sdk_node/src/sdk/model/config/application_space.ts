@@ -4,6 +4,7 @@ import {
   CreateApplicationSpaceResponse,
   ReadApplicationSpaceResponse,
 } from '../../../grpc/indykite/config/v1beta1/config_management_api';
+import { AppSpaceIKGStatus } from '../../../grpc/indykite/config/v1beta1/model';
 import { Utils } from '../../utils/utils';
 
 /**
@@ -40,6 +41,8 @@ export class ApplicationSpace {
     public createdBy?: string,
     // #13 Output only. The user/service id who last changed the configuration.
     public updatedBy?: string,
+    // #14 Output only. The status of the DB instance behind the Application Space.
+    public ikgStatus?: AppSpaceIKGStatus,
   ) {}
 
   static deserialize(
@@ -72,6 +75,7 @@ export class ApplicationSpace {
         Utils.timestampToDate(response.appSpace.destroyTime),
         response.appSpace.createdBy,
         response.appSpace.updatedBy,
+        response.appSpace.ikgStatus,
       );
     }
 

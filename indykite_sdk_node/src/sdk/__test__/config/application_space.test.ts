@@ -15,6 +15,7 @@ import { SdkError, SdkErrorCode } from '../../error';
 import { StringValue } from '../../../grpc/google/protobuf/wrappers';
 import { Utils } from '../../utils/utils';
 import { serviceAccountTokenMock } from '../../utils/test_utils';
+import { AppSpaceIKGStatus } from '../../../grpc/indykite/config/v1beta1/model';
 
 afterEach(() => {
   jest.restoreAllMocks();
@@ -257,6 +258,7 @@ describe('readApplicationSpaceById', () => {
                   updateTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 2, 15, 13, 13))),
                   deleteTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 2, 15, 13, 14))),
                   destroyTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 2, 15, 13, 15))),
+                  ikgStatus: AppSpaceIKGStatus.APP_SPACE_IKG_STATUS_STATUS_INVALID,
                 },
               });
             }
@@ -303,6 +305,7 @@ describe('readApplicationSpaceById', () => {
       expect(appSpace.destroyTime?.toString()).toBe(
         new Date(Date.UTC(2022, 2, 15, 13, 15)).toString(),
       );
+      expect(appSpace.ikgStatus).toBe(AppSpaceIKGStatus.APP_SPACE_IKG_STATUS_STATUS_INVALID);
     });
   });
 
@@ -415,6 +418,7 @@ describe('readApplicationSpaceByName', () => {
                   updateTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 2, 15, 13, 13))),
                   deleteTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 2, 15, 13, 14))),
                   destroyTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 2, 15, 13, 15))),
+                  ikgStatus: AppSpaceIKGStatus.APP_SPACE_IKG_STATUS_STATUS_INVALID,
                 },
               });
             }
@@ -468,6 +472,7 @@ describe('readApplicationSpaceByName', () => {
       expect(appSpace.destroyTime?.toString()).toBe(
         new Date(Date.UTC(2022, 2, 15, 13, 15)).toString(),
       );
+      expect(appSpace.ikgStatus).toBe(AppSpaceIKGStatus.APP_SPACE_IKG_STATUS_STATUS_INVALID);
     });
   });
 

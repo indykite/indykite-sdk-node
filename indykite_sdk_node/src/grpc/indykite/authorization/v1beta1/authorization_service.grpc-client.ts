@@ -28,6 +28,7 @@ import type { IsAuthorizedRequest } from "./authorization_service";
 import * as grpc from "@grpc/grpc-js";
 /**
  * AuthorizationAPI represents the service interface for authorization.
+ * Validation fails if a request contains an unknown field.
  *
  * @generated from protobuf service indykite.authorization.v1beta1.AuthorizationAPI
  */
@@ -56,6 +57,7 @@ export interface IAuthorizationAPIClient {
 }
 /**
  * AuthorizationAPI represents the service interface for authorization.
+ * Validation fails if a request contains an unknown field.
  *
  * @generated from protobuf service indykite.authorization.v1beta1.AuthorizationAPI
  */

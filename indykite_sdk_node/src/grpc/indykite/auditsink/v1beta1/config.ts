@@ -29,6 +29,7 @@ import { MessageType } from "@protobuf-ts/runtime";
 import { Value } from "../../objects/v1beta1/struct";
 import { Timestamp } from "../../../google/protobuf/timestamp";
 import { Duration } from "../../../google/protobuf/duration";
+import { ConsentConfiguration } from "../../config/v1beta1/model";
 /**
  * @generated from protobuf message indykite.auditsink.v1beta1.ContainersPath
  */
@@ -279,6 +280,12 @@ export interface ConfigDetail {
          * @generated from protobuf field: indykite.auditsink.v1beta1.OAuth2ProviderConfig oauth2_provider_config = 17;
          */
         oauth2ProviderConfig: OAuth2ProviderConfig;
+    } | {
+        oneofKind: "consentConfig";
+        /**
+         * @generated from protobuf field: indykite.config.v1beta1.ConsentConfiguration consent_config = 18;
+         */
+        consentConfig: ConsentConfiguration;
     } | {
         oneofKind: undefined;
     };
@@ -1514,7 +1521,14 @@ export enum ConfigType {
     /**
      * @generated from protobuf enum value: CONFIG_TYPE_AUTHORIZATION_POLICY = 22;
      */
-    AUTHORIZATION_POLICY = 22
+    AUTHORIZATION_POLICY = 22,
+    /**
+     * CONFIG_TYPE_RESOURCE = 25; // Not use in Config API, but in Ingest/IKG
+     * CONFIG_TYPE_RELATION = 26; // Not use in Config API, but in Ingest/IKG
+     *
+     * @generated from protobuf enum value: CONFIG_TYPE_CONSENT = 29;
+     */
+    CONSENT = 29
 }
 /**
  * @generated from protobuf enum indykite.auditsink.v1beta1.OAuth2GrantType
@@ -2072,7 +2086,8 @@ class ConfigDetail$Type extends MessageType<ConfigDetail> {
             { no: 14, name: "web_authn_provider_config", kind: "message", oneof: "configuration", T: () => WebAuthnProviderConfig },
             { no: 15, name: "authorization_policy_config", kind: "message", oneof: "configuration", T: () => AuthorizationPolicyConfig },
             { no: 16, name: "oauth2_application_config", kind: "message", oneof: "configuration", T: () => OAuth2ApplicationConfig },
-            { no: 17, name: "oauth2_provider_config", kind: "message", oneof: "configuration", T: () => OAuth2ProviderConfig }
+            { no: 17, name: "oauth2_provider_config", kind: "message", oneof: "configuration", T: () => OAuth2ProviderConfig },
+            { no: 18, name: "consent_config", kind: "message", oneof: "configuration", T: () => ConsentConfiguration }
         ]);
     }
     create(value?: PartialMessage<ConfigDetail>): ConfigDetail {
@@ -2177,6 +2192,12 @@ class ConfigDetail$Type extends MessageType<ConfigDetail> {
                         oauth2ProviderConfig: OAuth2ProviderConfig.internalBinaryRead(reader, reader.uint32(), options, (message.configuration as any).oauth2ProviderConfig)
                     };
                     break;
+                case /* indykite.config.v1beta1.ConsentConfiguration consent_config */ 18:
+                    message.configuration = {
+                        oneofKind: "consentConfig",
+                        consentConfig: ConsentConfiguration.internalBinaryRead(reader, reader.uint32(), options, (message.configuration as any).consentConfig)
+                    };
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -2240,6 +2261,9 @@ class ConfigDetail$Type extends MessageType<ConfigDetail> {
         /* indykite.auditsink.v1beta1.OAuth2ProviderConfig oauth2_provider_config = 17; */
         if (message.configuration.oneofKind === "oauth2ProviderConfig")
             OAuth2ProviderConfig.internalBinaryWrite(message.configuration.oauth2ProviderConfig, writer.tag(17, WireType.LengthDelimited).fork(), options).join();
+        /* indykite.config.v1beta1.ConsentConfiguration consent_config = 18; */
+        if (message.configuration.oneofKind === "consentConfig")
+            ConsentConfiguration.internalBinaryWrite(message.configuration.consentConfig, writer.tag(18, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

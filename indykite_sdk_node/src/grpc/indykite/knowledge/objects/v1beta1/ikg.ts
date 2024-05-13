@@ -142,7 +142,7 @@ export interface Metadata {
     };
 }
 /**
- * Subject to check if is authorized.
+ * User to look up in the Identity Knowledge Graph.
  *
  * @generated from protobuf message indykite.knowledge.objects.v1beta1.User
  */
@@ -153,7 +153,7 @@ export interface User {
     user: {
         oneofKind: "userId";
         /**
-         * Gid, unique identifier for the user∫
+         * Gid, unique identifier for the user
          *
          * @generated from protobuf field: string user_id = 1;
          */
