@@ -40,11 +40,11 @@ export interface UpsertData {
          */
         node: Node;
     } | {
-        oneofKind: "relation";
+        oneofKind: "relationship";
         /**
-         * @generated from protobuf field: indykite.auditsink.v1beta1.Relation relation = 2;
+         * @generated from protobuf field: indykite.auditsink.v1beta1.Relationship relationship = 2;
          */
-        relation: Relation;
+        relationship: Relationship;
     } | {
         oneofKind: undefined;
     };
@@ -63,11 +63,11 @@ export interface DeleteData {
          */
         node: NodeMatch;
     } | {
-        oneofKind: "relation";
+        oneofKind: "relationship";
         /**
-         * @generated from protobuf field: indykite.auditsink.v1beta1.RelationMatch relation = 2;
+         * @generated from protobuf field: indykite.auditsink.v1beta1.Relationship relationship = 2;
          */
-        relation: RelationMatch;
+        relationship: Relationship;
     } | {
         oneofKind: "nodeProperty";
         /**
@@ -75,11 +75,11 @@ export interface DeleteData {
          */
         nodeProperty: DeleteData_NodePropertyMatch;
     } | {
-        oneofKind: "relationProperty";
+        oneofKind: "relationshipProperty";
         /**
-         * @generated from protobuf field: indykite.auditsink.v1beta1.DeleteData.RelationPropertyMatch relation_property = 4;
+         * @generated from protobuf field: indykite.auditsink.v1beta1.DeleteData.RelationshipPropertyMatch relationship_property = 4;
          */
-        relationProperty: DeleteData_RelationPropertyMatch;
+        relationshipProperty: DeleteData_RelationshipPropertyMatch;
     } | {
         oneofKind: undefined;
     };
@@ -93,22 +93,30 @@ export interface DeleteData_NodePropertyMatch {
      */
     match?: NodeMatch;
     /**
-     * @generated from protobuf field: string key = 2;
+     * @generated from protobuf field: string property_type = 2;
      */
-    key: string;
+    propertyType: string;
 }
 /**
- * @generated from protobuf message indykite.auditsink.v1beta1.DeleteData.RelationPropertyMatch
+ * @generated from protobuf message indykite.auditsink.v1beta1.DeleteData.RelationshipPropertyMatch
  */
-export interface DeleteData_RelationPropertyMatch {
+export interface DeleteData_RelationshipPropertyMatch {
     /**
-     * @generated from protobuf field: indykite.auditsink.v1beta1.RelationMatch match = 1;
+     * @generated from protobuf field: string type = 1;
      */
-    match?: RelationMatch;
+    type: string;
     /**
-     * @generated from protobuf field: string key = 2;
+     * @generated from protobuf field: indykite.auditsink.v1beta1.NodeMatch source = 2;
      */
-    key: string;
+    source?: NodeMatch;
+    /**
+     * @generated from protobuf field: indykite.auditsink.v1beta1.NodeMatch target = 3;
+     */
+    target?: NodeMatch;
+    /**
+     * @generated from protobuf field: string property_type = 4;
+     */
+    propertyType: string;
 }
 /**
  * @generated from protobuf message indykite.auditsink.v1beta1.DigitalTwin
@@ -145,32 +153,38 @@ export interface Resource {
  */
 export interface Node {
     /**
-     * @generated from protobuf oneof: type
+     * @generated from protobuf field: string id = 1;
      */
-    type: {
-        oneofKind: "digitalTwin";
-        /**
-         * @generated from protobuf field: indykite.auditsink.v1beta1.DigitalTwin digital_twin = 1;
-         */
-        digitalTwin: DigitalTwin;
-    } | {
-        oneofKind: "resource";
-        /**
-         * @generated from protobuf field: indykite.auditsink.v1beta1.Resource resource = 2;
-         */
-        resource: Resource;
-    } | {
-        oneofKind: undefined;
-    };
+    id: string;
+    /**
+     * @generated from protobuf field: string external_id = 2;
+     */
+    externalId: string;
+    /**
+     * @generated from protobuf field: string type = 3;
+     */
+    type: string;
+    /**
+     * @generated from protobuf field: bool is_identity = 4;
+     */
+    isIdentity: boolean;
 }
 /**
- * @generated from protobuf message indykite.auditsink.v1beta1.Relation
+ * @generated from protobuf message indykite.auditsink.v1beta1.Relationship
  */
-export interface Relation {
+export interface Relationship {
     /**
-     * @generated from protobuf field: indykite.auditsink.v1beta1.RelationMatch match = 1;
+     * @generated from protobuf field: string type = 1;
      */
-    match?: RelationMatch;
+    type: string;
+    /**
+     * @generated from protobuf field: indykite.auditsink.v1beta1.NodeMatch source = 2;
+     */
+    source?: NodeMatch;
+    /**
+     * @generated from protobuf field: indykite.auditsink.v1beta1.NodeMatch target = 3;
+     */
+    target?: NodeMatch;
 }
 /**
  * @generated from protobuf message indykite.auditsink.v1beta1.NodeMatch
@@ -185,29 +199,12 @@ export interface NodeMatch {
      */
     type: string;
 }
-/**
- * @generated from protobuf message indykite.auditsink.v1beta1.RelationMatch
- */
-export interface RelationMatch {
-    /**
-     * @generated from protobuf field: indykite.auditsink.v1beta1.NodeMatch source_match = 1;
-     */
-    sourceMatch?: NodeMatch;
-    /**
-     * @generated from protobuf field: indykite.auditsink.v1beta1.NodeMatch target_match = 2;
-     */
-    targetMatch?: NodeMatch;
-    /**
-     * @generated from protobuf field: string type = 3;
-     */
-    type: string;
-}
 // @generated message type with reflection information, may provide speed optimized methods
 class UpsertData$Type extends MessageType<UpsertData> {
     constructor() {
         super("indykite.auditsink.v1beta1.UpsertData", [
             { no: 1, name: "node", kind: "message", oneof: "data", T: () => Node },
-            { no: 2, name: "relation", kind: "message", oneof: "data", T: () => Relation }
+            { no: 2, name: "relationship", kind: "message", oneof: "data", T: () => Relationship }
         ]);
     }
     create(value?: PartialMessage<UpsertData>): UpsertData {
@@ -228,10 +225,10 @@ class UpsertData$Type extends MessageType<UpsertData> {
                         node: Node.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).node)
                     };
                     break;
-                case /* indykite.auditsink.v1beta1.Relation relation */ 2:
+                case /* indykite.auditsink.v1beta1.Relationship relationship */ 2:
                     message.data = {
-                        oneofKind: "relation",
-                        relation: Relation.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).relation)
+                        oneofKind: "relationship",
+                        relationship: Relationship.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).relationship)
                     };
                     break;
                 default:
@@ -249,9 +246,9 @@ class UpsertData$Type extends MessageType<UpsertData> {
         /* indykite.auditsink.v1beta1.Node node = 1; */
         if (message.data.oneofKind === "node")
             Node.internalBinaryWrite(message.data.node, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* indykite.auditsink.v1beta1.Relation relation = 2; */
-        if (message.data.oneofKind === "relation")
-            Relation.internalBinaryWrite(message.data.relation, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* indykite.auditsink.v1beta1.Relationship relationship = 2; */
+        if (message.data.oneofKind === "relationship")
+            Relationship.internalBinaryWrite(message.data.relationship, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -267,9 +264,9 @@ class DeleteData$Type extends MessageType<DeleteData> {
     constructor() {
         super("indykite.auditsink.v1beta1.DeleteData", [
             { no: 1, name: "node", kind: "message", oneof: "data", T: () => NodeMatch },
-            { no: 2, name: "relation", kind: "message", oneof: "data", T: () => RelationMatch },
+            { no: 2, name: "relationship", kind: "message", oneof: "data", T: () => Relationship },
             { no: 3, name: "node_property", kind: "message", oneof: "data", T: () => DeleteData_NodePropertyMatch },
-            { no: 4, name: "relation_property", kind: "message", oneof: "data", T: () => DeleteData_RelationPropertyMatch }
+            { no: 4, name: "relationship_property", kind: "message", oneof: "data", T: () => DeleteData_RelationshipPropertyMatch }
         ]);
     }
     create(value?: PartialMessage<DeleteData>): DeleteData {
@@ -290,10 +287,10 @@ class DeleteData$Type extends MessageType<DeleteData> {
                         node: NodeMatch.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).node)
                     };
                     break;
-                case /* indykite.auditsink.v1beta1.RelationMatch relation */ 2:
+                case /* indykite.auditsink.v1beta1.Relationship relationship */ 2:
                     message.data = {
-                        oneofKind: "relation",
-                        relation: RelationMatch.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).relation)
+                        oneofKind: "relationship",
+                        relationship: Relationship.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).relationship)
                     };
                     break;
                 case /* indykite.auditsink.v1beta1.DeleteData.NodePropertyMatch node_property */ 3:
@@ -302,10 +299,10 @@ class DeleteData$Type extends MessageType<DeleteData> {
                         nodeProperty: DeleteData_NodePropertyMatch.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).nodeProperty)
                     };
                     break;
-                case /* indykite.auditsink.v1beta1.DeleteData.RelationPropertyMatch relation_property */ 4:
+                case /* indykite.auditsink.v1beta1.DeleteData.RelationshipPropertyMatch relationship_property */ 4:
                     message.data = {
-                        oneofKind: "relationProperty",
-                        relationProperty: DeleteData_RelationPropertyMatch.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).relationProperty)
+                        oneofKind: "relationshipProperty",
+                        relationshipProperty: DeleteData_RelationshipPropertyMatch.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).relationshipProperty)
                     };
                     break;
                 default:
@@ -323,15 +320,15 @@ class DeleteData$Type extends MessageType<DeleteData> {
         /* indykite.auditsink.v1beta1.NodeMatch node = 1; */
         if (message.data.oneofKind === "node")
             NodeMatch.internalBinaryWrite(message.data.node, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* indykite.auditsink.v1beta1.RelationMatch relation = 2; */
-        if (message.data.oneofKind === "relation")
-            RelationMatch.internalBinaryWrite(message.data.relation, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* indykite.auditsink.v1beta1.Relationship relationship = 2; */
+        if (message.data.oneofKind === "relationship")
+            Relationship.internalBinaryWrite(message.data.relationship, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         /* indykite.auditsink.v1beta1.DeleteData.NodePropertyMatch node_property = 3; */
         if (message.data.oneofKind === "nodeProperty")
             DeleteData_NodePropertyMatch.internalBinaryWrite(message.data.nodeProperty, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
-        /* indykite.auditsink.v1beta1.DeleteData.RelationPropertyMatch relation_property = 4; */
-        if (message.data.oneofKind === "relationProperty")
-            DeleteData_RelationPropertyMatch.internalBinaryWrite(message.data.relationProperty, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+        /* indykite.auditsink.v1beta1.DeleteData.RelationshipPropertyMatch relationship_property = 4; */
+        if (message.data.oneofKind === "relationshipProperty")
+            DeleteData_RelationshipPropertyMatch.internalBinaryWrite(message.data.relationshipProperty, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -347,11 +344,11 @@ class DeleteData_NodePropertyMatch$Type extends MessageType<DeleteData_NodePrope
     constructor() {
         super("indykite.auditsink.v1beta1.DeleteData.NodePropertyMatch", [
             { no: 1, name: "match", kind: "message", T: () => NodeMatch },
-            { no: 2, name: "key", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+            { no: 2, name: "property_type", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
         ]);
     }
     create(value?: PartialMessage<DeleteData_NodePropertyMatch>): DeleteData_NodePropertyMatch {
-        const message = { key: "" };
+        const message = { propertyType: "" };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<DeleteData_NodePropertyMatch>(this, message, value);
@@ -365,8 +362,8 @@ class DeleteData_NodePropertyMatch$Type extends MessageType<DeleteData_NodePrope
                 case /* indykite.auditsink.v1beta1.NodeMatch match */ 1:
                     message.match = NodeMatch.internalBinaryRead(reader, reader.uint32(), options, message.match);
                     break;
-                case /* string key */ 2:
-                    message.key = reader.string();
+                case /* string property_type */ 2:
+                    message.propertyType = reader.string();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -383,9 +380,9 @@ class DeleteData_NodePropertyMatch$Type extends MessageType<DeleteData_NodePrope
         /* indykite.auditsink.v1beta1.NodeMatch match = 1; */
         if (message.match)
             NodeMatch.internalBinaryWrite(message.match, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* string key = 2; */
-        if (message.key !== "")
-            writer.tag(2, WireType.LengthDelimited).string(message.key);
+        /* string property_type = 2; */
+        if (message.propertyType !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.propertyType);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -397,30 +394,38 @@ class DeleteData_NodePropertyMatch$Type extends MessageType<DeleteData_NodePrope
  */
 export const DeleteData_NodePropertyMatch = new DeleteData_NodePropertyMatch$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class DeleteData_RelationPropertyMatch$Type extends MessageType<DeleteData_RelationPropertyMatch> {
+class DeleteData_RelationshipPropertyMatch$Type extends MessageType<DeleteData_RelationshipPropertyMatch> {
     constructor() {
-        super("indykite.auditsink.v1beta1.DeleteData.RelationPropertyMatch", [
-            { no: 1, name: "match", kind: "message", T: () => RelationMatch },
-            { no: 2, name: "key", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+        super("indykite.auditsink.v1beta1.DeleteData.RelationshipPropertyMatch", [
+            { no: 1, name: "type", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 2, name: "source", kind: "message", T: () => NodeMatch },
+            { no: 3, name: "target", kind: "message", T: () => NodeMatch },
+            { no: 4, name: "property_type", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
         ]);
     }
-    create(value?: PartialMessage<DeleteData_RelationPropertyMatch>): DeleteData_RelationPropertyMatch {
-        const message = { key: "" };
+    create(value?: PartialMessage<DeleteData_RelationshipPropertyMatch>): DeleteData_RelationshipPropertyMatch {
+        const message = { type: "", propertyType: "" };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
-            reflectionMergePartial<DeleteData_RelationPropertyMatch>(this, message, value);
+            reflectionMergePartial<DeleteData_RelationshipPropertyMatch>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DeleteData_RelationPropertyMatch): DeleteData_RelationPropertyMatch {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DeleteData_RelationshipPropertyMatch): DeleteData_RelationshipPropertyMatch {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* indykite.auditsink.v1beta1.RelationMatch match */ 1:
-                    message.match = RelationMatch.internalBinaryRead(reader, reader.uint32(), options, message.match);
+                case /* string type */ 1:
+                    message.type = reader.string();
                     break;
-                case /* string key */ 2:
-                    message.key = reader.string();
+                case /* indykite.auditsink.v1beta1.NodeMatch source */ 2:
+                    message.source = NodeMatch.internalBinaryRead(reader, reader.uint32(), options, message.source);
+                    break;
+                case /* indykite.auditsink.v1beta1.NodeMatch target */ 3:
+                    message.target = NodeMatch.internalBinaryRead(reader, reader.uint32(), options, message.target);
+                    break;
+                case /* string property_type */ 4:
+                    message.propertyType = reader.string();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -433,13 +438,19 @@ class DeleteData_RelationPropertyMatch$Type extends MessageType<DeleteData_Relat
         }
         return message;
     }
-    internalBinaryWrite(message: DeleteData_RelationPropertyMatch, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* indykite.auditsink.v1beta1.RelationMatch match = 1; */
-        if (message.match)
-            RelationMatch.internalBinaryWrite(message.match, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* string key = 2; */
-        if (message.key !== "")
-            writer.tag(2, WireType.LengthDelimited).string(message.key);
+    internalBinaryWrite(message: DeleteData_RelationshipPropertyMatch, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string type = 1; */
+        if (message.type !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.type);
+        /* indykite.auditsink.v1beta1.NodeMatch source = 2; */
+        if (message.source)
+            NodeMatch.internalBinaryWrite(message.source, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* indykite.auditsink.v1beta1.NodeMatch target = 3; */
+        if (message.target)
+            NodeMatch.internalBinaryWrite(message.target, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        /* string property_type = 4; */
+        if (message.propertyType !== "")
+            writer.tag(4, WireType.LengthDelimited).string(message.propertyType);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -447,9 +458,9 @@ class DeleteData_RelationPropertyMatch$Type extends MessageType<DeleteData_Relat
     }
 }
 /**
- * @generated MessageType for protobuf message indykite.auditsink.v1beta1.DeleteData.RelationPropertyMatch
+ * @generated MessageType for protobuf message indykite.auditsink.v1beta1.DeleteData.RelationshipPropertyMatch
  */
-export const DeleteData_RelationPropertyMatch = new DeleteData_RelationPropertyMatch$Type();
+export const DeleteData_RelationshipPropertyMatch = new DeleteData_RelationshipPropertyMatch$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class DigitalTwin$Type extends MessageType<DigitalTwin> {
     constructor() {
@@ -569,12 +580,14 @@ export const Resource = new Resource$Type();
 class Node$Type extends MessageType<Node> {
     constructor() {
         super("indykite.auditsink.v1beta1.Node", [
-            { no: 1, name: "digital_twin", kind: "message", oneof: "type", T: () => DigitalTwin },
-            { no: 2, name: "resource", kind: "message", oneof: "type", T: () => Resource }
+            { no: 1, name: "id", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 2, name: "external_id", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 3, name: "type", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 4, name: "is_identity", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
     create(value?: PartialMessage<Node>): Node {
-        const message = { type: { oneofKind: undefined } };
+        const message = { id: "", externalId: "", type: "", isIdentity: false };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<Node>(this, message, value);
@@ -585,17 +598,17 @@ class Node$Type extends MessageType<Node> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* indykite.auditsink.v1beta1.DigitalTwin digital_twin */ 1:
-                    message.type = {
-                        oneofKind: "digitalTwin",
-                        digitalTwin: DigitalTwin.internalBinaryRead(reader, reader.uint32(), options, (message.type as any).digitalTwin)
-                    };
+                case /* string id */ 1:
+                    message.id = reader.string();
                     break;
-                case /* indykite.auditsink.v1beta1.Resource resource */ 2:
-                    message.type = {
-                        oneofKind: "resource",
-                        resource: Resource.internalBinaryRead(reader, reader.uint32(), options, (message.type as any).resource)
-                    };
+                case /* string external_id */ 2:
+                    message.externalId = reader.string();
+                    break;
+                case /* string type */ 3:
+                    message.type = reader.string();
+                    break;
+                case /* bool is_identity */ 4:
+                    message.isIdentity = reader.bool();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -609,12 +622,18 @@ class Node$Type extends MessageType<Node> {
         return message;
     }
     internalBinaryWrite(message: Node, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* indykite.auditsink.v1beta1.DigitalTwin digital_twin = 1; */
-        if (message.type.oneofKind === "digitalTwin")
-            DigitalTwin.internalBinaryWrite(message.type.digitalTwin, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* indykite.auditsink.v1beta1.Resource resource = 2; */
-        if (message.type.oneofKind === "resource")
-            Resource.internalBinaryWrite(message.type.resource, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* string id = 1; */
+        if (message.id !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.id);
+        /* string external_id = 2; */
+        if (message.externalId !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.externalId);
+        /* string type = 3; */
+        if (message.type !== "")
+            writer.tag(3, WireType.LengthDelimited).string(message.type);
+        /* bool is_identity = 4; */
+        if (message.isIdentity !== false)
+            writer.tag(4, WireType.Varint).bool(message.isIdentity);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -626,26 +645,34 @@ class Node$Type extends MessageType<Node> {
  */
 export const Node = new Node$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class Relation$Type extends MessageType<Relation> {
+class Relationship$Type extends MessageType<Relationship> {
     constructor() {
-        super("indykite.auditsink.v1beta1.Relation", [
-            { no: 1, name: "match", kind: "message", T: () => RelationMatch }
+        super("indykite.auditsink.v1beta1.Relationship", [
+            { no: 1, name: "type", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 2, name: "source", kind: "message", T: () => NodeMatch },
+            { no: 3, name: "target", kind: "message", T: () => NodeMatch }
         ]);
     }
-    create(value?: PartialMessage<Relation>): Relation {
-        const message = {};
+    create(value?: PartialMessage<Relationship>): Relationship {
+        const message = { type: "" };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
-            reflectionMergePartial<Relation>(this, message, value);
+            reflectionMergePartial<Relationship>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: Relation): Relation {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: Relationship): Relationship {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* indykite.auditsink.v1beta1.RelationMatch match */ 1:
-                    message.match = RelationMatch.internalBinaryRead(reader, reader.uint32(), options, message.match);
+                case /* string type */ 1:
+                    message.type = reader.string();
+                    break;
+                case /* indykite.auditsink.v1beta1.NodeMatch source */ 2:
+                    message.source = NodeMatch.internalBinaryRead(reader, reader.uint32(), options, message.source);
+                    break;
+                case /* indykite.auditsink.v1beta1.NodeMatch target */ 3:
+                    message.target = NodeMatch.internalBinaryRead(reader, reader.uint32(), options, message.target);
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -658,10 +685,16 @@ class Relation$Type extends MessageType<Relation> {
         }
         return message;
     }
-    internalBinaryWrite(message: Relation, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* indykite.auditsink.v1beta1.RelationMatch match = 1; */
-        if (message.match)
-            RelationMatch.internalBinaryWrite(message.match, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+    internalBinaryWrite(message: Relationship, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string type = 1; */
+        if (message.type !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.type);
+        /* indykite.auditsink.v1beta1.NodeMatch source = 2; */
+        if (message.source)
+            NodeMatch.internalBinaryWrite(message.source, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* indykite.auditsink.v1beta1.NodeMatch target = 3; */
+        if (message.target)
+            NodeMatch.internalBinaryWrite(message.target, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -669,9 +702,9 @@ class Relation$Type extends MessageType<Relation> {
     }
 }
 /**
- * @generated MessageType for protobuf message indykite.auditsink.v1beta1.Relation
+ * @generated MessageType for protobuf message indykite.auditsink.v1beta1.Relationship
  */
-export const Relation = new Relation$Type();
+export const Relationship = new Relationship$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class NodeMatch$Type extends MessageType<NodeMatch> {
     constructor() {
@@ -726,64 +759,3 @@ class NodeMatch$Type extends MessageType<NodeMatch> {
  * @generated MessageType for protobuf message indykite.auditsink.v1beta1.NodeMatch
  */
 export const NodeMatch = new NodeMatch$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class RelationMatch$Type extends MessageType<RelationMatch> {
-    constructor() {
-        super("indykite.auditsink.v1beta1.RelationMatch", [
-            { no: 1, name: "source_match", kind: "message", T: () => NodeMatch },
-            { no: 2, name: "target_match", kind: "message", T: () => NodeMatch },
-            { no: 3, name: "type", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
-        ]);
-    }
-    create(value?: PartialMessage<RelationMatch>): RelationMatch {
-        const message = { type: "" };
-        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
-        if (value !== undefined)
-            reflectionMergePartial<RelationMatch>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: RelationMatch): RelationMatch {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* indykite.auditsink.v1beta1.NodeMatch source_match */ 1:
-                    message.sourceMatch = NodeMatch.internalBinaryRead(reader, reader.uint32(), options, message.sourceMatch);
-                    break;
-                case /* indykite.auditsink.v1beta1.NodeMatch target_match */ 2:
-                    message.targetMatch = NodeMatch.internalBinaryRead(reader, reader.uint32(), options, message.targetMatch);
-                    break;
-                case /* string type */ 3:
-                    message.type = reader.string();
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: RelationMatch, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* indykite.auditsink.v1beta1.NodeMatch source_match = 1; */
-        if (message.sourceMatch)
-            NodeMatch.internalBinaryWrite(message.sourceMatch, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* indykite.auditsink.v1beta1.NodeMatch target_match = 2; */
-        if (message.targetMatch)
-            NodeMatch.internalBinaryWrite(message.targetMatch, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* string type = 3; */
-        if (message.type !== "")
-            writer.tag(3, WireType.LengthDelimited).string(message.type);
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message indykite.auditsink.v1beta1.RelationMatch
- */
-export const RelationMatch = new RelationMatch$Type();

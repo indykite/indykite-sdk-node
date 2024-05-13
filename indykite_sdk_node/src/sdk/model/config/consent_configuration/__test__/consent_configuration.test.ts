@@ -21,5 +21,4 @@ describe('when the instance is created', () => {
     expect(client.purpose).toBe('Purpose');
     expect(client.applicationId).toBe('gid:AAAAFTYjY2yhCkjdo0IfPre0-Ck');
   });
-
 });
