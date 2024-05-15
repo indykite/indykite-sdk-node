@@ -1,4 +1,11 @@
 # Changelog
+## [0.7.4](https://github.com/indykite/indykite-sdk-node/compare/v0.7.3...v0.7.4) (2024-05-15)
+
+
+### Features
+
+* add second part tda ([b00ee52](https://github.com/indykite/indykite-sdk-node/commit/b00ee528f919702b5f9dc069d558ff80035b814d))
+
 ## [0.7.3](https://github.com/indykite/indykite-sdk-node/compare/v0.7.2...v0.7.3) (2024-04-15)
 
 
