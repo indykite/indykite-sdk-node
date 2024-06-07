@@ -16,22 +16,8 @@ import { SdkError, SdkErrorCode } from '../../error';
 import { Utils } from '../../utils/utils';
 import { StringValue } from '../../../grpc/google/protobuf/wrappers';
 import { serviceAccountTokenMock } from '../../utils/test_utils';
-import {
-  AuthFlowConfig_Format,
-  AuthStyle,
-  AuthenticatorAttachment,
-  AuthorizationPolicyConfig_Status,
-  ConveyancePreference,
-  ProviderType,
-  UserVerificationRequirement,
-} from '../../../grpc/indykite/config/v1beta1/model';
-import {
-  AuthFlow,
-  AuthorizationPolicy,
-  EmailServiceConfigType,
-  OAuth2Client,
-  WebAuthnProvider,
-} from '../../model';
+import { AuthorizationPolicyConfig_Status } from '../../../grpc/indykite/config/v1beta1/model';
+import { AuthorizationPolicy, ConsentNode } from '../../model';
 
 let createConfigExample: CreateConfigNodeRequest;
 let updateConfigExample: UpdateConfigNodeRequest;
@@ -40,10 +26,10 @@ let deleteConfigExample: DeleteConfigNodeRequest;
 beforeEach(() => {
   createConfigExample = CreateConfigNodeRequest.fromJson({
     location: 'location-id',
-    name: 'authFlowConfig',
+    name: 'authzConfig',
     bookmarks: [],
-    displayName: 'Webauthn Provider Name',
-    description: 'Webauthn Provider description',
+    displayName: 'Authz Name',
+    description: 'Authz description',
   });
   createConfigExample.config = {
     oneofKind: undefined,
@@ -52,8 +38,8 @@ beforeEach(() => {
     id: 'configNode-id',
     bookmarks: [],
     etag: StringValue.fromJson('etag-token'),
-    displayName: StringValue.fromJson('WebAuthn Provider name'),
-    description: StringValue.fromJson('WebAuthn Provider description'),
+    displayName: StringValue.fromJson('Authz name'),
+    description: StringValue.fromJson('Authz description'),
     config: {
       oneofKind: undefined,
     },
@@ -61,15 +47,20 @@ beforeEach(() => {
   updateConfigExample.config = {
     oneofKind: undefined,
   };
-  const configAuthFlowExample = new AuthFlow(
-    'authFlowConfig',
-    AuthFlowConfig_Format.BARE_JSON,
-    Buffer.from('{}'),
-    false,
-  );
-  configAuthFlowExample.id = 'configNode-id';
-  configAuthFlowExample.etag = 'etag-token';
-  deleteConfigExample = ConfigClient.newDeleteConfigNodeRequest(configAuthFlowExample);
+
+  const consentExample: ConsentNode = new ConsentNode({
+    name: 'consent-node',
+    purpose: 'Taking control',
+    dataPoints: ['lastname', 'firstname', 'email'],
+    applicationId: 'new-configNode-id',
+    validityPeriod: '86400',
+    revokeAfterUse: false,
+  });
+
+  consentExample.id = 'configNode-id';
+  consentExample.etag = 'etag-token';
+  deleteConfigExample = ConfigClient.newDeleteConfigNodeRequest(consentExample);
+
   const policy = `
   {
     "path": {
@@ -113,49 +104,9 @@ beforeEach(() => {
     policy,
     status: AuthorizationPolicyConfig_Status.ACTIVE,
   });
-  const configEmailServiceConfigTypeExample: EmailServiceConfigType = new EmailServiceConfigType(
-    'emailServiceConfig',
-    'sdfsdfsdf', // apiKey:
-    false, //sandboxMode:
-  );
-  configEmailServiceConfigTypeExample.host = StringValue.fromJson('https://example.com/mail');
-  const configWebAuthnProviderExample = new WebAuthnProvider({
-    name: 'webauthn-provider',
-    attestationPreference: ConveyancePreference.DIRECT,
-    authenticatorAttachment: AuthenticatorAttachment.CROSS_PLATFORM,
-    relyingParties: {
-      'http://localhost:3000': 'default',
-    },
-    requireResidentKey: true,
-    userVerification: UserVerificationRequirement.REQUIRED,
-    authenticationTimeout: 60,
-    registrationTimeout: 120,
-  });
-  const configOAuth2ClientExample = new OAuth2Client({
-    providerType: ProviderType.LINKEDIN_COM,
-    clientId: 'client-id',
-    clientSecret: 'client-secret',
-    redirectUri: ['https://example.com/page'],
-    defaultScopes: ['openid'],
-    allowedScopes: ['openid', 'email'],
-    allowSignup: true,
-    issuer: 'issuer',
-    authorizationEndpoint: 'https://example.com/authorization',
-    tokenEndpoint: 'https://example.com/token',
-    discoveryUrl: 'https://example.com/discovery',
-    userinfoEndpoint: 'https://example.com/info',
-    jwksUri: 'https://example.com/jwks',
-    imageUrl: 'https://example.com/image.png',
-    tenant: 'tenant',
-    hostedDomain: 'https://example.com',
-    authStyle: AuthStyle.AUTO_DETECT,
-    name: 'oauth2-client-name',
-  });
-  ConfigClient.newUpdateConfigNodeRequest(configAuthFlowExample);
+
   ConfigClient.newUpdateConfigNodeRequest(configAuthorizationPolicyExample);
-  ConfigClient.newUpdateConfigNodeRequest(configEmailServiceConfigTypeExample);
-  ConfigClient.newUpdateConfigNodeRequest(configWebAuthnProviderExample);
-  ConfigClient.newUpdateConfigNodeRequest(configOAuth2ClientExample);
+  ConfigClient.newUpdateConfigNodeRequest(consentExample);
 });
 
 afterEach(() => {
@@ -203,14 +154,14 @@ describe('createConfigNode', () => {
       });
 
       it('sends correct request', () => {
-        expect(createConfigNodeSpy).toBeCalledWith(
+        expect(createConfigNodeSpy).toHaveBeenCalledWith(
           {
-            name: 'authFlowConfig',
+            name: 'authzConfig',
             location: 'location-id',
             description: {
-              value: 'Webauthn Provider description',
+              value: 'Authz description',
             },
-            displayName: { value: 'Webauthn Provider Name' },
+            displayName: { value: 'Authz Name' },
             bookmarks: [],
             config: {
               oneofKind: undefined,
@@ -241,15 +192,15 @@ describe('createConfigNode', () => {
       });
 
       it('sends correct request', () => {
-        expect(createConfigNodeSpy).toBeCalledWith(
+        expect(createConfigNodeSpy).toHaveBeenCalledWith(
           {
-            name: 'authFlowConfig',
+            name: 'authzConfig',
             location: 'location-id',
-            bookmarks: [],
             description: {
-              value: 'Webauthn Provider description',
+              value: 'Authz description',
             },
-            displayName: { value: 'Webauthn Provider Name' },
+            displayName: { value: 'Authz Name' },
+            bookmarks: [],
             config: {
               oneofKind: undefined,
             },
@@ -372,12 +323,12 @@ describe('readConfigNode', () => {
                   updateTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 6, 21, 11, 14))),
                   customerId: 'customer-id',
                   appSpaceId: 'app-space-id',
-                  tenantId: 'tenant-id',
                   name: 'instance-name',
                   config: {
                     oneofKind: undefined,
                   },
                   version: '1',
+                  tenantId: '',
                 },
               });
             }
@@ -391,7 +342,7 @@ describe('readConfigNode', () => {
     });
 
     it('sends correct request', () => {
-      expect(readConfigNodeSpy).toBeCalledWith(
+      expect(readConfigNodeSpy).toHaveBeenCalledWith(
         {
           id: 'configNode-id-request',
           bookmarks: [],
@@ -416,10 +367,10 @@ describe('readConfigNode', () => {
           updateTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 6, 21, 11, 14))),
           customerId: 'customer-id',
           appSpaceId: 'app-space-id',
-          tenantId: 'tenant-id',
           createdBy: 'Lorem ipsum - creator',
           updatedBy: 'Lorem ipsum - updater',
           version: '1',
+          tenantId: '',
         },
       });
     });
@@ -537,7 +488,7 @@ describe('updateConfigNode', () => {
       });
 
       it('sends correct request', () => {
-        expect(updateConfigNodeSpy).toBeCalledWith(
+        expect(updateConfigNodeSpy).toHaveBeenCalledWith(
           {
             id: 'configNode-id',
             bookmarks: [],
@@ -545,10 +496,10 @@ describe('updateConfigNode', () => {
               oneofKind: undefined,
             },
             description: {
-              value: 'WebAuthn Provider description',
+              value: 'Authz description',
             },
             displayName: {
-              value: 'WebAuthn Provider name',
+              value: 'Authz name',
             },
             etag: {
               value: 'etag-token',
@@ -577,14 +528,14 @@ describe('updateConfigNode', () => {
       });
 
       it('sends correct request', () => {
-        expect(updateConfigNodeSpy).toBeCalledWith(
+        expect(updateConfigNodeSpy).toHaveBeenCalledWith(
           {
             id: 'configNode-id',
             description: {
-              value: 'WebAuthn Provider description',
+              value: 'Authz description',
             },
             displayName: {
-              value: 'WebAuthn Provider name',
+              value: 'Authz name',
             },
             etag: {
               value: 'etag-token',
@@ -612,7 +563,7 @@ describe('updateConfigNode', () => {
     });
   });
 
-  describe('when a different webauthn provider is returned', () => {
+  describe('when a different authz policy is returned', () => {
     let thrownError: SdkError;
 
     beforeEach(async () => {
@@ -753,7 +704,7 @@ describe('deleteConfigNode', () => {
       });
 
       it('sends correct request', () => {
-        expect(deleteConfigNodeSpy).toBeCalledWith(
+        expect(deleteConfigNodeSpy).toHaveBeenCalledWith(
           {
             id: 'configNode-id',
             bookmarks: [],
@@ -795,7 +746,7 @@ describe('deleteConfigNode', () => {
       });
 
       it('sends correct request', () => {
-        expect(deleteConfigNodeSpy).toBeCalledWith(
+        expect(deleteConfigNodeSpy).toHaveBeenCalledWith(
           {
             id: 'configNode-id',
             etag: StringValue.fromJson('etag-token'),
@@ -911,12 +862,12 @@ describe('listConfigNodeVersions', () => {
                     updateTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 6, 21, 11, 14))),
                     customerId: 'customer-id',
                     appSpaceId: 'app-space-id',
-                    tenantId: 'tenant-id',
                     name: 'instance-name',
                     config: {
                       oneofKind: undefined,
                     },
                     version: '1',
+                    tenantId: '',
                   },
                 ],
               });
@@ -931,7 +882,7 @@ describe('listConfigNodeVersions', () => {
     });
 
     it('sends correct request', () => {
-      expect(listConfigNodeVersionsSpy).toBeCalledWith(
+      expect(listConfigNodeVersionsSpy).toHaveBeenCalledWith(
         {
           id: 'configNode-id-request',
           version: '',
@@ -947,7 +898,6 @@ describe('listConfigNodeVersions', () => {
       expect(listConfigNodeVersionsResponse.configNodes[0].name).toEqual('instance-name');
       expect(listConfigNodeVersionsResponse.configNodes[0].customerId).toEqual('customer-id');
       expect(listConfigNodeVersionsResponse.configNodes[0].appSpaceId).toEqual('app-space-id');
-      expect(listConfigNodeVersionsResponse.configNodes[0].tenantId).toEqual('tenant-id');
     });
   });
 

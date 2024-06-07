@@ -9,6 +9,8 @@ type IOptions = {
   name: string;
   displayName?: string;
   description?: StringValue;
+  validityPeriod: string;
+  revokeAfterUse: boolean;
 };
 
 /**
@@ -18,6 +20,8 @@ export class ConsentNode extends ConfigNode {
   public purpose: string;
   public dataPoints: string[];
   public applicationId: string;
+  public validityPeriod: string;
+  public revokeAfterUse: boolean;
 
   constructor(options: IOptions) {
     super(options.name);
@@ -27,6 +31,8 @@ export class ConsentNode extends ConfigNode {
     this.purpose = options.purpose;
     this.dataPoints = options.dataPoints;
     this.applicationId = options.applicationId;
+    this.validityPeriod = options.validityPeriod;
+    this.revokeAfterUse = options.revokeAfterUse;
   }
 
   marshal(): ConsentConfiguration {
@@ -34,6 +40,8 @@ export class ConsentNode extends ConfigNode {
       purpose: this.purpose,
       dataPoints: this.dataPoints,
       applicationId: this.applicationId,
+      validityPeriod: this.validityPeriod,
+      revokeAfterUse: this.revokeAfterUse,
     };
   }
 }

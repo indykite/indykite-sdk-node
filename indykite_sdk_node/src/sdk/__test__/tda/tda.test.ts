@@ -41,7 +41,7 @@ describe('grantConsent', () => {
     },
   } as User;
   const consentId = generateRandomGID();
-  const revokeAfterUse = true;
+  const validityPeriod = '86400';
 
   describe('when the response is successful', () => {
     const consentId = 'consent-123';
@@ -64,7 +64,7 @@ describe('grantConsent', () => {
     });
 
     it('should grant a consent', async () => {
-      const result = await sdk.grantConsent(user, consentId, revokeAfterUse);
+      const result = await sdk.grantConsent(user, consentId, validityPeriod);
       expect(result).toEqual({ consentId });
     });
   });
@@ -90,7 +90,7 @@ describe('grantConsent', () => {
     it('throws an error', async () => {
       let caughtError;
       try {
-        await sdk.grantConsent(user, consentId, revokeAfterUse);
+        await sdk.grantConsent(user, consentId, validityPeriod);
       } catch (err) {
         caughtError = err;
       }
@@ -120,7 +120,7 @@ describe('grantConsent', () => {
 
     it('throws an error', async () => {
       try {
-        await sdk.grantConsent(user, consentId, revokeAfterUse);
+        await sdk.grantConsent(user, consentId, validityPeriod);
       } catch (err) {
         caughtError = err as SdkError;
       }

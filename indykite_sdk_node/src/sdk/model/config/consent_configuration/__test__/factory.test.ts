@@ -9,6 +9,8 @@ describe('createInstance', () => {
       purpose: 'Purpose',
       dataPoints: ['lastname', 'firstname', 'email'],
       applicationId: 'gid:AAAAFTYjY2yhCkjdo0IfPre0-Ck',
+      validityPeriod: '86400',
+      revokeAfterUse: false,
     });
   });
 
@@ -19,6 +21,8 @@ describe('createInstance', () => {
         dataPoints: ['lastname', 'firstname', 'email'],
         applicationId: 'gid:AAAAFTYjY2yhCkjdo0IfPre0-Ck',
         name: 'instance-name',
+        validityPeriod: '86400',
+        revokeAfterUse: false,
       }),
     );
   });

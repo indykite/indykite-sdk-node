@@ -24,6 +24,7 @@ describe('deserialize', () => {
           updateTime: Utils.dateToTimestamp(new Date(2022, 2, 17, 12, 18)),
           deleteTime: Utils.dateToTimestamp(new Date(2022, 2, 17, 12, 19)),
           destroyTime: Utils.dateToTimestamp(new Date(2022, 2, 17, 12, 20)),
+          apiAccessRestriction: ['indykite.*'],
         },
       });
     });
@@ -41,6 +42,7 @@ describe('deserialize', () => {
       expect(appAgent.updateTime?.toString()).toBe(new Date(2022, 2, 17, 12, 18).toString());
       expect(appAgent.deleteTime?.toString()).toBe(new Date(2022, 2, 17, 12, 19).toString());
       expect(appAgent.destroyTime?.toString()).toBe(new Date(2022, 2, 17, 12, 20).toString());
+      expect(appAgent.apiAccessRestriction).toEqual(['indykite.*']);
     });
   });
 
@@ -63,6 +65,7 @@ describe('deserialize', () => {
           updateTime: Utils.dateToTimestamp(new Date(2022, 2, 17, 12, 18)),
           deleteTime: Utils.dateToTimestamp(new Date(2022, 2, 17, 12, 19)),
           destroyTime: Utils.dateToTimestamp(new Date(2022, 2, 17, 12, 20)),
+          apiAccessRestriction: ['indykite.*'],
         },
       });
     });

@@ -969,7 +969,7 @@ class ImportDigitalTwin$Type extends MessageType<ImportDigitalTwin> {
     constructor() {
         super("indykite.identity.v1beta2.ImportDigitalTwin", [
             { no: 1, name: "id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "27", maxLen: "100", pattern: "^gid:[A-Za-z0-9-_]{27,100}$", ignoreEmpty: true } } } },
-            { no: 2, name: "tenant_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "27", maxLen: "100", pattern: "^gid:[A-Za-z0-9-_]{27,100}$" } } } },
+            { no: 2, name: "tenant_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "27", maxLen: "100", pattern: "^gid:[A-Za-z0-9-_]{27,100}$", ignoreEmpty: true } } } },
             { no: 3, name: "kind", kind: "enum", T: () => ["indykite.identity.v1beta2.DigitalTwinKind", DigitalTwinKind, "DIGITAL_TWIN_KIND_"], options: { "validate.rules": { enum: { definedOnly: true, in: [1, 3] } } } },
             { no: 4, name: "state", kind: "enum", T: () => ["indykite.identity.v1beta2.DigitalTwinState", DigitalTwinState, "DIGITAL_TWIN_STATE_"], options: { "validate.rules": { enum: { definedOnly: true, in: [1, 2] } } } },
             { no: 5, name: "tags", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { maxItems: "32", unique: true, items: { string: { maxLen: "64", pattern: "^([A-Z][a-z]+)+$" } } } } } },

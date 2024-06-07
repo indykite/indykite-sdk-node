@@ -1,7 +1,5 @@
 import { parse, stringify, v4 } from 'uuid';
-import { Any } from '../../../grpc/google/protobuf/any';
 import { NullValue } from '../../../grpc/google/protobuf/struct';
-import { PostalAddress } from '../../../grpc/indykite/identity/v1beta2/model';
 import { Utils } from '../utils';
 import { SdkError } from '../../error';
 
@@ -13,35 +11,27 @@ describe('Utils', () => {
     });
 
     const dId = parse(v4()) as Uint8Array;
-    const tId = parse(v4()) as Uint8Array;
     const dIdUuid = stringify(dId);
-    const tIdUuid = stringify(tId);
     const dIdBuffer = Buffer.from(dId);
-    const tIdBuffer = Buffer.from(tId);
     const dIdBase64 = dIdBuffer.toString('base64');
-    const tIdBase64 = tIdBuffer.toString('base64');
-    expect(Utils.createDigitalTwinId(dId, tId)).toEqual({
+    expect(Utils.createDigitalTwinId(dId)).toEqual({
       digitalTwin: {
         id: dIdBase64,
-        tenantId: tIdBase64,
       },
     });
-    expect(Utils.createDigitalTwinId(dIdBuffer, tIdBuffer)).toEqual({
+    expect(Utils.createDigitalTwinId(dIdBuffer)).toEqual({
       digitalTwin: {
         id: dIdBase64,
-        tenantId: tIdBase64,
       },
     });
-    expect(Utils.createDigitalTwinId(dIdUuid, tIdUuid)).toEqual({
+    expect(Utils.createDigitalTwinId(dIdUuid)).toEqual({
       digitalTwin: {
         id: dIdBase64,
-        tenantId: tIdBase64,
       },
     });
-    expect(Utils.createDigitalTwinId(dIdBase64, tIdBase64)).toEqual({
+    expect(Utils.createDigitalTwinId(dIdBase64)).toEqual({
       digitalTwin: {
         id: dIdBase64,
-        tenantId: tIdBase64,
       },
     });
   });
@@ -118,34 +108,6 @@ describe('objectToValue', () => {
     });
   });
 
-  it('PostalAddress', () => {
-    const address = PostalAddress.fromJson(
-      {
-        addressCountry: 'Slovakia',
-      },
-      { typeRegistry: [PostalAddress] },
-    );
-    expect(Utils.objectToValue(address)).toEqual({
-      value: {
-        oneofKind: 'anyValue',
-        anyValue: {
-          typeUrl: Any.typeNameToUrl(PostalAddress.typeName),
-          value: PostalAddress.toBinary({
-            addressCountry: 'Slovakia',
-            addressCountryCode: '',
-            addressLocality: '',
-            addressRegion: '',
-            addressType: '',
-            formatted: '',
-            postOfficeBoxNumber: '',
-            postalCode: '',
-            streetAddress: '',
-          }),
-        },
-      },
-    });
-  });
-
   it('date', () => {
     const d = new Date('2022-04-21T08:23:55.988Z');
     expect(Utils.objectToValue(d)).toEqual({
@@ -183,29 +145,6 @@ describe('objectToJsonValue', () => {
     expect(Utils.objectToJsonValue(geo)).toEqual(geo);
     expect(Utils.objectToJsonValue(duration)).toEqual(duration);
     expect(Utils.objectToJsonValue(bytes)).toEqual(bytes);
-  });
-
-  it('PostalAddress', () => {
-    const address = PostalAddress.fromJson(
-      {
-        addressCountry: 'Slovakia',
-      },
-      { typeRegistry: [PostalAddress] },
-    );
-    expect(Utils.objectToJsonValue(address)).toEqual({
-      anyValue: {
-        ['@type']: Any.typeNameToUrl(PostalAddress.typeName),
-        addressCountry: 'Slovakia',
-        addressCountryCode: '',
-        addressLocality: '',
-        addressRegion: '',
-        addressType: '',
-        formatted: '',
-        postOfficeBoxNumber: '',
-        postalCode: '',
-        streetAddress: '',
-      },
-    });
   });
 
   it('date', () => {

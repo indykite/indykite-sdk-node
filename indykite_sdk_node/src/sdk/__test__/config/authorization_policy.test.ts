@@ -110,7 +110,7 @@ describe('createAuthorizationPolicyConfiguration', () => {
       });
 
       it('sends correct request', () => {
-        expect(createConfigNodeSpy).toBeCalledWith(
+        expect(createConfigNodeSpy).toHaveBeenCalledWith(
           {
             name: 'authorization-policy',
             location: 'location-id',
@@ -148,7 +148,7 @@ describe('createAuthorizationPolicyConfiguration', () => {
       });
 
       it('sends correct request', () => {
-        expect(createConfigNodeSpy).toBeCalledWith(
+        expect(createConfigNodeSpy).toHaveBeenCalledWith(
           {
             name: 'authorization-policy',
             location: 'location-id',
@@ -307,7 +307,7 @@ describe('readAuthorizationPolicyConfiguration', () => {
     });
 
     it('sends correct request', () => {
-      expect(readConfigNodeSpy).toBeCalledWith(
+      expect(readConfigNodeSpy).toHaveBeenCalledWith(
         {
           id: 'authorization-policy-id-request',
           bookmarks: [],
@@ -335,7 +335,6 @@ describe('readAuthorizationPolicyConfiguration', () => {
             updateTime: new Date(Date.UTC(2022, 6, 21, 11, 14)),
             customerId: 'customer-id',
             appSpaceId: 'app-space-id',
-            tenantId: 'tenant-id',
             createdBy: 'Lorem ipsum - creator',
             updatedBy: 'Lorem ipsum - updater',
           },
@@ -457,7 +456,7 @@ describe('updateAuthorizationPolicyConfiguration', () => {
       });
 
       it('sends correct request', () => {
-        expect(updateConfigNodeSpy).toBeCalledWith(
+        expect(updateConfigNodeSpy).toHaveBeenCalledWith(
           {
             id: 'authorization-policy-id',
             config: {
@@ -503,7 +502,7 @@ describe('updateAuthorizationPolicyConfiguration', () => {
       });
 
       it('sends correct request', () => {
-        expect(updateConfigNodeSpy).toBeCalledWith(
+        expect(updateConfigNodeSpy).toHaveBeenCalledWith(
           {
             id: 'authorization-policy-id',
             config: {
@@ -698,7 +697,7 @@ describe('deleteAuthorizationPolicyConfiguration', () => {
       });
 
       it('sends correct request', () => {
-        expect(deleteConfigNodeSpy).toBeCalledWith(
+        expect(deleteConfigNodeSpy).toHaveBeenCalledWith(
           {
             id: 'authorization-policy-id',
             bookmarks: [],
@@ -739,7 +738,7 @@ describe('deleteAuthorizationPolicyConfiguration', () => {
       });
 
       it('sends correct request', () => {
-        expect(deleteConfigNodeSpy).toBeCalledWith(
+        expect(deleteConfigNodeSpy).toHaveBeenCalledWith(
           {
             id: 'authorization-policy-id',
             etag: StringValue.fromJson('etag-token'),

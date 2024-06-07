@@ -1,9 +1,7 @@
 import { JsonObject, JsonValue } from '@protobuf-ts/runtime';
 import { parse, stringify } from 'uuid';
-import { Any } from '../../grpc/google/protobuf/any';
 import { Duration } from '../../grpc/google/protobuf/duration';
 import { Timestamp } from '../../grpc/google/protobuf/timestamp';
-import { PostalAddress } from '../../grpc/indykite/identity/v1beta2/model';
 import { Value } from '../../grpc/indykite/objects/v1beta1/struct';
 import { SdkError, SdkErrorCode } from '../error';
 
@@ -43,17 +41,13 @@ export class Utils {
   }
 
   /**
-   * Creates an object with `digitalTwin` property containing `id` and `tenantId`
+   * Creates an object with `digitalTwin` property containing `id`
    * properties with base64 encoded values.
    */
-  static createDigitalTwinId(
-    id: string | Uint8Array | Buffer,
-    tenantId: string | Uint8Array | Buffer,
-  ): { digitalTwin: { id: string; tenantId: string } } {
+  static createDigitalTwinId(id: string | Uint8Array | Buffer): { digitalTwin: { id: string } } {
     return {
       digitalTwin: {
         id: this.getBase64Id(id),
-        tenantId: this.getBase64Id(tenantId),
       },
     };
   }
@@ -163,12 +157,8 @@ export class Utils {
           return v.value.unsignedIntegerValue;
         case 'doubleValue':
           return v.value.doubleValue;
-        case 'anyValue': {
-          if (Any.typeNameToUrl(PostalAddress.typeName) === v.value.anyValue.typeUrl) {
-            return PostalAddress.fromBinary(v.value.anyValue.value);
-          }
+        case 'anyValue':
           return v.value.anyValue;
-        }
         case 'valueTime':
           return v.value.valueTime;
         case 'durationValue':
@@ -219,14 +209,6 @@ export class Utils {
             },
           };
         }
-        if (PostalAddress.is(value)) {
-          return {
-            anyValue: {
-              ...value,
-              ['@type']: Any.typeNameToUrl(PostalAddress.typeName),
-            },
-          };
-        }
         const m: JsonObject = {};
         Object.entries(value as UnknownObject).forEach(([k, v]) => {
           m[k] = this.objectToJsonValue(v);
@@ -245,7 +227,7 @@ export class Utils {
   }
 
   static objectToValue(value: unknown): Value {
-    return Value.fromJson(Utils.objectToJsonValue(value), { typeRegistry: [PostalAddress] });
+    return Value.fromJson(Utils.objectToJsonValue(value), {});
   }
 
   private static getBase64Id(id: string | Uint8Array | Buffer): string {

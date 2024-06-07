@@ -264,6 +264,7 @@ describe('readApplicationAgentById', () => {
                   updateTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 2, 15, 13, 13))),
                   deleteTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 2, 15, 13, 14))),
                   destroyTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 2, 15, 13, 15))),
+                  apiAccessRestriction: ['indykite.*'],
                 },
               });
             }
@@ -278,7 +279,7 @@ describe('readApplicationAgentById', () => {
     });
 
     it('sends correct request', () => {
-      expect(readApplicationAgentSpy).toBeCalledWith(
+      expect(readApplicationAgentSpy).toHaveBeenCalledWith(
         {
           identifier: {
             oneofKind: 'id',
@@ -311,6 +312,7 @@ describe('readApplicationAgentById', () => {
       expect(applicationAgent.destroyTime?.toString()).toBe(
         new Date(Date.UTC(2022, 2, 15, 13, 15)).toString(),
       );
+      expect(applicationAgent.apiAccessRestriction).toEqual(['indykite.*']);
     });
   });
 
@@ -424,6 +426,7 @@ describe('readApplicationAgentByName', () => {
                   updateTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 2, 15, 13, 13))),
                   deleteTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 2, 15, 13, 14))),
                   destroyTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 2, 15, 13, 15))),
+                  apiAccessRestriction: ['indykite.*'],
                 },
               });
             }
@@ -442,7 +445,7 @@ describe('readApplicationAgentByName', () => {
     });
 
     it('sends correct request', () => {
-      expect(readApplicationSpy).toBeCalledWith(
+      expect(readApplicationSpy).toHaveBeenCalledWith(
         {
           identifier: {
             oneofKind: 'name',
@@ -478,6 +481,7 @@ describe('readApplicationAgentByName', () => {
       expect(applicationAgent.destroyTime?.toString()).toBe(
         new Date(Date.UTC(2022, 2, 15, 13, 15)).toString(),
       );
+      expect(applicationAgent.apiAccessRestriction).toEqual(['indykite.*']);
     });
   });
 
@@ -650,6 +654,7 @@ describe('updateApplicationAgent', () => {
           undefined,
           'Lorem ipsum - creator',
           'Lorem ipsum - updater',
+          ['indykite.*'],
         );
         updateApplicationAgentResponse = await sdk.updateApplicationAgent(
           ConfigClient.newUpdateApplicationAgentRequest(applicationAgent),
@@ -657,7 +662,7 @@ describe('updateApplicationAgent', () => {
       });
 
       it('sends correct request', () => {
-        expect(updateApplicationAgentSpy).toBeCalledWith(
+        expect(updateApplicationAgentSpy).toHaveBeenCalledWith(
           {
             id: 'app-agent-id',
             etag: { value: 'etag-id' },

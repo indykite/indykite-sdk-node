@@ -18,7 +18,6 @@ import { IngestAPIClient } from '../../grpc/indykite/ingest/v1beta3/ingest_api.g
 import { ApplicationCredential } from '../utils/application_credential';
 import { ServiceAccountCredential } from '../utils/service_account_credential';
 import { AuthorizationAPIClient } from '../../grpc/indykite/authorization/v1beta1/authorization_service.grpc-client';
-import { Token } from '../utils/token_source/token';
 import { IdentityKnowledgeAPIClient } from '../../grpc/indykite/knowledge/v1beta1/identity_knowledge_api.grpc-client';
 import { IdentityKnowledgeAPIClient as IdentityKnowledgeReadAPIClient } from '../../grpc/indykite/knowledge/v1beta2/identity_knowledge_api.grpc-client';
 import { TrustedDataAccessAPIClient } from '../../grpc/indykite/tda/v1beta1/trusted_data_access_api.grpc-client';
@@ -214,11 +213,5 @@ export class SdkClient {
       await createCallCredential(),
       createCallCredential,
     );
-  }
-
-  static async buildApplicationCredentialToken(appCredential?: string | unknown): Promise<Token> {
-    const credential = SdkClient.getApplicationCredential(appCredential);
-    const builtCredential = await credential.buildToken();
-    return new Token(builtCredential.token, 'Bearer', builtCredential.getExpirationTime());
   }
 }

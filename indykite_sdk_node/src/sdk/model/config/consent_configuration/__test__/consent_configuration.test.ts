@@ -11,6 +11,8 @@ describe('when the instance is created', () => {
       purpose: 'Purpose',
       dataPoints: ['lastname', 'firstname', 'email'],
       applicationId: 'gid:AAAAFTYjY2yhCkjdo0IfPre0-Ck',
+      validityPeriod: '86400',
+      revokeAfterUse: false,
     });
   });
 
@@ -20,5 +22,7 @@ describe('when the instance is created', () => {
     expect(client.description?.value).toBe('Instance description');
     expect(client.purpose).toBe('Purpose');
     expect(client.applicationId).toBe('gid:AAAAFTYjY2yhCkjdo0IfPre0-Ck');
+    expect(client.validityPeriod).toBe('86400');
+    expect(client.revokeAfterUse).toBe(false);
   });
 });

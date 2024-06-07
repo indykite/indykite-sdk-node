@@ -34,7 +34,7 @@ describe('deserialize', () => {
     });
   });
 
-  describe('when the response contains a ConfigNode + Name, display, description, customerId, spaceId, tenantId', () => {
+  describe('when the response contains a ConfigNode + Name, display, description, customerId, spaceId', () => {
     let confNode: ConfigNode;
 
     beforeEach(() => {
@@ -47,7 +47,6 @@ describe('deserialize', () => {
         'Lorem ipsum',
         'customer-id',
         'app-space-id',
-        'tenant-id',
       );
     });
 
@@ -60,7 +59,6 @@ describe('deserialize', () => {
       expect(confNode.customerId).toBe('customer-id');
       expect(confNode.appSpaceId).toBe('app-space-id');
       expect(confNode.name).toBe('application-name');
-      expect(confNode.tenantId).toBe('tenant-id');
 
       expect(confNode.createTime).toBeUndefined();
       expect(confNode.updateTime).toBeUndefined();
@@ -81,7 +79,6 @@ describe('deserialize', () => {
             description: StringValue.create({ value: 'Lorem ipsum' }), //?
             customerId: 'customer-id', //?
             appSpaceId: 'app-space-id', //?
-            tenantId: 'tenant-id', //?
             id: 'config-node-id',
             // locationId: 'location-id',
             createTime: Utils.dateToTimestamp(new Date(2022, 2, 17, 12, 17)),
@@ -105,8 +102,6 @@ describe('deserialize', () => {
       expect(confNode.customerId).toBe('customer-id');
       expect(confNode.appSpaceId).toBe('app-space-id');
       expect(confNode.name).toBe('application-name');
-      expect(confNode.tenantId).toBe('tenant-id');
-
       expect(confNode.createTime?.toString()).toBe(new Date(2022, 2, 17, 12, 17).toString());
       expect(confNode.updateTime?.toString()).toBe(new Date(2022, 2, 17, 12, 18).toString());
       expect(confNode.createdBy).toBe('Lorem ipsum - creator');

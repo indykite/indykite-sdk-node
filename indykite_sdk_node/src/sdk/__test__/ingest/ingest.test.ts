@@ -5,9 +5,23 @@ import { Stream } from 'stream';
 
 import { EventEmitter } from 'events';
 import { SdkClient } from '../../client/client';
-import { IngestClient, IngestRecord } from '../../ingest';
+import {
+  IngestClient,
+  IngestRecord,
+  IngestNodeRecord,
+  IngestNodeMatch,
+  IngestNodePropertyMatch,
+  IngestRelationship,
+  IngestRelationshipProperty,
+} from '../../ingest';
 import { applicationTokenMock } from '../../utils/test_utils';
 import {
+  BatchUpsertNodesResponse,
+  BatchDeleteNodesResponse,
+  BatchDeleteNodePropertiesResponse,
+  BatchUpsertRelationshipsResponse,
+  BatchDeleteRelationshipsResponse,
+  BatchDeleteRelationshipPropertiesResponse,
   IngestRecordRequest,
   IngestRecordResponse,
   StreamRecordsResponse,
@@ -1212,6 +1226,1139 @@ describe('IngestRecord builder', () => {
           },
         });
       });
+    });
+  });
+});
+
+describe('batchUpsertNodes', () => {
+  let response: BatchUpsertNodesResponse | undefined;
+  let nodes: IngestNodeRecord[];
+
+  beforeEach(() => {
+    nodes = [
+      {
+        externalId: 'person3',
+        type: 'Person',
+        properties: [
+          {
+            type: 'customProp',
+            value: '42',
+            metadata: {
+              assuranceLevel: 1,
+              verificationTime: Utils.dateToTimestamp(new Date()),
+              source: 'Myself',
+              customMetadata: {
+                customdata: 'SomeCustomData',
+              },
+            },
+          },
+        ],
+        id: '',
+        isIdentity: false,
+        tags: [],
+      },
+      {
+        externalId: 'person4',
+        type: 'Person',
+        properties: [
+          {
+            type: 'email',
+            value: 'person4@yahoo.com',
+          },
+        ],
+        id: '',
+        isIdentity: false,
+        tags: [],
+      },
+    ];
+    response = undefined;
+  });
+
+  describe('when no error is returned', () => {
+    let batchUpsertSpy: jest.SpyInstance;
+    let sdk: IngestClient;
+
+    beforeEach(async () => {
+      sdk = await IngestClient.createInstance(JSON.stringify(applicationTokenMock));
+      batchUpsertSpy = jest
+        .spyOn(sdk['client'], 'batchUpsertNodes')
+        .mockImplementation(
+          (
+            req,
+            res:
+              | Metadata
+              | CallOptions
+              | ((err: ServiceError | null, response: BatchUpsertNodesResponse) => void),
+          ) => {
+            if (typeof res === 'function') {
+              res(null, {
+                results: [
+                  {
+                    changes: [
+                      {
+                        id: 'gid:AAAAHHAJnz-XBUfCo-nxapTwF_o',
+                        dataType: 1,
+                      },
+                    ],
+                  },
+                  {
+                    changes: [
+                      {
+                        id: 'gid:AAAAHMYjzqeCzk8SpXF9wVs6iBc',
+                        dataType: 1,
+                      },
+                    ],
+                  },
+                ],
+              });
+            }
+            return {} as SurfaceCall;
+          },
+        );
+
+      response = await sdk.batchUpsertNodes(nodes);
+    });
+
+    it('batch sends correct request', () => {
+      expect(batchUpsertSpy).toHaveBeenCalledWith(
+        {
+          nodes: [
+            {
+              externalId: 'person3',
+              properties: [],
+              type: 'Person',
+              id: '',
+              isIdentity: false,
+              tags: [],
+            },
+            {
+              externalId: 'person4',
+              properties: [],
+              type: 'Person',
+              id: '',
+              isIdentity: false,
+              tags: [],
+            },
+          ],
+        },
+        expect.any(Function),
+      );
+    });
+
+    it('batch returns a correct response', () => {
+      expect(response?.results[0]).not.toBeNull;
+    });
+  });
+
+  describe('when the batch response is empty', () => {
+    let thrownError: Error;
+    let sdk: IngestClient;
+
+    beforeEach(async () => {
+      sdk = await IngestClient.createInstance(JSON.stringify(applicationTokenMock));
+      jest
+        .spyOn(sdk['client'], 'batchUpsertNodes')
+        .mockImplementation(
+          (
+            req,
+            res:
+              | Metadata
+              | CallOptions
+              | ((err: ServiceError | null, response?: BatchUpsertNodesResponse) => void),
+          ) => {
+            if (typeof res === 'function') {
+              res(null);
+            }
+            return {} as SurfaceCall;
+          },
+        );
+
+      return sdk.batchUpsertNodes(nodes).catch((err) => {
+        thrownError = err;
+      });
+    });
+
+    it('throws an error', () => {
+      expect(thrownError.message).toBe('No IngestClient record response');
+    });
+  });
+
+  describe('batch when an error is returned', () => {
+    const error = {
+      code: Status.NOT_FOUND,
+      details: 'DETAILS',
+      metadata: {},
+    } as ServiceError;
+    let thrownError: Error;
+    let sdk: IngestClient;
+
+    beforeEach(async () => {
+      sdk = await IngestClient.createInstance(JSON.stringify(applicationTokenMock));
+      jest
+        .spyOn(sdk['client'], 'batchUpsertNodes')
+        .mockImplementation(
+          (
+            req,
+            res:
+              | Metadata
+              | CallOptions
+              | ((err: ServiceError | null, response?: BatchUpsertNodesResponse) => void),
+          ) => {
+            if (typeof res === 'function') {
+              res(error);
+            }
+            return {} as SurfaceCall;
+          },
+        );
+
+      return sdk.batchUpsertNodes(nodes).catch((err) => {
+        thrownError = err;
+      });
+    });
+
+    it('batch throws an error', () => {
+      expect(thrownError).toBe(error);
+    });
+  });
+});
+
+describe('batchDeleteNodes', () => {
+  let response: BatchDeleteNodesResponse | undefined;
+  let nodes: IngestNodeMatch[];
+
+  beforeEach(() => {
+    nodes = [
+      {
+        externalId: 'person1',
+        type: 'Person',
+      },
+      {
+        externalId: 'person2',
+        type: 'Person',
+      },
+    ];
+    response = undefined;
+  });
+
+  describe('when no error is returned in batch delete', () => {
+    let batchDeleteSpy: jest.SpyInstance;
+    let sdk: IngestClient;
+
+    beforeEach(async () => {
+      sdk = await IngestClient.createInstance(JSON.stringify(applicationTokenMock));
+      batchDeleteSpy = jest
+        .spyOn(sdk['client'], 'batchDeleteNodes')
+        .mockImplementation(
+          (
+            req,
+            res:
+              | Metadata
+              | CallOptions
+              | ((err: ServiceError | null, response: BatchDeleteNodesResponse) => void),
+          ) => {
+            if (typeof res === 'function') {
+              res(null, {
+                results: [
+                  {
+                    changes: [
+                      {
+                        id: 'gid:AAAAHHAJnz-XBUfCo-nxapTwF_o',
+                        dataType: 1,
+                      },
+                    ],
+                  },
+                  {
+                    changes: [
+                      {
+                        id: 'gid:AAAAHMYjzqeCzk8SpXF9wVs6iBc',
+                        dataType: 1,
+                      },
+                    ],
+                  },
+                ],
+              });
+            }
+            return {} as SurfaceCall;
+          },
+        );
+
+      response = await sdk.batchDeleteNodes(nodes);
+    });
+
+    it('batch sends correct request', () => {
+      expect(batchDeleteSpy).toHaveBeenCalledWith(
+        {
+          nodes: [
+            {
+              externalId: 'person1',
+              type: 'Person',
+            },
+            {
+              externalId: 'person2',
+              type: 'Person',
+            },
+          ],
+        },
+        expect.any(Function),
+      );
+    });
+
+    it('batch returns a correct response', () => {
+      expect(response?.results[0]).not.toBeNull;
+    });
+  });
+
+  describe('when the batch delete response is empty', () => {
+    let thrownError: Error;
+    let sdk: IngestClient;
+
+    beforeEach(async () => {
+      sdk = await IngestClient.createInstance(JSON.stringify(applicationTokenMock));
+      jest
+        .spyOn(sdk['client'], 'batchDeleteNodes')
+        .mockImplementation(
+          (
+            req,
+            res:
+              | Metadata
+              | CallOptions
+              | ((err: ServiceError | null, response?: BatchDeleteNodesResponse) => void),
+          ) => {
+            if (typeof res === 'function') {
+              res(null);
+            }
+            return {} as SurfaceCall;
+          },
+        );
+
+      return sdk.batchDeleteNodes(nodes).catch((err) => {
+        thrownError = err;
+      });
+    });
+
+    it('throws an error', () => {
+      expect(thrownError.message).toBe('No IngestClient record response');
+    });
+  });
+
+  describe('batch delete when an error is returned', () => {
+    const error = {
+      code: Status.NOT_FOUND,
+      details: 'DETAILS',
+      metadata: {},
+    } as ServiceError;
+    let thrownError: Error;
+    let sdk: IngestClient;
+
+    beforeEach(async () => {
+      sdk = await IngestClient.createInstance(JSON.stringify(applicationTokenMock));
+      jest
+        .spyOn(sdk['client'], 'batchDeleteNodes')
+        .mockImplementation(
+          (
+            req,
+            res:
+              | Metadata
+              | CallOptions
+              | ((err: ServiceError | null, response?: BatchDeleteNodesResponse) => void),
+          ) => {
+            if (typeof res === 'function') {
+              res(error);
+            }
+            return {} as SurfaceCall;
+          },
+        );
+
+      return sdk.batchDeleteNodes(nodes).catch((err) => {
+        thrownError = err;
+      });
+    });
+
+    it('batch throws an error', () => {
+      expect(thrownError).toBe(error);
+    });
+  });
+});
+
+describe('batchDeleteNodeProperties', () => {
+  let response: BatchDeleteNodePropertiesResponse | undefined;
+  let nodeProperties: IngestNodePropertyMatch[];
+
+  beforeEach(() => {
+    nodeProperties = [
+      {
+        match: {
+          externalId: 'person1',
+          type: 'Person',
+        },
+        propertyType: 'customProp',
+      },
+      {
+        match: {
+          externalId: 'person1',
+          type: 'Person',
+        },
+        propertyType: 'customProp2',
+      },
+    ];
+    response = undefined;
+  });
+
+  describe('when no error is returned in batch delete properties', () => {
+    let batchDeleteNodePropertiesSpy: jest.SpyInstance;
+    let sdk: IngestClient;
+
+    beforeEach(async () => {
+      sdk = await IngestClient.createInstance(JSON.stringify(applicationTokenMock));
+      batchDeleteNodePropertiesSpy = jest
+        .spyOn(sdk['client'], 'batchDeleteNodeProperties')
+        .mockImplementation(
+          (
+            req,
+            res:
+              | Metadata
+              | CallOptions
+              | ((err: ServiceError | null, response: BatchDeleteNodePropertiesResponse) => void),
+          ) => {
+            if (typeof res === 'function') {
+              res(null, {
+                results: [
+                  {
+                    changes: [
+                      {
+                        id: 'gid:AAAAHHAJnz-XBUfCo-nxapTwF_o',
+                        dataType: 1,
+                      },
+                    ],
+                  },
+                  {
+                    changes: [
+                      {
+                        id: 'gid:AAAAHMYjzqeCzk8SpXF9wVs6iBc',
+                        dataType: 1,
+                      },
+                    ],
+                  },
+                ],
+              });
+            }
+            return {} as SurfaceCall;
+          },
+        );
+
+      response = await sdk.batchDeleteNodeProperties(nodeProperties);
+    });
+
+    it('batch sends correct request', () => {
+      expect(batchDeleteNodePropertiesSpy).toHaveBeenCalledWith(
+        {
+          nodeProperties: [
+            {
+              match: {
+                externalId: 'person1',
+                type: 'Person',
+              },
+              propertyType: 'customProp',
+            },
+            {
+              match: {
+                externalId: 'person1',
+                type: 'Person',
+              },
+              propertyType: 'customProp2',
+            },
+          ],
+        },
+        expect.any(Function),
+      );
+    });
+
+    it('batch returns a correct response', () => {
+      expect(response?.results[0]).not.toBeNull;
+    });
+  });
+
+  describe('when the batch delete node properties response is empty', () => {
+    let thrownError: Error;
+    let sdk: IngestClient;
+
+    beforeEach(async () => {
+      sdk = await IngestClient.createInstance(JSON.stringify(applicationTokenMock));
+      jest
+        .spyOn(sdk['client'], 'batchDeleteNodeProperties')
+        .mockImplementation(
+          (
+            req,
+            res:
+              | Metadata
+              | CallOptions
+              | ((err: ServiceError | null, response?: BatchDeleteNodePropertiesResponse) => void),
+          ) => {
+            if (typeof res === 'function') {
+              res(null);
+            }
+            return {} as SurfaceCall;
+          },
+        );
+
+      return sdk.batchDeleteNodeProperties(nodeProperties).catch((err) => {
+        thrownError = err;
+      });
+    });
+
+    it('throws an error', () => {
+      expect(thrownError.message).toBe('No IngestClient record response');
+    });
+  });
+
+  describe('batch delete properties when an error is returned', () => {
+    const error = {
+      code: Status.NOT_FOUND,
+      details: 'DETAILS',
+      metadata: {},
+    } as ServiceError;
+    let thrownError: Error;
+    let sdk: IngestClient;
+
+    beforeEach(async () => {
+      sdk = await IngestClient.createInstance(JSON.stringify(applicationTokenMock));
+      jest
+        .spyOn(sdk['client'], 'batchDeleteNodeProperties')
+        .mockImplementation(
+          (
+            req,
+            res:
+              | Metadata
+              | CallOptions
+              | ((err: ServiceError | null, response?: BatchDeleteNodePropertiesResponse) => void),
+          ) => {
+            if (typeof res === 'function') {
+              res(error);
+            }
+            return {} as SurfaceCall;
+          },
+        );
+
+      return sdk.batchDeleteNodeProperties(nodeProperties).catch((err) => {
+        thrownError = err;
+      });
+    });
+
+    it('batch throws an error', () => {
+      expect(thrownError).toBe(error);
+    });
+  });
+});
+
+describe('batchUpsertRelationships', () => {
+  let response: BatchUpsertRelationshipsResponse | undefined;
+  let relationships: IngestRelationship[];
+  const timeNow = Utils.dateToTimestamp(new Date());
+
+  beforeEach(() => {
+    relationships = [
+      {
+        source: { externalId: 'person3', type: 'Person' },
+        target: { externalId: 'car3', type: 'Car' },
+        type: 'OWNS',
+        properties: [
+          {
+            type: 'customProp',
+            value: '46',
+            metadata: {
+              assuranceLevel: 1,
+              verificationTime: timeNow,
+              source: 'Myself',
+              customMetadata: {
+                customdata: 'SomeCustomData',
+              },
+            },
+          },
+        ],
+      },
+      {
+        source: { externalId: 'person4', type: 'Person' },
+        target: { externalId: 'car4', type: 'Car' },
+        type: 'OWNS',
+        properties: [
+          {
+            type: 'licence',
+            value: '4712589',
+          },
+        ],
+      },
+    ];
+    response = undefined;
+  });
+
+  describe('when no error is returned', () => {
+    let batchUpsertSpy: jest.SpyInstance;
+    let sdk: IngestClient;
+
+    beforeEach(async () => {
+      sdk = await IngestClient.createInstance(JSON.stringify(applicationTokenMock));
+      batchUpsertSpy = jest
+        .spyOn(sdk['client'], 'batchUpsertRelationships')
+        .mockImplementation(
+          (
+            req,
+            res:
+              | Metadata
+              | CallOptions
+              | ((err: ServiceError | null, response: BatchUpsertRelationshipsResponse) => void),
+          ) => {
+            if (typeof res === 'function') {
+              res(null, {
+                results: [
+                  {
+                    changes: [
+                      {
+                        id: 'gid:AAAAHHAJnz-XBUfCo-nxapTwF_o',
+                        dataType: 1,
+                      },
+                    ],
+                  },
+                  {
+                    changes: [
+                      {
+                        id: 'gid:AAAAHMYjzqeCzk8SpXF9wVs6iBc',
+                        dataType: 1,
+                      },
+                    ],
+                  },
+                ],
+              });
+            }
+            return {} as SurfaceCall;
+          },
+        );
+
+      response = await sdk.batchUpsertRelationships(relationships);
+    });
+
+    it('batch sends correct request', () => {
+      expect(batchUpsertSpy).toHaveBeenCalledWith(
+        {
+          relationships: [
+            {
+              source: { externalId: 'person3', type: 'Person' },
+              target: { externalId: 'car3', type: 'Car' },
+              type: 'OWNS',
+              properties: [
+                {
+                  type: 'customProp',
+                  value: {
+                    type: {
+                      oneofKind: 'stringValue',
+                      stringValue: '46',
+                    },
+                  },
+                  metadata: {
+                    assuranceLevel: 1,
+                    verificationTime: timeNow,
+                    source: 'Myself',
+                    customMetadata: {
+                      customdata: {
+                        type: {
+                          oneofKind: 'stringValue',
+                          stringValue: 'SomeCustomData',
+                        },
+                      },
+                    },
+                  },
+                },
+              ],
+            },
+            {
+              source: { externalId: 'person4', type: 'Person' },
+              target: { externalId: 'car4', type: 'Car' },
+              type: 'OWNS',
+              properties: [
+                {
+                  type: 'licence',
+                  value: {
+                    type: {
+                      oneofKind: 'stringValue',
+                      stringValue: '4712589',
+                    },
+                  },
+                  metadata: undefined,
+                },
+              ],
+            },
+          ],
+        },
+        expect.any(Function),
+      );
+    });
+
+    it('batch returns a correct response', () => {
+      expect(response?.results[0]).not.toBeNull;
+    });
+  });
+
+  describe('when the batch response is empty', () => {
+    let thrownError: Error;
+    let sdk: IngestClient;
+
+    beforeEach(async () => {
+      sdk = await IngestClient.createInstance(JSON.stringify(applicationTokenMock));
+      jest
+        .spyOn(sdk['client'], 'batchUpsertRelationships')
+        .mockImplementation(
+          (
+            req,
+            res:
+              | Metadata
+              | CallOptions
+              | ((err: ServiceError | null, response?: BatchUpsertRelationshipsResponse) => void),
+          ) => {
+            if (typeof res === 'function') {
+              res(null);
+            }
+            return {} as SurfaceCall;
+          },
+        );
+
+      return sdk.batchUpsertRelationships(relationships).catch((err) => {
+        thrownError = err;
+      });
+    });
+
+    it('throws an error', () => {
+      expect(thrownError.message).toBe('No IngestClient record response');
+    });
+  });
+
+  describe('batch when an error is returned', () => {
+    const error = {
+      code: Status.NOT_FOUND,
+      details: 'DETAILS',
+      metadata: {},
+    } as ServiceError;
+    let thrownError: Error;
+    let sdk: IngestClient;
+
+    beforeEach(async () => {
+      sdk = await IngestClient.createInstance(JSON.stringify(applicationTokenMock));
+      jest
+        .spyOn(sdk['client'], 'batchUpsertRelationships')
+        .mockImplementation(
+          (
+            req,
+            res:
+              | Metadata
+              | CallOptions
+              | ((err: ServiceError | null, response?: BatchUpsertRelationshipsResponse) => void),
+          ) => {
+            if (typeof res === 'function') {
+              res(error);
+            }
+            return {} as SurfaceCall;
+          },
+        );
+
+      return sdk.batchUpsertRelationships(relationships).catch((err) => {
+        thrownError = err;
+      });
+    });
+
+    it('batch throws an error', () => {
+      expect(thrownError).toBe(error);
+    });
+  });
+});
+
+describe('batchDeleteRelationships', () => {
+  let response: BatchDeleteRelationshipsResponse | undefined;
+  let relationships: IngestRelationship[];
+  const timeNow = Utils.dateToTimestamp(new Date());
+
+  beforeEach(() => {
+    relationships = [
+      {
+        source: { externalId: 'person3', type: 'Person' },
+        target: { externalId: 'car3', type: 'Car' },
+        type: 'OWNS',
+        properties: [
+          {
+            type: 'customProp',
+            value: '46',
+            metadata: {
+              assuranceLevel: 1,
+              verificationTime: timeNow,
+              source: 'Myself',
+              customMetadata: {
+                customdata: 'SomeCustomData',
+              },
+            },
+          },
+        ],
+      },
+      {
+        source: { externalId: 'person4', type: 'Person' },
+        target: { externalId: 'car4', type: 'Car' },
+        type: 'OWNS',
+        properties: [
+          {
+            type: 'licence',
+            value: '4712589',
+          },
+        ],
+      },
+    ];
+    response = undefined;
+  });
+
+  describe('when no error is returned in batch delete', () => {
+    let batchDeleteSpy: jest.SpyInstance;
+    let sdk: IngestClient;
+
+    beforeEach(async () => {
+      sdk = await IngestClient.createInstance(JSON.stringify(applicationTokenMock));
+      batchDeleteSpy = jest
+        .spyOn(sdk['client'], 'batchDeleteRelationships')
+        .mockImplementation(
+          (
+            req,
+            res:
+              | Metadata
+              | CallOptions
+              | ((err: ServiceError | null, response: BatchDeleteRelationshipsResponse) => void),
+          ) => {
+            if (typeof res === 'function') {
+              res(null, {
+                results: [
+                  {
+                    changes: [
+                      {
+                        id: 'gid:AAAAHHAJnz-XBUfCo-nxapTwF_o',
+                        dataType: 1,
+                      },
+                    ],
+                  },
+                  {
+                    changes: [
+                      {
+                        id: 'gid:AAAAHMYjzqeCzk8SpXF9wVs6iBc',
+                        dataType: 1,
+                      },
+                    ],
+                  },
+                ],
+              });
+            }
+            return {} as SurfaceCall;
+          },
+        );
+
+      response = await sdk.batchDeleteRelationships(relationships);
+    });
+
+    it('batch sends correct request', () => {
+      expect(batchDeleteSpy).toHaveBeenCalledWith(
+        {
+          relationships: [
+            {
+              source: { externalId: 'person3', type: 'Person' },
+              target: { externalId: 'car3', type: 'Car' },
+              type: 'OWNS',
+              properties: [
+                {
+                  type: 'customProp',
+                  value: {
+                    type: {
+                      oneofKind: 'stringValue',
+                      stringValue: '46',
+                    },
+                  },
+                  metadata: {
+                    assuranceLevel: 1,
+                    verificationTime: timeNow,
+                    source: 'Myself',
+                    customMetadata: {
+                      customdata: {
+                        type: {
+                          oneofKind: 'stringValue',
+                          stringValue: 'SomeCustomData',
+                        },
+                      },
+                    },
+                  },
+                },
+              ],
+            },
+            {
+              source: { externalId: 'person4', type: 'Person' },
+              target: { externalId: 'car4', type: 'Car' },
+              type: 'OWNS',
+              properties: [
+                {
+                  type: 'licence',
+                  value: {
+                    type: {
+                      oneofKind: 'stringValue',
+                      stringValue: '4712589',
+                    },
+                  },
+                  metadata: undefined,
+                },
+              ],
+            },
+          ],
+        },
+        expect.any(Function),
+      );
+    });
+
+    it('batch returns a correct response', () => {
+      expect(response?.results[0]).not.toBeNull;
+    });
+  });
+
+  describe('when the batch delete response is empty', () => {
+    let thrownError: Error;
+    let sdk: IngestClient;
+
+    beforeEach(async () => {
+      sdk = await IngestClient.createInstance(JSON.stringify(applicationTokenMock));
+      jest
+        .spyOn(sdk['client'], 'batchDeleteRelationships')
+        .mockImplementation(
+          (
+            req,
+            res:
+              | Metadata
+              | CallOptions
+              | ((err: ServiceError | null, response?: BatchDeleteRelationshipsResponse) => void),
+          ) => {
+            if (typeof res === 'function') {
+              res(null);
+            }
+            return {} as SurfaceCall;
+          },
+        );
+
+      return sdk.batchDeleteRelationships(relationships).catch((err) => {
+        thrownError = err;
+      });
+    });
+
+    it('throws an error', () => {
+      expect(thrownError.message).toBe('No IngestClient record response');
+    });
+  });
+
+  describe('batch delete when an error is returned', () => {
+    const error = {
+      code: Status.NOT_FOUND,
+      details: 'DETAILS',
+      metadata: {},
+    } as ServiceError;
+    let thrownError: Error;
+    let sdk: IngestClient;
+
+    beforeEach(async () => {
+      sdk = await IngestClient.createInstance(JSON.stringify(applicationTokenMock));
+      jest
+        .spyOn(sdk['client'], 'batchDeleteRelationships')
+        .mockImplementation(
+          (
+            req,
+            res:
+              | Metadata
+              | CallOptions
+              | ((err: ServiceError | null, response?: BatchDeleteRelationshipsResponse) => void),
+          ) => {
+            if (typeof res === 'function') {
+              res(error);
+            }
+            return {} as SurfaceCall;
+          },
+        );
+
+      return sdk.batchDeleteRelationships(relationships).catch((err) => {
+        thrownError = err;
+      });
+    });
+
+    it('batch throws an error', () => {
+      expect(thrownError).toBe(error);
+    });
+  });
+});
+
+describe('batchDeleteRelationshipProperties', () => {
+  let response: BatchDeleteRelationshipPropertiesResponse | undefined;
+  let relationshipProperties: IngestRelationshipProperty[];
+
+  beforeEach(() => {
+    relationshipProperties = [
+      {
+        source: { externalId: 'person3', type: 'Person' },
+        target: { externalId: 'car3', type: 'Car' },
+        type: 'OWNS',
+        propertyType: 'custom3',
+      },
+      {
+        source: { externalId: 'person4', type: 'Person' },
+        target: { externalId: 'car4', type: 'Car' },
+        type: 'OWNS',
+        propertyType: 'custom4',
+      },
+    ];
+    response = undefined;
+  });
+
+  describe('when no error is returned in batch delete properties', () => {
+    let batchDeleteRelationshipPropertiesSpy: jest.SpyInstance;
+    let sdk: IngestClient;
+
+    beforeEach(async () => {
+      sdk = await IngestClient.createInstance(JSON.stringify(applicationTokenMock));
+      batchDeleteRelationshipPropertiesSpy = jest
+        .spyOn(sdk['client'], 'batchDeleteRelationshipProperties')
+        .mockImplementation(
+          (
+            req,
+            res:
+              | Metadata
+              | CallOptions
+              | ((
+                  err: ServiceError | null,
+                  response: BatchDeleteRelationshipPropertiesResponse,
+                ) => void),
+          ) => {
+            if (typeof res === 'function') {
+              res(null, {
+                results: [
+                  {
+                    changes: [
+                      {
+                        id: 'gid:AAAAHHAJnz-XBUfCo-nxapTwF_o',
+                        dataType: 1,
+                      },
+                    ],
+                  },
+                  {
+                    changes: [
+                      {
+                        id: 'gid:AAAAHMYjzqeCzk8SpXF9wVs6iBc',
+                        dataType: 1,
+                      },
+                    ],
+                  },
+                ],
+              });
+            }
+            return {} as SurfaceCall;
+          },
+        );
+
+      response = await sdk.batchDeleteRelationshipProperties(relationshipProperties);
+    });
+
+    it('batch sends correct request', () => {
+      expect(batchDeleteRelationshipPropertiesSpy).toHaveBeenCalledWith(
+        {
+          relationshipProperties: [
+            {
+              source: { externalId: 'person3', type: 'Person' },
+              target: { externalId: 'car3', type: 'Car' },
+              type: 'OWNS',
+              propertyType: 'custom3',
+            },
+            {
+              source: { externalId: 'person4', type: 'Person' },
+              target: { externalId: 'car4', type: 'Car' },
+              type: 'OWNS',
+              propertyType: 'custom4',
+            },
+          ],
+        },
+        expect.any(Function),
+      );
+    });
+
+    it('batch returns a correct response', () => {
+      expect(response?.results[0]).not.toBeNull;
+    });
+  });
+
+  describe('when the batch delete node properties response is empty', () => {
+    let thrownError: Error;
+    let sdk: IngestClient;
+
+    beforeEach(async () => {
+      sdk = await IngestClient.createInstance(JSON.stringify(applicationTokenMock));
+      jest
+        .spyOn(sdk['client'], 'batchDeleteRelationshipProperties')
+        .mockImplementation(
+          (
+            req,
+            res:
+              | Metadata
+              | CallOptions
+              | ((
+                  err: ServiceError | null,
+                  response?: BatchDeleteRelationshipPropertiesResponse,
+                ) => void),
+          ) => {
+            if (typeof res === 'function') {
+              res(null);
+            }
+            return {} as SurfaceCall;
+          },
+        );
+
+      return sdk.batchDeleteRelationshipProperties(relationshipProperties).catch((err) => {
+        thrownError = err;
+      });
+    });
+
+    it('throws an error', () => {
+      expect(thrownError.message).toBe('No IngestClient record response');
+    });
+  });
+
+  describe('batch delete properties when an error is returned', () => {
+    const error = {
+      code: Status.NOT_FOUND,
+      details: 'DETAILS',
+      metadata: {},
+    } as ServiceError;
+    let thrownError: Error;
+    let sdk: IngestClient;
+
+    beforeEach(async () => {
+      sdk = await IngestClient.createInstance(JSON.stringify(applicationTokenMock));
+      jest
+        .spyOn(sdk['client'], 'batchDeleteRelationshipProperties')
+        .mockImplementation(
+          (
+            req,
+            res:
+              | Metadata
+              | CallOptions
+              | ((
+                  err: ServiceError | null,
+                  response?: BatchDeleteRelationshipPropertiesResponse,
+                ) => void),
+          ) => {
+            if (typeof res === 'function') {
+              res(error);
+            }
+            return {} as SurfaceCall;
+          },
+        );
+
+      return sdk.batchDeleteRelationshipProperties(relationshipProperties).catch((err) => {
+        thrownError = err;
+      });
+    });
+
+    it('batch throws an error', () => {
+      expect(thrownError).toBe(error);
     });
   });
 });
