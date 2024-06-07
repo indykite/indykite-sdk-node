@@ -1,4 +1,11 @@
 # Changelog
+## [0.7.5](https://github.com/indykite/indykite-sdk-node/compare/v0.7.4...v0.7.5) (2024-06-07)
+
+
+### Features
+
+* remove outdated authn methods ([430cfe4](https://github.com/indykite/indykite-sdk-node/commit/430cfe42e79f84b854d41a819baf52ff128879ca))
+
 ## [0.7.4](https://github.com/indykite/indykite-sdk-node/compare/v0.7.3...v0.7.4) (2024-05-15)
 
 
