@@ -22,15 +22,6 @@ import { Utils } from './utils/utils';
 
 export type InputParameters = string | boolean | number;
 
-/**
- * @deprecated
- * @since 0.4.2
- */
-export const DIGITAL_TWIN_IDENTIFIER = 'digitalTwinIdentifier';
-export const DIGITAL_TWIN_IDENTIFIER_DIGITAL_TWIN = 'digitalTwin';
-export const DIGITAL_TWIN_IDENTIFIER_PROPERTY_FILTER = 'propertyFilter';
-export const DIGITAL_TWIN_IDENTIFIER_ACCESS_TOKEN = 'accessToken';
-
 export const DIGITAL_TWIN_ID = 'digitalTwinId';
 export const DIGITAL_TWIN_PROPERTY = 'digitalTwinProperty';
 export const DIGITAL_TWIN_ACCESS_TOKEN = 'indykiteAccessToken';

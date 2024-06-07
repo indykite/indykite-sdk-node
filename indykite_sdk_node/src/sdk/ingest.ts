@@ -5,13 +5,31 @@ import {
   IngestRecordResponse,
   StreamRecordsRequest,
   StreamRecordsResponse,
+  BatchUpsertNodesRequest,
+  BatchUpsertNodesResponse,
+  BatchDeleteNodesRequest,
+  BatchDeleteNodesResponse,
+  BatchDeleteNodePropertiesRequest,
+  BatchDeleteNodePropertiesResponse,
+  BatchUpsertRelationshipsRequest,
+  BatchUpsertRelationshipsResponse,
+  BatchDeleteRelationshipsRequest,
+  BatchDeleteRelationshipsResponse,
+  BatchDeleteRelationshipPropertiesRequest,
+  BatchDeleteRelationshipPropertiesResponse,
 } from '../grpc/indykite/ingest/v1beta3/ingest_api';
 import { Readable } from 'stream';
 import { SdkError, SdkErrorCode, SkdErrorText } from './error';
 import { IndexFixer, streamKeeper } from './utils/stream';
 import { Utils } from './utils/utils';
-import { NodeMatch, Record as RecordModel } from '../grpc/indykite/ingest/v1beta3/model';
-import { Metadata, Property } from '../grpc/indykite/knowledge/objects/v1beta1/ikg';
+import {
+  NodeMatch,
+  DeleteData_NodePropertyMatch as NodePropertyMatch,
+  DeleteData_RelationshipPropertyMatch as RelationshipPropertyMatch,
+  Record as RecordModel,
+  Relationship,
+} from '../grpc/indykite/ingest/v1beta3/model';
+import { Metadata, Node, Property } from '../grpc/indykite/knowledge/objects/v1beta1/ikg';
 import { Value } from '../grpc/indykite/objects/v1beta2/value';
 import { Timestamp } from '../grpc/google/protobuf/timestamp';
 
@@ -27,6 +45,11 @@ export interface IngestNodeRecord {
 export interface IngestNodeMatch {
   externalId: string;
   type: string;
+}
+
+export interface IngestNodePropertyMatch {
+  match: IngestNodeMatch;
+  propertyType: string;
 }
 
 export interface IngestRelationship {
@@ -387,6 +410,363 @@ export class IngestRecordDelete extends IngestRecord {
   }
 }
 
+export class BatchUpsertNodes {
+  protected request: BatchUpsertNodesRequest;
+
+  constructor(nodes?: IngestNodeRecord[]) {
+    if (nodes) {
+      const nodesArr = [];
+      const req: any = {};
+      for (const node of nodes) {
+        nodesArr.push(new BatchNode(node).prepare());
+      }
+      req.nodes = nodesArr;
+      this.request = req;
+      return;
+    }
+
+    this.request = {
+      nodes: [],
+    };
+  }
+
+  marshal(): BatchUpsertNodesRequest {
+    return this.request;
+  }
+
+  getNodes(): Node[] {
+    return this.request.nodes as Node[];
+  }
+}
+
+export class BatchDeleteNodes {
+  protected request: BatchDeleteNodesRequest;
+
+  constructor(nodes?: IngestNodeMatch[]) {
+    if (nodes) {
+      const nodesArr = [];
+      const req: any = {};
+      for (const node of nodes) {
+        nodesArr.push(new BatchNodeMatch(node).prepare());
+      }
+      req.nodes = nodesArr;
+      this.request = req;
+      return;
+    }
+
+    this.request = {
+      nodes: [],
+    };
+  }
+
+  marshal(): BatchDeleteNodesRequest {
+    return this.request;
+  }
+
+  getNodes(): Node[] {
+    return this.request.nodes as Node[];
+  }
+}
+
+export class BatchDeleteNodeProperties {
+  protected request: BatchDeleteNodePropertiesRequest;
+
+  constructor(nodeProperties?: IngestNodePropertyMatch[]) {
+    if (nodeProperties) {
+      const nodesArr = [];
+      const req: any = {};
+      for (const nodeProperty of nodeProperties) {
+        nodesArr.push(new BatchNodePropertyMatch(nodeProperty).prepare());
+      }
+      req.nodeProperties = nodesArr;
+      this.request = req;
+      return;
+    }
+
+    this.request = {
+      nodeProperties: [],
+    };
+  }
+
+  marshal(): BatchDeleteNodePropertiesRequest {
+    return this.request;
+  }
+
+  getNodeProperties(): NodePropertyMatch[] {
+    return this.request.nodeProperties as NodePropertyMatch[];
+  }
+}
+
+export class BatchNode {
+  protected node: IngestNodeRecord;
+
+  constructor(node: IngestNodeRecord) {
+    this.node = node;
+  }
+
+  getNode(): IngestNodeRecord {
+    return this.node;
+  }
+
+  prepare(): Node {
+    let properties!: Property[];
+    if (this.node.properties) {
+      for (const property of this.node.properties) {
+        const metadata = {} as Metadata;
+        if (property.metadata?.assuranceLevel) {
+          metadata['assuranceLevel'] = property.metadata.assuranceLevel;
+        }
+        if (property.metadata?.verificationTime) {
+          metadata['verificationTime'] = property.metadata.verificationTime;
+        }
+        if (property.metadata?.source) {
+          metadata['source'] = property.metadata.source;
+        }
+        if (property.metadata?.customMetadata) {
+          const listCustom: { [key: string]: Value } = {};
+          for (const [key, value] of Object.entries(property.metadata?.customMetadata)) {
+            listCustom[key] = Value.fromJson(Utils.objectToJsonValue(value));
+          }
+          metadata['customMetadata'] = listCustom;
+        }
+        if (properties) {
+          properties.push({
+            type: property.type,
+            value: Value.fromJson(Utils.objectToJsonValue(property.value)),
+            metadata: property.metadata ? metadata : undefined,
+          });
+        }
+      }
+    }
+
+    const node = {
+      externalId: this.node.externalId ?? '',
+      type: this.node.type ?? '',
+      tags: this.node.tags ?? [],
+      properties: properties ?? [],
+      id: this.node.id ?? '',
+      isIdentity: this.node.isIdentity ?? false,
+    } as Node;
+    return node;
+  }
+}
+
+export class BatchNodeMatch {
+  protected node: IngestNodeMatch;
+
+  constructor(node: IngestNodeMatch) {
+    this.node = node;
+  }
+
+  getNode(): IngestNodeMatch {
+    return this.node;
+  }
+
+  prepare(): NodeMatch {
+    const node = {
+      externalId: this.node.externalId ?? '',
+      type: this.node.type ?? '',
+    } as NodeMatch;
+    return node;
+  }
+}
+
+export class BatchNodePropertyMatch {
+  protected nodeProperty: IngestNodePropertyMatch;
+
+  constructor(nodeProperty: IngestNodePropertyMatch) {
+    this.nodeProperty = nodeProperty;
+  }
+
+  getNode(): IngestNodePropertyMatch {
+    return this.nodeProperty;
+  }
+
+  prepare(): NodePropertyMatch {
+    const nodeProperty = {
+      match: {
+        externalId: this.nodeProperty.match.externalId ?? '',
+        type: this.nodeProperty.match.type ?? '',
+      },
+      propertyType: this.nodeProperty.propertyType ?? '',
+    } as NodePropertyMatch;
+    return nodeProperty;
+  }
+}
+
+export class BatchUpsertRelationships {
+  protected request: BatchUpsertRelationshipsRequest;
+
+  constructor(relationships?: IngestRelationship[]) {
+    if (relationships) {
+      const relationshipsArr = [];
+      const req: any = {};
+      for (const relationship of relationships) {
+        relationshipsArr.push(new BatchRelationship(relationship).prepare());
+      }
+      req.relationships = relationshipsArr;
+      this.request = req;
+      return;
+    }
+
+    this.request = {
+      relationships: [],
+    };
+  }
+
+  marshal(): BatchUpsertRelationshipsRequest {
+    return this.request;
+  }
+
+  getRelationships(): Relationship[] {
+    return this.request.relationships as Relationship[];
+  }
+}
+
+export class BatchDeleteRelationships {
+  protected request: BatchDeleteRelationshipsRequest;
+
+  constructor(relationships?: IngestRelationship[]) {
+    if (relationships) {
+      const relationshipsArr = [];
+      const req: any = {};
+      for (const relationship of relationships) {
+        relationshipsArr.push(new BatchRelationship(relationship).prepare());
+      }
+      req.relationships = relationshipsArr;
+      this.request = req;
+      return;
+    }
+
+    this.request = {
+      relationships: [],
+    };
+  }
+
+  marshal(): BatchDeleteRelationshipsRequest {
+    return this.request;
+  }
+
+  getRelationships(): Relationship[] {
+    return this.request.relationships as Relationship[];
+  }
+}
+
+export class BatchDeleteRelationshipProperties {
+  protected request: BatchDeleteRelationshipPropertiesRequest;
+
+  constructor(relationshipProperties?: IngestRelationshipProperty[]) {
+    if (relationshipProperties) {
+      const relationshipsArr = [];
+      const req: any = {};
+      for (const relationshipProperty of relationshipProperties) {
+        relationshipsArr.push(new BatchRelationshipProperty(relationshipProperty).prepare());
+      }
+      req.relationshipProperties = relationshipsArr;
+      this.request = req;
+      return;
+    }
+
+    this.request = {
+      relationshipProperties: [],
+    };
+  }
+
+  marshal(): BatchDeleteRelationshipPropertiesRequest {
+    return this.request;
+  }
+
+  getRelationshipProperties(): RelationshipPropertyMatch[] {
+    return this.request.relationshipProperties as RelationshipPropertyMatch[];
+  }
+}
+
+export class BatchRelationship {
+  protected relationship: IngestRelationship;
+
+  constructor(relationship: IngestRelationship) {
+    this.relationship = relationship;
+  }
+
+  getNode(): IngestRelationship {
+    return this.relationship;
+  }
+
+  prepare(): Relationship {
+    const properties: Property[] = [];
+    if (this.relationship.properties) {
+      for (const property of this.relationship.properties) {
+        const metadata = {} as Metadata;
+        let propertyData = {} as Property;
+        if (property.metadata?.assuranceLevel) {
+          metadata['assuranceLevel'] = property.metadata.assuranceLevel;
+        }
+        if (property.metadata?.verificationTime) {
+          metadata['verificationTime'] = property.metadata.verificationTime;
+        }
+        if (property.metadata?.source) {
+          metadata['source'] = property.metadata.source;
+        }
+        if (property.metadata?.customMetadata) {
+          const listCustom: { [key: string]: Value } = {};
+          for (const [key, value] of Object.entries(property.metadata?.customMetadata)) {
+            listCustom[key] = Value.fromJson(Utils.objectToJsonValue(value));
+          }
+          metadata['customMetadata'] = listCustom;
+        }
+        propertyData = {
+          type: property.type,
+          value: Value.fromJson(Utils.objectToJsonValue(property.value)),
+          metadata: property.metadata ? metadata : undefined,
+        };
+        properties.push(propertyData);
+      }
+    }
+
+    const relationship = {
+      source: {
+        externalId: this.relationship.source?.externalId ?? '',
+        type: this.relationship.source?.type ?? '',
+      } as IngestNodeMatch,
+      target: {
+        externalId: this.relationship.target?.externalId ?? '',
+        type: this.relationship.target?.type ?? '',
+      } as IngestNodeMatch,
+      type: this.relationship?.type ?? '',
+      properties: properties ?? [],
+    } as Relationship;
+    return relationship;
+  }
+}
+
+export class BatchRelationshipProperty {
+  protected relationshipProperty: IngestRelationshipProperty;
+
+  constructor(relationshipProperty: IngestRelationshipProperty) {
+    this.relationshipProperty = relationshipProperty;
+  }
+
+  getNode(): IngestRelationshipProperty {
+    return this.relationshipProperty;
+  }
+
+  prepare(): RelationshipPropertyMatch {
+    const relationshipProperty = {
+      source: {
+        externalId: this.relationshipProperty.source?.externalId ?? '',
+        type: this.relationshipProperty.source?.type ?? '',
+      } as IngestNodeMatch,
+      target: {
+        externalId: this.relationshipProperty.target?.externalId ?? '',
+        type: this.relationshipProperty.target?.type ?? '',
+      } as IngestNodeMatch,
+      type: this.relationshipProperty?.type ?? '',
+      propertyType: this.relationshipProperty.propertyType ?? [],
+    } as RelationshipPropertyMatch;
+    return relationshipProperty;
+  }
+}
+
 /**
  * IngestAPI represents the service interface for data ingestion.
  * @category Clients
@@ -561,6 +941,250 @@ export class IngestClient {
       });
       output.on('end', () => {
         resolve(result);
+      });
+    });
+  }
+
+  /**
+   * @since 0.7.5
+   * @example
+   * await sdk.batchUpsertNodes([
+   *   {
+   *       externalId: 'person1',
+   *       type: 'Person',
+   *       properties: [{
+   *         type: "customProp",
+   *         value: '42',
+   *         metadata: {
+   *            assuranceLevel: 1,
+   *            verificationTime: Utils.dateToTimestamp(new Date()),
+   *            source: "Myself",
+   *            customMetadata: {
+   *                "customdata": 'SomeCustomData'
+   *            },
+   *          }
+   *       }],
+   *     },
+   *    {
+   *       externalId: 'person2',
+   *       type: 'Person',
+   *       properties: [{
+   *         type: "email",
+   *         value: 'person@yahoo.com',
+   *       }],
+   *     }
+   * ]);
+   */
+  batchUpsertNodes(nodes: IngestNodeRecord[]): Promise<BatchUpsertNodesResponse> {
+    const r = new BatchUpsertNodes(nodes);
+    const req: BatchUpsertNodesRequest = r.marshal();
+    return new Promise((resolve, reject) => {
+      this.client.batchUpsertNodes(req, (err, response) => {
+        if (err) reject(err);
+        else if (!response)
+          reject(new SdkError(SdkErrorCode.SDK_CODE_6, SkdErrorText.SDK_CODE_6(IngestClient.name)));
+        else {
+          resolve(response);
+        }
+      });
+    });
+  }
+
+  /**
+   * @since 0.7.5
+   * @example
+   * await sdk.batchUpsertRelationships([
+   *   {
+   *       source: {externalId:'person1', type: 'Person'},
+   *       target: {externalId:'car1', type: 'Car'},
+   *       type: 'OWNS',
+   *       properties: [{
+   *         type: "customProp",
+   *         value: '42',
+   *         metadata: {
+   *            assuranceLevel: 1,
+   *            verificationTime: Utils.dateToTimestamp(new Date()),
+   *            source: "Myself",
+   *            customMetadata: {
+   *                "customdata": 'SomeCustomData'
+   *            },
+   *          }
+   *       }],
+   *     },
+   *    {
+   *       source: {externalId:'person2', type: 'Person'},
+   *       target: {externalId:'car2', type: 'Car'},
+   *       type: 'OWNS',
+   *       properties: [{
+   *         type: "licence",
+   *         value: '4712589',
+   *       }],
+   *     }
+   * ]);
+   */
+  batchUpsertRelationships(
+    relationships: IngestRelationship[],
+  ): Promise<BatchUpsertRelationshipsResponse> {
+    const r = new BatchUpsertRelationships(relationships);
+    const req: BatchUpsertRelationshipsRequest = r.marshal();
+    return new Promise((resolve, reject) => {
+      this.client.batchUpsertRelationships(req, (err, response) => {
+        if (err) reject(err);
+        else if (!response)
+          reject(new SdkError(SdkErrorCode.SDK_CODE_6, SkdErrorText.SDK_CODE_6(IngestClient.name)));
+        else {
+          resolve(response);
+        }
+      });
+    });
+  }
+
+  /**
+   * @since 0.7.5
+   * @example
+   * await sdk.batchDeleteNodes([
+   *   {
+   *       externalId: 'person1',
+   *       type: 'Person',
+   *     },
+   *    {
+   *       externalId: 'person2',
+   *       type: 'Person',
+   *     }
+   * ]);
+   */
+  batchDeleteNodes(nodes: IngestNodeMatch[]): Promise<BatchDeleteNodesResponse> {
+    const r = new BatchDeleteNodes(nodes);
+    const req: BatchDeleteNodesRequest = r.marshal();
+    return new Promise((resolve, reject) => {
+      this.client.batchDeleteNodes(req, (err, response) => {
+        if (err) reject(err);
+        else if (!response)
+          reject(new SdkError(SdkErrorCode.SDK_CODE_6, SkdErrorText.SDK_CODE_6(IngestClient.name)));
+        else {
+          resolve(response);
+        }
+      });
+    });
+  }
+
+  /**
+   * @since 0.7.5
+   * @example
+   * await sdk.batchDeleteNodeProperties([
+   *   {
+   *       match: {
+   *        externalId: 'person1',
+   *        type: 'Person',
+   *      },
+   *      propertyType: 'PropertyType'
+   *     },
+   *   {
+   *       match: {
+   *        externalId: 'person2',
+   *        type: 'Person',
+   *      },
+   *      propertyType: 'PropertyType'
+   *     }
+   * ]);
+   */
+  batchDeleteNodeProperties(
+    nodeProperties: IngestNodePropertyMatch[],
+  ): Promise<BatchDeleteNodePropertiesResponse> {
+    const r = new BatchDeleteNodeProperties(nodeProperties);
+    const req: BatchDeleteNodePropertiesRequest = r.marshal();
+    return new Promise((resolve, reject) => {
+      this.client.batchDeleteNodeProperties(req, (err, response) => {
+        if (err) reject(err);
+        else if (!response)
+          reject(new SdkError(SdkErrorCode.SDK_CODE_6, SkdErrorText.SDK_CODE_6(IngestClient.name)));
+        else {
+          resolve(response);
+        }
+      });
+    });
+  }
+
+  /**
+   * @since 0.7.5
+   * @example
+   * await sdk.batchDeleteRelationships([
+   *   {
+   *       source: {externalId:'person1', type: 'Person'},
+   *       target: {externalId:'car1', type: 'Car'},
+   *       type: 'OWNS',
+   *       properties: [{
+   *         type: "customProp",
+   *         value: '42',
+   *         metadata: {
+   *            assuranceLevel: 1,
+   *            verificationTime: Utils.dateToTimestamp(new Date()),
+   *            source: "Myself",
+   *            customMetadata: {
+   *                "customdata": 'SomeCustomData'
+   *            },
+   *          }
+   *       }],
+   *     },
+   *    {
+   *       source: {externalId:'person2', type: 'Person'},
+   *       target: {externalId:'car2', type: 'Car'},
+   *       type: 'OWNS',
+   *       properties: [{
+   *         type: "licence",
+   *         value: '4712589',
+   *       }],
+   *     }
+   * ]);
+   */
+  batchDeleteRelationships(
+    relationships: IngestRelationship[],
+  ): Promise<BatchDeleteRelationshipsResponse> {
+    const r = new BatchDeleteRelationships(relationships);
+    const req: BatchDeleteRelationshipsRequest = r.marshal();
+    return new Promise((resolve, reject) => {
+      this.client.batchDeleteRelationships(req, (err, response) => {
+        if (err) reject(err);
+        else if (!response)
+          reject(new SdkError(SdkErrorCode.SDK_CODE_6, SkdErrorText.SDK_CODE_6(IngestClient.name)));
+        else {
+          resolve(response);
+        }
+      });
+    });
+  }
+
+  /**
+   * @since 0.7.5
+   * @example
+   * await sdk.batchDeleteRelationshipProperties([
+   *   {
+   *       source: {externalId:'person1', type: 'Person'},
+   *       target: {externalId:'car1', type: 'Car'},
+   *       type: 'OWNS',
+   *       propertyType:'custom'
+   *    },
+   *    {
+   *       source: {externalId:'person2', type: 'Person'},
+   *       target: {externalId:'car2', type: 'Car'},
+   *       type: 'OWNS',
+   *       propertyType:'custom2'
+   *    }
+   * ]);
+   */
+  batchDeleteRelationshipProperties(
+    relationshipProperties: IngestRelationshipProperty[],
+  ): Promise<BatchDeleteRelationshipPropertiesResponse> {
+    const r = new BatchDeleteRelationshipProperties(relationshipProperties);
+    const req: BatchDeleteRelationshipPropertiesRequest = r.marshal();
+    return new Promise((resolve, reject) => {
+      this.client.batchDeleteRelationshipProperties(req, (err, response) => {
+        if (err) reject(err);
+        else if (!response)
+          reject(new SdkError(SdkErrorCode.SDK_CODE_6, SkdErrorText.SDK_CODE_6(IngestClient.name)));
+        else {
+          resolve(response);
+        }
       });
     });
   }

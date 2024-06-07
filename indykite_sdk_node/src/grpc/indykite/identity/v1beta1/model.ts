@@ -848,7 +848,7 @@ class DigitalTwin$Type extends MessageType<DigitalTwin> {
     constructor() {
         super("indykite.identity.v1beta1.DigitalTwin", [
             { no: 1, name: "id", kind: "scalar", T: 12 /*ScalarType.BYTES*/, options: { "validate.rules": { bytes: { len: "16" } } } },
-            { no: 2, name: "tenant_id", kind: "scalar", T: 12 /*ScalarType.BYTES*/, options: { "validate.rules": { bytes: { len: "16" } } } },
+            { no: 2, name: "tenant_id", kind: "scalar", T: 12 /*ScalarType.BYTES*/ },
             { no: 3, name: "kind", kind: "enum", T: () => ["indykite.identity.v1beta1.DigitalTwinKind", DigitalTwinKind, "DIGITAL_TWIN_KIND_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
             { no: 4, name: "state", kind: "enum", T: () => ["indykite.identity.v1beta1.DigitalTwinState", DigitalTwinState, "DIGITAL_TWIN_STATE_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
             { no: 5, name: "tags", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { maxItems: "32", unique: true, items: { string: { maxLen: "64", pattern: "^([A-Z][a-z]+)+$" } } } } } }

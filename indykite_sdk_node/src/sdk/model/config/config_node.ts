@@ -7,11 +7,7 @@ import {
 } from '../../../grpc/indykite/config/v1beta1/config_management_api';
 import { SdkError, SdkErrorCode, SkdErrorText } from '../../error';
 import { Utils } from '../../utils/utils';
-import { AuthFlow } from './authflow/flow';
 import { AuthorizationPolicy } from './authorization_policy';
-import { EmailServiceConfigType } from './email/factory';
-import { OAuth2Client } from './oauth2_client/oauth2_client';
-import { WebAuthnProvider } from './webauthn_provider';
 import { ConsentNode } from './consent_configuration';
 
 /**
@@ -47,8 +43,6 @@ export class ConfigNode {
   public customerId?: string;
   // AppSpaceId this object is directly or indirectly connected to.
   public appSpaceId?: string;
-  // TenantId this object is directly or indirectly connected to.
-  public tenantId?: string;
 
   constructor(public name: string) {}
 
@@ -59,7 +53,6 @@ export class ConfigNode {
     description?: string,
     customerId?: string,
     appSpaceId?: string,
-    tenantId?: string,
   ): ConfigNode {
     if (response.configNode) {
       const tmpConfigNode = new ConfigNode(response.configNode.name);
@@ -75,7 +68,6 @@ export class ConfigNode {
       tmpConfigNode.etag = response.configNode.etag;
       tmpConfigNode.customerId = response.configNode.customerId;
       tmpConfigNode.appSpaceId = response.configNode.appSpaceId;
-      tmpConfigNode.tenantId = response.configNode.tenantId;
       return tmpConfigNode;
     }
 
@@ -87,21 +79,8 @@ export class ConfigNode {
     tmpConfigNode.description = description ? StringValue.fromJson(description) : undefined;
     tmpConfigNode.customerId = customerId;
     tmpConfigNode.appSpaceId = appSpaceId;
-    tmpConfigNode.tenantId = tenantId;
     return tmpConfigNode;
   }
 }
 
-export type ConfigNodeType =
-  | ConfigNode
-  | AuthFlow
-  | EmailServiceConfigType
-  | OAuth2Client
-  // | PasswordProviderConfig
-  | WebAuthnProvider
-  // | AuthenteqProviderConfig
-  // | SAFRProviderConfig
-  | AuthorizationPolicy
-  | ConsentNode;
-// | KnowledgeGraphSchemaConfig
-// | ReadIDProviderConfig
+export type ConfigNodeType = ConfigNode | AuthorizationPolicy | ConsentNode;

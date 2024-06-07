@@ -107,11 +107,12 @@ export interface GrantConsentRequest {
      */
     consentId: string;
     /**
-     * Optional: The consent will be revoked after the data has been fetched.
+     * Optional: Specifies the duration in second that the consent remains valid, ranging from 1 day to 2 years.
+     * Should be lower or equal to the consent's configuration.
      *
-     * @generated from protobuf field: bool revoke_after_use = 3;
+     * @generated from protobuf field: uint64 validity_period = 4;
      */
-    revokeAfterUse: boolean;
+    validityPeriod: string;
 }
 /**
  * @generated from protobuf message indykite.tda.v1beta1.GrantConsentResponse
@@ -355,11 +356,11 @@ class GrantConsentRequest$Type extends MessageType<GrantConsentRequest> {
         super("indykite.tda.v1beta1.GrantConsentRequest", [
             { no: 1, name: "user", kind: "message", T: () => User, options: { "validate.rules": { message: { required: true } } } },
             { no: 2, name: "consent_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
-            { no: 3, name: "revoke_after_use", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+            { no: 4, name: "validity_period", kind: "scalar", T: 4 /*ScalarType.UINT64*/ }
         ]);
     }
     create(value?: PartialMessage<GrantConsentRequest>): GrantConsentRequest {
-        const message = { consentId: "", revokeAfterUse: false };
+        const message = { consentId: "", validityPeriod: "0" };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<GrantConsentRequest>(this, message, value);
@@ -376,8 +377,8 @@ class GrantConsentRequest$Type extends MessageType<GrantConsentRequest> {
                 case /* string consent_id */ 2:
                     message.consentId = reader.string();
                     break;
-                case /* bool revoke_after_use */ 3:
-                    message.revokeAfterUse = reader.bool();
+                case /* uint64 validity_period */ 4:
+                    message.validityPeriod = reader.uint64().toString();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -397,9 +398,9 @@ class GrantConsentRequest$Type extends MessageType<GrantConsentRequest> {
         /* string consent_id = 2; */
         if (message.consentId !== "")
             writer.tag(2, WireType.LengthDelimited).string(message.consentId);
-        /* bool revoke_after_use = 3; */
-        if (message.revokeAfterUse !== false)
-            writer.tag(3, WireType.Varint).bool(message.revokeAfterUse);
+        /* uint64 validity_period = 4; */
+        if (message.validityPeriod !== "0")
+            writer.tag(4, WireType.Varint).uint64(message.validityPeriod);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

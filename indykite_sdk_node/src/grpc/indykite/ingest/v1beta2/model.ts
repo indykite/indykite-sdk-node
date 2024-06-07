@@ -157,8 +157,7 @@ export interface DigitalTwin {
      */
     tags: string[];
     /**
-     * @deprecated
-     * @generated from protobuf field: string tenant_id = 5 [deprecated = true];
+     * @generated from protobuf field: string tenant_id = 5;
      */
     tenantId: string;
     /**
@@ -702,7 +701,7 @@ class DigitalTwin$Type extends MessageType<DigitalTwin> {
                 case /* repeated string tags */ 3:
                     message.tags.push(reader.string());
                     break;
-                case /* string tenant_id = 5 [deprecated = true];*/ 5:
+                case /* string tenant_id */ 5:
                     message.tenantId = reader.string();
                     break;
                 case /* repeated indykite.ingest.v1beta2.IdentityProperty identity_properties = 6 [deprecated = true];*/ 6:
@@ -735,7 +734,7 @@ class DigitalTwin$Type extends MessageType<DigitalTwin> {
         /* repeated string tags = 3; */
         for (let i = 0; i < message.tags.length; i++)
             writer.tag(3, WireType.LengthDelimited).string(message.tags[i]);
-        /* string tenant_id = 5 [deprecated = true]; */
+        /* string tenant_id = 5; */
         if (message.tenantId !== "")
             writer.tag(5, WireType.LengthDelimited).string(message.tenantId);
         /* repeated indykite.ingest.v1beta2.IdentityProperty identity_properties = 6 [deprecated = true]; */

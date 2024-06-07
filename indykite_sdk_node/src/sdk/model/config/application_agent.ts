@@ -42,6 +42,8 @@ export class ApplicationAgent {
     public createdBy?: string,
     // #14 Output only. The user/service id who last changed the configuration.
     public updatedBy?: string,
+    // #15 Restriction list of consent if apply
+    public apiAccessRestriction?: string[],
   ) {}
 
   static deserialize(
@@ -75,6 +77,7 @@ export class ApplicationAgent {
         Utils.timestampToDate(response.applicationAgent.destroyTime),
         response.applicationAgent.createdBy,
         response.applicationAgent.updatedBy,
+        response.applicationAgent.apiAccessRestriction,
       );
     }
 

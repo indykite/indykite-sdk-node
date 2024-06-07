@@ -2043,7 +2043,7 @@ export const GetDigitalTwinResponse = new GetDigitalTwinResponse$Type();
 class ListDigitalTwinsRequest$Type extends MessageType<ListDigitalTwinsRequest> {
     constructor() {
         super("indykite.identity.v1beta1.ListDigitalTwinsRequest", [
-            { no: 1, name: "tenant_id", kind: "scalar", T: 12 /*ScalarType.BYTES*/, options: { "validate.rules": { bytes: { len: "16" } } } },
+            { no: 1, name: "tenant_id", kind: "scalar", T: 12 /*ScalarType.BYTES*/ },
             { no: 2, name: "collection_id", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 3, name: "page_size", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
             { no: 4, name: "page_token", kind: "scalar", T: 9 /*ScalarType.STRING*/ },

@@ -7,14 +7,8 @@ import {
   CreateApplicationSpaceResponse,
   CreateConfigNodeRequest,
   CreateConfigNodeResponse,
-  CreateOAuth2ApplicationRequest,
-  CreateOAuth2ApplicationResponse,
-  CreateOAuth2ProviderRequest,
-  CreateOAuth2ProviderResponse,
   CreateServiceAccountRequest,
   CreateServiceAccountResponse,
-  CreateTenantRequest,
-  CreateTenantResponse,
   DeleteApplicationAgentCredentialRequest,
   DeleteApplicationAgentCredentialResponse,
   DeleteApplicationAgentRequest,
@@ -25,21 +19,14 @@ import {
   DeleteApplicationSpaceResponse,
   DeleteConfigNodeRequest,
   DeleteConfigNodeResponse,
-  DeleteOAuth2ApplicationRequest,
-  DeleteOAuth2ApplicationResponse,
-  DeleteOAuth2ProviderRequest,
-  DeleteOAuth2ProviderResponse,
   DeleteServiceAccountCredentialRequest,
   DeleteServiceAccountRequest,
   DeleteServiceAccountResponse,
-  DeleteTenantRequest,
-  DeleteTenantResponse,
   ListApplicationAgentsRequest,
   ListApplicationSpacesRequest,
   ListApplicationsRequest,
   ListConfigNodeVersionsRequest,
   ListConfigNodeVersionsResponse,
-  ListTenantsRequest,
   ReadApplicationAgentCredentialRequest,
   ReadApplicationAgentCredentialResponse,
   ReadApplicationAgentRequest,
@@ -52,15 +39,9 @@ import {
   ReadConfigNodeResponse,
   ReadCustomerRequest,
   ReadCustomerResponse,
-  ReadOAuth2ApplicationRequest,
-  ReadOAuth2ApplicationResponse,
-  ReadOAuth2ProviderRequest,
-  ReadOAuth2ProviderResponse,
   ReadServiceAccountCredentialRequest,
   ReadServiceAccountRequest,
   ReadServiceAccountResponse,
-  ReadTenantRequest,
-  ReadTenantResponse,
   RegisterApplicationAgentCredentialRequest,
   RegisterApplicationAgentCredentialResponse,
   RegisterServiceAccountCredentialRequest,
@@ -72,14 +53,8 @@ import {
   UpdateApplicationSpaceResponse,
   UpdateConfigNodeRequest,
   UpdateConfigNodeResponse,
-  UpdateOAuth2ApplicationRequest,
-  UpdateOAuth2ApplicationResponse,
-  UpdateOAuth2ProviderRequest,
-  UpdateOAuth2ProviderResponse,
   UpdateServiceAccountRequest,
   UpdateServiceAccountResponse,
-  UpdateTenantRequest,
-  UpdateTenantResponse,
 } from '../grpc/indykite/config/v1beta1/config_management_api';
 import { SdkClient } from './client/client';
 import { SdkErrorCode, SdkError, SkdErrorText } from './error';
@@ -88,12 +63,10 @@ import { StringValue } from '../grpc/google/protobuf/wrappers';
 import { Utils } from './utils/utils';
 import {
   AUTHORIZATION_POLICY_CONFIG,
-  AUTH_FLOW_CONFIG,
   Application,
   ApplicationAgent,
   ApplicationAgentCredential,
   ApplicationSpace,
-  AuthFlow,
   AuthorizationPolicy,
   ConfigNode,
   ConfigNodeFactory,
@@ -101,21 +74,10 @@ import {
   CONSENT_CONFIG,
   ConsentNode,
   Customer,
-  EmailServiceConfigType,
-  OAUTH2_CLIENT_CONFIG,
-  OAuth2Application,
-  OAuth2ApplicationConfig,
-  OAuth2Client,
-  OAuth2Provider,
-  OAuth2ProviderConfig,
   ServiceAccount,
   ServiceAccountCredential,
   ServiceAccountRole,
-  Tenant,
-  WEBAUTHN_PROVIDER_CONFIG,
-  WebAuthnProvider,
 } from './model';
-import { EMAIL_SERVICE_CONFIG } from './model/config/email/factory';
 import { Readable } from 'stream';
 
 export class ConfigClient {
@@ -295,7 +257,6 @@ export class ConfigClient {
    *     'Application agent credentials',
    *     undefined,
    *     undefined,
-   *     'default-tenant-id',
    *   );
    *   if (!creds.agentConfig) {
    *     throw new Error("Application agent credentials were not created");
@@ -308,7 +269,6 @@ export class ConfigClient {
     applicationAgentCredentialsName: string,
     publicKeyType: 'jwk' | 'pem' | undefined,
     publicKey: Buffer | undefined,
-    defaultTenantId: string,
     expireTime?: Date,
   ): Promise<object> {
     let application: CreateApplicationResponse | undefined;
@@ -338,7 +298,6 @@ export class ConfigClient {
         ConfigClient.newRegisterApplicationAgentCredentialRequest(
           applicationAgent.id,
           applicationAgentCredentialsName,
-          defaultTenantId,
           publicKeyType,
           publicKey,
           expireTime,
@@ -373,204 +332,6 @@ export class ConfigClient {
           } else {
             reject(new SdkError(SdkErrorCode.SDK_CODE_3, SkdErrorText.SDK_CODE_3(ConfigNode.name)));
           }
-        }
-      });
-    });
-  }
-
-  /**
-   * @since 0.1.0
-   * @deprecated since 0.4.1 Use createConfigNode
-   * @example
-   * const sendgrid = new SendgridEmailService(
-   *   'default-email-provider',
-   *   '963843b5-983e-4d73-b666-069a98f1ef57',
-   *   true,
-   * );
-   * await sdk.createEmailServiceConfiguration(
-   *   APPLICATION_SPACE_ID,
-   *   sendgrid,
-   * );
-   */
-  createEmailServiceConfiguration(
-    location: string,
-    config: EmailServiceConfigType,
-    bookmarks: string[] = [],
-  ): Promise<EmailServiceConfigType> {
-    const req = CreateConfigNodeRequest.fromJson({
-      location,
-      name: config.name,
-      bookmarks,
-    });
-    req.config = {
-      oneofKind: 'emailServiceConfig',
-      emailServiceConfig: config.marshal(),
-    };
-    return new Promise<EmailServiceConfigType>((resolve, reject) => {
-      this.client.createConfigNode(req, (err, response) => {
-        if (err) reject(err);
-        else if (!response) new SdkError(SdkErrorCode.SDK_CODE_1, 'No email config response');
-        else
-          try {
-            resolve(response as unknown as EmailServiceConfigType);
-          } catch (err) {
-            reject(err);
-          }
-      });
-    });
-  }
-
-  /**
-   * @since 0.1.0
-   * @deprecated since 0.4.1 Use createConfigNode
-   * @example
-   * // auth-flow.yaml file
-   * // configuration:
-   * //     activities:
-   * //         '00000000':
-   * //             '@type': input
-   * //         '00000034':
-   * //             '@type': password
-   * //             nodeConfig:
-   * //                 minPassword: 5
-   * //         000000F0:
-   * //             '@type': success
-   * //         '00000020':
-   * //             '@type': router
-   * //             nodeConfig:
-   * //                 orders:
-   * //                     - '00000034' # Password
-   * //                     - '00000036'
-   * //         '00000036':
-   * //             '@type': action
-   * //             nodeConfig:
-   * //                 actions:
-   * //                     register:
-   * //                         order: 0
-   * //                         locale_key: I18N_REGISTER
-   * //                         icon: register
-   * //         '00000054':
-   * //             '@type': passwordCreate
-   * //     sequences:
-   * //         - sourceRef: '00000000' # Input -> Router
-   * //           targetRef: '00000020'
-   * //         - sourceRef: '00000020' # Router -> Password
-   * //           targetRef: '00000034'
-   * //         - sourceRef: '00000020' # Router -> Action
-   * //           targetRef: '00000036'
-   * //         - sourceRef: '00000034' # Password -> Success
-   * //           targetRef: 000000F0
-   * //           condition: success
-   * //         - sourceRef: '00000036' # Action -> Create password
-   * //           targetRef: '00000054'
-   * //           condition: register
-   * //         - sourceRef: '00000054' # Create password -> Success
-   * //           targetRef: 000000F0
-   * //           condition: success
-   *
-   * const afData = await fs.readFile('./auth-flow.yaml');
-   * await sdk.createAuthflowConfiguration(
-   *   APPLICATION_SPACE_ID,
-   *   new AuthFlow('my-authflow', AuthFlowConfig_Format.BARE_YAML, afData, true),
-   * );
-   */
-  createAuthflowConfiguration(
-    location: string,
-    config: AuthFlow,
-    bookmarks: string[] = [],
-  ): Promise<AuthFlow> {
-    const req = CreateConfigNodeRequest.fromJson({
-      location,
-      name: config.name,
-      bookmarks,
-    });
-    req.config = {
-      oneofKind: 'authFlowConfig',
-      authFlowConfig: config.marshal(),
-    };
-
-    return new Promise((resolve, reject) => {
-      this.client.createConfigNode(req, (err, response) => {
-        if (err) reject(err);
-        else {
-          if (!response) {
-            reject(new SdkError(SdkErrorCode.SDK_CODE_1, 'No auth flow response'));
-            return;
-          }
-
-          try {
-            config.id = response.id;
-            config.etag = response.etag;
-            config.createTime = Utils.timestampToDate(response.createTime);
-            config.updateTime = Utils.timestampToDate(response.updateTime);
-            config.createdBy = response.createdBy;
-            config.updatedBy = response.updatedBy;
-            resolve(config);
-          } catch (err) {
-            reject(err);
-          }
-        }
-      });
-    });
-  }
-
-  /**
-   * @since 0.2.3
-   * @deprecated since 0.4.1 Use createConfigNode
-   * @example
-   * async function example(sdk: ConfigClient) {
-   *   await sdk.createWebAuthnProviderConfiguration(
-   *     APPLICATION_SPACE_ID,
-   *     new WebAuthnProvider({
-   *       attestationPreference: ConveyancePreference.NONE,
-   *       authenticatorAttachment: AuthenticatorAttachment.DEFAULT,
-   *       name: 'my-webauthn-provider',
-   *       displayName: 'My WebAuthn Provider',
-   *       relyingParties: {
-   *         'http://localhost:3000': 'default',
-   *       },
-   *       requireResidentKey: false,
-   *       userVerification: UserVerificationRequirement.PREFERRED,
-   *     }),
-   *   );
-   * }
-   */
-  createWebAuthnProviderConfiguration(
-    location: string,
-    config: WebAuthnProvider,
-    bookmarks: string[] = [],
-  ): Promise<WebAuthnProvider> {
-    const req = CreateConfigNodeRequest.fromJson({
-      location,
-      name: config.name,
-      bookmarks,
-    });
-    req.config = {
-      oneofKind: 'webauthnProviderConfig',
-      webauthnProviderConfig: config.marshal(),
-    };
-
-    if (config.displayName !== undefined) {
-      req.displayName = StringValue.fromJson(config.displayName);
-    }
-    if (config.description !== undefined) {
-      req.description = StringValue.create(config.description);
-    }
-
-    return new Promise((resolve, reject) => {
-      this.client.createConfigNode(req, (err, response) => {
-        if (err) reject(err);
-        else {
-          if (!response) {
-            reject(new SdkError(SdkErrorCode.SDK_CODE_1, 'No webauthn provider response'));
-            return;
-          }
-
-          config.id = response.id;
-          config.etag = response.etag;
-          config.createTime = Utils.timestampToDate(response.createTime);
-          config.updateTime = Utils.timestampToDate(response.updateTime);
-          resolve(config);
         }
       });
     });
@@ -650,210 +411,6 @@ export class ConfigClient {
     });
   }
 
-  /**
-   * @since 0.1.13
-   * @deprecated since 0.4.1 Use createConfigNode
-   * @example
-   * const oauth2Client = await sdk.createOAuth2Client(
-   *   APPLICATION_SPACE_ID,
-   *   new OAuth2Client({
-   *     name: 'default-oauth2-client-tmp',
-   *     allowedScopes: ['openid', 'email', 'profile'],
-   *     clientId: 'client-id-123456789123456789',
-   *     clientSecret: 'client-secret-123456789123456789',
-   *     defaultScopes: ['openid', 'email', 'profile'],
-   *     providerType: OAuth2ProviderType.GOOGLE_COM,
-   *     redirectUri: ['http://localhost:3000/callback'],
-   *   }),
-   * );
-   */
-  createOAuth2Client(
-    location: string,
-    oauth2Client: OAuth2Client,
-    bookmarks: string[] = [],
-  ): Promise<OAuth2Client> {
-    const req = CreateConfigNodeRequest.fromJson({
-      location,
-      name: oauth2Client.name,
-      bookmarks,
-    });
-    if (oauth2Client.displayName !== undefined) {
-      req.displayName = StringValue.fromJson(oauth2Client.displayName);
-    }
-    if (oauth2Client.description !== undefined) {
-      req.description = StringValue.create(oauth2Client.description);
-    }
-    req.config = {
-      oneofKind: 'oauth2ClientConfig',
-      oauth2ClientConfig: oauth2Client.marshal(),
-    };
-
-    return new Promise((resolve, reject) => {
-      this.client.createConfigNode(req, (err, response) => {
-        if (err) reject(err);
-        else {
-          if (!response) {
-            reject(new SdkError(SdkErrorCode.SDK_CODE_1, 'No OAuth2 client response'));
-            return;
-          }
-
-          try {
-            oauth2Client.id = response.id;
-            oauth2Client.etag = response.etag;
-            oauth2Client.createTime = Utils.timestampToDate(response.createTime);
-            oauth2Client.updateTime = Utils.timestampToDate(response.updateTime);
-            resolve(oauth2Client);
-          } catch (err) {
-            reject(err);
-          }
-        }
-      });
-    });
-  }
-
-  static newCreateOAuth2ApplicationRequest(
-    oauth2ProviderId: string,
-    name: string,
-    config: OAuth2ApplicationConfig,
-    displayName?: string,
-    description?: string,
-    bookmarks: string[] = [],
-  ): CreateOAuth2ApplicationRequest {
-    return {
-      oauth2ProviderId,
-      name,
-      bookmarks,
-      config: {
-        ...config,
-        audiences: config.audiences ?? [],
-        description: config.description ?? '',
-        allowedCorsOrigins: config.allowedCorsOrigins ?? [],
-        additionalContacts: config.additionalContacts ?? [],
-        sectorIdentifierUri: config.sectorIdentifierUri ?? '',
-        grantTypes: config.grantTypes ?? [],
-        responseTypes: config.responseTypes ?? [],
-        userinfoSignedResponseAlg: config.userinfoSignedResponseAlg ?? '',
-      },
-      displayName: displayName ? StringValue.create({ value: displayName }) : undefined,
-      description: description ? StringValue.create({ value: description }) : undefined,
-    } as CreateOAuth2ApplicationRequest;
-  }
-
-  /**
-   * https://pkg.go.dev/github.com/indykite/jarvis-sdk-go@v0.11.0/config#Client.CreateOAuth2Application
-   * @since 0.4.1
-   * @example
-   * const oauth2App = await sdk.createOAuth2Application(ConfigClient.newCreateOAuth2ApplicationRequest(
-   *   OAUTH2_PROVIDER_ID,
-   *   'default-oauth2-application',
-   *   new OAuth2ApplicationConfig({
-   *     clientId: 'client-id-123456789123456789',
-   *     displayName: 'OAuth2 Application Name',
-   *     owner: 'Owner Name',
-   *     redirectUris: ['http://localhost:3000/callback'],
-   *     scopes: ['openid'],
-   *     subjectType: ClientSubjectType.PUBLIC,
-   *     tokenEndpointAuthMethod: TokenEndpointAuthMethod.CLIENT_SECRET_BASIC,
-   *     tokenEndpointAuthSigningAlg: 'RS256',
-   *     clientUri: 'http://localhost:3000',
-   *     logoUri: 'http://localhost:3000/logo.png',
-   *     policyUri: 'http://localhost:3000/policy',
-   *     termsOfServiceUri: 'http://localhost:3000/tos',
-   *     userSupportEmailAddress: 'user@example.com',
-   *   }))
-   * );
-   */
-  createOAuth2Application(
-    oAuth2ApplicationRequest: CreateOAuth2ApplicationRequest,
-  ): Promise<CreateOAuth2ApplicationResponse> {
-    return new Promise((resolve, reject) => {
-      this.client.createOAuth2Application(oAuth2ApplicationRequest, (err, response) => {
-        if (err) {
-          reject(err);
-        } else {
-          if (!response)
-            reject(
-              new SdkError(
-                SdkErrorCode.SDK_CODE_3,
-                SkdErrorText.SDK_CODE_3(OAuth2Application.name),
-              ),
-            );
-          else {
-            resolve(response);
-          }
-        }
-      });
-    });
-  }
-
-  static newCreateOAuth2ProviderRequest(
-    appSpaceId: string,
-    name: string,
-    config: OAuth2ProviderConfig,
-    displayName?: string,
-    description?: string,
-    bookmarks: string[] = [],
-  ): CreateOAuth2ProviderRequest {
-    return {
-      appSpaceId,
-      name,
-      config: {
-        ...config,
-        responseTypes: config.responseTypes ?? [],
-        scopes: config.scopes ?? [],
-        tokenEndpointAuthMethod: config.tokenEndpointAuthMethod ?? [],
-        tokenEndpointAuthSigningAlg: config.tokenEndpointAuthSigningAlg ?? [],
-        requestUris: config.requestUris ?? [],
-        requestObjectSigningAlg: config.requestObjectSigningAlg ?? '',
-        frontChannelConsentUri: config.frontChannelConsentUri ?? {},
-        frontChannelLoginUri: config.frontChannelLoginUri ?? {},
-      },
-      bookmarks,
-      displayName: displayName ? StringValue.create({ value: displayName }) : undefined,
-      description: description ? StringValue.create({ value: description }) : undefined,
-    } as CreateOAuth2ProviderRequest;
-  }
-
-  /**
-   * https://pkg.go.dev/github.com/indykite/jarvis-sdk-go@v0.11.0/config#Client.CreateOAuth2Provider
-   * @since 0.4.1
-   * @example
-   * const provider = await sdk.createOAuth2Provider(
-   *   ConfigClient.newCreateOAuth2ProviderRequest(
-   *    appSpace.id,
-   *    'default-oauth2-provider',
-   *    new OAuth2ProviderConfig({
-   *      frontChannelConsentUri: { default: 'http://localhost:3000/consent' },
-   *      frontChannelLoginUri: { default: 'http://localhost:3000/login' },
-   *      grantTypes: [GrantType.AUTHORIZATION_CODE],
-   *      responseTypes: [ResponseType.CODE],
-   *      scopes: ['openid'],
-   *      tokenEndpointAuthMethod: [TokenEndpointAuthMethod.CLIENT_SECRET_BASIC],
-   *      tokenEndpointAuthSigningAlg: ['RS256'],
-   *   })
-   *  )
-   * );
-   */
-  createOAuth2Provider(
-    oAuth2ProviderRequest: CreateOAuth2ProviderRequest,
-  ): Promise<CreateOAuth2ProviderResponse> {
-    return new Promise((resolve, reject) => {
-      this.client.createOAuth2Provider(oAuth2ProviderRequest, (err, response) => {
-        if (err) {
-          reject(err);
-        } else {
-          if (!response) {
-            reject(
-              new SdkError(SdkErrorCode.SDK_CODE_3, SkdErrorText.SDK_CODE_3(OAuth2Provider.name)),
-            );
-          } else {
-            resolve(response);
-          }
-        }
-      });
-    });
-  }
-
   static newCreateServiceAccountRequest(
     location: string,
     name: string,
@@ -896,50 +453,6 @@ export class ConfigClient {
             reject(
               new SdkError(SdkErrorCode.SDK_CODE_3, SkdErrorText.SDK_CODE_3(ServiceAccount.name)),
             );
-          } else {
-            resolve(response);
-          }
-        }
-      });
-    });
-  }
-
-  static newCreateTenantRequest(
-    issuerId: string,
-    name: string,
-    displayName?: string,
-    description?: string,
-    bookmarks: string[] = [],
-  ): CreateTenantRequest {
-    return {
-      issuerId,
-      name,
-      bookmarks,
-      displayName: displayName ? StringValue.create({ value: displayName }) : undefined,
-      description: description ? StringValue.create({ value: description }) : undefined,
-    } as CreateTenantRequest;
-  }
-
-  /**
-   * https://pkg.go.dev/github.com/indykite/jarvis-sdk-go@v0.11.0/config#Client.CreateTenant
-   * @since 0.4.1
-   * @example
-   * await sdk.createTenant(
-   *  ConfigClient.newCreateTenantRequest(
-   *     CUSTOMER_ID,,
-   *     'tenant-name',
-   *     "Default tenant",
-   *  )
-   * );
-   */
-  createTenant(tenantRequest: CreateTenantRequest): Promise<CreateTenantResponse> {
-    return new Promise((resolve, reject) => {
-      this.client.createTenant(tenantRequest, (err, response) => {
-        if (err) {
-          reject(err);
-        } else {
-          if (!response) {
-            reject(new SdkError(SdkErrorCode.SDK_CODE_3, SkdErrorText.SDK_CODE_3(Tenant.name)));
           } else {
             resolve(response);
           }
@@ -1178,85 +691,6 @@ export class ConfigClient {
   }
 
   /**
-   * @since 0.1.0
-   * @example
-   * const config = await sdk.readEmailServiceConfiguration(EMAIL_SERVICE_CONFIG_ID);
-   * await sdk.deleteEmailServiceConfiguration(config);
-   */
-  deleteEmailServiceConfiguration(
-    config: EmailServiceConfigType,
-    bookmarks: string[] = [],
-  ): Promise<boolean> {
-    const req = {
-      id: config.id,
-      bookmarks,
-    } as DeleteConfigNodeRequest;
-    if (config.etag !== undefined) req.etag = StringValue.fromJson(config.etag);
-
-    return new Promise<boolean>((resolve, reject) => {
-      this.client.deleteConfigNode(req, (err, response) => {
-        if (err) reject(false);
-        else if (!response)
-          reject(new SdkError(SdkErrorCode.SDK_CODE_1, 'No email config response'));
-        else {
-          resolve(true);
-        }
-      });
-    });
-  }
-
-  /**
-   * @since 0.1.0
-   * @example
-   * const config = await sdk.readAuthflowConfiguration(AUTH_FLOW_CONFIG_ID);
-   * await sdk.deleteAuthflowConfiguration(config);
-   */
-  deleteAuthflowConfiguration(config: AuthFlow, bookmarks: string[] = []): Promise<boolean> {
-    const req = {
-      id: config.id,
-      bookmarks,
-    } as DeleteConfigNodeRequest;
-    if (config.etag !== undefined) req.etag = StringValue.create({ value: config.etag });
-
-    return new Promise<boolean>((resolve, reject) => {
-      this.client.deleteConfigNode(req, (err, response) => {
-        if (err) reject(false);
-        else if (!response)
-          reject(new SdkError(SdkErrorCode.SDK_CODE_1, 'No auth flow config response'));
-        else {
-          resolve(true);
-        }
-      });
-    });
-  }
-
-  /**
-   * @since 0.2.3
-   * @example
-   * async function example(sdk: ConfigClient, webAuthnProviderId: string) {
-   *   const wp = await sdk.readWebAuthnProviderConfiguration(webAuthnProviderId);
-   *   await sdk.deleteWebAuthnProviderConfiguration(wp);
-   * }
-   */
-  deleteWebAuthnProviderConfiguration(
-    config: WebAuthnProvider,
-    bookmarks: string[] = [],
-  ): Promise<boolean> {
-    const req = {
-      id: config.id,
-      bookmarks,
-    } as DeleteConfigNodeRequest;
-    if (config.etag !== undefined) req.etag = StringValue.create({ value: config.etag });
-
-    return new Promise<boolean>((resolve, reject) => {
-      this.client.deleteConfigNode(req, (err) => {
-        if (err) reject(err);
-        else resolve(true);
-      });
-    });
-  }
-
-  /**
    * @since 0.3.2
    * @deprecated since 0.4.1 Use deleteConfigNode
    * @example
@@ -1279,111 +713,6 @@ export class ConfigClient {
       this.client.deleteConfigNode(req, (err) => {
         if (err) reject(err);
         else resolve(true);
-      });
-    });
-  }
-
-  /**
-   * @since 0.1.13
-   * @deprecated since 0.4.1 Use deleteConfigNode
-   * @example
-   * const oauth2Client = await sdk.deleteOAuth2Client(OAUTH2_CLIENT_ID);
-   */
-  deleteOAuth2Client(config: OAuth2Client, bookmarks: string[] = []): Promise<void> {
-    const req = {
-      id: config.id,
-      bookmarks,
-    } as DeleteConfigNodeRequest;
-    if (config.etag !== undefined) req.etag = StringValue.create({ value: config.etag });
-
-    return new Promise((resolve, reject) => {
-      this.client.deleteConfigNode(req, (err, response) => {
-        if (err) reject(err);
-        else if (!response)
-          reject(new SdkError(SdkErrorCode.SDK_CODE_1, 'No OAuth2 client response'));
-        else {
-          resolve();
-        }
-      });
-    });
-  }
-
-  static newDeleteOAuth2ApplicationRequest(
-    id: string,
-    bookmarks: string[] = [],
-  ): DeleteOAuth2ApplicationRequest {
-    return {
-      id: id,
-      bookmarks,
-    } as DeleteOAuth2ApplicationRequest;
-  }
-
-  /**
-   * https://pkg.go.dev/github.com/indykite/jarvis-sdk-go@v0.11.0/config#Client.DeleteOAuth2Application
-   * @since 0.4.1
-   * @example
-   * const request = ConfigClient.newDeleteOAuth2ApplicationRequest(OAUTH2_APPLICATION_ID);
-   * const oauth2App = await sdk.deleteOAuth2Application(request);
-   */
-  deleteOAuth2Application(
-    oAuth2ApplicationRequest: DeleteOAuth2ApplicationRequest,
-  ): Promise<DeleteOAuth2ApplicationResponse> {
-    return new Promise((resolve, reject) => {
-      this.client.deleteOAuth2Application(oAuth2ApplicationRequest, (err, response) => {
-        if (err) {
-          reject(err);
-        } else {
-          if (!response) {
-            reject(
-              new SdkError(
-                SdkErrorCode.SDK_CODE_3,
-                SkdErrorText.SDK_CODE_3(OAuth2Application.name),
-              ),
-            );
-          } else {
-            resolve(response);
-          }
-        }
-      });
-    });
-  }
-
-  static newDeleteOAuth2ProviderRequest(
-    id: string,
-    bookmarks: string[] = [],
-  ): DeleteOAuth2ProviderRequest {
-    return {
-      id: id,
-      bookmarks,
-    } as DeleteOAuth2ProviderRequest;
-  }
-
-  /**
-   * https://pkg.go.dev/github.com/indykite/jarvis-sdk-go@v0.11.0/config#Client.DeleteOAuth2Provider
-   * @since 0.4.1
-   * @example
-   * const request = ConfigClient.newDeleteOAuth2ProviderRequest(OAUTH2_PROVIDER_ID);
-   * const provider = await sdk.deleteOAuth2Provider(request);
-   */
-  deleteOAuth2Provider(
-    oAuth2ProviderRequest: DeleteOAuth2ProviderRequest,
-  ): Promise<DeleteOAuth2ProviderResponse> {
-    return new Promise((resolve, reject) => {
-      this.client.deleteOAuth2Provider(oAuth2ProviderRequest, (err, response) => {
-        if (err) {
-          reject(err);
-        } else {
-          if (!response) {
-            reject(
-              new SdkError(
-                SdkErrorCode.SDK_CODE_3,
-                SkdErrorText.SDK_CODE_3(OAuth2Application.name),
-              ),
-            );
-          } else {
-            resolve(response);
-          }
-        }
       });
     });
   }
@@ -1435,40 +764,6 @@ export class ConfigClient {
             reject(
               new SdkError(SdkErrorCode.SDK_CODE_3, SkdErrorText.SDK_CODE_3(ServiceAccount.name)),
             );
-          } else {
-            resolve(response);
-          }
-        }
-      });
-    });
-  }
-
-  static newDeleteTenantRequest(tenant: Tenant, bookmarks: string[] = []): DeleteTenantRequest {
-    return {
-      id: tenant.id,
-      bookmarks,
-      etag: tenant.etag ? StringValue.create({ value: tenant.etag }) : undefined,
-    } as DeleteTenantRequest;
-  }
-
-  /**
-   * https://pkg.go.dev/github.com/indykite/jarvis-sdk-go@v0.11.0/config#Client.DeleteTenant
-   * @since 0.4.1
-   * @example
-   * const tenant = await sdk.readTenantByName(
-   *   APPLICATION_SPACE_ID,
-   *   'tenant-name',
-   * );
-   * await sdk.deleteTenant(ConfigClient.newDeleteTenantRequest(tenant));
-   */
-  deleteTenant(tenantRequest: DeleteTenantRequest): Promise<DeleteTenantResponse> {
-    return new Promise((resolve, reject) => {
-      this.client.deleteTenant(tenantRequest, (err, response) => {
-        if (err) {
-          reject(err);
-        } else {
-          if (!response) {
-            reject(new SdkError(SdkErrorCode.SDK_CODE_3, SkdErrorText.SDK_CODE_3(Tenant.name)));
           } else {
             resolve(response);
           }
@@ -1594,49 +889,6 @@ export class ConfigClient {
       .on('readable', () => {
         const value = stream.read();
         if (value && value.application) {
-          result.push(value);
-        }
-      })
-      .on('close', () => {
-        result.push(null);
-      })
-      .on('error', (err) => {
-        result.destroy(err);
-      });
-    return result;
-  }
-
-  static newListTenantsRequest(
-    appSpaceId: string,
-    tenantIds: string[],
-    bookmarks: string[] = [],
-  ): ListTenantsRequest {
-    return {
-      appSpaceId,
-      match: tenantIds,
-      bookmarks,
-    } as ListTenantsRequest;
-  }
-
-  /**
-   * https://pkg.go.dev/github.com/indykite/jarvis-sdk-go@v0.11.0/config#Client.ListTenants
-   * @since 0.4.1
-   * @example
-   * const request = ConfigClient.newListTenantsRequest(APPLICATION_SPACE_ID,['tenant-name1', 'tenant-name2']);
-   * const tenants = await sdk.listTenants(request);
-   */
-  listTenants(tenantsRequest: ListTenantsRequest): Readable {
-    const result = new Readable({
-      read: () => {
-        // Nothing needed to be done here
-      },
-      objectMode: true,
-    });
-    const stream = this.client
-      .listTenants(tenantsRequest)
-      .on('readable', () => {
-        const value = stream.read();
-        if (value && value.tenant) {
           result.push(value);
         }
       })
@@ -1900,117 +1152,6 @@ export class ConfigClient {
   }
 
   /**
-   * @since 0.1.0
-   * @deprecated since 0.4.1 Use readConfigNode
-   * @example
-   * const config = await sdk.readEmailServiceConfiguration(EMAIL_SERVICE_CONFIG_ID);
-   * config.displayName = 'My new name';
-   * await sdk.updateEmailServiceConfiguration(config);
-   */
-  readEmailServiceConfiguration(
-    id: string,
-    bookmarks: string[] = [],
-    version = '',
-  ): Promise<EmailServiceConfigType> {
-    return new Promise((resolve, reject) => {
-      this.client.readConfigNode({ id, bookmarks, version }, (err, response) => {
-        if (err) reject(err);
-        else
-          try {
-            if (response && response.configNode) {
-              const ret = ConfigNodeFactory.createInstance(
-                response.configNode,
-              ) as EmailServiceConfigType;
-              resolve(ret);
-            } else {
-              reject(new SdkError(SdkErrorCode.SDK_CODE_1, 'config_error_read_emailconfiguration'));
-            }
-          } catch (err) {
-            reject(err);
-          }
-      });
-    });
-  }
-
-  /**
-   * @since 0.1.0
-   * @deprecated since 0.4.1 Use readConfigNode
-   * @example
-   * const config = await sdk.readAuthflowConfiguration(AUTH_FLOW_CONFIG_ID);
-   * config.displayName = 'My new name';
-   * await sdk.updateAuthflowConfiguration(config);
-   */
-  readAuthflowConfiguration(id: string, bookmarks: string[] = [], version = ''): Promise<AuthFlow> {
-    return new Promise((resolve, reject) => {
-      this.client.readConfigNode({ id, bookmarks, version }, (err, response) => {
-        if (err) reject(err);
-        else
-          try {
-            if (response && response.configNode) {
-              const ret = ConfigNodeFactory.createInstance(response.configNode) as AuthFlow;
-              resolve(ret);
-            } else {
-              reject(
-                new SdkError(SdkErrorCode.SDK_CODE_1, 'config_error_read_authflowconfiguration'),
-              );
-            }
-          } catch (err) {
-            reject(err);
-          }
-      });
-    });
-  }
-
-  /**
-   * @since 0.2.3
-   * @deprecated since 0.4.1 Use readConfigNode
-   * @example
-   * async function example(sdk: ConfigClient) {
-   *   const createdWp = await sdk.createWebAuthnProviderConfiguration(
-   *     APPLICATION_SPACE_ID,
-   *     new WebAuthnProvider({
-   *       attestationPreference: ConveyancePreference.NONE,
-   *       authenticatorAttachment: AuthenticatorAttachment.DEFAULT,
-   *       name: 'my-webauthn-provider',
-   *       displayName: 'My WebAuthn Provider',
-   *       relyingParties: {
-   *         'http://localhost:3000': 'default',
-   *       },
-   *       requireResidentKey: false,
-   *       userVerification: UserVerificationRequirement.PREFERRED,
-   *     }),
-   *   );
-   *
-   *   // Store the WebAuthn provider ID somewhere (createdWp.id) so that you can use the ID later.
-   *
-   *   const wp = await sdk.readWebAuthnProviderConfiguration(createdWp.id);
-   *   console.log(JSON.stringify(wp, null, 2));
-   * }
-   */
-  readWebAuthnProviderConfiguration(
-    id: string,
-    bookmarks: string[] = [],
-    version = '',
-  ): Promise<WebAuthnProvider> {
-    return new Promise((resolve, reject) => {
-      this.client.readConfigNode({ id, bookmarks, version }, (err, response) => {
-        if (err) reject(err);
-        else if (response && response.configNode) {
-          const ret = ConfigNodeFactory.createInstance(response.configNode) as WebAuthnProvider;
-          resolve(ret);
-        } else {
-          reject(
-            new SdkError(
-              SdkErrorCode.SDK_CODE_1,
-              'config_error_read_webauthnproviderconfiguration',
-            ),
-          );
-        }
-      });
-    });
-  }
-
-  /**
    * @since 0.3.2
    * @deprecated since 0.4.1 Use readConfigNode
    * @example
@@ -2071,32 +1212,6 @@ export class ConfigClient {
     });
   }
 
-  /**
-   * @since 0.1.13
-   * @deprecated since 0.4.1 Use readConfigNode
-   *
-   * @example
-   * const oauth2Client = await sdk.readOAuth2Client(OAUTH2_CLIENT_ID);
-   */
-  readOAuth2Client(id: string, bookmarks: string[] = [], version = ''): Promise<OAuth2Client> {
-    return new Promise((resolve, reject) => {
-      this.client.readConfigNode({ id, bookmarks, version }, (err, response) => {
-        if (err) reject(err);
-        else
-          try {
-            if (response && response.configNode) {
-              const ret = ConfigNodeFactory.createInstance(response.configNode) as OAuth2Client;
-              resolve(ret);
-            } else {
-              reject(new SdkError(SdkErrorCode.SDK_CODE_1, 'config_error_read_oauth2client'));
-            }
-          } catch (err) {
-            reject(err);
-          }
-      });
-    });
-  }
-
   static newReadCustomerRequest(
     kind = 'id',
     idOrName: string,
@@ -2139,83 +1254,6 @@ export class ConfigClient {
         } else {
           if (!response) {
             reject(new SdkError(SdkErrorCode.SDK_CODE_3, SkdErrorText.SDK_CODE_3(Customer.name)));
-          } else {
-            resolve(response);
-          }
-        }
-      });
-    });
-  }
-
-  static newReadOAuth2ApplicationRequest(
-    id: string,
-    bookmarks: string[] = [],
-  ): ReadOAuth2ApplicationRequest {
-    return {
-      id,
-      bookmarks,
-    } as ReadOAuth2ApplicationRequest;
-  }
-
-  /**
-   * https://pkg.go.dev/github.com/indykite/jarvis-sdk-go@v0.11.0/config#Client.ReadOAuth2Application
-   * @since 0.4.1
-   * @example
-   * const request = ConfigClien.newReadOAuth2ApplicationRequest(OAUTH2_APPLICATION_ID);
-   * const oauth2App = await sdk.readOAuth2Application(request);
-   */
-  readOAuth2Application(
-    oAuth2ApplicationRequest: ReadOAuth2ApplicationRequest,
-  ): Promise<ReadOAuth2ApplicationResponse> {
-    return new Promise((resolve, reject) => {
-      this.client.readOAuth2Application(oAuth2ApplicationRequest, (err, response) => {
-        if (err) {
-          reject(err);
-        } else {
-          if (!response) {
-            reject(
-              new SdkError(
-                SdkErrorCode.SDK_CODE_3,
-                SkdErrorText.SDK_CODE_3(OAuth2Application.name),
-              ),
-            );
-          } else {
-            resolve(response);
-          }
-        }
-      });
-    });
-  }
-
-  static newReadOAuth2ProviderRequest(
-    id: string,
-    bookmarks: string[] = [],
-  ): ReadOAuth2ProviderRequest {
-    return {
-      id,
-      bookmarks,
-    } as ReadOAuth2ProviderRequest;
-  }
-
-  /**
-   * https://pkg.go.dev/github.com/indykite/jarvis-sdk-go@v0.11.0/config#Client.ReadOAuth2Provider
-   * @since 0.4.1
-   * @example
-   * const request = ConfigClient.newReadOAuth2ProviderRequest(OAUTH2_PROVIDER_ID);
-   * const provider = await sdk.readOAuth2Provider(request);
-   */
-  readOAuth2Provider(
-    oAuth2ProviderRequest: ReadOAuth2ProviderRequest,
-  ): Promise<ReadOAuth2ProviderResponse> {
-    return new Promise((resolve, reject) => {
-      this.client.readOAuth2Provider(oAuth2ProviderRequest, (err, response) => {
-        if (err) {
-          reject(err);
-        } else {
-          if (!response) {
-            reject(
-              new SdkError(SdkErrorCode.SDK_CODE_3, SkdErrorText.SDK_CODE_3(OAuth2Provider.name)),
-            );
           } else {
             resolve(response);
           }
@@ -2312,64 +1350,9 @@ export class ConfigClient {
     });
   }
 
-  static newReadTenantRequest(
-    kind = 'id',
-    id: string,
-    name = '',
-    bookmarks: string[] = [],
-  ): ReadTenantRequest {
-    switch (kind) {
-      case 'id':
-      default:
-        return {
-          identifier: {
-            oneofKind: kind,
-            id, //SERVICE_ACCOUNT_ID
-          },
-          bookmarks,
-        } as ReadTenantRequest;
-      case 'name':
-        return {
-          identifier: {
-            oneofKind: kind,
-            name: {
-              location: id, //CUSTOMER_ID,
-              name,
-            },
-          },
-          bookmarks,
-        } as ReadTenantRequest;
-    }
-  }
-
-  /**
-   * https://pkg.go.dev/github.com/indykite/jarvis-sdk-go@v0.11.0/config#Client.ReadTenant
-   * @since 0.4.1
-   * @example
-   * const request = ConfigClient.newReadTenantRequest('id',TENANT_ID);
-   * const request = ConfigClient.newReadTenantRequest('name',APPLICATION_SPACE_ID,'tenant-name');
-   * const tenant = await sdk.readTenant(request);
-   */
-  readTenant(tenantRequest: ReadTenantRequest): Promise<ReadTenantResponse> {
-    return new Promise((resolve, reject) => {
-      this.client.readTenant(tenantRequest, (err, response) => {
-        if (err) {
-          reject(err);
-        } else {
-          if (!response) {
-            reject(new SdkError(SdkErrorCode.SDK_CODE_3, SkdErrorText.SDK_CODE_3(Tenant.name)));
-          } else {
-            resolve(response);
-          }
-        }
-      });
-    });
-  }
-
   static newRegisterApplicationAgentCredentialRequest(
     applicationAgentId: string,
     displayName: string,
-    defaultTenantId: string,
     publicKeyType?: 'jwk' | 'pem',
     publicKey?: Buffer,
     expireTime?: Date,
@@ -2378,7 +1361,6 @@ export class ConfigClient {
     return {
       applicationAgentId,
       displayName,
-      defaultTenantId,
       publicKey: {
         oneofKind: publicKeyType ? publicKeyType : undefined,
         [publicKeyType?.toString() ?? 'jwk']: publicKey ? publicKey : undefined,
@@ -2395,7 +1377,6 @@ export class ConfigClient {
    * const request = ConfigClient.newRegisterApplicationAgentCredentialRequest(
    *   APPLICATION_AGENT_ID,
    *   'Credential Name',
-   *   TENANT_ID,
    * );
    * const appCredentials = await sdk.registerApplicationAgentCredential(request)
    * // Credentials are stored in `appCredentials.agentConfig` property
@@ -2651,30 +1632,6 @@ export class ConfigClient {
         : undefined,
       description: configNode.description ? StringValue.create(configNode.description) : undefined,
     } as UpdateConfigNodeRequest;
-    if (configNode instanceof AuthFlow) {
-      request.config = {
-        oneofKind: AUTH_FLOW_CONFIG,
-        authFlowConfig: configNode.marshal(),
-      };
-    }
-    if (configNode instanceof EmailServiceConfigType) {
-      request.config = {
-        oneofKind: EMAIL_SERVICE_CONFIG,
-        emailServiceConfig: configNode.marshal(),
-      };
-    }
-    if (configNode instanceof OAuth2Client) {
-      request.config = {
-        oneofKind: OAUTH2_CLIENT_CONFIG,
-        oauth2ClientConfig: configNode.marshal(),
-      };
-    }
-    if (configNode instanceof WebAuthnProvider) {
-      request.config = {
-        oneofKind: WEBAUTHN_PROVIDER_CONFIG,
-        webauthnProviderConfig: configNode.marshal(),
-      };
-    }
     if (configNode instanceof AuthorizationPolicy) {
       request.config = {
         oneofKind: AUTHORIZATION_POLICY_CONFIG,
@@ -2716,153 +1673,6 @@ export class ConfigClient {
               ),
             );
           }
-        }
-      });
-    });
-  }
-
-  /**
-   * @since 0.1.0
-   * @deprecated since 0.4.1 Use updateConfigNode
-   * @example
-   * const config = await sdk.readEmailServiceConfiguration(EMAIL_SERVICE_CONFIG_ID);
-   * config.displayName = 'My new name';
-   * await sdk.updateEmailServiceConfiguration(config);
-   */
-  updateEmailServiceConfiguration(
-    config: EmailServiceConfigType,
-    bookmarks: string[] = [],
-  ): Promise<EmailServiceConfigType> {
-    const req = {
-      id: config.id,
-      bookmarks,
-    } as UpdateConfigNodeRequest;
-    if (config.etag) req.etag = StringValue.fromJson(config.etag);
-    if (config.displayName !== undefined)
-      req.displayName = StringValue.fromJson(config.displayName);
-    if (config.description !== undefined) req.description = StringValue.create(config.description);
-    req.config = {
-      oneofKind: 'emailServiceConfig',
-      emailServiceConfig: config.marshal(),
-    };
-
-    return new Promise<EmailServiceConfigType>((resolve, reject) => {
-      this.client.updateConfigNode(req, (err, response) => {
-        if (err) reject(err);
-        else
-          try {
-            if (response && response.id === config.id) {
-              config.etag = response.etag;
-              config.updateTime = Utils.timestampToDate(response.updateTime);
-              resolve(config);
-            } else {
-              reject(
-                new SdkError(
-                  SdkErrorCode.SDK_CODE_1,
-                  `Update returned with different id: req.iq=${config.id}, res.id=${
-                    response ? response.id : 'undefined'
-                  }`,
-                ),
-              );
-            }
-          } catch (err) {
-            reject(err);
-          }
-      });
-    });
-  }
-
-  /**
-   * @since 0.1.0
-   * @deprecated since 0.4.1 Use updateConfigNode
-   * @example
-   * const config = await sdk.readAuthflowConfiguration(AUTH_FLOW_CONFIG_ID);
-   * config.displayName = 'My new name';
-   * await sdk.updateAuthflowConfiguration(config);
-   */
-  updateAuthflowConfiguration(config: AuthFlow, bookmarks: string[] = []): Promise<AuthFlow> {
-    const req = {
-      id: config.id,
-      bookmarks,
-    } as UpdateConfigNodeRequest;
-    if (config.etag !== undefined) req.etag = StringValue.fromJson(config.etag);
-    if (config.displayName !== undefined)
-      req.displayName = StringValue.fromJson(config.displayName);
-    if (config.description !== undefined) req.description = StringValue.create(config.description);
-    req.config = {
-      oneofKind: 'authFlowConfig',
-      authFlowConfig: config.marshal(),
-    };
-
-    return new Promise<AuthFlow>((resolve, reject) => {
-      this.client.updateConfigNode(req, (err, response) => {
-        if (err) reject(err);
-        else
-          try {
-            if (response && response.id === config.id) {
-              config.etag = response.etag;
-              config.updateTime = Utils.timestampToDate(response.updateTime);
-              resolve(config);
-            } else {
-              reject(
-                new SdkError(
-                  SdkErrorCode.SDK_CODE_1,
-                  `Update returned with different id: req.iq=${config.id}, res.id=${
-                    response ? response.id : 'undefined'
-                  }`,
-                ),
-              );
-            }
-          } catch (err) {
-            reject(err);
-          }
-      });
-    });
-  }
-
-  /**
-   * @since 0.2.3
-   * @deprecated since 0.4.1 Use updateConfigNode
-   * @example
-   * async function example(sdk: ConfigClient, webAuthnProviderId: string) {
-   *   const wp = await sdk.readWebAuthnProviderConfiguration(webAuthnProviderId);
-   *   wp.displayName = 'New Display name';
-   *   await sdk.updateWebAuthnProviderConfiguration(wp);
-   * }
-   */
-  updateWebAuthnProviderConfiguration(
-    config: WebAuthnProvider,
-    bookmarks: string[] = [],
-  ): Promise<WebAuthnProvider> {
-    const req = {
-      id: config.id,
-      bookmarks,
-    } as UpdateConfigNodeRequest;
-    if (config.etag !== undefined) req.etag = StringValue.create({ value: config.etag });
-    if (config.displayName !== undefined)
-      req.displayName = StringValue.create({ value: config.displayName });
-    if (config.description !== undefined) req.description = StringValue.create(config.description);
-    req.config = {
-      oneofKind: 'webauthnProviderConfig',
-      webauthnProviderConfig: config.marshal(),
-    };
-
-    return new Promise<WebAuthnProvider>((resolve, reject) => {
-      this.client.updateConfigNode(req, (err, response) => {
-        if (err) reject(err);
-        else if (response && response.id === config.id) {
-          config.etag = response.etag;
-          config.updateTime = Utils.timestampToDate(response.updateTime);
-          resolve(config);
-        } else {
-          reject(
-            new SdkError(
-              SdkErrorCode.SDK_CODE_1,
-              `Update returned with different id: req.iq=${config.id}, res.id=${
-                response ? response.id : 'undefined'
-              }`,
-            ),
-          );
         }
       });
     });
@@ -2916,154 +1726,6 @@ export class ConfigClient {
     });
   }
 
-  /**
-   * @since 0.1.13
-   * @deprecated since 0.4.1 Use updateConfigNode*
-   * @example
-   * const oauth2Client = await sdk.readOAuth2Client(OAUTH2_CLIENT_ID);
-   * oauth2Client.displayName = 'New Name';
-   * await sdk.updateOAuth2Client(oauth2Client);
-   */
-  updateOAuth2Client(config: OAuth2Client, bookmarks: string[] = []): Promise<OAuth2Client> {
-    const req = {
-      id: config.id,
-      bookmarks,
-    } as UpdateConfigNodeRequest;
-    if (config.etag !== undefined) req.etag = StringValue.create({ value: config.etag });
-    if (config.displayName !== undefined)
-      req.displayName = StringValue.create({ value: config.displayName });
-    if (config.description !== undefined) req.description = StringValue.create(config.description);
-    req.config = {
-      oneofKind: 'oauth2ClientConfig',
-      oauth2ClientConfig: config.marshal(),
-    };
-
-    return new Promise<OAuth2Client>((resolve, reject) => {
-      this.client.updateConfigNode(req, (err, response) => {
-        if (err) reject(err);
-        else
-          try {
-            if (response && response.id === config.id) {
-              config.etag = response.etag;
-              config.updateTime = Utils.timestampToDate(response.updateTime);
-              resolve(config);
-            } else {
-              reject(
-                new SdkError(
-                  SdkErrorCode.SDK_CODE_1,
-                  `Update returned with different id: req.iq=${config.id}, res.id=${
-                    response ? response.id : 'undefined'
-                  }`,
-                ),
-              );
-            }
-          } catch (err) {
-            reject(err);
-          }
-      });
-    });
-  }
-
-  static newUpdateOAuth2ApplicationRequest(
-    oauth2Client: OAuth2Application,
-    bookmarks: string[] = [],
-  ): UpdateOAuth2ApplicationRequest {
-    return {
-      id: oauth2Client.id,
-      bookmarks,
-      etag: oauth2Client.etag ? StringValue.create({ value: oauth2Client.etag }) : undefined,
-      displayName: oauth2Client.displayName
-        ? StringValue.create({ value: oauth2Client.displayName })
-        : undefined,
-      description: oauth2Client.description
-        ? StringValue.create({ value: oauth2Client.description })
-        : undefined,
-      config: oauth2Client.config?.marshal() ?? undefined,
-    } as UpdateOAuth2ApplicationRequest;
-  }
-
-  /**
-   * https://pkg.go.dev/github.com/indykite/jarvis-sdk-go@v0.11.0/config#Client.UpdateOAuth2Application
-   * @since 0.4.1
-   * @example
-   * const oauth2App = await sdk.readOAuth2Application(OAUTH2_APPLICATION_ID);
-   * oauth2App.displayName = 'New Name';
-   * const request = ConfigClient.newUpdateOAuth2ApplicationRequest(oauth2App);
-   * await sdk.updateOAuth2Application(request);
-   */
-  updateOAuth2Application(
-    oAuth2ApplicationRequest: UpdateOAuth2ApplicationRequest,
-  ): Promise<UpdateOAuth2ApplicationResponse> {
-    return new Promise((resolve, reject) => {
-      this.client.updateOAuth2Application(oAuth2ApplicationRequest, (err, response) => {
-        if (err) {
-          reject(err);
-        } else {
-          if (response && response.id === oAuth2ApplicationRequest.id) {
-            resolve(response);
-          } else {
-            reject(
-              new SdkError(
-                SdkErrorCode.SDK_CODE_4,
-                SkdErrorText.SDK_CODE_4(oAuth2ApplicationRequest.id, response?.id),
-              ),
-            );
-          }
-        }
-      });
-    });
-  }
-
-  static newUpdateOAuth2ProviderRequest(
-    oauth2Provider: OAuth2Provider,
-    bookmarks: string[] = [],
-  ): UpdateOAuth2ProviderRequest {
-    return {
-      id: oauth2Provider.id,
-      bookmarks,
-      etag: oauth2Provider.etag ? StringValue.create({ value: oauth2Provider.etag }) : undefined,
-      displayName: oauth2Provider.displayName
-        ? StringValue.create({ value: oauth2Provider.displayName })
-        : undefined,
-      description: oauth2Provider.description
-        ? StringValue.create({ value: oauth2Provider.description })
-        : undefined,
-      config: oauth2Provider.config?.marshal() ?? undefined,
-    } as UpdateOAuth2ProviderRequest;
-  }
-
-  /**
-   * https://pkg.go.dev/github.com/indykite/jarvis-sdk-go@v0.11.0/config#Client.UpdateOAuth2Provider
-   * @since 0.4.1
-   * @example
-   * const provider = await sdk.readOAuth2Provider(OAUTH2_PROVIDER_ID);
-   * provider.displayName = 'New Name';
-   * const request = ConfigClient.newUpdateOAuth2ProviderRequest(provider);
-   * await sdk.updateOAuth2Provider(request);
-   */
-  updateOAuth2Provider(
-    oAuth2ProviderRequest: UpdateOAuth2ProviderRequest,
-  ): Promise<UpdateOAuth2ProviderResponse> {
-    return new Promise((resolve, reject) => {
-      this.client.updateOAuth2Provider(oAuth2ProviderRequest, (err, response) => {
-        if (err) {
-          reject(err);
-        } else {
-          if (response && response.id === oAuth2ProviderRequest.id) {
-            resolve(response);
-          } else {
-            reject(
-              new SdkError(
-                SdkErrorCode.SDK_CODE_4,
-                SkdErrorText.SDK_CODE_4(oAuth2ProviderRequest.id, response?.id),
-              ),
-            );
-          }
-        }
-      });
-    });
-  }
-
   static newUpdateServiceAccountRequest(
     serviceAccount: ServiceAccount,
     bookmarks: string[] = [],
@@ -3108,53 +1770,6 @@ export class ConfigClient {
               new SdkError(
                 SdkErrorCode.SDK_CODE_4,
                 SkdErrorText.SDK_CODE_4(serviceAccountRequest.id, response?.id),
-              ),
-            );
-          }
-        }
-      });
-    });
-  }
-
-  static newUpdateTenantRequest(tenant: Tenant, bookmarks: string[] = []): UpdateTenantRequest {
-    return {
-      id: tenant.id,
-      bookmarks,
-      etag: tenant.etag ? StringValue.create({ value: tenant.etag }) : undefined,
-      displayName: tenant.displayName
-        ? StringValue.create({ value: tenant.displayName })
-        : undefined,
-      description: tenant.description
-        ? StringValue.create({ value: tenant.description })
-        : undefined,
-    } as UpdateTenantRequest;
-  }
-
-  /**
-   * https://pkg.go.dev/github.com/indykite/jarvis-sdk-go@v0.11.0/config#Client.UpdateTenant
-   * @since 0.4.1
-   * @example
-   * const tenant = await sdk.readTenantByName(
-   *   APPLICATION_SPACE_ID,
-   *   'tenant-name',
-   * );
-   * tenant.displayName = 'New Name';
-   * const request = ConfigClient.newUpdateTenantRequest(tenant);
-   * await sdk.updateTenant(request);
-   */
-  updateTenant(tenantRequest: UpdateTenantRequest): Promise<UpdateTenantResponse> {
-    return new Promise((resolve, reject) => {
-      this.client.updateTenant(tenantRequest, (err, response) => {
-        if (err) {
-          reject(err);
-        } else {
-          if (response && response.id === tenantRequest.id) {
-            resolve(response);
-          } else {
-            reject(
-              new SdkError(
-                SdkErrorCode.SDK_CODE_4,
-                SkdErrorText.SDK_CODE_4(tenantRequest.id, response?.id),
               ),
             );
           }

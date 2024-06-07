@@ -27,10 +27,123 @@ import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MESSAGE_TYPE } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
-import { Info } from "./model";
 import { Status } from "../../../google/rpc/status";
 import { RecordError } from "./model";
 import { Record } from "./model";
+import { DeleteData_RelationshipPropertyMatch } from "./model";
+import { DeleteData_NodePropertyMatch } from "./model";
+import { NodeMatch } from "./model";
+import { Relationship } from "./model";
+import { Info } from "./model";
+import { Node } from "../../knowledge/objects/v1beta1/ikg";
+/**
+ * @generated from protobuf message indykite.ingest.v1beta3.BatchUpsertNodesRequest
+ */
+export interface BatchUpsertNodesRequest {
+    /**
+     * @generated from protobuf field: repeated indykite.knowledge.objects.v1beta1.Node nodes = 1;
+     */
+    nodes: Node[];
+}
+/**
+ * @generated from protobuf message indykite.ingest.v1beta3.BatchUpsertNodesResponse
+ */
+export interface BatchUpsertNodesResponse {
+    /**
+     * @generated from protobuf field: repeated indykite.ingest.v1beta3.Info results = 1;
+     */
+    results: Info[];
+}
+/**
+ * @generated from protobuf message indykite.ingest.v1beta3.BatchUpsertRelationshipsRequest
+ */
+export interface BatchUpsertRelationshipsRequest {
+    /**
+     * @generated from protobuf field: repeated indykite.ingest.v1beta3.Relationship relationships = 1;
+     */
+    relationships: Relationship[];
+}
+/**
+ * @generated from protobuf message indykite.ingest.v1beta3.BatchUpsertRelationshipsResponse
+ */
+export interface BatchUpsertRelationshipsResponse {
+    /**
+     * @generated from protobuf field: repeated indykite.ingest.v1beta3.Info results = 1;
+     */
+    results: Info[];
+}
+/**
+ * @generated from protobuf message indykite.ingest.v1beta3.BatchDeleteNodesRequest
+ */
+export interface BatchDeleteNodesRequest {
+    /**
+     * @generated from protobuf field: repeated indykite.ingest.v1beta3.NodeMatch nodes = 1;
+     */
+    nodes: NodeMatch[];
+}
+/**
+ * @generated from protobuf message indykite.ingest.v1beta3.BatchDeleteNodesResponse
+ */
+export interface BatchDeleteNodesResponse {
+    /**
+     * @generated from protobuf field: repeated indykite.ingest.v1beta3.Info results = 1;
+     */
+    results: Info[];
+}
+/**
+ * @generated from protobuf message indykite.ingest.v1beta3.BatchDeleteRelationshipsRequest
+ */
+export interface BatchDeleteRelationshipsRequest {
+    /**
+     * @generated from protobuf field: repeated indykite.ingest.v1beta3.Relationship relationships = 1;
+     */
+    relationships: Relationship[];
+}
+/**
+ * @generated from protobuf message indykite.ingest.v1beta3.BatchDeleteRelationshipsResponse
+ */
+export interface BatchDeleteRelationshipsResponse {
+    /**
+     * @generated from protobuf field: repeated indykite.ingest.v1beta3.Info results = 1;
+     */
+    results: Info[];
+}
+/**
+ * @generated from protobuf message indykite.ingest.v1beta3.BatchDeleteNodePropertiesRequest
+ */
+export interface BatchDeleteNodePropertiesRequest {
+    /**
+     * @generated from protobuf field: repeated indykite.ingest.v1beta3.DeleteData.NodePropertyMatch node_properties = 1;
+     */
+    nodeProperties: DeleteData_NodePropertyMatch[];
+}
+/**
+ * @generated from protobuf message indykite.ingest.v1beta3.BatchDeleteNodePropertiesResponse
+ */
+export interface BatchDeleteNodePropertiesResponse {
+    /**
+     * @generated from protobuf field: repeated indykite.ingest.v1beta3.Info results = 1;
+     */
+    results: Info[];
+}
+/**
+ * @generated from protobuf message indykite.ingest.v1beta3.BatchDeleteRelationshipPropertiesRequest
+ */
+export interface BatchDeleteRelationshipPropertiesRequest {
+    /**
+     * @generated from protobuf field: repeated indykite.ingest.v1beta3.DeleteData.RelationshipPropertyMatch relationship_properties = 1;
+     */
+    relationshipProperties: DeleteData_RelationshipPropertyMatch[];
+}
+/**
+ * @generated from protobuf message indykite.ingest.v1beta3.BatchDeleteRelationshipPropertiesResponse
+ */
+export interface BatchDeleteRelationshipPropertiesResponse {
+    /**
+     * @generated from protobuf field: repeated indykite.ingest.v1beta3.Info results = 1;
+     */
+    results: Info[];
+}
 /**
  * @generated from protobuf message indykite.ingest.v1beta3.StreamRecordsRequest
  */
@@ -97,6 +210,570 @@ export interface IngestRecordResponse {
      */
     info?: Info;
 }
+// @generated message type with reflection information, may provide speed optimized methods
+class BatchUpsertNodesRequest$Type extends MessageType<BatchUpsertNodesRequest> {
+    constructor() {
+        super("indykite.ingest.v1beta3.BatchUpsertNodesRequest", [
+            { no: 1, name: "nodes", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Node, options: { "validate.rules": { repeated: { minItems: "1", maxItems: "250" } } } }
+        ]);
+    }
+    create(value?: PartialMessage<BatchUpsertNodesRequest>): BatchUpsertNodesRequest {
+        const message = { nodes: [] };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<BatchUpsertNodesRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: BatchUpsertNodesRequest): BatchUpsertNodesRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* repeated indykite.knowledge.objects.v1beta1.Node nodes */ 1:
+                    message.nodes.push(Node.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: BatchUpsertNodesRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* repeated indykite.knowledge.objects.v1beta1.Node nodes = 1; */
+        for (let i = 0; i < message.nodes.length; i++)
+            Node.internalBinaryWrite(message.nodes[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message indykite.ingest.v1beta3.BatchUpsertNodesRequest
+ */
+export const BatchUpsertNodesRequest = new BatchUpsertNodesRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class BatchUpsertNodesResponse$Type extends MessageType<BatchUpsertNodesResponse> {
+    constructor() {
+        super("indykite.ingest.v1beta3.BatchUpsertNodesResponse", [
+            { no: 1, name: "results", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Info }
+        ]);
+    }
+    create(value?: PartialMessage<BatchUpsertNodesResponse>): BatchUpsertNodesResponse {
+        const message = { results: [] };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<BatchUpsertNodesResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: BatchUpsertNodesResponse): BatchUpsertNodesResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* repeated indykite.ingest.v1beta3.Info results */ 1:
+                    message.results.push(Info.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: BatchUpsertNodesResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* repeated indykite.ingest.v1beta3.Info results = 1; */
+        for (let i = 0; i < message.results.length; i++)
+            Info.internalBinaryWrite(message.results[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message indykite.ingest.v1beta3.BatchUpsertNodesResponse
+ */
+export const BatchUpsertNodesResponse = new BatchUpsertNodesResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class BatchUpsertRelationshipsRequest$Type extends MessageType<BatchUpsertRelationshipsRequest> {
+    constructor() {
+        super("indykite.ingest.v1beta3.BatchUpsertRelationshipsRequest", [
+            { no: 1, name: "relationships", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Relationship, options: { "validate.rules": { repeated: { minItems: "1", maxItems: "250" } } } }
+        ]);
+    }
+    create(value?: PartialMessage<BatchUpsertRelationshipsRequest>): BatchUpsertRelationshipsRequest {
+        const message = { relationships: [] };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<BatchUpsertRelationshipsRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: BatchUpsertRelationshipsRequest): BatchUpsertRelationshipsRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* repeated indykite.ingest.v1beta3.Relationship relationships */ 1:
+                    message.relationships.push(Relationship.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: BatchUpsertRelationshipsRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* repeated indykite.ingest.v1beta3.Relationship relationships = 1; */
+        for (let i = 0; i < message.relationships.length; i++)
+            Relationship.internalBinaryWrite(message.relationships[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message indykite.ingest.v1beta3.BatchUpsertRelationshipsRequest
+ */
+export const BatchUpsertRelationshipsRequest = new BatchUpsertRelationshipsRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class BatchUpsertRelationshipsResponse$Type extends MessageType<BatchUpsertRelationshipsResponse> {
+    constructor() {
+        super("indykite.ingest.v1beta3.BatchUpsertRelationshipsResponse", [
+            { no: 1, name: "results", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Info }
+        ]);
+    }
+    create(value?: PartialMessage<BatchUpsertRelationshipsResponse>): BatchUpsertRelationshipsResponse {
+        const message = { results: [] };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<BatchUpsertRelationshipsResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: BatchUpsertRelationshipsResponse): BatchUpsertRelationshipsResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* repeated indykite.ingest.v1beta3.Info results */ 1:
+                    message.results.push(Info.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: BatchUpsertRelationshipsResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* repeated indykite.ingest.v1beta3.Info results = 1; */
+        for (let i = 0; i < message.results.length; i++)
+            Info.internalBinaryWrite(message.results[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message indykite.ingest.v1beta3.BatchUpsertRelationshipsResponse
+ */
+export const BatchUpsertRelationshipsResponse = new BatchUpsertRelationshipsResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class BatchDeleteNodesRequest$Type extends MessageType<BatchDeleteNodesRequest> {
+    constructor() {
+        super("indykite.ingest.v1beta3.BatchDeleteNodesRequest", [
+            { no: 1, name: "nodes", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => NodeMatch, options: { "validate.rules": { repeated: { minItems: "1", maxItems: "250" } } } }
+        ]);
+    }
+    create(value?: PartialMessage<BatchDeleteNodesRequest>): BatchDeleteNodesRequest {
+        const message = { nodes: [] };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<BatchDeleteNodesRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: BatchDeleteNodesRequest): BatchDeleteNodesRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* repeated indykite.ingest.v1beta3.NodeMatch nodes */ 1:
+                    message.nodes.push(NodeMatch.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: BatchDeleteNodesRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* repeated indykite.ingest.v1beta3.NodeMatch nodes = 1; */
+        for (let i = 0; i < message.nodes.length; i++)
+            NodeMatch.internalBinaryWrite(message.nodes[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message indykite.ingest.v1beta3.BatchDeleteNodesRequest
+ */
+export const BatchDeleteNodesRequest = new BatchDeleteNodesRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class BatchDeleteNodesResponse$Type extends MessageType<BatchDeleteNodesResponse> {
+    constructor() {
+        super("indykite.ingest.v1beta3.BatchDeleteNodesResponse", [
+            { no: 1, name: "results", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Info }
+        ]);
+    }
+    create(value?: PartialMessage<BatchDeleteNodesResponse>): BatchDeleteNodesResponse {
+        const message = { results: [] };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<BatchDeleteNodesResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: BatchDeleteNodesResponse): BatchDeleteNodesResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* repeated indykite.ingest.v1beta3.Info results */ 1:
+                    message.results.push(Info.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: BatchDeleteNodesResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* repeated indykite.ingest.v1beta3.Info results = 1; */
+        for (let i = 0; i < message.results.length; i++)
+            Info.internalBinaryWrite(message.results[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message indykite.ingest.v1beta3.BatchDeleteNodesResponse
+ */
+export const BatchDeleteNodesResponse = new BatchDeleteNodesResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class BatchDeleteRelationshipsRequest$Type extends MessageType<BatchDeleteRelationshipsRequest> {
+    constructor() {
+        super("indykite.ingest.v1beta3.BatchDeleteRelationshipsRequest", [
+            { no: 1, name: "relationships", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Relationship, options: { "validate.rules": { repeated: { minItems: "1", maxItems: "250" } } } }
+        ]);
+    }
+    create(value?: PartialMessage<BatchDeleteRelationshipsRequest>): BatchDeleteRelationshipsRequest {
+        const message = { relationships: [] };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<BatchDeleteRelationshipsRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: BatchDeleteRelationshipsRequest): BatchDeleteRelationshipsRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* repeated indykite.ingest.v1beta3.Relationship relationships */ 1:
+                    message.relationships.push(Relationship.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: BatchDeleteRelationshipsRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* repeated indykite.ingest.v1beta3.Relationship relationships = 1; */
+        for (let i = 0; i < message.relationships.length; i++)
+            Relationship.internalBinaryWrite(message.relationships[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message indykite.ingest.v1beta3.BatchDeleteRelationshipsRequest
+ */
+export const BatchDeleteRelationshipsRequest = new BatchDeleteRelationshipsRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class BatchDeleteRelationshipsResponse$Type extends MessageType<BatchDeleteRelationshipsResponse> {
+    constructor() {
+        super("indykite.ingest.v1beta3.BatchDeleteRelationshipsResponse", [
+            { no: 1, name: "results", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Info }
+        ]);
+    }
+    create(value?: PartialMessage<BatchDeleteRelationshipsResponse>): BatchDeleteRelationshipsResponse {
+        const message = { results: [] };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<BatchDeleteRelationshipsResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: BatchDeleteRelationshipsResponse): BatchDeleteRelationshipsResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* repeated indykite.ingest.v1beta3.Info results */ 1:
+                    message.results.push(Info.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: BatchDeleteRelationshipsResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* repeated indykite.ingest.v1beta3.Info results = 1; */
+        for (let i = 0; i < message.results.length; i++)
+            Info.internalBinaryWrite(message.results[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message indykite.ingest.v1beta3.BatchDeleteRelationshipsResponse
+ */
+export const BatchDeleteRelationshipsResponse = new BatchDeleteRelationshipsResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class BatchDeleteNodePropertiesRequest$Type extends MessageType<BatchDeleteNodePropertiesRequest> {
+    constructor() {
+        super("indykite.ingest.v1beta3.BatchDeleteNodePropertiesRequest", [
+            { no: 1, name: "node_properties", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => DeleteData_NodePropertyMatch, options: { "validate.rules": { repeated: { minItems: "1", maxItems: "250" } } } }
+        ]);
+    }
+    create(value?: PartialMessage<BatchDeleteNodePropertiesRequest>): BatchDeleteNodePropertiesRequest {
+        const message = { nodeProperties: [] };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<BatchDeleteNodePropertiesRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: BatchDeleteNodePropertiesRequest): BatchDeleteNodePropertiesRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* repeated indykite.ingest.v1beta3.DeleteData.NodePropertyMatch node_properties */ 1:
+                    message.nodeProperties.push(DeleteData_NodePropertyMatch.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: BatchDeleteNodePropertiesRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* repeated indykite.ingest.v1beta3.DeleteData.NodePropertyMatch node_properties = 1; */
+        for (let i = 0; i < message.nodeProperties.length; i++)
+            DeleteData_NodePropertyMatch.internalBinaryWrite(message.nodeProperties[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message indykite.ingest.v1beta3.BatchDeleteNodePropertiesRequest
+ */
+export const BatchDeleteNodePropertiesRequest = new BatchDeleteNodePropertiesRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class BatchDeleteNodePropertiesResponse$Type extends MessageType<BatchDeleteNodePropertiesResponse> {
+    constructor() {
+        super("indykite.ingest.v1beta3.BatchDeleteNodePropertiesResponse", [
+            { no: 1, name: "results", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Info }
+        ]);
+    }
+    create(value?: PartialMessage<BatchDeleteNodePropertiesResponse>): BatchDeleteNodePropertiesResponse {
+        const message = { results: [] };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<BatchDeleteNodePropertiesResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: BatchDeleteNodePropertiesResponse): BatchDeleteNodePropertiesResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* repeated indykite.ingest.v1beta3.Info results */ 1:
+                    message.results.push(Info.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: BatchDeleteNodePropertiesResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* repeated indykite.ingest.v1beta3.Info results = 1; */
+        for (let i = 0; i < message.results.length; i++)
+            Info.internalBinaryWrite(message.results[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message indykite.ingest.v1beta3.BatchDeleteNodePropertiesResponse
+ */
+export const BatchDeleteNodePropertiesResponse = new BatchDeleteNodePropertiesResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class BatchDeleteRelationshipPropertiesRequest$Type extends MessageType<BatchDeleteRelationshipPropertiesRequest> {
+    constructor() {
+        super("indykite.ingest.v1beta3.BatchDeleteRelationshipPropertiesRequest", [
+            { no: 1, name: "relationship_properties", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => DeleteData_RelationshipPropertyMatch, options: { "validate.rules": { repeated: { minItems: "1", maxItems: "250" } } } }
+        ]);
+    }
+    create(value?: PartialMessage<BatchDeleteRelationshipPropertiesRequest>): BatchDeleteRelationshipPropertiesRequest {
+        const message = { relationshipProperties: [] };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<BatchDeleteRelationshipPropertiesRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: BatchDeleteRelationshipPropertiesRequest): BatchDeleteRelationshipPropertiesRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* repeated indykite.ingest.v1beta3.DeleteData.RelationshipPropertyMatch relationship_properties */ 1:
+                    message.relationshipProperties.push(DeleteData_RelationshipPropertyMatch.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: BatchDeleteRelationshipPropertiesRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* repeated indykite.ingest.v1beta3.DeleteData.RelationshipPropertyMatch relationship_properties = 1; */
+        for (let i = 0; i < message.relationshipProperties.length; i++)
+            DeleteData_RelationshipPropertyMatch.internalBinaryWrite(message.relationshipProperties[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message indykite.ingest.v1beta3.BatchDeleteRelationshipPropertiesRequest
+ */
+export const BatchDeleteRelationshipPropertiesRequest = new BatchDeleteRelationshipPropertiesRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class BatchDeleteRelationshipPropertiesResponse$Type extends MessageType<BatchDeleteRelationshipPropertiesResponse> {
+    constructor() {
+        super("indykite.ingest.v1beta3.BatchDeleteRelationshipPropertiesResponse", [
+            { no: 1, name: "results", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Info }
+        ]);
+    }
+    create(value?: PartialMessage<BatchDeleteRelationshipPropertiesResponse>): BatchDeleteRelationshipPropertiesResponse {
+        const message = { results: [] };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<BatchDeleteRelationshipPropertiesResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: BatchDeleteRelationshipPropertiesResponse): BatchDeleteRelationshipPropertiesResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* repeated indykite.ingest.v1beta3.Info results */ 1:
+                    message.results.push(Info.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: BatchDeleteRelationshipPropertiesResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* repeated indykite.ingest.v1beta3.Info results = 1; */
+        for (let i = 0; i < message.results.length; i++)
+            Info.internalBinaryWrite(message.results[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message indykite.ingest.v1beta3.BatchDeleteRelationshipPropertiesResponse
+ */
+export const BatchDeleteRelationshipPropertiesResponse = new BatchDeleteRelationshipPropertiesResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class StreamRecordsRequest$Type extends MessageType<StreamRecordsRequest> {
     constructor() {
@@ -331,5 +1008,11 @@ export const IngestRecordResponse = new IngestRecordResponse$Type();
  */
 export const IngestAPI = new ServiceType("indykite.ingest.v1beta3.IngestAPI", [
     { name: "StreamRecords", serverStreaming: true, clientStreaming: true, options: {}, I: StreamRecordsRequest, O: StreamRecordsResponse },
-    { name: "IngestRecord", options: {}, I: IngestRecordRequest, O: IngestRecordResponse }
+    { name: "IngestRecord", options: {}, I: IngestRecordRequest, O: IngestRecordResponse },
+    { name: "BatchUpsertNodes", options: {}, I: BatchUpsertNodesRequest, O: BatchUpsertNodesResponse },
+    { name: "BatchUpsertRelationships", options: {}, I: BatchUpsertRelationshipsRequest, O: BatchUpsertRelationshipsResponse },
+    { name: "BatchDeleteNodes", options: {}, I: BatchDeleteNodesRequest, O: BatchDeleteNodesResponse },
+    { name: "BatchDeleteRelationships", options: {}, I: BatchDeleteRelationshipsRequest, O: BatchDeleteRelationshipsResponse },
+    { name: "BatchDeleteNodeProperties", options: {}, I: BatchDeleteNodePropertiesRequest, O: BatchDeleteNodePropertiesResponse },
+    { name: "BatchDeleteRelationshipProperties", options: {}, I: BatchDeleteRelationshipPropertiesRequest, O: BatchDeleteRelationshipPropertiesResponse }
 ]);

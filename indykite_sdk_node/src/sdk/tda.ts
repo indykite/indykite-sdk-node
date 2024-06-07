@@ -45,7 +45,7 @@ export class TrustedDataAccessClient {
    *   const result = await sdk.grantConsent({
    *     user: User({"userId":"gid:userid"}),
    *     consentId: 'gid:consent-id',
-   *     revokeAfterUse: true,
+   *     validityPeriod: 86400,
    *   });
    *   console.log(JSON.stringify(result, null, 2));
    * }
@@ -53,12 +53,12 @@ export class TrustedDataAccessClient {
   grantConsent(
     user: User,
     consentId: string,
-    revokeAfterUse: boolean,
+    validityPeriod: string,
   ): Promise<GrantConsentResponse> {
     const request = GrantConsentRequest.create({
       user,
       consentId,
-      revokeAfterUse,
+      validityPeriod,
     });
 
     return new Promise((resolve, reject) => {

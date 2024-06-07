@@ -66,17 +66,15 @@ describe('registerApplicationAgentCredential', () => {
           ConfigClient.newRegisterApplicationAgentCredentialRequest(
             'app-agent-id',
             'Agent Credentials',
-            'default-tenant-id',
           ),
         );
       });
 
       it('sends correct request', () => {
-        expect(registerApplicationAgentCredentialSpy).toBeCalledWith(
+        expect(registerApplicationAgentCredentialSpy).toHaveBeenCalledWith(
           {
             applicationAgentId: 'app-agent-id',
             displayName: 'Agent Credentials',
-            defaultTenantId: 'default-tenant-id',
             publicKey: { oneofKind: undefined },
             bookmarks: [],
           },
@@ -113,7 +111,6 @@ describe('registerApplicationAgentCredential', () => {
           ConfigClient.newRegisterApplicationAgentCredentialRequest(
             'app-agent-id',
             'Agent Credentials',
-            'default-tenant-id',
             'jwk',
             publicKey,
             expireTime,
@@ -126,7 +123,6 @@ describe('registerApplicationAgentCredential', () => {
           {
             applicationAgentId: 'app-agent-id',
             displayName: 'Agent Credentials',
-            defaultTenantId: 'default-tenant-id',
             publicKey: { oneofKind: 'jwk', jwk: publicKey },
             expireTime: Utils.dateToTimestamp(expireTime),
             bookmarks: [],
@@ -166,7 +162,6 @@ describe('registerApplicationAgentCredential', () => {
           ConfigClient.newRegisterApplicationAgentCredentialRequest(
             'app-agent-id',
             'Agent Credentials',
-            'default-tenant-id',
             'pem',
             publicKey,
             expireTime,
@@ -175,11 +170,10 @@ describe('registerApplicationAgentCredential', () => {
       });
 
       it('sends correct request', () => {
-        expect(registerApplicationAgentCredentialSpy).toBeCalledWith(
+        expect(registerApplicationAgentCredentialSpy).toHaveBeenCalledWith(
           {
             applicationAgentId: 'app-agent-id',
             displayName: 'Agent Credentials',
-            defaultTenantId: 'default-tenant-id',
             publicKey: { oneofKind: 'pem', pem: publicKey },
             expireTime: Utils.dateToTimestamp(expireTime),
             bookmarks: [],
@@ -245,7 +239,6 @@ describe('registerApplicationAgentCredential', () => {
           ConfigClient.newRegisterApplicationAgentCredentialRequest(
             'app-agent-id',
             'Agent Credentials',
-            'default-tenant-id',
           ),
         )
         .catch((err) => {
@@ -287,7 +280,6 @@ describe('registerApplicationAgentCredential', () => {
           ConfigClient.newRegisterApplicationAgentCredentialRequest(
             'app-agent-id',
             'Agent Credentials',
-            'default-tenant-id',
           ),
         )
         .catch((err) => {
@@ -647,7 +639,6 @@ describe('createApplicationWithAgentCredentials', () => {
         'app-agent-credential-name',
         undefined,
         undefined,
-        'default-tenant-id',
       );
     });
 
@@ -681,7 +672,6 @@ describe('createApplicationWithAgentCredentials', () => {
         ConfigClient.newRegisterApplicationAgentCredentialRequest(
           'app-agent-id',
           'app-agent-credential-name',
-          'default-tenant-id',
           undefined,
           undefined,
           undefined,
@@ -732,7 +722,6 @@ describe('createApplicationWithAgentCredentials', () => {
         'app-agent-credential-name',
         undefined,
         undefined,
-        'default-tenant-id',
       );
     });
 
@@ -763,7 +752,6 @@ describe('createApplicationWithAgentCredentials', () => {
         ConfigClient.newRegisterApplicationAgentCredentialRequest(
           'app-agent-id',
           'app-agent-credential-name',
-          'default-tenant-id',
           undefined,
           undefined,
           undefined,
@@ -806,7 +794,6 @@ describe('createApplicationWithAgentCredentials', () => {
         'app-agent-credential-name',
         undefined,
         undefined,
-        'default-tenant-id',
       );
     });
 
@@ -826,13 +813,13 @@ describe('createApplicationWithAgentCredentials', () => {
     });
 
     it('calls correct functions', async () => {
-      expect(createApplicationMock).toBeCalledWith(
+      expect(createApplicationMock).toHaveBeenCalledWith(
         ConfigClient.newCreateApplicationRequest('app-space-id', 'app-name'),
       );
-      expect(createApplicationAgentMock).toBeCalledWith(
+      expect(createApplicationAgentMock).toHaveBeenCalledWith(
         ConfigClient.newCreateApplicationAgentRequest('app-id', 'app-agent-name'),
       );
-      expect(registerApplicationCredentialMock).toBeCalledTimes(0);
+      expect(registerApplicationCredentialMock).toHaveBeenCalledTimes(0);
     });
   });
 
@@ -862,7 +849,6 @@ describe('createApplicationWithAgentCredentials', () => {
         'app-agent-credential-name',
         undefined,
         undefined,
-        'default-tenant-id',
       );
     });
 
@@ -881,11 +867,11 @@ describe('createApplicationWithAgentCredentials', () => {
     });
 
     it('calls correct functions', async () => {
-      expect(createApplicationMock).toBeCalledWith(
+      expect(createApplicationMock).toHaveBeenCalledWith(
         ConfigClient.newCreateApplicationRequest('app-space-id', 'app-name'),
       );
-      expect(createApplicationAgentMock).toBeCalledTimes(0);
-      expect(registerApplicationCredentialMock).toBeCalledTimes(0);
+      expect(createApplicationAgentMock).toHaveBeenCalledTimes(0);
+      expect(registerApplicationCredentialMock).toHaveBeenCalledTimes(0);
     });
   });
 });

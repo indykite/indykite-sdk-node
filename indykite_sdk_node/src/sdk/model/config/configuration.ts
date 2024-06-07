@@ -31,8 +31,6 @@ export class NodeConfiguration {
   customerId?: string;
   // AppSpaceId this object is directly or indirectly connected to.
   appSpaceId?: string;
-  // TenantId this object is directly or indirectly connected to.
-  tenantId?: string;
 
   constructor(public name: string) {}
 }

@@ -203,24 +203,6 @@ export interface ConfigDetail {
      * @generated from protobuf oneof: configuration
      */
     configuration: {
-        oneofKind: "customerConfig";
-        /**
-         * @generated from protobuf field: indykite.auditsink.v1beta1.CustomerConfig customer_config = 5;
-         */
-        customerConfig: CustomerConfig;
-    } | {
-        oneofKind: "applicationSpaceConfig";
-        /**
-         * @generated from protobuf field: indykite.auditsink.v1beta1.ApplicationSpaceConfig application_space_config = 6;
-         */
-        applicationSpaceConfig: ApplicationSpaceConfig;
-    } | {
-        oneofKind: "tenantConfig";
-        /**
-         * @generated from protobuf field: indykite.auditsink.v1beta1.TenantConfig tenant_config = 7;
-         */
-        tenantConfig: TenantConfig;
-    } | {
         oneofKind: "applicationAgentCredential";
         /**
          * @generated from protobuf field: indykite.auditsink.v1beta1.ApplicationAgentCredentialConfig application_agent_credential = 8;
@@ -269,6 +251,12 @@ export interface ConfigDetail {
          */
         authorizationPolicyConfig: AuthorizationPolicyConfig;
     } | {
+        oneofKind: "tokenIntrospectConfig";
+        /**
+         * @generated from protobuf field: indykite.auditsink.v1beta1.TokenIntrospectConfig token_introspect_config = 19;
+         */
+        tokenIntrospectConfig: TokenIntrospectConfig;
+    } | {
         oneofKind: "oauth2ApplicationConfig";
         /**
          * @generated from protobuf field: indykite.auditsink.v1beta1.OAuth2ApplicationConfig oauth2_application_config = 16;
@@ -289,57 +277,6 @@ export interface ConfigDetail {
     } | {
         oneofKind: undefined;
     };
-}
-/**
- * @generated from protobuf message indykite.auditsink.v1beta1.CustomerConfig
- */
-export interface CustomerConfig {
-    /**
-     * @generated from protobuf field: string default_auth_flow_id = 1;
-     */
-    defaultAuthFlowId: string;
-    /**
-     * @generated from protobuf field: string default_email_service_id = 2;
-     */
-    defaultEmailServiceId: string;
-}
-/**
- * @generated from protobuf message indykite.auditsink.v1beta1.ApplicationSpaceConfig
- */
-export interface ApplicationSpaceConfig {
-    /**
-     * @generated from protobuf field: string default_tenant_id = 1;
-     */
-    defaultTenantId: string;
-    /**
-     * @generated from protobuf field: string default_auth_flow_id = 2;
-     */
-    defaultAuthFlowId: string;
-    /**
-     * @generated from protobuf field: string default_email_service_id = 3;
-     */
-    defaultEmailServiceId: string;
-    /**
-     * @generated from protobuf field: indykite.auditsink.v1beta1.UsernamePolicyConfig username_policy = 4;
-     */
-    usernamePolicy?: UsernamePolicyConfig;
-}
-/**
- * @generated from protobuf message indykite.auditsink.v1beta1.TenantConfig
- */
-export interface TenantConfig {
-    /**
-     * @generated from protobuf field: string default_auth_flow_id = 1;
-     */
-    defaultAuthFlowId: string;
-    /**
-     * @generated from protobuf field: string default_email_service_id = 2;
-     */
-    defaultEmailServiceId: string;
-    /**
-     * @generated from protobuf field: indykite.auditsink.v1beta1.UsernamePolicyConfig username_policy = 3;
-     */
-    usernamePolicy?: UsernamePolicyConfig;
 }
 /**
  * @generated from protobuf message indykite.auditsink.v1beta1.UsernamePolicyConfig
@@ -1429,6 +1366,114 @@ export interface RevokeConfigPermissions {
     objectType: ConfigType;
 }
 /**
+ * Token Introspect configuration for AppSpace.
+ *
+ * @generated from protobuf message indykite.auditsink.v1beta1.TokenIntrospectConfig
+ */
+export interface TokenIntrospectConfig {
+    /**
+     * @generated from protobuf oneof: token_matcher
+     */
+    tokenMatcher: {
+        oneofKind: "jwt";
+        /**
+         * @generated from protobuf field: indykite.auditsink.v1beta1.TokenIntrospectConfig.JWT jwt = 1;
+         */
+        jwt: TokenIntrospectConfig_JWT;
+    } | {
+        oneofKind: undefined;
+    };
+    /**
+     * @generated from protobuf oneof: validation
+     */
+    validation: {
+        oneofKind: "offline";
+        /**
+         * @generated from protobuf field: indykite.auditsink.v1beta1.TokenIntrospectConfig.Offline offline = 3;
+         */
+        offline: TokenIntrospectConfig_Offline;
+    } | {
+        oneofKind: undefined;
+    };
+    /**
+     * ClaimsMapping specify which claims from the token should be mapped to IKG Property with given name.
+     * Remember, that 'email' claim is always extracted if exists and stored under 'email' key in IKG.
+     *
+     * Key specify name of property in IKG.
+     * Value specify which claim to map and how.
+     *
+     * @generated from protobuf field: map<string, indykite.auditsink.v1beta1.TokenIntrospectConfig.Claim> claims_mapping = 7;
+     */
+    claimsMapping: {
+        [key: string]: TokenIntrospectConfig_Claim;
+    };
+    /**
+     * Node type in IKG to which we will try to match sub claim with DT external_id.
+     *
+     * @generated from protobuf field: string ikg_node_type = 5;
+     */
+    ikgNodeType: string;
+    /**
+     * Perform Upsert specify, if we should create and/or update DigitalTwin in IKG if it doesn't exist with.
+     * In future this will perform upsert also on properties that are derived from token.
+     *
+     * @generated from protobuf field: bool perform_upsert = 6;
+     */
+    performUpsert: boolean;
+}
+/**
+ * JWT specifies all attributes to match with received token.
+ *
+ * @generated from protobuf message indykite.auditsink.v1beta1.TokenIntrospectConfig.JWT
+ */
+export interface TokenIntrospectConfig_JWT {
+    /**
+     * Issuer is used to exact match based on `iss` claim in JWT.
+     *
+     * @generated from protobuf field: string issuer = 1;
+     */
+    issuer: string;
+    /**
+     * Audience is used to exact match based on `aud` claim in JWT.
+     *
+     * @generated from protobuf field: string audience = 2;
+     */
+    audience: string;
+}
+/**
+ * Offline validation works only with JWT.
+ *
+ * @generated from protobuf message indykite.auditsink.v1beta1.TokenIntrospectConfig.Offline
+ */
+export interface TokenIntrospectConfig_Offline {
+    /**
+     * Public JWK to validate signature of JWT.
+     * If there are no public keys specified, they will be fetched and cached from
+     * jwks_uri at https://jwt-issuer.tld/.well-known/openid-configuration
+     *
+     * @generated from protobuf field: repeated bytes public_jwks = 1;
+     */
+    publicJwks: Uint8Array[];
+}
+/**
+ * Claim specify details about claim that will be mapped to IKG.
+ *
+ * @generated from protobuf message indykite.auditsink.v1beta1.TokenIntrospectConfig.Claim
+ */
+export interface TokenIntrospectConfig_Claim {
+    /**
+     * JSON selector of property in token claims. Currently just name in top-level object is supported.
+     *
+     * By default we support all standard claims from OpenID specification https://openid.net/specs/openid-connect-core-1_0.html#StandardClaims,
+     * and mapping will fail if claim and data type will not match the standard.
+     *
+     * For non-standard claims the type will be derived from the JSON.
+     *
+     * @generated from protobuf field: string selector = 1;
+     */
+    selector: string;
+}
+/**
  * ConfigType is equivalent to internal DocumentType, for easier maintenance keep same numbers.
  *
  * @generated from protobuf enum indykite.auditsink.v1beta1.ConfigType
@@ -1494,6 +1539,10 @@ export enum ConfigType {
      * @generated from protobuf enum value: CONFIG_TYPE_AUDIT_SINK = 27;
      */
     AUDIT_SINK = 27,
+    /**
+     * @generated from protobuf enum value: CONFIG_TYPE_TOKEN_INTROSPECT = 30;
+     */
+    TOKEN_INTROSPECT = 30,
     /**
      * @generated from protobuf enum value: CONFIG_TYPE_OAUTH2_CLIENT = 10;
      */
@@ -2074,9 +2123,6 @@ class ConfigDetail$Type extends MessageType<ConfigDetail> {
             { no: 2, name: "display_name", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 3, name: "description", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 4, name: "version", kind: "scalar", T: 3 /*ScalarType.INT64*/ },
-            { no: 5, name: "customer_config", kind: "message", oneof: "configuration", T: () => CustomerConfig },
-            { no: 6, name: "application_space_config", kind: "message", oneof: "configuration", T: () => ApplicationSpaceConfig },
-            { no: 7, name: "tenant_config", kind: "message", oneof: "configuration", T: () => TenantConfig },
             { no: 8, name: "application_agent_credential", kind: "message", oneof: "configuration", T: () => ApplicationAgentCredentialConfig },
             { no: 9, name: "service_account_credential", kind: "message", oneof: "configuration", T: () => ServiceAccountCredentialConfig },
             { no: 10, name: "auth_flow_config", kind: "message", oneof: "configuration", T: () => AuthFlowConfig },
@@ -2085,6 +2131,7 @@ class ConfigDetail$Type extends MessageType<ConfigDetail> {
             { no: 13, name: "oauth2_client_config", kind: "message", oneof: "configuration", T: () => OAuth2ClientConfig },
             { no: 14, name: "web_authn_provider_config", kind: "message", oneof: "configuration", T: () => WebAuthnProviderConfig },
             { no: 15, name: "authorization_policy_config", kind: "message", oneof: "configuration", T: () => AuthorizationPolicyConfig },
+            { no: 19, name: "token_introspect_config", kind: "message", oneof: "configuration", T: () => TokenIntrospectConfig },
             { no: 16, name: "oauth2_application_config", kind: "message", oneof: "configuration", T: () => OAuth2ApplicationConfig },
             { no: 17, name: "oauth2_provider_config", kind: "message", oneof: "configuration", T: () => OAuth2ProviderConfig },
             { no: 18, name: "consent_config", kind: "message", oneof: "configuration", T: () => ConsentConfiguration }
@@ -2113,24 +2160,6 @@ class ConfigDetail$Type extends MessageType<ConfigDetail> {
                     break;
                 case /* int64 version */ 4:
                     message.version = reader.int64().toString();
-                    break;
-                case /* indykite.auditsink.v1beta1.CustomerConfig customer_config */ 5:
-                    message.configuration = {
-                        oneofKind: "customerConfig",
-                        customerConfig: CustomerConfig.internalBinaryRead(reader, reader.uint32(), options, (message.configuration as any).customerConfig)
-                    };
-                    break;
-                case /* indykite.auditsink.v1beta1.ApplicationSpaceConfig application_space_config */ 6:
-                    message.configuration = {
-                        oneofKind: "applicationSpaceConfig",
-                        applicationSpaceConfig: ApplicationSpaceConfig.internalBinaryRead(reader, reader.uint32(), options, (message.configuration as any).applicationSpaceConfig)
-                    };
-                    break;
-                case /* indykite.auditsink.v1beta1.TenantConfig tenant_config */ 7:
-                    message.configuration = {
-                        oneofKind: "tenantConfig",
-                        tenantConfig: TenantConfig.internalBinaryRead(reader, reader.uint32(), options, (message.configuration as any).tenantConfig)
-                    };
                     break;
                 case /* indykite.auditsink.v1beta1.ApplicationAgentCredentialConfig application_agent_credential */ 8:
                     message.configuration = {
@@ -2180,6 +2209,12 @@ class ConfigDetail$Type extends MessageType<ConfigDetail> {
                         authorizationPolicyConfig: AuthorizationPolicyConfig.internalBinaryRead(reader, reader.uint32(), options, (message.configuration as any).authorizationPolicyConfig)
                     };
                     break;
+                case /* indykite.auditsink.v1beta1.TokenIntrospectConfig token_introspect_config */ 19:
+                    message.configuration = {
+                        oneofKind: "tokenIntrospectConfig",
+                        tokenIntrospectConfig: TokenIntrospectConfig.internalBinaryRead(reader, reader.uint32(), options, (message.configuration as any).tokenIntrospectConfig)
+                    };
+                    break;
                 case /* indykite.auditsink.v1beta1.OAuth2ApplicationConfig oauth2_application_config */ 16:
                     message.configuration = {
                         oneofKind: "oauth2ApplicationConfig",
@@ -2222,15 +2257,6 @@ class ConfigDetail$Type extends MessageType<ConfigDetail> {
         /* int64 version = 4; */
         if (message.version !== "0")
             writer.tag(4, WireType.Varint).int64(message.version);
-        /* indykite.auditsink.v1beta1.CustomerConfig customer_config = 5; */
-        if (message.configuration.oneofKind === "customerConfig")
-            CustomerConfig.internalBinaryWrite(message.configuration.customerConfig, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
-        /* indykite.auditsink.v1beta1.ApplicationSpaceConfig application_space_config = 6; */
-        if (message.configuration.oneofKind === "applicationSpaceConfig")
-            ApplicationSpaceConfig.internalBinaryWrite(message.configuration.applicationSpaceConfig, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
-        /* indykite.auditsink.v1beta1.TenantConfig tenant_config = 7; */
-        if (message.configuration.oneofKind === "tenantConfig")
-            TenantConfig.internalBinaryWrite(message.configuration.tenantConfig, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
         /* indykite.auditsink.v1beta1.ApplicationAgentCredentialConfig application_agent_credential = 8; */
         if (message.configuration.oneofKind === "applicationAgentCredential")
             ApplicationAgentCredentialConfig.internalBinaryWrite(message.configuration.applicationAgentCredential, writer.tag(8, WireType.LengthDelimited).fork(), options).join();
@@ -2255,6 +2281,9 @@ class ConfigDetail$Type extends MessageType<ConfigDetail> {
         /* indykite.auditsink.v1beta1.AuthorizationPolicyConfig authorization_policy_config = 15; */
         if (message.configuration.oneofKind === "authorizationPolicyConfig")
             AuthorizationPolicyConfig.internalBinaryWrite(message.configuration.authorizationPolicyConfig, writer.tag(15, WireType.LengthDelimited).fork(), options).join();
+        /* indykite.auditsink.v1beta1.TokenIntrospectConfig token_introspect_config = 19; */
+        if (message.configuration.oneofKind === "tokenIntrospectConfig")
+            TokenIntrospectConfig.internalBinaryWrite(message.configuration.tokenIntrospectConfig, writer.tag(19, WireType.LengthDelimited).fork(), options).join();
         /* indykite.auditsink.v1beta1.OAuth2ApplicationConfig oauth2_application_config = 16; */
         if (message.configuration.oneofKind === "oauth2ApplicationConfig")
             OAuth2ApplicationConfig.internalBinaryWrite(message.configuration.oauth2ApplicationConfig, writer.tag(16, WireType.LengthDelimited).fork(), options).join();
@@ -2274,189 +2303,6 @@ class ConfigDetail$Type extends MessageType<ConfigDetail> {
  * @generated MessageType for protobuf message indykite.auditsink.v1beta1.ConfigDetail
  */
 export const ConfigDetail = new ConfigDetail$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class CustomerConfig$Type extends MessageType<CustomerConfig> {
-    constructor() {
-        super("indykite.auditsink.v1beta1.CustomerConfig", [
-            { no: 1, name: "default_auth_flow_id", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 2, name: "default_email_service_id", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
-        ]);
-    }
-    create(value?: PartialMessage<CustomerConfig>): CustomerConfig {
-        const message = { defaultAuthFlowId: "", defaultEmailServiceId: "" };
-        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
-        if (value !== undefined)
-            reflectionMergePartial<CustomerConfig>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: CustomerConfig): CustomerConfig {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* string default_auth_flow_id */ 1:
-                    message.defaultAuthFlowId = reader.string();
-                    break;
-                case /* string default_email_service_id */ 2:
-                    message.defaultEmailServiceId = reader.string();
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: CustomerConfig, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* string default_auth_flow_id = 1; */
-        if (message.defaultAuthFlowId !== "")
-            writer.tag(1, WireType.LengthDelimited).string(message.defaultAuthFlowId);
-        /* string default_email_service_id = 2; */
-        if (message.defaultEmailServiceId !== "")
-            writer.tag(2, WireType.LengthDelimited).string(message.defaultEmailServiceId);
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message indykite.auditsink.v1beta1.CustomerConfig
- */
-export const CustomerConfig = new CustomerConfig$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class ApplicationSpaceConfig$Type extends MessageType<ApplicationSpaceConfig> {
-    constructor() {
-        super("indykite.auditsink.v1beta1.ApplicationSpaceConfig", [
-            { no: 1, name: "default_tenant_id", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 2, name: "default_auth_flow_id", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 3, name: "default_email_service_id", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 4, name: "username_policy", kind: "message", T: () => UsernamePolicyConfig }
-        ]);
-    }
-    create(value?: PartialMessage<ApplicationSpaceConfig>): ApplicationSpaceConfig {
-        const message = { defaultTenantId: "", defaultAuthFlowId: "", defaultEmailServiceId: "" };
-        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
-        if (value !== undefined)
-            reflectionMergePartial<ApplicationSpaceConfig>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ApplicationSpaceConfig): ApplicationSpaceConfig {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* string default_tenant_id */ 1:
-                    message.defaultTenantId = reader.string();
-                    break;
-                case /* string default_auth_flow_id */ 2:
-                    message.defaultAuthFlowId = reader.string();
-                    break;
-                case /* string default_email_service_id */ 3:
-                    message.defaultEmailServiceId = reader.string();
-                    break;
-                case /* indykite.auditsink.v1beta1.UsernamePolicyConfig username_policy */ 4:
-                    message.usernamePolicy = UsernamePolicyConfig.internalBinaryRead(reader, reader.uint32(), options, message.usernamePolicy);
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: ApplicationSpaceConfig, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* string default_tenant_id = 1; */
-        if (message.defaultTenantId !== "")
-            writer.tag(1, WireType.LengthDelimited).string(message.defaultTenantId);
-        /* string default_auth_flow_id = 2; */
-        if (message.defaultAuthFlowId !== "")
-            writer.tag(2, WireType.LengthDelimited).string(message.defaultAuthFlowId);
-        /* string default_email_service_id = 3; */
-        if (message.defaultEmailServiceId !== "")
-            writer.tag(3, WireType.LengthDelimited).string(message.defaultEmailServiceId);
-        /* indykite.auditsink.v1beta1.UsernamePolicyConfig username_policy = 4; */
-        if (message.usernamePolicy)
-            UsernamePolicyConfig.internalBinaryWrite(message.usernamePolicy, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message indykite.auditsink.v1beta1.ApplicationSpaceConfig
- */
-export const ApplicationSpaceConfig = new ApplicationSpaceConfig$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class TenantConfig$Type extends MessageType<TenantConfig> {
-    constructor() {
-        super("indykite.auditsink.v1beta1.TenantConfig", [
-            { no: 1, name: "default_auth_flow_id", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 2, name: "default_email_service_id", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 3, name: "username_policy", kind: "message", T: () => UsernamePolicyConfig }
-        ]);
-    }
-    create(value?: PartialMessage<TenantConfig>): TenantConfig {
-        const message = { defaultAuthFlowId: "", defaultEmailServiceId: "" };
-        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
-        if (value !== undefined)
-            reflectionMergePartial<TenantConfig>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: TenantConfig): TenantConfig {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* string default_auth_flow_id */ 1:
-                    message.defaultAuthFlowId = reader.string();
-                    break;
-                case /* string default_email_service_id */ 2:
-                    message.defaultEmailServiceId = reader.string();
-                    break;
-                case /* indykite.auditsink.v1beta1.UsernamePolicyConfig username_policy */ 3:
-                    message.usernamePolicy = UsernamePolicyConfig.internalBinaryRead(reader, reader.uint32(), options, message.usernamePolicy);
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: TenantConfig, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* string default_auth_flow_id = 1; */
-        if (message.defaultAuthFlowId !== "")
-            writer.tag(1, WireType.LengthDelimited).string(message.defaultAuthFlowId);
-        /* string default_email_service_id = 2; */
-        if (message.defaultEmailServiceId !== "")
-            writer.tag(2, WireType.LengthDelimited).string(message.defaultEmailServiceId);
-        /* indykite.auditsink.v1beta1.UsernamePolicyConfig username_policy = 3; */
-        if (message.usernamePolicy)
-            UsernamePolicyConfig.internalBinaryWrite(message.usernamePolicy, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message indykite.auditsink.v1beta1.TenantConfig
- */
-export const TenantConfig = new TenantConfig$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class UsernamePolicyConfig$Type extends MessageType<UsernamePolicyConfig> {
     constructor() {
@@ -4368,3 +4214,252 @@ class RevokeConfigPermissions$Type extends MessageType<RevokeConfigPermissions> 
  * @generated MessageType for protobuf message indykite.auditsink.v1beta1.RevokeConfigPermissions
  */
 export const RevokeConfigPermissions = new RevokeConfigPermissions$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class TokenIntrospectConfig$Type extends MessageType<TokenIntrospectConfig> {
+    constructor() {
+        super("indykite.auditsink.v1beta1.TokenIntrospectConfig", [
+            { no: 1, name: "jwt", kind: "message", oneof: "tokenMatcher", T: () => TokenIntrospectConfig_JWT },
+            { no: 3, name: "offline", kind: "message", oneof: "validation", T: () => TokenIntrospectConfig_Offline },
+            { no: 7, name: "claims_mapping", kind: "map", K: 9 /*ScalarType.STRING*/, V: { kind: "message", T: () => TokenIntrospectConfig_Claim } },
+            { no: 5, name: "ikg_node_type", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 6, name: "perform_upsert", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+        ]);
+    }
+    create(value?: PartialMessage<TokenIntrospectConfig>): TokenIntrospectConfig {
+        const message = { tokenMatcher: { oneofKind: undefined }, validation: { oneofKind: undefined }, claimsMapping: {}, ikgNodeType: "", performUpsert: false };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<TokenIntrospectConfig>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: TokenIntrospectConfig): TokenIntrospectConfig {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* indykite.auditsink.v1beta1.TokenIntrospectConfig.JWT jwt */ 1:
+                    message.tokenMatcher = {
+                        oneofKind: "jwt",
+                        jwt: TokenIntrospectConfig_JWT.internalBinaryRead(reader, reader.uint32(), options, (message.tokenMatcher as any).jwt)
+                    };
+                    break;
+                case /* indykite.auditsink.v1beta1.TokenIntrospectConfig.Offline offline */ 3:
+                    message.validation = {
+                        oneofKind: "offline",
+                        offline: TokenIntrospectConfig_Offline.internalBinaryRead(reader, reader.uint32(), options, (message.validation as any).offline)
+                    };
+                    break;
+                case /* map<string, indykite.auditsink.v1beta1.TokenIntrospectConfig.Claim> claims_mapping */ 7:
+                    this.binaryReadMap7(message.claimsMapping, reader, options);
+                    break;
+                case /* string ikg_node_type */ 5:
+                    message.ikgNodeType = reader.string();
+                    break;
+                case /* bool perform_upsert */ 6:
+                    message.performUpsert = reader.bool();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    private binaryReadMap7(map: TokenIntrospectConfig["claimsMapping"], reader: IBinaryReader, options: BinaryReadOptions): void {
+        let len = reader.uint32(), end = reader.pos + len, key: keyof TokenIntrospectConfig["claimsMapping"] | undefined, val: TokenIntrospectConfig["claimsMapping"][any] | undefined;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case 1:
+                    key = reader.string();
+                    break;
+                case 2:
+                    val = TokenIntrospectConfig_Claim.internalBinaryRead(reader, reader.uint32(), options);
+                    break;
+                default: throw new globalThis.Error("unknown map entry field for field indykite.auditsink.v1beta1.TokenIntrospectConfig.claims_mapping");
+            }
+        }
+        map[key ?? ""] = val ?? TokenIntrospectConfig_Claim.create();
+    }
+    internalBinaryWrite(message: TokenIntrospectConfig, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* indykite.auditsink.v1beta1.TokenIntrospectConfig.JWT jwt = 1; */
+        if (message.tokenMatcher.oneofKind === "jwt")
+            TokenIntrospectConfig_JWT.internalBinaryWrite(message.tokenMatcher.jwt, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* indykite.auditsink.v1beta1.TokenIntrospectConfig.Offline offline = 3; */
+        if (message.validation.oneofKind === "offline")
+            TokenIntrospectConfig_Offline.internalBinaryWrite(message.validation.offline, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        /* map<string, indykite.auditsink.v1beta1.TokenIntrospectConfig.Claim> claims_mapping = 7; */
+        for (let k of Object.keys(message.claimsMapping)) {
+            writer.tag(7, WireType.LengthDelimited).fork().tag(1, WireType.LengthDelimited).string(k);
+            writer.tag(2, WireType.LengthDelimited).fork();
+            TokenIntrospectConfig_Claim.internalBinaryWrite(message.claimsMapping[k], writer, options);
+            writer.join().join();
+        }
+        /* string ikg_node_type = 5; */
+        if (message.ikgNodeType !== "")
+            writer.tag(5, WireType.LengthDelimited).string(message.ikgNodeType);
+        /* bool perform_upsert = 6; */
+        if (message.performUpsert !== false)
+            writer.tag(6, WireType.Varint).bool(message.performUpsert);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message indykite.auditsink.v1beta1.TokenIntrospectConfig
+ */
+export const TokenIntrospectConfig = new TokenIntrospectConfig$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class TokenIntrospectConfig_JWT$Type extends MessageType<TokenIntrospectConfig_JWT> {
+    constructor() {
+        super("indykite.auditsink.v1beta1.TokenIntrospectConfig.JWT", [
+            { no: 1, name: "issuer", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 2, name: "audience", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+        ]);
+    }
+    create(value?: PartialMessage<TokenIntrospectConfig_JWT>): TokenIntrospectConfig_JWT {
+        const message = { issuer: "", audience: "" };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<TokenIntrospectConfig_JWT>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: TokenIntrospectConfig_JWT): TokenIntrospectConfig_JWT {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string issuer */ 1:
+                    message.issuer = reader.string();
+                    break;
+                case /* string audience */ 2:
+                    message.audience = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: TokenIntrospectConfig_JWT, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string issuer = 1; */
+        if (message.issuer !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.issuer);
+        /* string audience = 2; */
+        if (message.audience !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.audience);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message indykite.auditsink.v1beta1.TokenIntrospectConfig.JWT
+ */
+export const TokenIntrospectConfig_JWT = new TokenIntrospectConfig_JWT$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class TokenIntrospectConfig_Offline$Type extends MessageType<TokenIntrospectConfig_Offline> {
+    constructor() {
+        super("indykite.auditsink.v1beta1.TokenIntrospectConfig.Offline", [
+            { no: 1, name: "public_jwks", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 12 /*ScalarType.BYTES*/ }
+        ]);
+    }
+    create(value?: PartialMessage<TokenIntrospectConfig_Offline>): TokenIntrospectConfig_Offline {
+        const message = { publicJwks: [] };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<TokenIntrospectConfig_Offline>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: TokenIntrospectConfig_Offline): TokenIntrospectConfig_Offline {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* repeated bytes public_jwks */ 1:
+                    message.publicJwks.push(reader.bytes());
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: TokenIntrospectConfig_Offline, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* repeated bytes public_jwks = 1; */
+        for (let i = 0; i < message.publicJwks.length; i++)
+            writer.tag(1, WireType.LengthDelimited).bytes(message.publicJwks[i]);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message indykite.auditsink.v1beta1.TokenIntrospectConfig.Offline
+ */
+export const TokenIntrospectConfig_Offline = new TokenIntrospectConfig_Offline$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class TokenIntrospectConfig_Claim$Type extends MessageType<TokenIntrospectConfig_Claim> {
+    constructor() {
+        super("indykite.auditsink.v1beta1.TokenIntrospectConfig.Claim", [
+            { no: 1, name: "selector", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+        ]);
+    }
+    create(value?: PartialMessage<TokenIntrospectConfig_Claim>): TokenIntrospectConfig_Claim {
+        const message = { selector: "" };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<TokenIntrospectConfig_Claim>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: TokenIntrospectConfig_Claim): TokenIntrospectConfig_Claim {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string selector */ 1:
+                    message.selector = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: TokenIntrospectConfig_Claim, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string selector = 1; */
+        if (message.selector !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.selector);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message indykite.auditsink.v1beta1.TokenIntrospectConfig.Claim
+ */
+export const TokenIntrospectConfig_Claim = new TokenIntrospectConfig_Claim$Type();
