@@ -106,10 +106,6 @@ export interface Value {
         durationValue: Duration;
     } | {
         oneofKind: "stringValue";
-        // An identifier value. Keep here to know number 13 is reserved for Identifier.
-        // However, we don't have proper type for Identifier yet.
-        // Identifier identifier_value = 13;
-
         /**
          * A string value.
          *
