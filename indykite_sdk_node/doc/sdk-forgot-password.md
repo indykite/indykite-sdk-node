@@ -104,7 +104,7 @@ The property values, for your application, can be retrieved from your IndyKite p
 
 Example .env:
 ```bash
-REACT_APP_BASE_URI=https://jarvis-dev.indykite.com
+REACT_APP_BASE_URI=https://indykite-sdk-node.indykite.com
 REACT_APP_APPLICATION_ID=696e6479-6b69-4465-8000-020F00000000
 REACT_APP_TENANT_ID=696e6479-6b69-4465-8000-030F00000002
 ```
@@ -165,84 +165,4 @@ const Login = () => {
     </div>
   );
 };
-```
-
-### Call sendResetPasswordEmail() function:
-* On the route “/forgot/password” in your component call function IKUICore.renderForgotPasswordForm
-
-```typescript
-import { IKUICore } from "indykite-ui-sdk";
-
-const ForgotPassword = () => (
-  <div>
-    <div id="forgot-password-container" />
-    {IKUICore.renderForgotPasswordForm({
-      renderElementSelector: "#forgotten-password-container",
-      labels:
-        username: "Custom Email address",
-        submitButton: "Custom Send password reset email",
-        backToLogin: "Custom Go back to login"
-      }
-    })}
-  </div>
-);
-```
-
-### Code to handle the callback (link from email):
-* Once the user provides their email address and clicks the send button, an email should be sent to the user
-* Your email templates needs to include the link to your app route where you allow the user to set their new password, for example “/set/new/password”
-* On this route you need to accept the token (for example referenceID)
-
-```typescript
-<Route path="/set/new/password/:referenceId">
-   <SetNewPassword/>
-</Route>
-```
-
-* In the component on the set new password route call function IKUICore.renderSetNewPasswordForm which is where you will pass the token (referenceId).
-
-```typescript
-import { IKUICore } from "indykite-ui-sdk";
-import { useParams } from "react-router-dom"; // Or any other way how to extract url parameters
-
-const SetNewPassword = () => {
-  const { referenceId } = useParams();
-
-  return (
-    <div>
-      <div id="set-new-password-container" />
-      {IKUICore.renderSetNewPasswordForm({
-        labels: {
-          newPassword: "Custom Password",
-          confirmNewPassword: "Custom Password confirm",
-          submitButton: "Custom set new password",
-        },
-        renderElementSelector: "#set-new-password-container",
-        token: referenceId,
-      })}
-    </div>
-  );
-};
-```
-
-## Optional - Login with new credentials
-Once the user has submitted their new password, in the previous step, you can present the user with the option of re-authenticating with the new credentials.
-
-```typescript
-import { IKUIUserAPI } from "indykite-ui-sdk";
-
-IKUIUserAPI.login("valid@username.com", "Validpassword")
-  .then((data) => {
-    console.log(data["@type"]);
-    console.log(data.token);
-    console.log(data.refresh_token);
-    console.log(data.token_type); // For example "bearer"
-    console.log(data.expiration_time); // Timestamp
-    console.log(data.expires_in); // In x seconds
-  })
-  .catch((err) => {
-    console.log(err["@type"]);
-    console.log(err["~error"].code);
-    console.log(err["~error"].msg);
-  });
 ```

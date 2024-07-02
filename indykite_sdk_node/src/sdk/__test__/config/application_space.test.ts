@@ -251,7 +251,6 @@ describe('readApplicationSpaceById', () => {
                   description: StringValue.create({ value: 'App space description' }),
                   displayName: 'App Space Name',
                   etag: '5432',
-                  issuerId: 'issuer-id',
                   createdBy: 'Lorem ipsum - creator',
                   updatedBy: 'Lorem ipsum - updater',
                   createTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 2, 15, 13, 12))),
@@ -292,7 +291,6 @@ describe('readApplicationSpaceById', () => {
       expect(appSpace.description).toBe('App space description');
       expect(appSpace.displayName).toBe('App Space Name');
       expect(appSpace.etag).toBe('5432');
-      expect(appSpace.issuerId).toBe('issuer-id');
       expect(appSpace.createTime?.toString()).toBe(
         new Date(Date.UTC(2022, 2, 15, 13, 12)).toString(),
       );
@@ -411,7 +409,6 @@ describe('readApplicationSpaceByName', () => {
                   description: StringValue.create({ value: 'App space description' }),
                   displayName: 'App Space Name',
                   etag: '5432',
-                  issuerId: 'issuer-id',
                   createdBy: 'Lorem ipsum - creator',
                   updatedBy: 'Lorem ipsum - updater',
                   createTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 2, 15, 13, 12))),
@@ -459,7 +456,6 @@ describe('readApplicationSpaceByName', () => {
       expect(appSpace.description).toBe('App space description');
       expect(appSpace.displayName).toBe('App Space Name');
       expect(appSpace.etag).toBe('5432');
-      expect(appSpace.issuerId).toBe('issuer-id');
       expect(appSpace.createTime?.toString()).toBe(
         new Date(Date.UTC(2022, 2, 15, 13, 12)).toString(),
       );
@@ -577,7 +573,6 @@ describe('listApplicationSpaces', () => {
               description: StringValue.create({ value: 'App space description' }),
               displayName: 'App Space Name',
               etag: '5432',
-              issuerId: 'issuer-id',
               createTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 2, 15, 13, 12))),
               updateTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 2, 15, 13, 13))),
               deleteTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 2, 15, 13, 14))),
@@ -634,7 +629,6 @@ describe('listApplicationSpaces', () => {
       expect(appSpaces[0].description).toBe('App space description');
       expect(appSpaces[0].displayName).toBe('App Space Name');
       expect(appSpaces[0].etag).toBe('5432');
-      expect(appSpaces[0].issuerId).toBe('issuer-id');
       expect(appSpaces[0].createTime?.toString()).toBe(
         new Date(Date.UTC(2022, 2, 15, 13, 12)).toString(),
       );
@@ -794,7 +788,6 @@ describe('updateApplicationSpace', () => {
           'customer-id',
           '555',
           'App Space',
-          '11',
           'Description',
         );
         updatedAppSpace = await sdk.updateApplicationSpace(
@@ -863,7 +856,6 @@ describe('updateApplicationSpace', () => {
         'customer-id',
         '555',
         'App Space',
-        '11',
         'Description',
       );
       return sdk
@@ -911,7 +903,6 @@ describe('updateApplicationSpace', () => {
         'customer-id',
         '555',
         'App Space',
-        '11',
         'Description',
       );
       sdk
@@ -953,7 +944,6 @@ describe('updateApplicationSpace', () => {
         'customer-id',
         '555',
         'App Space',
-        '11',
         'Description',
       );
       sdk
@@ -1000,7 +990,6 @@ describe('deleteApplicationSpace', () => {
         'customer-id',
         '555',
         'App Space',
-        '11',
         'Description',
       );
       returnedValue = await sdk.deleteApplicationSpace(
@@ -1050,7 +1039,6 @@ describe('deleteApplicationSpace', () => {
         'customer-id',
         '555',
         'App Space',
-        '11',
         'Description',
       );
       sdk
@@ -1086,7 +1074,6 @@ describe('deleteApplicationSpace', () => {
         'customer-id',
         '555',
         'App Space',
-        '11',
         'Description',
       );
       sdk

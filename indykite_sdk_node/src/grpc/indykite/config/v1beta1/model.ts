@@ -26,10 +26,8 @@ import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MESSAGE_TYPE } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
-import { PolicyBuilderConfig } from "./policy_builder";
-import { Int64Value } from "../../../google/protobuf/wrappers";
-import { Value } from "../../objects/v1beta1/struct";
 import { Duration } from "../../../google/protobuf/duration";
+import { PolicyBuilderConfig } from "./policy_builder";
 import { Timestamp } from "../../../google/protobuf/timestamp";
 import { StringValue } from "../../../google/protobuf/wrappers";
 /**
@@ -216,122 +214,11 @@ export interface ApplicationSpace {
      */
     customerId: string;
     /**
-     * IssuerId associated with this Application Space.
-     *
-     * @generated from protobuf field: string issuer_id = 11;
-     */
-    issuerId: string;
-    /**
      * Read only. Status of the ikg db instance behind the Application Space.
      *
      * @generated from protobuf field: indykite.config.v1beta1.AppSpaceIKGStatus ikg_status = 14;
      */
     ikgStatus: AppSpaceIKGStatus;
-}
-/**
- * Tenant is a representation of an organization.
- * Tenant is distinct and separate from other IndyKite tenants and has its own
- * representation of objects.
- *
- * @generated from protobuf message indykite.config.v1beta1.Tenant
- */
-export interface Tenant {
-    /**
-     * Globally unique identifier.
-     *
-     * @generated from protobuf field: string id = 1;
-     */
-    id: string;
-    /**
-     * Name is unique name of configuration object.
-     *
-     * @generated from protobuf field: string name = 2;
-     */
-    name: string;
-    /**
-     * Human readable name of configuration.
-     *
-     * @generated from protobuf field: string display_name = 3;
-     */
-    displayName: string;
-    /**
-     * Description of the configuration.
-     *
-     * @generated from protobuf field: google.protobuf.StringValue description = 4;
-     */
-    description?: StringValue;
-    /**
-     * Output only. The time at which the configuration was created.
-     *
-     * @generated from protobuf field: google.protobuf.Timestamp create_time = 5;
-     */
-    createTime?: Timestamp;
-    /**
-     * Output only. The user/service id who created the configuration.
-     *
-     * @generated from protobuf field: string created_by = 14;
-     */
-    createdBy: string;
-    /**
-     * Output only. The time at which the configuration was last changed.
-     *
-     * This value is initially set to the `create_time` then increases monotonically with each change.
-     *
-     * @generated from protobuf field: google.protobuf.Timestamp update_time = 6;
-     */
-    updateTime?: Timestamp;
-    /**
-     * Output only. The user/service id who last changed the configuration.
-     *
-     * @generated from protobuf field: string updated_by = 15;
-     */
-    updatedBy: string;
-    /**
-     * Output only. The time this configuration was destroyed.
-     *
-     * Only present if deletion of object was requested.
-     *
-     * @generated from protobuf field: google.protobuf.Timestamp destroy_time = 7;
-     */
-    destroyTime?: Timestamp;
-    /**
-     * Output only. The time this configuration will be entirely deleted.
-     *
-     * Only present if deletion of object was requested.
-     *
-     * @generated from protobuf field: google.protobuf.Timestamp delete_time = 8;
-     */
-    deleteTime?: Timestamp;
-    /**
-     * Output only. Multiversion concurrency control version.
-     *
-     * @generated from protobuf field: string etag = 9;
-     */
-    etag: string;
-    /**
-     * CustomerId this object is directly or indirectly connected to.
-     *
-     * @generated from protobuf field: string customer_id = 10;
-     */
-    customerId: string;
-    /**
-     * AppSpaceId this object is directly or indirectly connected to.
-     *
-     * @generated from protobuf field: string app_space_id = 11;
-     */
-    appSpaceId: string;
-    /**
-     * IssuerId this object is directly or indirectly connected to.
-     *
-     * @generated from protobuf field: string issuer_id = 12;
-     */
-    issuerId: string;
-    /**
-     * Default is read only value indicating this instance is used by default.
-     *
-     * @generated from protobuf field: bool default = 13;
-     */
-    default: boolean;
 }
 /**
  * Application represents the customer application.
@@ -845,58 +732,14 @@ export interface ConfigNode {
      */
     appSpaceId: string;
     /**
-     * TenantId this object is directly or indirectly connected to.
-     *
-     * @generated from protobuf field: string tenant_id = 12;
-     */
-    tenantId: string;
-    /**
      * @generated from protobuf oneof: config
      */
     config: {
-        oneofKind: "authFlowConfig";
-        /**
-         * @generated from protobuf field: indykite.config.v1beta1.AuthFlowConfig auth_flow_config = 14;
-         */
-        authFlowConfig: AuthFlowConfig;
-    } | {
-        oneofKind: "emailServiceConfig";
-        /**
-         * @generated from protobuf field: indykite.config.v1beta1.EmailServiceConfig email_service_config = 15;
-         */
-        emailServiceConfig: EmailServiceConfig;
-    } | {
         oneofKind: "auditSinkConfig";
         /**
          * @generated from protobuf field: indykite.config.v1beta1.AuditSinkConfig audit_sink_config = 28;
          */
         auditSinkConfig: AuditSinkConfig;
-    } | {
-        oneofKind: "oauth2ClientConfig";
-        /**
-         * OAuth2ClientConfig for third party OIDC clients.
-         *
-         * @generated from protobuf field: indykite.config.v1beta1.OAuth2ClientConfig oauth2_client_config = 16;
-         */
-        oauth2ClientConfig: OAuth2ClientConfig;
-    } | {
-        oneofKind: "passwordProviderConfig";
-        /**
-         * @generated from protobuf field: indykite.config.v1beta1.PasswordProviderConfig password_provider_config = 18;
-         */
-        passwordProviderConfig: PasswordProviderConfig;
-    } | {
-        oneofKind: "webauthnProviderConfig";
-        /**
-         * @generated from protobuf field: indykite.config.v1beta1.WebAuthnProviderConfig webauthn_provider_config = 19;
-         */
-        webauthnProviderConfig: WebAuthnProviderConfig;
-    } | {
-        oneofKind: "safrProviderConfig";
-        /**
-         * @generated from protobuf field: indykite.config.v1beta1.SAFRProviderConfig safr_provider_config = 21;
-         */
-        safrProviderConfig: SAFRProviderConfig;
     } | {
         oneofKind: "authorizationPolicyConfig";
         /**
@@ -924,1226 +767,6 @@ export interface ConfigNode {
      * @generated from protobuf field: int64 version = 29;
      */
     version: string;
-}
-/**
- * OAuth2ClientConfig is a service specific set of parameters
- *
- * @generated from protobuf message indykite.config.v1beta1.OAuth2ClientConfig
- */
-export interface OAuth2ClientConfig {
-    /**
-     * @generated from protobuf field: indykite.config.v1beta1.ProviderType provider_type = 1;
-     */
-    providerType: ProviderType;
-    /**
-     * @generated from protobuf field: string client_id = 2;
-     */
-    clientId: string;
-    /**
-     * Client secret, must be provided when creating a new client config but is optional when updating.
-     * If provided when updating, stored secret value will be updated with new value.
-     * If not provided when updating, stored secret value will be kept.
-     * When reading back client config, client secret will always be set to string empty.
-     *
-     * @generated from protobuf field: string client_secret = 3;
-     */
-    clientSecret: string;
-    /**
-     * @generated from protobuf field: repeated string redirect_uri = 4;
-     */
-    redirectUri: string[];
-    /**
-     * @generated from protobuf field: repeated string default_scopes = 17;
-     */
-    defaultScopes: string[];
-    /**
-     * @generated from protobuf field: repeated string allowed_scopes = 19;
-     */
-    allowedScopes: string[];
-    /**
-     * This is only for Github, might change to hint for UI.
-     *
-     * @generated from protobuf field: bool allow_signup = 8;
-     */
-    allowSignup: boolean;
-    /**
-     * URL using the https scheme with no query or fragment component that the OP asserts as its Issuer Identifier.
-     * If Issuer discovery is supported (see Section 2), this value MUST be identical to the issuer value returned by WebFinger.
-     * This also MUST be identical to the iss Claim value in ID Tokens issued from this Issuer.
-     * Example: `https://server/issuer/.well-known/openid-configuration`
-     *
-     * @generated from protobuf field: string issuer = 9;
-     */
-    issuer: string;
-    /**
-     * URL of the OP's OAuth 2.0 Authorization Endpoint
-     * Example: `https://server/issuer/.well-known/openid-configuration`
-     *
-     * @generated from protobuf field: string authorization_endpoint = 10;
-     */
-    authorizationEndpoint: string;
-    /**
-     * URL of the OP's OAuth 2.0 Token Endpoint
-     *
-     * @generated from protobuf field: string token_endpoint = 11;
-     */
-    tokenEndpoint: string;
-    /**
-     * @generated from protobuf field: string discovery_url = 16;
-     */
-    discoveryUrl: string;
-    /**
-     * URL of the OP's UserInfo Endpoint
-     * Example `https://server/issuer/.well-known/openid-configuration`
-     *
-     * @generated from protobuf field: string userinfo_endpoint = 12;
-     */
-    userinfoEndpoint: string;
-    /**
-     * URL of the OP's JSON Web Key Set [JWK] document. This contains the signing key(s) the
-     * RP uses to validate signatures from the OP. The JWK Set MAY also contain the Server's encryption key(s),
-     * which are used by RPs to encrypt requests to the Server. When both signing and encryption keys are made available,
-     * a use (Key Use) parameter value is REQUIRED for all keys in the referenced JWK Set to indicate each key's
-     * intended usage. Although some algorithms allow the same key to be used for both signatures and encryption,
-     * doing so is NOT RECOMMENDED, as it is less secure. The JWK x5c parameter MAY be used to provide X.509
-     * representations of keys provided. When used, the bare key values MUST still be present and MUST match those in the certificate.
-     *
-     * @generated from protobuf field: string jwks_uri = 13;
-     */
-    jwksUri: string;
-    /**
-     * Example `https://server/openid.png`
-     *
-     * @generated from protobuf field: string image_url = 14;
-     */
-    imageUrl: string;
-    /**
-     * Example `login.microsoftonline.com/" + tenant + "/oauth2/v2.0/authorize`
-     *
-     * @generated from protobuf field: string tenant = 15;
-     */
-    tenant: string;
-    /**
-     * [Send Auth Request](https://developers.google.com/identity/protocols/oauth2/openid-connect#sendauthrequest)
-     * [Authentication URI Parameters](https://developers.google.com/identity/protocols/oauth2/openid-connect#authenticationuriparameters)
-     *
-     * @generated from protobuf field: string hosted_domain = 18;
-     */
-    hostedDomain: string;
-    /**
-     * AuthStyle represents how requests for tokens are authenticated to the server.
-     *
-     * @generated from protobuf field: indykite.config.v1beta1.AuthStyle auth_style = 20;
-     */
-    authStyle: AuthStyle;
-    /**
-     * Required if using Apple as provider. Used to sign JWT token which acts as client_secret for
-     * authorization code - token exchange.
-     * Private key pem must be provided when creating a new client config but is optional when updating.
-     * If provided when updating, stored secret value will be updated with new value.
-     * If not provided when updating, stored secret value will be kept.
-     * When reading back client config, private key pem will always be set to null.
-     *
-     * @generated from protobuf field: bytes private_key_pem = 21;
-     */
-    privateKeyPem: Uint8Array;
-    /**
-     * Required if using Apple as provider. Used to sign JWT token which acts as client_secret for
-     * authorization code - token exchange.
-     *
-     * @generated from protobuf field: string private_key_id = 22;
-     */
-    privateKeyId: string;
-    /**
-     * Required if using Apple as provider. Used to generate JWT token for authorization code - token exchange.
-     *
-     * @generated from protobuf field: string team_id = 23;
-     */
-    teamId: string;
-}
-/**
- * @generated from protobuf message indykite.config.v1beta1.OAuth2Application
- */
-export interface OAuth2Application {
-    /**
-     * Globally unique identifier.
-     *
-     * @generated from protobuf field: string id = 1;
-     */
-    id: string;
-    /**
-     * Name is unique name of configuration object.
-     *
-     * @generated from protobuf field: string name = 2;
-     */
-    name: string;
-    /**
-     * Human readable name of configuration.
-     *
-     * @generated from protobuf field: string display_name = 3;
-     */
-    displayName: string;
-    /**
-     * Description of the configuration.
-     *
-     * @generated from protobuf field: google.protobuf.StringValue description = 4;
-     */
-    description?: StringValue;
-    /**
-     * Output only. The time at which the configuration was created.
-     *
-     * @generated from protobuf field: google.protobuf.Timestamp create_time = 5;
-     */
-    createTime?: Timestamp;
-    /**
-     * Output only. The user/service id who created the configuration.
-     *
-     * @generated from protobuf field: string created_by = 14;
-     */
-    createdBy: string;
-    /**
-     * Output only. The time at which the configuration was last changed.
-     *
-     * This value is initially set to the `create_time` then increases monotonically with each change.
-     *
-     * @generated from protobuf field: google.protobuf.Timestamp update_time = 6;
-     */
-    updateTime?: Timestamp;
-    /**
-     * Output only. The user/service id who last changed the configuration.
-     *
-     * @generated from protobuf field: string updated_by = 15;
-     */
-    updatedBy: string;
-    /**
-     * Output only. The time this configuration was destroyed.
-     *
-     * Only present if deletion of object was requested.
-     *
-     * @generated from protobuf field: google.protobuf.Timestamp destroy_time = 7;
-     */
-    destroyTime?: Timestamp;
-    /**
-     * Output only. The time this configuration will be entirely deleted.
-     *
-     * Only present if deletion of object was requested.
-     *
-     * @generated from protobuf field: google.protobuf.Timestamp delete_time = 8;
-     */
-    deleteTime?: Timestamp;
-    /**
-     * Output only. Multiversion concurrency control version.
-     *
-     * @generated from protobuf field: string etag = 9;
-     */
-    etag: string;
-    /**
-     * CustomerId this object is indirectly connected to.
-     *
-     * @generated from protobuf field: string customer_id = 10;
-     */
-    customerId: string;
-    /**
-     * AppSpaceId this object is indirectly connected to.
-     *
-     * @generated from protobuf field: string app_space_id = 11;
-     */
-    appSpaceId: string;
-    /**
-     * oauth2_provider_id this object is directly connected to.
-     *
-     * @generated from protobuf field: string oauth2_provider_id = 12;
-     */
-    oauth2ProviderId: string;
-    /**
-     * OAuth2ApplicationConfig IndyKite OIDC Application Config
-     *
-     * @generated from protobuf field: indykite.config.v1beta1.OAuth2ApplicationConfig config = 13;
-     */
-    config?: OAuth2ApplicationConfig;
-}
-/**
- * @generated from protobuf message indykite.config.v1beta1.OAuth2ApplicationConfig
- */
-export interface OAuth2ApplicationConfig {
-    /**
-     * ClientId is the id for this client.
-     * It is read-only and is ignored during create/update request.
-     *
-     * @generated from protobuf field: string client_id = 1;
-     */
-    clientId: string;
-    /**
-     * DisplayName is a human readable name to show in consent page etc, not in Console
-     *
-     * @generated from protobuf field: string display_name = 3;
-     */
-    displayName: string;
-    /**
-     * Description is a optional description to show in consent page etc, not in Console
-     *
-     * @generated from protobuf field: string description = 4;
-     */
-    description: string;
-    /**
-     * RedirectURIs is an array of allowed redirect urls for the client, for example http://mydomain/oauth/callback .
-     *
-     * @generated from protobuf field: repeated string redirect_uris = 5;
-     */
-    redirectUris: string[];
-    /**
-     * Owner is a string identifying the owner of the OAuth 2.0 Client.
-     *
-     * @generated from protobuf field: string owner = 6;
-     */
-    owner: string;
-    /**
-     * PolicyURI is a URL string that points to a human-readable privacy policy document
-     * that describes how the deployment organization collects, uses,
-     * retains, and discloses personal data.
-     *
-     * @generated from protobuf field: string policy_uri = 7;
-     */
-    policyUri: string;
-    /**
-     * AllowedCORSOrigins are one or more URLs (scheme://host[:port]) which are allowed to make CORS requests
-     * to the /oauth/token endpoint. If this array is empty, the sever's CORS origin configuration (`CORS_ALLOWED_ORIGINS`)
-     * will be used instead. If this array is set, the allowed origins are appended to the server's CORS origin configuration.
-     * Be aware that environment variable `CORS_ENABLED` MUST be set to `true` for this to work.
-     *
-     * @generated from protobuf field: repeated string allowed_cors_origins = 8;
-     */
-    allowedCorsOrigins: string[];
-    /**
-     * TermsOfServiceURI is a URL string that points to a human-readable terms of service
-     * document for the client that describes a contractual relationship
-     * between the end-user and the client that the end-user accepts when
-     * authorizing the client.
-     *
-     * @generated from protobuf field: string terms_of_service_uri = 9;
-     */
-    termsOfServiceUri: string;
-    /**
-     * ClientURI is an URL string of a web page providing information about the client.
-     * If present, the server SHOULD display this URL to the end-user in
-     * a clickable fashion.
-     *
-     * @generated from protobuf field: string client_uri = 10;
-     */
-    clientUri: string;
-    /**
-     * LogoURI is an URL string that references a logo for the client.
-     *
-     * @generated from protobuf field: string logo_uri = 11;
-     */
-    logoUri: string;
-    /**
-     * UserSupportEmailAddress is main email contact for User support
-     *
-     * @generated from protobuf field: string user_support_email_address = 12;
-     */
-    userSupportEmailAddress: string;
-    /**
-     * AdditionalContacts is a array of strings representing ways to contact people responsible
-     * for this client, typically email addresses.
-     *
-     * @generated from protobuf field: repeated string additional_contacts = 13;
-     */
-    additionalContacts: string[];
-    /**
-     * SubjectType requested for responses to this Client. The subject_types_supported Discovery parameter contains a
-     * list of the supported subject_type values for this server.
-     *
-     * @generated from protobuf field: indykite.config.v1beta1.ClientSubjectType subject_type = 14;
-     */
-    subjectType: ClientSubjectType;
-    /**
-     * URL using the https scheme to be used in calculating Pseudonymous Identifiers by the OP. The URL references a
-     * file with a single JSON array of redirect_uri values.
-     *
-     * @generated from protobuf field: string sector_identifier_uri = 15;
-     */
-    sectorIdentifierUri: string;
-    /**
-     * GrantTypes is an array of grant types the client is allowed to use.
-     *
-     * @generated from protobuf field: repeated indykite.config.v1beta1.GrantType grant_types = 16;
-     */
-    grantTypes: GrantType[];
-    /**
-     * ResponseTypes is an array of the OAuth 2.0 response type strings that the client can
-     * use at the authorization endpoint.
-     *
-     * @generated from protobuf field: repeated indykite.config.v1beta1.ResponseType response_types = 17;
-     */
-    responseTypes: ResponseType[];
-    /**
-     * Scope is a string containing a space-separated list of scope values (as
-     * described in Section 3.3 of OAuth 2.0 [RFC6749]) that the client
-     * can use when requesting access tokens.
-     *
-     * Pattern: ^[!#-\[\]-~]{1,254}$
-     *
-     * @generated from protobuf field: repeated string scopes = 18;
-     */
-    scopes: string[];
-    /**
-     * Audience is a whitelist defining the audiences this client is allowed to request tokens for. An audience limits
-     * the applicability of an OAuth 2.0 Access Token to, for example, certain API endpoints.
-     *
-     * @generated from protobuf field: repeated string audiences = 19;
-     */
-    audiences: string[];
-    /**
-     * Requested Client Authentication method for the Token Endpoint.
-     *
-     * @generated from protobuf field: indykite.config.v1beta1.TokenEndpointAuthMethod token_endpoint_auth_method = 20;
-     */
-    tokenEndpointAuthMethod: TokenEndpointAuthMethod;
-    /**
-     * Requested Client Authentication signing algorithm for the Token Endpoint.
-     *
-     * @generated from protobuf field: string token_endpoint_auth_signing_alg = 21;
-     */
-    tokenEndpointAuthSigningAlg: string;
-    /**
-     * JWS alg algorithm [JWA] REQUIRED for signing UserInfo Responses. If this is specified, the response will be JWT
-     * [JWT] serialized, and signed using JWS. The default, if omitted, is for the UserInfo Response to return the Claims
-     * as a UTF-8 encoded JSON object using the application/json content-type.
-     *
-     * @generated from protobuf field: string userinfo_signed_response_alg = 22;
-     */
-    userinfoSignedResponseAlg: string;
-    /**
-     * @generated from protobuf field: bool trusted = 23;
-     */
-    trusted: boolean;
-}
-/**
- * @generated from protobuf message indykite.config.v1beta1.OAuth2Provider
- */
-export interface OAuth2Provider {
-    /**
-     * Globally unique identifier.
-     *
-     * @generated from protobuf field: string id = 1;
-     */
-    id: string;
-    /**
-     * Name is unique name of configuration object.
-     *
-     * @generated from protobuf field: string name = 2;
-     */
-    name: string;
-    /**
-     * Human readable name of configuration.
-     *
-     * @generated from protobuf field: string display_name = 3;
-     */
-    displayName: string;
-    /**
-     * Description of the configuration.
-     *
-     * @generated from protobuf field: google.protobuf.StringValue description = 4;
-     */
-    description?: StringValue;
-    /**
-     * Output only. The time at which the configuration was created.
-     *
-     * @generated from protobuf field: google.protobuf.Timestamp create_time = 5;
-     */
-    createTime?: Timestamp;
-    /**
-     * Output only. The user/service id who created the configuration.
-     *
-     * @generated from protobuf field: string created_by = 13;
-     */
-    createdBy: string;
-    /**
-     * Output only. The time at which the configuration was last changed.
-     *
-     * This value is initially set to the `create_time` then increases monotonically with each change.
-     *
-     * @generated from protobuf field: google.protobuf.Timestamp update_time = 6;
-     */
-    updateTime?: Timestamp;
-    /**
-     * Output only. The user/service id who last changed the configuration.
-     *
-     * @generated from protobuf field: string updated_by = 14;
-     */
-    updatedBy: string;
-    /**
-     * Output only. The time this configuration was destroyed.
-     *
-     * Only present if deletion of object was requested.
-     *
-     * @generated from protobuf field: google.protobuf.Timestamp destroy_time = 7;
-     */
-    destroyTime?: Timestamp;
-    /**
-     * Output only. The time this configuration will be entirely deleted.
-     *
-     * Only present if deletion of object was requested.
-     *
-     * @generated from protobuf field: google.protobuf.Timestamp delete_time = 8;
-     */
-    deleteTime?: Timestamp;
-    /**
-     * Output only. Multiversion concurrency control version.
-     *
-     * @generated from protobuf field: string etag = 9;
-     */
-    etag: string;
-    /**
-     * CustomerId this object is indirectly connected to.
-     *
-     * @generated from protobuf field: string customer_id = 10;
-     */
-    customerId: string;
-    /**
-     * AppSpaceId this object is indirectly connected to.
-     *
-     * @generated from protobuf field: string app_space_id = 11;
-     */
-    appSpaceId: string;
-    /**
-     * OAuth2ApplicationConfig IndyKite OIDC Application Config
-     *
-     * @generated from protobuf field: indykite.config.v1beta1.OAuth2ProviderConfig config = 12;
-     */
-    config?: OAuth2ProviderConfig;
-}
-/**
- * @generated from protobuf message indykite.config.v1beta1.OAuth2ProviderConfig
- */
-export interface OAuth2ProviderConfig {
-    /**
-     * GrantTypes is an array of grant types the client is allowed to use.
-     *
-     * @generated from protobuf field: repeated indykite.config.v1beta1.GrantType grant_types = 1;
-     */
-    grantTypes: GrantType[];
-    /**
-     * ResponseTypes is an array of the OAuth 2.0 response type strings that the client can
-     * use at the authorization endpoint.
-     *
-     * @generated from protobuf field: repeated indykite.config.v1beta1.ResponseType response_types = 2;
-     */
-    responseTypes: ResponseType[];
-    /**
-     * Scope is a string containing a space-separated list of scope values (as
-     * described in Section 3.3 of OAuth 2.0 [RFC6749]) that the client
-     * can use when requesting access tokens.
-     *
-     * Pattern: ^[!#-\[\]-~]{1,254}$
-     *
-     * @generated from protobuf field: repeated string scopes = 3;
-     */
-    scopes: string[];
-    /**
-     * Requested Client Authentication method for the Token Endpoint.
-     *
-     * @generated from protobuf field: repeated indykite.config.v1beta1.TokenEndpointAuthMethod token_endpoint_auth_method = 4;
-     */
-    tokenEndpointAuthMethod: TokenEndpointAuthMethod[];
-    /**
-     * Requested Client Authentication signing algorithm for the Token Endpoint.
-     *
-     * @generated from protobuf field: repeated string token_endpoint_auth_signing_alg = 5;
-     */
-    tokenEndpointAuthSigningAlg: string[];
-    /**
-     * Array of request_uri values that are pre-registered by the RP for use at the OP. Servers MAY cache the
-     * contents of the files referenced by these URIs and not retrieve them at the time they are used in a request.
-     * OPs can require that request_uri values used be pre-registered with the require_request_uri_registration
-     * discovery parameter.
-     *
-     * @generated from protobuf field: repeated string request_uris = 6;
-     */
-    requestUris: string[];
-    /**
-     * RequestObjectSigningAlg JWS [JWS] alg algorithm [JWA] that MUST be used for signing Request Objects sent to the OP. All Request Objects
-     * from this Client MUST be rejected, if not signed with this algorithm.
-     *
-     * @generated from protobuf field: string request_object_signing_alg = 7;
-     */
-    requestObjectSigningAlg: string;
-    /**
-     * @generated from protobuf field: map<string, string> front_channel_login_uri = 8;
-     */
-    frontChannelLoginUri: {
-        [key: string]: string;
-    };
-    /**
-     * @generated from protobuf field: map<string, string> front_channel_consent_uri = 9;
-     */
-    frontChannelConsentUri: {
-        [key: string]: string;
-    };
-}
-/**
- * @generated from protobuf message indykite.config.v1beta1.WebAuthnProviderConfig
- */
-export interface WebAuthnProviderConfig {
-    /**
-     * @generated from protobuf field: map<string, string> relying_parties = 1;
-     */
-    relyingParties: {
-        [key: string]: string;
-    };
-    /**
-     * @generated from protobuf field: indykite.config.v1beta1.ConveyancePreference attestation_preference = 2;
-     */
-    attestationPreference: ConveyancePreference;
-    /**
-     * @generated from protobuf field: indykite.config.v1beta1.AuthenticatorAttachment authenticator_attachment = 3;
-     */
-    authenticatorAttachment: AuthenticatorAttachment;
-    /**
-     * @generated from protobuf field: bool require_resident_key = 7;
-     */
-    requireResidentKey: boolean;
-    /**
-     * @generated from protobuf field: indykite.config.v1beta1.UserVerificationRequirement user_verification = 4;
-     */
-    userVerification: UserVerificationRequirement;
-    /**
-     *  specifies a time, in milliseconds
-     *
-     * @generated from protobuf field: google.protobuf.Duration registration_timeout = 5;
-     */
-    registrationTimeout?: Duration;
-    /**
-     *  specifies a time, in milliseconds
-     *
-     * @generated from protobuf field: google.protobuf.Duration authentication_timeout = 6;
-     */
-    authenticationTimeout?: Duration;
-}
-/**
- * @generated from protobuf message indykite.config.v1beta1.WebAuthnSiteDefinition
- */
-export interface WebAuthnSiteDefinition {
-    /**
-     * @generated from protobuf field: string id = 1;
-     */
-    id: string;
-    /**
-     * @generated from protobuf field: string display_name = 2;
-     */
-    displayName: string;
-    /**
-     * @generated from protobuf field: string origin = 3;
-     */
-    origin: string;
-    /**
-     * @generated from protobuf field: string icon = 4;
-     */
-    icon: string;
-}
-/**
- * AuthFlowConfig Flow Definition
- *
- * @generated from protobuf message indykite.config.v1beta1.AuthFlowConfig
- */
-export interface AuthFlowConfig {
-    /**
-     * @generated from protobuf field: indykite.config.v1beta1.AuthFlowConfig.Format source_format = 1;
-     */
-    sourceFormat: AuthFlowConfig_Format;
-    /**
-     * Source of AuthFlow definition.
-     * During Write, developer can send only JSON or YAML and must set appropriate format in source_format field.
-     *
-     * When reading, format is always specified by source_format field. However, also Rich JSON might be returned.
-     * This situation happen, when AuthFlow was designed via Drag'n'Drop tool in Console UI.
-     *
-     * @generated from protobuf field: bytes source = 2;
-     */
-    source: Uint8Array;
-    /**
-     * Default is read only value indicating this instance is used by default.
-     *
-     * @generated from protobuf field: bool default = 4;
-     */
-    default: boolean;
-}
-/**
- * @generated from protobuf enum indykite.config.v1beta1.AuthFlowConfig.Format
- */
-export enum AuthFlowConfig_Format {
-    /**
-     * @generated from protobuf enum value: FORMAT_INVALID = 0;
-     */
-    INVALID = 0,
-    /**
-     * @generated from protobuf enum value: FORMAT_BARE_YAML = 1;
-     */
-    BARE_YAML = 1,
-    /**
-     * @generated from protobuf enum value: FORMAT_BARE_JSON = 2;
-     */
-    BARE_JSON = 2,
-    /**
-     * @generated from protobuf enum value: FORMAT_RICH_JSON = 3;
-     */
-    RICH_JSON = 3
-}
-/**
- * @generated from protobuf message indykite.config.v1beta1.SAFRProviderConfig
- */
-export interface SAFRProviderConfig {
-    /**
-     * @generated from protobuf field: string account_id = 1;
-     */
-    accountId: string;
-    /**
-     * Password, must be provided when creating a new config but is optional when updating.
-     * If provided when updating, stored password value will be updated with new value.
-     * If not provided when updating, stored password value will be kept.
-     * When reading back config, password will always be set to string empty.
-     *
-     * @generated from protobuf field: string password = 2;
-     */
-    password: string;
-    /**
-     * Directory has default value : main
-     *
-     * @generated from protobuf field: string directory = 3;
-     */
-    directory: string;
-}
-/**
- * SMSServiceConfig is not supported yet, but is used as type in many endpoints
- *
- * @generated from protobuf message indykite.config.v1beta1.SMSServiceConfig
- */
-export interface SMSServiceConfig {
-}
-/**
- * @generated from protobuf message indykite.config.v1beta1.EmailServiceConfig
- */
-export interface EmailServiceConfig {
-    /**
-     * @generated from protobuf field: indykite.config.v1beta1.Email default_from_address = 1;
-     */
-    defaultFromAddress?: Email;
-    /**
-     * Default is read only value indicating this instance is used by default.
-     *
-     * @generated from protobuf field: bool default = 8;
-     */
-    default: boolean;
-    /**
-     * @generated from protobuf oneof: provider
-     */
-    provider: {
-        oneofKind: "sendgrid";
-        /**
-         * @generated from protobuf field: indykite.config.v1beta1.SendGridProviderConfig sendgrid = 4;
-         */
-        sendgrid: SendGridProviderConfig;
-    } | {
-        oneofKind: "mailjet";
-        /**
-         * @generated from protobuf field: indykite.config.v1beta1.MailJetProviderConfig mailjet = 5;
-         */
-        mailjet: MailJetProviderConfig;
-    } | {
-        oneofKind: "mailgun";
-        /**
-         * @generated from protobuf field: indykite.config.v1beta1.MailgunProviderConfig mailgun = 6;
-         */
-        mailgun: MailgunProviderConfig;
-    } | {
-        oneofKind: "amazon";
-        /**
-         * @generated from protobuf field: indykite.config.v1beta1.AmazonSESProviderConfig amazon = 7;
-         */
-        amazon: AmazonSESProviderConfig;
-    } | {
-        oneofKind: undefined;
-    };
-    /**
-     * @generated from protobuf field: indykite.config.v1beta1.EmailDefinition invitation_message = 9;
-     */
-    invitationMessage?: EmailDefinition;
-    /**
-     * @generated from protobuf field: indykite.config.v1beta1.EmailDefinition reset_password_message = 10;
-     */
-    resetPasswordMessage?: EmailDefinition;
-    /**
-     * @generated from protobuf field: indykite.config.v1beta1.EmailDefinition verification_message = 11;
-     */
-    verificationMessage?: EmailDefinition;
-    /**
-     * @generated from protobuf field: indykite.config.v1beta1.EmailDefinition one_time_password_message = 13;
-     */
-    oneTimePasswordMessage?: EmailDefinition;
-    /**
-     * @generated from protobuf field: indykite.config.v1beta1.EmailDefinition app_space_ready_to_use_message = 14;
-     */
-    appSpaceReadyToUseMessage?: EmailDefinition;
-}
-/**
- * Email holds email name and address info.
- *
- * @generated from protobuf message indykite.config.v1beta1.Email
- */
-export interface Email {
-    /**
-     * @generated from protobuf field: string address = 1;
-     */
-    address: string;
-    /**
-     * @generated from protobuf field: string name = 2;
-     */
-    name: string;
-}
-/**
- * @generated from protobuf message indykite.config.v1beta1.SendGridProviderConfig
- */
-export interface SendGridProviderConfig {
-    /**
-     * Api key, must be provided when creating a new config but is optional when updating.
-     * If provided when updating, stored api key value will be updated with new value.
-     * If not provided when updating, stored api key value will be kept.
-     * When reading back config, api key will always be set to string empty.
-     *
-     * @generated from protobuf field: string api_key = 1;
-     */
-    apiKey: string;
-    /**
-     * @generated from protobuf field: bool sandbox_mode = 2;
-     */
-    sandboxMode: boolean;
-    /**
-     * @generated from protobuf field: google.protobuf.StringValue ip_pool_name = 3;
-     */
-    ipPoolName?: StringValue;
-    /**
-     * Host default to https://api.sendgrid.com
-     *
-     * @generated from protobuf field: google.protobuf.StringValue host = 4;
-     */
-    host?: StringValue;
-}
-/**
- * @generated from protobuf message indykite.config.v1beta1.MailJetProviderConfig
- */
-export interface MailJetProviderConfig {
-    /**
-     * Api key, must be provided when creating a new config but is optional when updating.
-     * If provided when updating, stored api key value will be updated with new value.
-     * If not provided when updating, stored api key value will be kept.
-     * When reading back config, api key will always be set to string empty.
-     *
-     * @generated from protobuf field: string api_key = 1;
-     */
-    apiKey: string;
-    /**
-     * @generated from protobuf field: bool sandbox_mode = 2;
-     */
-    sandboxMode: boolean;
-    /**
-     * @generated from protobuf field: map<string, string> url_tags = 8;
-     */
-    urlTags: {
-        [key: string]: string;
-    };
-    /**
-     * @generated from protobuf field: google.protobuf.StringValue custom_campaign = 4;
-     */
-    customCampaign?: StringValue;
-}
-/**
- * @generated from protobuf message indykite.config.v1beta1.MailgunProviderConfig
- */
-export interface MailgunProviderConfig {
-    /**
-     * Api key, must be provided when creating a new config but is optional when updating.
-     * If provided when updating, stored api key value will be updated with new value.
-     * If not provided when updating, stored api key value will be kept.
-     * When reading back config, api key will always be set to string empty.
-     *
-     * @generated from protobuf field: string api_key = 1;
-     */
-    apiKey: string;
-    /**
-     * @generated from protobuf field: indykite.config.v1beta1.Email default_from_address = 2;
-     */
-    defaultFromAddress?: Email;
-}
-/**
- * @generated from protobuf message indykite.config.v1beta1.AmazonSESProviderConfig
- */
-export interface AmazonSESProviderConfig {
-    /**
-     * AWS Access key ID
-     *
-     * @generated from protobuf field: string access_key_id = 1;
-     */
-    accessKeyId: string;
-    /**
-     * AWS Secret Access Key, must be provided when creating a new config but is optional when updating.
-     * If provided when updating, stored access key value will be updated with new value.
-     * If not provided when updating, stored access key value will be kept.
-     * When reading back config, access key will always be set to string empty.
-     *
-     * @generated from protobuf field: string secret_access_key = 2;
-     */
-    secretAccessKey: string;
-    /**
-     * The region to send requests to. This parameter is required and must
-     * be configured globally or on a per-client basis unless otherwise
-     * noted. A full list of regions is found in the "Regions and Endpoints"
-     * document.
-     *
-     * See (Regions)[http://docs.aws.amazon.com/general/latest/gr/rande.html] for AWS
-     * Regions and Endpoints.
-     *
-     * @generated from protobuf field: string region = 4;
-     */
-    region: string;
-    /**
-     * ConfigurationSetName The name of the configuration set that you want to use when sending the email.
-     *
-     * @generated from protobuf field: string configuration_set_name = 5;
-     */
-    configurationSetName: string;
-    /**
-     * @generated from protobuf field: indykite.config.v1beta1.Email default_from_address = 6;
-     */
-    defaultFromAddress?: Email;
-    /**
-     * FeedbackForwardingEmailAddress The address that you want bounce and complaint notifications to be sent to.
-     *
-     * @generated from protobuf field: string feedback_forwarding_email_address = 7;
-     */
-    feedbackForwardingEmailAddress: string;
-    /**
-     * ReplyToAddresses The "Reply-to" email addresses for the message.
-     *
-     * When the recipient replies  to the message, each Reply-to address receives the reply.
-     *
-     * @generated from protobuf field: repeated string reply_to_addresses = 8;
-     */
-    replyToAddresses: string[];
-}
-/**
- * @generated from protobuf message indykite.config.v1beta1.EmailDefinition
- */
-export interface EmailDefinition {
-    /**
-     * @generated from protobuf oneof: email
-     */
-    email: {
-        oneofKind: "template";
-        /**
-         * @generated from protobuf field: indykite.config.v1beta1.EmailTemplate template = 2;
-         */
-        template: EmailTemplate;
-    } | {
-        oneofKind: "message";
-        /**
-         * @generated from protobuf field: indykite.config.v1beta1.EmailMessage message = 3;
-         */
-        message: EmailMessage;
-    } | {
-        oneofKind: undefined;
-    };
-}
-/**
- * @generated from protobuf message indykite.config.v1beta1.EmailTemplate
- */
-export interface EmailTemplate {
-    /**
-     * @generated from protobuf field: string template_id = 1;
-     */
-    templateId: string;
-    /**
-     * @generated from protobuf field: google.protobuf.StringValue template_version = 20;
-     */
-    templateVersion?: StringValue;
-    /**
-     * @generated from protobuf field: indykite.config.v1beta1.Email from = 2;
-     */
-    from?: Email;
-    /**
-     * @generated from protobuf field: indykite.config.v1beta1.Email reply_to = 3;
-     */
-    replyTo?: Email;
-    /**
-     * @generated from protobuf field: repeated indykite.config.v1beta1.Email to = 4;
-     */
-    to: Email[];
-    /**
-     * @generated from protobuf field: repeated indykite.config.v1beta1.Email cc = 5;
-     */
-    cc: Email[];
-    /**
-     * @generated from protobuf field: repeated indykite.config.v1beta1.Email bcc = 6;
-     */
-    bcc: Email[];
-    /**
-     * @generated from protobuf field: string subject = 7;
-     */
-    subject: string;
-    /**
-     * @generated from protobuf field: map<string, string> headers = 8;
-     */
-    headers: {
-        [key: string]: string;
-    };
-    /**
-     * @generated from protobuf field: map<string, string> custom_args = 11;
-     */
-    customArgs: {
-        [key: string]: string;
-    };
-    /**
-     * @generated from protobuf field: map<string, indykite.objects.v1beta1.Value> dynamic_template_values = 12;
-     */
-    dynamicTemplateValues: {
-        [key: string]: Value;
-    };
-    /**
-     * @generated from protobuf field: repeated string categories = 13;
-     */
-    categories: string[];
-    /**
-     * @generated from protobuf field: repeated indykite.config.v1beta1.EmailAttachment attachments = 14;
-     */
-    attachments: EmailAttachment[];
-    /**
-     * @generated from protobuf field: google.protobuf.StringValue event_payload = 15;
-     */
-    eventPayload?: StringValue;
-    /**
-     * The Amazon Resource Name (ARN) of the template.
-     *
-     * @generated from protobuf field: string template_arn = 16;
-     */
-    templateArn: string;
-}
-/**
- * @generated from protobuf message indykite.config.v1beta1.EmailAttachment
- */
-export interface EmailAttachment {
-    /**
-     * @generated from protobuf field: string content_type = 1;
-     */
-    contentType: string;
-    /**
-     * @generated from protobuf field: google.protobuf.StringValue content_id = 2;
-     */
-    contentId?: StringValue;
-    /**
-     * @generated from protobuf field: bool inline = 3;
-     */
-    inline: boolean;
-    /**
-     * @generated from protobuf field: string file_name = 4;
-     */
-    fileName: string;
-    /**
-     * @generated from protobuf field: bytes content = 5;
-     */
-    content: Uint8Array;
-}
-/**
- * @generated from protobuf message indykite.config.v1beta1.EmailMessage
- */
-export interface EmailMessage {
-    /**
-     * @generated from protobuf field: indykite.config.v1beta1.Email from = 1;
-     */
-    from?: Email;
-    /**
-     * @generated from protobuf field: indykite.config.v1beta1.Email reply_to = 2;
-     */
-    replyTo?: Email;
-    /**
-     * @generated from protobuf field: repeated indykite.config.v1beta1.Email to = 3;
-     */
-    to: Email[];
-    /**
-     * @generated from protobuf field: repeated indykite.config.v1beta1.Email cc = 4;
-     */
-    cc: Email[];
-    /**
-     * @generated from protobuf field: repeated indykite.config.v1beta1.Email bcc = 5;
-     */
-    bcc: Email[];
-    /**
-     * @generated from protobuf field: string subject = 6;
-     */
-    subject: string;
-    /**
-     * @generated from protobuf field: string text_content = 7;
-     */
-    textContent: string;
-    /**
-     * @generated from protobuf field: string html_content = 8;
-     */
-    htmlContent: string;
-    /**
-     * @generated from protobuf field: map<string, string> headers = 9;
-     */
-    headers: {
-        [key: string]: string;
-    };
-    /**
-     * @generated from protobuf field: map<string, string> custom_args = 11;
-     */
-    customArgs: {
-        [key: string]: string;
-    };
-    /**
-     * @generated from protobuf field: map<string, indykite.objects.v1beta1.Value> dynamic_template_values = 10;
-     */
-    dynamicTemplateValues: {
-        [key: string]: Value;
-    };
-    /**
-     * @generated from protobuf field: repeated string categories = 12;
-     */
-    categories: string[];
-    /**
-     * @generated from protobuf field: repeated indykite.config.v1beta1.EmailAttachment attachments = 13;
-     */
-    attachments: EmailAttachment[];
-    /**
-     * @generated from protobuf field: google.protobuf.StringValue event_payload = 14;
-     */
-    eventPayload?: StringValue;
-}
-// 
-// Password Provider Service Configuration
-// 
-
-/**
- * @generated from protobuf message indykite.config.v1beta1.PasswordProviderConfig
- */
-export interface PasswordProviderConfig {
-    /**
-     * @generated from protobuf field: indykite.config.v1beta1.UsernamePolicy username_policy = 1;
-     */
-    usernamePolicy?: UsernamePolicy;
-    /**
-     * @generated from protobuf field: indykite.config.v1beta1.PasswordPolicy password_policy = 2;
-     */
-    passwordPolicy?: PasswordPolicy;
-    /**
-     * Specifies the period (in seconds) after which the failure count will be reset.
-     *
-     * @generated from protobuf field: google.protobuf.Duration fail_interval = 3;
-     */
-    failInterval?: Duration;
-    /**
-     * @generated from protobuf field: google.protobuf.Duration minimum_password_lifetime = 4;
-     */
-    minimumPasswordLifetime?: Duration;
-    /**
-     * @generated from protobuf field: google.protobuf.Duration maximum_password_lifetime = 5;
-     */
-    maximumPasswordLifetime?: Duration;
-    /**
-     * Sets the number of previous passwords that are stored and which a user is prevented from using
-     *
-     * @generated from protobuf field: int64 password_history = 6;
-     */
-    passwordHistory: string;
-    /**
-     * Specifies the maximum number of consecutive failures to input the correct password before the user's account is locked.
-     *
-     * @generated from protobuf field: int64 maximum_consecutive_failures = 7;
-     */
-    maximumConsecutiveFailures: string;
-    /**
-     * Specifies the period (in seconds) for which a lockout is enforced.
-     *
-     * @generated from protobuf field: google.protobuf.Duration lockout_time = 8;
-     */
-    lockoutTime?: Duration;
-}
-/**
- * @generated from protobuf message indykite.config.v1beta1.UsernamePolicy
- */
-export interface UsernamePolicy {
-    /**
-     * AllowedUsernameFormats activates the validator to accept various formats as user identifier for humans.
-     *
-     * @generated from protobuf field: repeated string allowed_username_formats = 5;
-     */
-    allowedUsernameFormats: string[];
-    /**
-     * Must be valid email with MX record
-     *
-     * @generated from protobuf field: bool valid_email = 1;
-     */
-    validEmail: boolean;
-    /**
-     * Email must be verified
-     *
-     * @generated from protobuf field: bool verify_email = 2;
-     */
-    verifyEmail: boolean;
-    /**
-     * @generated from protobuf field: google.protobuf.Duration verify_email_grace_period = 7;
-     */
-    verifyEmailGracePeriod?: Duration;
-    /**
-     * Allowed email domains to register. Can be shared among tenants.
-     *
-     * @generated from protobuf field: repeated string allowed_email_domains = 3;
-     */
-    allowedEmailDomains: string[];
-    /**
-     * Unique email domain in AppSpace, not allowed to be shared amon tenants.
-     *
-     * @generated from protobuf field: repeated string exclusive_email_domains = 4;
-     */
-    exclusiveEmailDomains: string[];
-}
-/**
- * UniquePropertyConstraintDefinition defines the given Identity property as unique among other.
- *
- * This defines a constraint on Identity Property storage to enforce the value to be unique.
- * The
- *
- * @generated from protobuf message indykite.config.v1beta1.UniquePropertyConstraint
- */
-export interface UniquePropertyConstraint {
-    /**
-     * If tenantUnique is true the value will be unique only in Tenant and not across multiple tenants.
-     *
-     * @generated from protobuf field: bool tenant_unique = 1;
-     */
-    tenantUnique: boolean;
-    /**
-     * Canonicalization takes the supported methods in order and find the first applicable to given value to apply it
-     * before checking unique value.
-     * Example ‘K’ ("\u004B") and ‘K’ (Kelvin sign “\u212A”) are different but
-     * rune ("\u00e9") or an ’e' followed by an acute accent (“e\u0301”) are the same.
-     *
-     * @generated from protobuf field: repeated string canonicalization = 2;
-     */
-    canonicalization: string[];
-}
-/**
- * @generated from protobuf message indykite.config.v1beta1.PasswordPolicy
- */
-export interface PasswordPolicy {
-    /**
-     * @generated from protobuf field: indykite.config.v1beta1.PasswordPolicyTemplate template = 1;
-     */
-    template: PasswordPolicyTemplate;
-    /**
-     * @generated from protobuf field: google.protobuf.Int64Value minimum_length = 2;
-     */
-    minimumLength?: Int64Value;
 }
 /**
  * @generated from protobuf message indykite.config.v1beta1.AuthorizationPolicyConfig
@@ -2303,6 +926,12 @@ export interface TokenIntrospectConfig {
          */
         jwt: TokenIntrospectConfig_JWT;
     } | {
+        oneofKind: "opaque";
+        /**
+         * @generated from protobuf field: indykite.config.v1beta1.TokenIntrospectConfig.Opaque opaque = 2;
+         */
+        opaque: TokenIntrospectConfig_Opaque;
+    } | {
         oneofKind: undefined;
     };
     /**
@@ -2314,6 +943,12 @@ export interface TokenIntrospectConfig {
          * @generated from protobuf field: indykite.config.v1beta1.TokenIntrospectConfig.Offline offline = 3;
          */
         offline: TokenIntrospectConfig_Offline;
+    } | {
+        oneofKind: "online";
+        /**
+         * @generated from protobuf field: indykite.config.v1beta1.TokenIntrospectConfig.Online online = 4;
+         */
+        online: TokenIntrospectConfig_Online;
     } | {
         oneofKind: undefined;
     };
@@ -2363,6 +998,14 @@ export interface TokenIntrospectConfig_JWT {
     audience: string;
 }
 /**
+ * Opaque specifies the configuration is for opaque tokens.
+ * Currently we will support max 1 opaque token configuration per app space.
+ *
+ * @generated from protobuf message indykite.config.v1beta1.TokenIntrospectConfig.Opaque
+ */
+export interface TokenIntrospectConfig_Opaque {
+}
+/**
  * Offline validation works only with JWT.
  *
  * @generated from protobuf message indykite.config.v1beta1.TokenIntrospectConfig.Offline
@@ -2376,6 +1019,35 @@ export interface TokenIntrospectConfig_Offline {
      * @generated from protobuf field: repeated bytes public_jwks = 1;
      */
     publicJwks: Uint8Array[];
+}
+/**
+ * Online validation works with both JWT and Opaque tokens.
+ * It will call userinfo endpoint to validate token and fetch user claims.
+ *
+ * @generated from protobuf message indykite.config.v1beta1.TokenIntrospectConfig.Online
+ */
+export interface TokenIntrospectConfig_Online {
+    /**
+     * URI of userinfo endpoint which will be used to validate access token.
+     * And also fetch user claims when opaque token is received.
+     *
+     * It can remain empty, if JWT token matcher is used.
+     * Then the URI under "userinfo_endpoint" in .well-known/openid-configuration endpoint is used.
+     *
+     * @generated from protobuf field: string userinfo_endpoint = 1;
+     */
+    userinfoEndpoint: string;
+    /**
+     * Cache TTL of token validity can be used to minimize calls to userinfo endpoint.
+     * The final cache TTL will be set to lower limit of this value and exp claim of JWT token.
+     * If not set, token will not be cached and call to userinfo endpoint will be made on every request.
+     *
+     * However, token validity will be checked first if possible (JWT tokens).
+     * If token is expired, userinfo endpoint will not be called, nor cache checked.
+     *
+     * @generated from protobuf field: google.protobuf.Duration cache_ttl = 2;
+     */
+    cacheTtl?: Duration;
 }
 /**
  * Claim specify details about claim that will be mapped to IKG.
@@ -2394,6 +1066,32 @@ export interface TokenIntrospectConfig_Claim {
      * @generated from protobuf field: string selector = 1;
      */
     selector: string;
+}
+/**
+ * @generated from protobuf message indykite.config.v1beta1.ConsentDataPoint
+ */
+export interface ConsentDataPoint {
+    /**
+     * @generated from protobuf field: string query = 1;
+     */
+    query: string;
+    /**
+     * @generated from protobuf field: repeated indykite.config.v1beta1.ConsentDataPoint.Return returns = 2;
+     */
+    returns: ConsentDataPoint_Return[];
+}
+/**
+ * @generated from protobuf message indykite.config.v1beta1.ConsentDataPoint.Return
+ */
+export interface ConsentDataPoint_Return {
+    /**
+     * @generated from protobuf field: string variable = 1;
+     */
+    variable: string;
+    /**
+     * @generated from protobuf field: repeated string properties = 2;
+     */
+    properties: string[];
 }
 /**
  * @generated from protobuf enum indykite.config.v1beta1.AppSpaceIKGStatus
@@ -2419,416 +1117,6 @@ export enum AppSpaceIKGStatus {
      * @generated from protobuf enum value: APP_SPACE_IKG_STATUS_STATUS_PAUSED = 4;
      */
     APP_SPACE_IKG_STATUS_STATUS_PAUSED = 4
-}
-// 
-// 
-// OAuth2 Configurations
-// 
-// 
-
-/**
- * ProviderType is a list of supported OAuth2 providers.
- *
- * @generated from protobuf enum indykite.config.v1beta1.ProviderType
- */
-export enum ProviderType {
-    /**
-     * @generated from protobuf enum value: PROVIDER_TYPE_INVALID = 0;
-     */
-    INVALID = 0,
-    /**
-     * @generated from protobuf enum value: PROVIDER_TYPE_AMAZON_COM = 1;
-     */
-    AMAZON_COM = 1,
-    /**
-     * @generated from protobuf enum value: PROVIDER_TYPE_AMAZONCOGNITO_COM = 34;
-     */
-    AMAZONCOGNITO_COM = 34,
-    /**
-     * @generated from protobuf enum value: PROVIDER_TYPE_APPLE_COM = 41;
-     */
-    APPLE_COM = 41,
-    /**
-     * @generated from protobuf enum value: PROVIDER_TYPE_AUTHENTEQ_COM = 33;
-     */
-    AUTHENTEQ_COM = 33,
-    /**
-     * @generated from protobuf enum value: PROVIDER_TYPE_BANKID_COM = 38;
-     */
-    BANKID_COM = 38,
-    /**
-     * @generated from protobuf enum value: PROVIDER_TYPE_BANKID_NO = 37;
-     */
-    BANKID_NO = 37,
-    /**
-     * @generated from protobuf enum value: PROVIDER_TYPE_BITBUCKET = 2;
-     */
-    BITBUCKET = 2,
-    /**
-     * @generated from protobuf enum value: PROVIDER_TYPE_CERN_CH = 3;
-     */
-    CERN_CH = 3,
-    /**
-     * @generated from protobuf enum value: PROVIDER_TYPE_CUSTOM = 39;
-     */
-    CUSTOM = 39,
-    /**
-     * @generated from protobuf enum value: PROVIDER_TYPE_FACEBOOK_COM = 4;
-     */
-    FACEBOOK_COM = 4,
-    /**
-     * @generated from protobuf enum value: PROVIDER_TYPE_FITBIT_COM = 5;
-     */
-    FITBIT_COM = 5,
-    /**
-     * @generated from protobuf enum value: PROVIDER_TYPE_FOURSQUARE_COM = 6;
-     */
-    FOURSQUARE_COM = 6,
-    /**
-     * @generated from protobuf enum value: PROVIDER_TYPE_GITHUB_COM = 7;
-     */
-    GITHUB_COM = 7,
-    /**
-     * @generated from protobuf enum value: PROVIDER_TYPE_GITLAB_COM = 8;
-     */
-    GITLAB_COM = 8,
-    /**
-     * @generated from protobuf enum value: PROVIDER_TYPE_GOOGLE_COM = 9;
-     */
-    GOOGLE_COM = 9,
-    /**
-     * @generated from protobuf enum value: PROVIDER_TYPE_HEROKU_COM = 10;
-     */
-    HEROKU_COM = 10,
-    /**
-     * @generated from protobuf enum value: PROVIDER_TYPE_HIPCHAT_COM = 11;
-     */
-    HIPCHAT_COM = 11,
-    /**
-     * @generated from protobuf enum value: PROVIDER_TYPE_INDYKITE_ID = 35;
-     */
-    INDYKITE_ID = 35,
-    /**
-     * @generated from protobuf enum value: PROVIDER_TYPE_INDYKITE_ME = 36;
-     */
-    INDYKITE_ME = 36,
-    /**
-     * @generated from protobuf enum value: PROVIDER_TYPE_INSTAGRAM_COM = 12;
-     */
-    INSTAGRAM_COM = 12,
-    /**
-     * @generated from protobuf enum value: PROVIDER_TYPE_KAKAO_COM = 13;
-     */
-    KAKAO_COM = 13,
-    /**
-     * @generated from protobuf enum value: PROVIDER_TYPE_LINKEDIN_COM = 14;
-     */
-    LINKEDIN_COM = 14,
-    /**
-     * @generated from protobuf enum value: PROVIDER_TYPE_MAILCHIMP_COM = 15;
-     */
-    MAILCHIMP_COM = 15,
-    /**
-     * @generated from protobuf enum value: PROVIDER_TYPE_MAIL_RU = 16;
-     */
-    MAIL_RU = 16,
-    /**
-     * @generated from protobuf enum value: PROVIDER_TYPE_MEDIAMATH_COM = 17;
-     */
-    MEDIAMATH_COM = 17,
-    /**
-     * @generated from protobuf enum value: PROVIDER_TYPE_SANDBOX_MEDIAMATH_COM = 18;
-     */
-    SANDBOX_MEDIAMATH_COM = 18,
-    /**
-     * @generated from protobuf enum value: PROVIDER_TYPE_LIVE_COM = 32;
-     */
-    LIVE_COM = 32,
-    /**
-     * @generated from protobuf enum value: PROVIDER_TYPE_MICROSOFT_COM = 19;
-     */
-    MICROSOFT_COM = 19,
-    /**
-     * @generated from protobuf enum value: PROVIDER_TYPE_HEALTH_NOKIA_COM = 20;
-     */
-    HEALTH_NOKIA_COM = 20,
-    /**
-     * @generated from protobuf enum value: PROVIDER_TYPE_ODNOKLASSNIKI_RU = 21;
-     */
-    ODNOKLASSNIKI_RU = 21,
-    /**
-     * @generated from protobuf enum value: PROVIDER_TYPE_PAYPAL_COM = 22;
-     */
-    PAYPAL_COM = 22,
-    /**
-     * @generated from protobuf enum value: PROVIDER_TYPE_SANDBOX_PAYPAL_COM = 23;
-     */
-    SANDBOX_PAYPAL_COM = 23,
-    /**
-     * @generated from protobuf enum value: PROVIDER_TYPE_SLACK_COM = 24;
-     */
-    SLACK_COM = 24,
-    /**
-     * @generated from protobuf enum value: PROVIDER_TYPE_SPOTIFY_COM = 25;
-     */
-    SPOTIFY_COM = 25,
-    /**
-     * @generated from protobuf enum value: PROVIDER_TYPE_STACKOVERFLOW_COM = 26;
-     */
-    STACKOVERFLOW_COM = 26,
-    /**
-     * @generated from protobuf enum value: PROVIDER_TYPE_TWITCH_TV = 27;
-     */
-    TWITCH_TV = 27,
-    /**
-     * @generated from protobuf enum value: PROVIDER_TYPE_UBER_COM = 28;
-     */
-    UBER_COM = 28,
-    /**
-     * @generated from protobuf enum value: PROVIDER_TYPE_VIPPS_NO = 40;
-     */
-    VIPPS_NO = 40,
-    /**
-     * @generated from protobuf enum value: PROVIDER_TYPE_VK_COM = 29;
-     */
-    VK_COM = 29,
-    /**
-     * @generated from protobuf enum value: PROVIDER_TYPE_YAHOO_COM = 30;
-     */
-    YAHOO_COM = 30,
-    /**
-     * @generated from protobuf enum value: PROVIDER_TYPE_YANDEX_COM = 31;
-     */
-    YANDEX_COM = 31
-}
-/**
- * AuthStyle represents how requests for tokens are authenticated
- * to the server.
- *
- * @generated from protobuf enum indykite.config.v1beta1.AuthStyle
- */
-export enum AuthStyle {
-    /**
-     * @generated from protobuf enum value: AUTH_STYLE_INVALID = 0;
-     */
-    INVALID = 0,
-    /**
-     * AuthStyleAutoDetect means to auto-detect which authentication
-     * style the provider wants by trying both ways and caching
-     * the successful way for the future.
-     *
-     * @generated from protobuf enum value: AUTH_STYLE_AUTO_DETECT = 1;
-     */
-    AUTO_DETECT = 1,
-    /**
-     * AuthStyleInParams sends the "client_id" and "client_secret"
-     * in the POST body as application/x-www-form-urlencoded parameters.
-     *
-     * @generated from protobuf enum value: AUTH_STYLE_IN_PARAMS = 2;
-     */
-    IN_PARAMS = 2,
-    /**
-     * AuthStyleInHeader sends the client_id and client_password
-     * using HTTP Basic Authorization. This is an optional style
-     * described in the OAuth2 RFC 6749 section 2.3.1.
-     *
-     * @generated from protobuf enum value: AUTH_STYLE_IN_HEADER = 3;
-     */
-    IN_HEADER = 3
-}
-// 
-// 
-//  OAuth2/OIDC Service Configuration
-// 
-// 
-
-/**
- * @generated from protobuf enum indykite.config.v1beta1.GrantType
- */
-export enum GrantType {
-    /**
-     * @generated from protobuf enum value: GRANT_TYPE_INVALID = 0;
-     */
-    INVALID = 0,
-    /**
-     * https://tools.ietf.org/html/rfc6749#section-4.1
-     *
-     * @generated from protobuf enum value: GRANT_TYPE_AUTHORIZATION_CODE = 1;
-     */
-    AUTHORIZATION_CODE = 1,
-    /**
-     * https://tools.ietf.org/html/rfc6749#section-4.2
-     *
-     * @generated from protobuf enum value: GRANT_TYPE_IMPLICIT = 2;
-     */
-    IMPLICIT = 2,
-    /**
-     * https://tools.ietf.org/html/rfc6749#section-4.3
-     *
-     * @generated from protobuf enum value: GRANT_TYPE_PASSWORD = 3;
-     */
-    PASSWORD = 3,
-    /**
-     * https://tools.ietf.org/html/rfc6749#section-4.4
-     *
-     * @generated from protobuf enum value: GRANT_TYPE_CLIENT_CREDENTIALS = 4;
-     */
-    CLIENT_CREDENTIALS = 4,
-    /**
-     * https://tools.ietf.org/html/rfc6749#section-6
-     *
-     * @generated from protobuf enum value: GRANT_TYPE_REFRESH_TOKEN = 5;
-     */
-    REFRESH_TOKEN = 5
-}
-/**
- * @generated from protobuf enum indykite.config.v1beta1.ResponseType
- */
-export enum ResponseType {
-    /**
-     * @generated from protobuf enum value: RESPONSE_TYPE_INVALID = 0;
-     */
-    INVALID = 0,
-    /**
-     * @generated from protobuf enum value: RESPONSE_TYPE_TOKEN = 1;
-     */
-    TOKEN = 1,
-    /**
-     * @generated from protobuf enum value: RESPONSE_TYPE_CODE = 2;
-     */
-    CODE = 2,
-    /**
-     * @generated from protobuf enum value: RESPONSE_TYPE_ID_TOKEN = 3;
-     */
-    ID_TOKEN = 3
-}
-/**
- * @generated from protobuf enum indykite.config.v1beta1.ClientSubjectType
- */
-export enum ClientSubjectType {
-    /**
-     * @generated from protobuf enum value: CLIENT_SUBJECT_TYPE_INVALID = 0;
-     */
-    INVALID = 0,
-    /**
-     * @generated from protobuf enum value: CLIENT_SUBJECT_TYPE_PUBLIC = 1;
-     */
-    PUBLIC = 1,
-    /**
-     * @generated from protobuf enum value: CLIENT_SUBJECT_TYPE_PAIRWISE = 2;
-     */
-    PAIRWISE = 2
-}
-/**
- * @generated from protobuf enum indykite.config.v1beta1.TokenEndpointAuthMethod
- */
-export enum TokenEndpointAuthMethod {
-    /**
-     * @generated from protobuf enum value: TOKEN_ENDPOINT_AUTH_METHOD_INVALID = 0;
-     */
-    INVALID = 0,
-    /**
-     * @generated from protobuf enum value: TOKEN_ENDPOINT_AUTH_METHOD_CLIENT_SECRET_BASIC = 1;
-     */
-    CLIENT_SECRET_BASIC = 1,
-    /**
-     * @generated from protobuf enum value: TOKEN_ENDPOINT_AUTH_METHOD_CLIENT_SECRET_POST = 2;
-     */
-    CLIENT_SECRET_POST = 2,
-    /**
-     * @generated from protobuf enum value: TOKEN_ENDPOINT_AUTH_METHOD_PRIVATE_KEY_JWT = 3;
-     */
-    PRIVATE_KEY_JWT = 3,
-    /**
-     * @generated from protobuf enum value: TOKEN_ENDPOINT_AUTH_METHOD_NONE = 4;
-     */
-    NONE = 4
-}
-// 
-// 
-// WebAuthn Configuration
-// 
-// 
-
-/**
- * @generated from protobuf enum indykite.config.v1beta1.ConveyancePreference
- */
-export enum ConveyancePreference {
-    /**
-     * @generated from protobuf enum value: CONVEYANCE_PREFERENCE_INVALID = 0;
-     */
-    INVALID = 0,
-    /**
-     * @generated from protobuf enum value: CONVEYANCE_PREFERENCE_NONE = 1;
-     */
-    NONE = 1,
-    /**
-     * @generated from protobuf enum value: CONVEYANCE_PREFERENCE_INDIRECT = 2;
-     */
-    INDIRECT = 2,
-    /**
-     * @generated from protobuf enum value: CONVEYANCE_PREFERENCE_DIRECT = 3;
-     */
-    DIRECT = 3
-}
-/**
- * @generated from protobuf enum indykite.config.v1beta1.AuthenticatorAttachment
- */
-export enum AuthenticatorAttachment {
-    /**
-     * @generated from protobuf enum value: AUTHENTICATOR_ATTACHMENT_INVALID = 0;
-     */
-    INVALID = 0,
-    /**
-     * @generated from protobuf enum value: AUTHENTICATOR_ATTACHMENT_DEFAULT = 1;
-     */
-    DEFAULT = 1,
-    /**
-     * @generated from protobuf enum value: AUTHENTICATOR_ATTACHMENT_PLATFORM = 2;
-     */
-    PLATFORM = 2,
-    /**
-     * @generated from protobuf enum value: AUTHENTICATOR_ATTACHMENT_CROSS_PLATFORM = 3;
-     */
-    CROSS_PLATFORM = 3
-}
-/**
- * @generated from protobuf enum indykite.config.v1beta1.UserVerificationRequirement
- */
-export enum UserVerificationRequirement {
-    /**
-     * @generated from protobuf enum value: USER_VERIFICATION_REQUIREMENT_INVALID = 0;
-     */
-    INVALID = 0,
-    /**
-     * @generated from protobuf enum value: USER_VERIFICATION_REQUIREMENT_PREFERRED = 1;
-     */
-    PREFERRED = 1,
-    /**
-     * @generated from protobuf enum value: USER_VERIFICATION_REQUIREMENT_REQUIRED = 2;
-     */
-    REQUIRED = 2,
-    /**
-     * @generated from protobuf enum value: USER_VERIFICATION_REQUIREMENT_DISCOURAGED = 3;
-     */
-    DISCOURAGED = 3
-}
-/**
- * @generated from protobuf enum indykite.config.v1beta1.PasswordPolicyTemplate
- */
-export enum PasswordPolicyTemplate {
-    /**
-     * @generated from protobuf enum value: PASSWORD_POLICY_TEMPLATE_INVALID = 0;
-     */
-    INVALID = 0,
-    /**
-     * @generated from protobuf enum value: PASSWORD_POLICY_TEMPLATE_CUSTOM = 1;
-     */
-    CUSTOM = 1,
-    /**
-     * @generated from protobuf enum value: PASSWORD_POLICY_TEMPLATE_NIST = 2;
-     */
-    NIST = 2
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class UniqueNameIdentifier$Type extends MessageType<UniqueNameIdentifier> {
@@ -3017,12 +1305,11 @@ class ApplicationSpace$Type extends MessageType<ApplicationSpace> {
             { no: 8, name: "delete_time", kind: "message", T: () => Timestamp },
             { no: 9, name: "etag", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 10, name: "customer_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
-            { no: 11, name: "issuer_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
             { no: 14, name: "ikg_status", kind: "enum", T: () => ["indykite.config.v1beta1.AppSpaceIKGStatus", AppSpaceIKGStatus] }
         ]);
     }
     create(value?: PartialMessage<ApplicationSpace>): ApplicationSpace {
-        const message = { id: "", name: "", displayName: "", createdBy: "", updatedBy: "", etag: "", customerId: "", issuerId: "", ikgStatus: 0 };
+        const message = { id: "", name: "", displayName: "", createdBy: "", updatedBy: "", etag: "", customerId: "", ikgStatus: 0 };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<ApplicationSpace>(this, message, value);
@@ -3068,9 +1355,6 @@ class ApplicationSpace$Type extends MessageType<ApplicationSpace> {
                     break;
                 case /* string customer_id */ 10:
                     message.customerId = reader.string();
-                    break;
-                case /* string issuer_id */ 11:
-                    message.issuerId = reader.string();
                     break;
                 case /* indykite.config.v1beta1.AppSpaceIKGStatus ikg_status */ 14:
                     message.ikgStatus = reader.int32();
@@ -3123,9 +1407,6 @@ class ApplicationSpace$Type extends MessageType<ApplicationSpace> {
         /* string customer_id = 10; */
         if (message.customerId !== "")
             writer.tag(10, WireType.LengthDelimited).string(message.customerId);
-        /* string issuer_id = 11; */
-        if (message.issuerId !== "")
-            writer.tag(11, WireType.LengthDelimited).string(message.issuerId);
         /* indykite.config.v1beta1.AppSpaceIKGStatus ikg_status = 14; */
         if (message.ikgStatus !== 0)
             writer.tag(14, WireType.Varint).int32(message.ikgStatus);
@@ -3139,151 +1420,6 @@ class ApplicationSpace$Type extends MessageType<ApplicationSpace> {
  * @generated MessageType for protobuf message indykite.config.v1beta1.ApplicationSpace
  */
 export const ApplicationSpace = new ApplicationSpace$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class Tenant$Type extends MessageType<Tenant> {
-    constructor() {
-        super("indykite.config.v1beta1.Tenant", [
-            { no: 1, name: "id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
-            { no: 2, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "2", maxLen: "63", pattern: "^[a-z](?:[-a-z0-9]{0,61}[a-z0-9])$" } } } },
-            { no: 3, name: "display_name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "2", maxLen: "254" } } } },
-            { no: 4, name: "description", kind: "message", T: () => StringValue, options: { "validate.rules": { string: { minLen: "2", maxLen: "254" } } } },
-            { no: 5, name: "create_time", kind: "message", T: () => Timestamp },
-            { no: 14, name: "created_by", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 6, name: "update_time", kind: "message", T: () => Timestamp },
-            { no: 15, name: "updated_by", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 7, name: "destroy_time", kind: "message", T: () => Timestamp },
-            { no: 8, name: "delete_time", kind: "message", T: () => Timestamp },
-            { no: 9, name: "etag", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 10, name: "customer_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
-            { no: 11, name: "app_space_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
-            { no: 12, name: "issuer_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
-            { no: 13, name: "default", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
-        ]);
-    }
-    create(value?: PartialMessage<Tenant>): Tenant {
-        const message = { id: "", name: "", displayName: "", createdBy: "", updatedBy: "", etag: "", customerId: "", appSpaceId: "", issuerId: "", default: false };
-        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
-        if (value !== undefined)
-            reflectionMergePartial<Tenant>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: Tenant): Tenant {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* string id */ 1:
-                    message.id = reader.string();
-                    break;
-                case /* string name */ 2:
-                    message.name = reader.string();
-                    break;
-                case /* string display_name */ 3:
-                    message.displayName = reader.string();
-                    break;
-                case /* google.protobuf.StringValue description */ 4:
-                    message.description = StringValue.internalBinaryRead(reader, reader.uint32(), options, message.description);
-                    break;
-                case /* google.protobuf.Timestamp create_time */ 5:
-                    message.createTime = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createTime);
-                    break;
-                case /* string created_by */ 14:
-                    message.createdBy = reader.string();
-                    break;
-                case /* google.protobuf.Timestamp update_time */ 6:
-                    message.updateTime = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.updateTime);
-                    break;
-                case /* string updated_by */ 15:
-                    message.updatedBy = reader.string();
-                    break;
-                case /* google.protobuf.Timestamp destroy_time */ 7:
-                    message.destroyTime = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.destroyTime);
-                    break;
-                case /* google.protobuf.Timestamp delete_time */ 8:
-                    message.deleteTime = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.deleteTime);
-                    break;
-                case /* string etag */ 9:
-                    message.etag = reader.string();
-                    break;
-                case /* string customer_id */ 10:
-                    message.customerId = reader.string();
-                    break;
-                case /* string app_space_id */ 11:
-                    message.appSpaceId = reader.string();
-                    break;
-                case /* string issuer_id */ 12:
-                    message.issuerId = reader.string();
-                    break;
-                case /* bool default */ 13:
-                    message.default = reader.bool();
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: Tenant, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* string id = 1; */
-        if (message.id !== "")
-            writer.tag(1, WireType.LengthDelimited).string(message.id);
-        /* string name = 2; */
-        if (message.name !== "")
-            writer.tag(2, WireType.LengthDelimited).string(message.name);
-        /* string display_name = 3; */
-        if (message.displayName !== "")
-            writer.tag(3, WireType.LengthDelimited).string(message.displayName);
-        /* google.protobuf.StringValue description = 4; */
-        if (message.description)
-            StringValue.internalBinaryWrite(message.description, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
-        /* google.protobuf.Timestamp create_time = 5; */
-        if (message.createTime)
-            Timestamp.internalBinaryWrite(message.createTime, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
-        /* string created_by = 14; */
-        if (message.createdBy !== "")
-            writer.tag(14, WireType.LengthDelimited).string(message.createdBy);
-        /* google.protobuf.Timestamp update_time = 6; */
-        if (message.updateTime)
-            Timestamp.internalBinaryWrite(message.updateTime, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
-        /* string updated_by = 15; */
-        if (message.updatedBy !== "")
-            writer.tag(15, WireType.LengthDelimited).string(message.updatedBy);
-        /* google.protobuf.Timestamp destroy_time = 7; */
-        if (message.destroyTime)
-            Timestamp.internalBinaryWrite(message.destroyTime, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
-        /* google.protobuf.Timestamp delete_time = 8; */
-        if (message.deleteTime)
-            Timestamp.internalBinaryWrite(message.deleteTime, writer.tag(8, WireType.LengthDelimited).fork(), options).join();
-        /* string etag = 9; */
-        if (message.etag !== "")
-            writer.tag(9, WireType.LengthDelimited).string(message.etag);
-        /* string customer_id = 10; */
-        if (message.customerId !== "")
-            writer.tag(10, WireType.LengthDelimited).string(message.customerId);
-        /* string app_space_id = 11; */
-        if (message.appSpaceId !== "")
-            writer.tag(11, WireType.LengthDelimited).string(message.appSpaceId);
-        /* string issuer_id = 12; */
-        if (message.issuerId !== "")
-            writer.tag(12, WireType.LengthDelimited).string(message.issuerId);
-        /* bool default = 13; */
-        if (message.default !== false)
-            writer.tag(13, WireType.Varint).bool(message.default);
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message indykite.config.v1beta1.Tenant
- */
-export const Tenant = new Tenant$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class Application$Type extends MessageType<Application> {
     constructor() {
@@ -3935,14 +2071,7 @@ class ConfigNode$Type extends MessageType<ConfigNode> {
             { no: 9, name: "etag", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 10, name: "customer_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
             { no: 11, name: "app_space_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
-            { no: 12, name: "tenant_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$", ignoreEmpty: true } } } },
-            { no: 14, name: "auth_flow_config", kind: "message", oneof: "config", T: () => AuthFlowConfig, options: { "validate.rules": { message: { required: true } } } },
-            { no: 15, name: "email_service_config", kind: "message", oneof: "config", T: () => EmailServiceConfig, options: { "validate.rules": { message: { required: true } } } },
             { no: 28, name: "audit_sink_config", kind: "message", oneof: "config", T: () => AuditSinkConfig, options: { "validate.rules": { message: { required: true } } } },
-            { no: 16, name: "oauth2_client_config", kind: "message", oneof: "config", T: () => OAuth2ClientConfig, options: { "validate.rules": { message: { required: true } } } },
-            { no: 18, name: "password_provider_config", kind: "message", oneof: "config", T: () => PasswordProviderConfig, options: { "validate.rules": { message: { required: true } } } },
-            { no: 19, name: "webauthn_provider_config", kind: "message", oneof: "config", T: () => WebAuthnProviderConfig, options: { "validate.rules": { message: { required: true } } } },
-            { no: 21, name: "safr_provider_config", kind: "message", oneof: "config", T: () => SAFRProviderConfig, options: { "validate.rules": { message: { required: true } } } },
             { no: 23, name: "authorization_policy_config", kind: "message", oneof: "config", T: () => AuthorizationPolicyConfig, options: { "validate.rules": { message: { required: true } } } },
             { no: 30, name: "consent_config", kind: "message", oneof: "config", T: () => ConsentConfiguration, options: { "validate.rules": { message: { required: true } } } },
             { no: 31, name: "token_introspect_config", kind: "message", oneof: "config", T: () => TokenIntrospectConfig, options: { "validate.rules": { message: { required: true } } } },
@@ -3950,7 +2079,7 @@ class ConfigNode$Type extends MessageType<ConfigNode> {
         ]);
     }
     create(value?: PartialMessage<ConfigNode>): ConfigNode {
-        const message = { id: "", name: "", displayName: "", createdBy: "", updatedBy: "", etag: "", customerId: "", appSpaceId: "", tenantId: "", config: { oneofKind: undefined }, version: "0" };
+        const message = { id: "", name: "", displayName: "", createdBy: "", updatedBy: "", etag: "", customerId: "", appSpaceId: "", config: { oneofKind: undefined }, version: "0" };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<ConfigNode>(this, message, value);
@@ -4000,49 +2129,10 @@ class ConfigNode$Type extends MessageType<ConfigNode> {
                 case /* string app_space_id */ 11:
                     message.appSpaceId = reader.string();
                     break;
-                case /* string tenant_id */ 12:
-                    message.tenantId = reader.string();
-                    break;
-                case /* indykite.config.v1beta1.AuthFlowConfig auth_flow_config */ 14:
-                    message.config = {
-                        oneofKind: "authFlowConfig",
-                        authFlowConfig: AuthFlowConfig.internalBinaryRead(reader, reader.uint32(), options, (message.config as any).authFlowConfig)
-                    };
-                    break;
-                case /* indykite.config.v1beta1.EmailServiceConfig email_service_config */ 15:
-                    message.config = {
-                        oneofKind: "emailServiceConfig",
-                        emailServiceConfig: EmailServiceConfig.internalBinaryRead(reader, reader.uint32(), options, (message.config as any).emailServiceConfig)
-                    };
-                    break;
                 case /* indykite.config.v1beta1.AuditSinkConfig audit_sink_config */ 28:
                     message.config = {
                         oneofKind: "auditSinkConfig",
                         auditSinkConfig: AuditSinkConfig.internalBinaryRead(reader, reader.uint32(), options, (message.config as any).auditSinkConfig)
-                    };
-                    break;
-                case /* indykite.config.v1beta1.OAuth2ClientConfig oauth2_client_config */ 16:
-                    message.config = {
-                        oneofKind: "oauth2ClientConfig",
-                        oauth2ClientConfig: OAuth2ClientConfig.internalBinaryRead(reader, reader.uint32(), options, (message.config as any).oauth2ClientConfig)
-                    };
-                    break;
-                case /* indykite.config.v1beta1.PasswordProviderConfig password_provider_config */ 18:
-                    message.config = {
-                        oneofKind: "passwordProviderConfig",
-                        passwordProviderConfig: PasswordProviderConfig.internalBinaryRead(reader, reader.uint32(), options, (message.config as any).passwordProviderConfig)
-                    };
-                    break;
-                case /* indykite.config.v1beta1.WebAuthnProviderConfig webauthn_provider_config */ 19:
-                    message.config = {
-                        oneofKind: "webauthnProviderConfig",
-                        webauthnProviderConfig: WebAuthnProviderConfig.internalBinaryRead(reader, reader.uint32(), options, (message.config as any).webauthnProviderConfig)
-                    };
-                    break;
-                case /* indykite.config.v1beta1.SAFRProviderConfig safr_provider_config */ 21:
-                    message.config = {
-                        oneofKind: "safrProviderConfig",
-                        safrProviderConfig: SAFRProviderConfig.internalBinaryRead(reader, reader.uint32(), options, (message.config as any).safrProviderConfig)
                     };
                     break;
                 case /* indykite.config.v1beta1.AuthorizationPolicyConfig authorization_policy_config */ 23:
@@ -4117,30 +2207,9 @@ class ConfigNode$Type extends MessageType<ConfigNode> {
         /* string app_space_id = 11; */
         if (message.appSpaceId !== "")
             writer.tag(11, WireType.LengthDelimited).string(message.appSpaceId);
-        /* string tenant_id = 12; */
-        if (message.tenantId !== "")
-            writer.tag(12, WireType.LengthDelimited).string(message.tenantId);
-        /* indykite.config.v1beta1.AuthFlowConfig auth_flow_config = 14; */
-        if (message.config.oneofKind === "authFlowConfig")
-            AuthFlowConfig.internalBinaryWrite(message.config.authFlowConfig, writer.tag(14, WireType.LengthDelimited).fork(), options).join();
-        /* indykite.config.v1beta1.EmailServiceConfig email_service_config = 15; */
-        if (message.config.oneofKind === "emailServiceConfig")
-            EmailServiceConfig.internalBinaryWrite(message.config.emailServiceConfig, writer.tag(15, WireType.LengthDelimited).fork(), options).join();
         /* indykite.config.v1beta1.AuditSinkConfig audit_sink_config = 28; */
         if (message.config.oneofKind === "auditSinkConfig")
             AuditSinkConfig.internalBinaryWrite(message.config.auditSinkConfig, writer.tag(28, WireType.LengthDelimited).fork(), options).join();
-        /* indykite.config.v1beta1.OAuth2ClientConfig oauth2_client_config = 16; */
-        if (message.config.oneofKind === "oauth2ClientConfig")
-            OAuth2ClientConfig.internalBinaryWrite(message.config.oauth2ClientConfig, writer.tag(16, WireType.LengthDelimited).fork(), options).join();
-        /* indykite.config.v1beta1.PasswordProviderConfig password_provider_config = 18; */
-        if (message.config.oneofKind === "passwordProviderConfig")
-            PasswordProviderConfig.internalBinaryWrite(message.config.passwordProviderConfig, writer.tag(18, WireType.LengthDelimited).fork(), options).join();
-        /* indykite.config.v1beta1.WebAuthnProviderConfig webauthn_provider_config = 19; */
-        if (message.config.oneofKind === "webauthnProviderConfig")
-            WebAuthnProviderConfig.internalBinaryWrite(message.config.webauthnProviderConfig, writer.tag(19, WireType.LengthDelimited).fork(), options).join();
-        /* indykite.config.v1beta1.SAFRProviderConfig safr_provider_config = 21; */
-        if (message.config.oneofKind === "safrProviderConfig")
-            SAFRProviderConfig.internalBinaryWrite(message.config.safrProviderConfig, writer.tag(21, WireType.LengthDelimited).fork(), options).join();
         /* indykite.config.v1beta1.AuthorizationPolicyConfig authorization_policy_config = 23; */
         if (message.config.oneofKind === "authorizationPolicyConfig")
             AuthorizationPolicyConfig.internalBinaryWrite(message.config.authorizationPolicyConfig, writer.tag(23, WireType.LengthDelimited).fork(), options).join();
@@ -4163,2445 +2232,6 @@ class ConfigNode$Type extends MessageType<ConfigNode> {
  * @generated MessageType for protobuf message indykite.config.v1beta1.ConfigNode
  */
 export const ConfigNode = new ConfigNode$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class OAuth2ClientConfig$Type extends MessageType<OAuth2ClientConfig> {
-    constructor() {
-        super("indykite.config.v1beta1.OAuth2ClientConfig", [
-            { no: 1, name: "provider_type", kind: "enum", T: () => ["indykite.config.v1beta1.ProviderType", ProviderType, "PROVIDER_TYPE_"], options: { "validate.rules": { enum: { definedOnly: true, notIn: [0] } } } },
-            { no: 2, name: "client_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "8" } } } },
-            { no: 3, name: "client_secret", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "8", ignoreEmpty: true } } } },
-            { no: 4, name: "redirect_uri", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { unique: true, items: { string: { minLen: "8", uri: true } }, ignoreEmpty: true } } } },
-            { no: 17, name: "default_scopes", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { unique: true, items: { string: { minLen: "1" } }, ignoreEmpty: true } } } },
-            { no: 19, name: "allowed_scopes", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { unique: true, items: { string: { minLen: "1" } }, ignoreEmpty: true } } } },
-            { no: 8, name: "allow_signup", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 9, name: "issuer", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "9", prefix: "https", uri: true, ignoreEmpty: true } } } },
-            { no: 10, name: "authorization_endpoint", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "9", prefix: "https", uri: true, ignoreEmpty: true } } } },
-            { no: 11, name: "token_endpoint", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "9", prefix: "https", uri: true, ignoreEmpty: true } } } },
-            { no: 16, name: "discovery_url", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "9", prefix: "https", uri: true, ignoreEmpty: true } } } },
-            { no: 12, name: "userinfo_endpoint", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "9", prefix: "https", uri: true, ignoreEmpty: true } } } },
-            { no: 13, name: "jwks_uri", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "9", prefix: "https", uri: true, ignoreEmpty: true } } } },
-            { no: 14, name: "image_url", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "2", maxLen: "1024", ignoreEmpty: true } } } },
-            { no: 15, name: "tenant", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "2", maxLen: "254", ignoreEmpty: true } } } },
-            { no: 18, name: "hosted_domain", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "2", maxLen: "254", hostname: true, ignoreEmpty: true } } } },
-            { no: 20, name: "auth_style", kind: "enum", T: () => ["indykite.config.v1beta1.AuthStyle", AuthStyle, "AUTH_STYLE_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
-            { no: 21, name: "private_key_pem", kind: "scalar", T: 12 /*ScalarType.BYTES*/, options: { "validate.rules": { bytes: { minLen: "85", maxLen: "8192", prefix: "LS0tLS1CRUdJTiBQUklWQVRFIEtFWS0tLS0t", suffix: "LS0tLS1FTkQgUFJJVkFURSBLRVktLS0tLQ==", ignoreEmpty: true } } } },
-            { no: 22, name: "private_key_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "2", maxLen: "254", ignoreEmpty: true } } } },
-            { no: 23, name: "team_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "2", maxLen: "254", ignoreEmpty: true } } } }
-        ]);
-    }
-    create(value?: PartialMessage<OAuth2ClientConfig>): OAuth2ClientConfig {
-        const message = { providerType: 0, clientId: "", clientSecret: "", redirectUri: [], defaultScopes: [], allowedScopes: [], allowSignup: false, issuer: "", authorizationEndpoint: "", tokenEndpoint: "", discoveryUrl: "", userinfoEndpoint: "", jwksUri: "", imageUrl: "", tenant: "", hostedDomain: "", authStyle: 0, privateKeyPem: new Uint8Array(0), privateKeyId: "", teamId: "" };
-        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
-        if (value !== undefined)
-            reflectionMergePartial<OAuth2ClientConfig>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: OAuth2ClientConfig): OAuth2ClientConfig {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* indykite.config.v1beta1.ProviderType provider_type */ 1:
-                    message.providerType = reader.int32();
-                    break;
-                case /* string client_id */ 2:
-                    message.clientId = reader.string();
-                    break;
-                case /* string client_secret */ 3:
-                    message.clientSecret = reader.string();
-                    break;
-                case /* repeated string redirect_uri */ 4:
-                    message.redirectUri.push(reader.string());
-                    break;
-                case /* repeated string default_scopes */ 17:
-                    message.defaultScopes.push(reader.string());
-                    break;
-                case /* repeated string allowed_scopes */ 19:
-                    message.allowedScopes.push(reader.string());
-                    break;
-                case /* bool allow_signup */ 8:
-                    message.allowSignup = reader.bool();
-                    break;
-                case /* string issuer */ 9:
-                    message.issuer = reader.string();
-                    break;
-                case /* string authorization_endpoint */ 10:
-                    message.authorizationEndpoint = reader.string();
-                    break;
-                case /* string token_endpoint */ 11:
-                    message.tokenEndpoint = reader.string();
-                    break;
-                case /* string discovery_url */ 16:
-                    message.discoveryUrl = reader.string();
-                    break;
-                case /* string userinfo_endpoint */ 12:
-                    message.userinfoEndpoint = reader.string();
-                    break;
-                case /* string jwks_uri */ 13:
-                    message.jwksUri = reader.string();
-                    break;
-                case /* string image_url */ 14:
-                    message.imageUrl = reader.string();
-                    break;
-                case /* string tenant */ 15:
-                    message.tenant = reader.string();
-                    break;
-                case /* string hosted_domain */ 18:
-                    message.hostedDomain = reader.string();
-                    break;
-                case /* indykite.config.v1beta1.AuthStyle auth_style */ 20:
-                    message.authStyle = reader.int32();
-                    break;
-                case /* bytes private_key_pem */ 21:
-                    message.privateKeyPem = reader.bytes();
-                    break;
-                case /* string private_key_id */ 22:
-                    message.privateKeyId = reader.string();
-                    break;
-                case /* string team_id */ 23:
-                    message.teamId = reader.string();
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: OAuth2ClientConfig, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* indykite.config.v1beta1.ProviderType provider_type = 1; */
-        if (message.providerType !== 0)
-            writer.tag(1, WireType.Varint).int32(message.providerType);
-        /* string client_id = 2; */
-        if (message.clientId !== "")
-            writer.tag(2, WireType.LengthDelimited).string(message.clientId);
-        /* string client_secret = 3; */
-        if (message.clientSecret !== "")
-            writer.tag(3, WireType.LengthDelimited).string(message.clientSecret);
-        /* repeated string redirect_uri = 4; */
-        for (let i = 0; i < message.redirectUri.length; i++)
-            writer.tag(4, WireType.LengthDelimited).string(message.redirectUri[i]);
-        /* repeated string default_scopes = 17; */
-        for (let i = 0; i < message.defaultScopes.length; i++)
-            writer.tag(17, WireType.LengthDelimited).string(message.defaultScopes[i]);
-        /* repeated string allowed_scopes = 19; */
-        for (let i = 0; i < message.allowedScopes.length; i++)
-            writer.tag(19, WireType.LengthDelimited).string(message.allowedScopes[i]);
-        /* bool allow_signup = 8; */
-        if (message.allowSignup !== false)
-            writer.tag(8, WireType.Varint).bool(message.allowSignup);
-        /* string issuer = 9; */
-        if (message.issuer !== "")
-            writer.tag(9, WireType.LengthDelimited).string(message.issuer);
-        /* string authorization_endpoint = 10; */
-        if (message.authorizationEndpoint !== "")
-            writer.tag(10, WireType.LengthDelimited).string(message.authorizationEndpoint);
-        /* string token_endpoint = 11; */
-        if (message.tokenEndpoint !== "")
-            writer.tag(11, WireType.LengthDelimited).string(message.tokenEndpoint);
-        /* string discovery_url = 16; */
-        if (message.discoveryUrl !== "")
-            writer.tag(16, WireType.LengthDelimited).string(message.discoveryUrl);
-        /* string userinfo_endpoint = 12; */
-        if (message.userinfoEndpoint !== "")
-            writer.tag(12, WireType.LengthDelimited).string(message.userinfoEndpoint);
-        /* string jwks_uri = 13; */
-        if (message.jwksUri !== "")
-            writer.tag(13, WireType.LengthDelimited).string(message.jwksUri);
-        /* string image_url = 14; */
-        if (message.imageUrl !== "")
-            writer.tag(14, WireType.LengthDelimited).string(message.imageUrl);
-        /* string tenant = 15; */
-        if (message.tenant !== "")
-            writer.tag(15, WireType.LengthDelimited).string(message.tenant);
-        /* string hosted_domain = 18; */
-        if (message.hostedDomain !== "")
-            writer.tag(18, WireType.LengthDelimited).string(message.hostedDomain);
-        /* indykite.config.v1beta1.AuthStyle auth_style = 20; */
-        if (message.authStyle !== 0)
-            writer.tag(20, WireType.Varint).int32(message.authStyle);
-        /* bytes private_key_pem = 21; */
-        if (message.privateKeyPem.length)
-            writer.tag(21, WireType.LengthDelimited).bytes(message.privateKeyPem);
-        /* string private_key_id = 22; */
-        if (message.privateKeyId !== "")
-            writer.tag(22, WireType.LengthDelimited).string(message.privateKeyId);
-        /* string team_id = 23; */
-        if (message.teamId !== "")
-            writer.tag(23, WireType.LengthDelimited).string(message.teamId);
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message indykite.config.v1beta1.OAuth2ClientConfig
- */
-export const OAuth2ClientConfig = new OAuth2ClientConfig$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class OAuth2Application$Type extends MessageType<OAuth2Application> {
-    constructor() {
-        super("indykite.config.v1beta1.OAuth2Application", [
-            { no: 1, name: "id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
-            { no: 2, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "2", maxLen: "63", pattern: "^[a-z](?:[-a-z0-9]{0,61}[a-z0-9])$" } } } },
-            { no: 3, name: "display_name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "2", maxLen: "254" } } } },
-            { no: 4, name: "description", kind: "message", T: () => StringValue, options: { "validate.rules": { string: { minLen: "2", maxLen: "254" } } } },
-            { no: 5, name: "create_time", kind: "message", T: () => Timestamp },
-            { no: 14, name: "created_by", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 6, name: "update_time", kind: "message", T: () => Timestamp },
-            { no: 15, name: "updated_by", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 7, name: "destroy_time", kind: "message", T: () => Timestamp },
-            { no: 8, name: "delete_time", kind: "message", T: () => Timestamp },
-            { no: 9, name: "etag", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 10, name: "customer_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
-            { no: 11, name: "app_space_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
-            { no: 12, name: "oauth2_provider_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
-            { no: 13, name: "config", kind: "message", T: () => OAuth2ApplicationConfig }
-        ]);
-    }
-    create(value?: PartialMessage<OAuth2Application>): OAuth2Application {
-        const message = { id: "", name: "", displayName: "", createdBy: "", updatedBy: "", etag: "", customerId: "", appSpaceId: "", oauth2ProviderId: "" };
-        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
-        if (value !== undefined)
-            reflectionMergePartial<OAuth2Application>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: OAuth2Application): OAuth2Application {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* string id */ 1:
-                    message.id = reader.string();
-                    break;
-                case /* string name */ 2:
-                    message.name = reader.string();
-                    break;
-                case /* string display_name */ 3:
-                    message.displayName = reader.string();
-                    break;
-                case /* google.protobuf.StringValue description */ 4:
-                    message.description = StringValue.internalBinaryRead(reader, reader.uint32(), options, message.description);
-                    break;
-                case /* google.protobuf.Timestamp create_time */ 5:
-                    message.createTime = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createTime);
-                    break;
-                case /* string created_by */ 14:
-                    message.createdBy = reader.string();
-                    break;
-                case /* google.protobuf.Timestamp update_time */ 6:
-                    message.updateTime = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.updateTime);
-                    break;
-                case /* string updated_by */ 15:
-                    message.updatedBy = reader.string();
-                    break;
-                case /* google.protobuf.Timestamp destroy_time */ 7:
-                    message.destroyTime = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.destroyTime);
-                    break;
-                case /* google.protobuf.Timestamp delete_time */ 8:
-                    message.deleteTime = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.deleteTime);
-                    break;
-                case /* string etag */ 9:
-                    message.etag = reader.string();
-                    break;
-                case /* string customer_id */ 10:
-                    message.customerId = reader.string();
-                    break;
-                case /* string app_space_id */ 11:
-                    message.appSpaceId = reader.string();
-                    break;
-                case /* string oauth2_provider_id */ 12:
-                    message.oauth2ProviderId = reader.string();
-                    break;
-                case /* indykite.config.v1beta1.OAuth2ApplicationConfig config */ 13:
-                    message.config = OAuth2ApplicationConfig.internalBinaryRead(reader, reader.uint32(), options, message.config);
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: OAuth2Application, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* string id = 1; */
-        if (message.id !== "")
-            writer.tag(1, WireType.LengthDelimited).string(message.id);
-        /* string name = 2; */
-        if (message.name !== "")
-            writer.tag(2, WireType.LengthDelimited).string(message.name);
-        /* string display_name = 3; */
-        if (message.displayName !== "")
-            writer.tag(3, WireType.LengthDelimited).string(message.displayName);
-        /* google.protobuf.StringValue description = 4; */
-        if (message.description)
-            StringValue.internalBinaryWrite(message.description, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
-        /* google.protobuf.Timestamp create_time = 5; */
-        if (message.createTime)
-            Timestamp.internalBinaryWrite(message.createTime, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
-        /* string created_by = 14; */
-        if (message.createdBy !== "")
-            writer.tag(14, WireType.LengthDelimited).string(message.createdBy);
-        /* google.protobuf.Timestamp update_time = 6; */
-        if (message.updateTime)
-            Timestamp.internalBinaryWrite(message.updateTime, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
-        /* string updated_by = 15; */
-        if (message.updatedBy !== "")
-            writer.tag(15, WireType.LengthDelimited).string(message.updatedBy);
-        /* google.protobuf.Timestamp destroy_time = 7; */
-        if (message.destroyTime)
-            Timestamp.internalBinaryWrite(message.destroyTime, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
-        /* google.protobuf.Timestamp delete_time = 8; */
-        if (message.deleteTime)
-            Timestamp.internalBinaryWrite(message.deleteTime, writer.tag(8, WireType.LengthDelimited).fork(), options).join();
-        /* string etag = 9; */
-        if (message.etag !== "")
-            writer.tag(9, WireType.LengthDelimited).string(message.etag);
-        /* string customer_id = 10; */
-        if (message.customerId !== "")
-            writer.tag(10, WireType.LengthDelimited).string(message.customerId);
-        /* string app_space_id = 11; */
-        if (message.appSpaceId !== "")
-            writer.tag(11, WireType.LengthDelimited).string(message.appSpaceId);
-        /* string oauth2_provider_id = 12; */
-        if (message.oauth2ProviderId !== "")
-            writer.tag(12, WireType.LengthDelimited).string(message.oauth2ProviderId);
-        /* indykite.config.v1beta1.OAuth2ApplicationConfig config = 13; */
-        if (message.config)
-            OAuth2ApplicationConfig.internalBinaryWrite(message.config, writer.tag(13, WireType.LengthDelimited).fork(), options).join();
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message indykite.config.v1beta1.OAuth2Application
- */
-export const OAuth2Application = new OAuth2Application$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class OAuth2ApplicationConfig$Type extends MessageType<OAuth2ApplicationConfig> {
-    constructor() {
-        super("indykite.config.v1beta1.OAuth2ApplicationConfig", [
-            { no: 1, name: "client_id", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 3, name: "display_name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "2", maxLen: "254" } } } },
-            { no: 4, name: "description", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "2", maxLen: "254", ignoreEmpty: true } } } },
-            { no: 5, name: "redirect_uris", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { minItems: "1", unique: true, items: { string: { uri: true } } } } } },
-            { no: 6, name: "owner", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "2", maxLen: "254" } } } },
-            { no: 7, name: "policy_uri", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "254", uri: true } } } },
-            { no: 8, name: "allowed_cors_origins", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { unique: true, items: { string: { maxLen: "254", uri: true } } } } } },
-            { no: 9, name: "terms_of_service_uri", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "254", uri: true } } } },
-            { no: 10, name: "client_uri", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "254", uri: true } } } },
-            { no: 11, name: "logo_uri", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "254", uri: true } } } },
-            { no: 12, name: "user_support_email_address", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "254", email: true } } } },
-            { no: 13, name: "additional_contacts", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/ },
-            { no: 14, name: "subject_type", kind: "enum", T: () => ["indykite.config.v1beta1.ClientSubjectType", ClientSubjectType, "CLIENT_SUBJECT_TYPE_"], options: { "validate.rules": { enum: { definedOnly: true, notIn: [0] } } } },
-            { no: 15, name: "sector_identifier_uri", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "254", uri: true, ignoreEmpty: true } } } },
-            { no: 16, name: "grant_types", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["indykite.config.v1beta1.GrantType", GrantType, "GRANT_TYPE_"], options: { "validate.rules": { repeated: { unique: true, items: { enum: { definedOnly: true, notIn: [0] } } } } } },
-            { no: 17, name: "response_types", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["indykite.config.v1beta1.ResponseType", ResponseType, "RESPONSE_TYPE_"], options: { "validate.rules": { repeated: { unique: true, items: { enum: { definedOnly: true, notIn: [0] } } } } } },
-            { no: 18, name: "scopes", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { minItems: "1", unique: true, items: { string: { pattern: "^[\\x21\\x23-\\x5b\\x5d-\\x7e]{1,254}$" } } } } } },
-            { no: 19, name: "audiences", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { unique: true, items: { string: { uuid: true } } } } } },
-            { no: 20, name: "token_endpoint_auth_method", kind: "enum", T: () => ["indykite.config.v1beta1.TokenEndpointAuthMethod", TokenEndpointAuthMethod, "TOKEN_ENDPOINT_AUTH_METHOD_"], options: { "validate.rules": { enum: { definedOnly: true, notIn: [0] } } } },
-            { no: 21, name: "token_endpoint_auth_signing_alg", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { in: ["RS256", "RS384", "RS512", "PS256", "PS384", "PS512", "ES256", "ES384", "ES512", "ES256K", "HS256", "HS384", "HS512", "EdDSA"] } } } },
-            { no: 22, name: "userinfo_signed_response_alg", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { in: ["RS256"], ignoreEmpty: true } } } },
-            { no: 23, name: "trusted", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
-        ]);
-    }
-    create(value?: PartialMessage<OAuth2ApplicationConfig>): OAuth2ApplicationConfig {
-        const message = { clientId: "", displayName: "", description: "", redirectUris: [], owner: "", policyUri: "", allowedCorsOrigins: [], termsOfServiceUri: "", clientUri: "", logoUri: "", userSupportEmailAddress: "", additionalContacts: [], subjectType: 0, sectorIdentifierUri: "", grantTypes: [], responseTypes: [], scopes: [], audiences: [], tokenEndpointAuthMethod: 0, tokenEndpointAuthSigningAlg: "", userinfoSignedResponseAlg: "", trusted: false };
-        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
-        if (value !== undefined)
-            reflectionMergePartial<OAuth2ApplicationConfig>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: OAuth2ApplicationConfig): OAuth2ApplicationConfig {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* string client_id */ 1:
-                    message.clientId = reader.string();
-                    break;
-                case /* string display_name */ 3:
-                    message.displayName = reader.string();
-                    break;
-                case /* string description */ 4:
-                    message.description = reader.string();
-                    break;
-                case /* repeated string redirect_uris */ 5:
-                    message.redirectUris.push(reader.string());
-                    break;
-                case /* string owner */ 6:
-                    message.owner = reader.string();
-                    break;
-                case /* string policy_uri */ 7:
-                    message.policyUri = reader.string();
-                    break;
-                case /* repeated string allowed_cors_origins */ 8:
-                    message.allowedCorsOrigins.push(reader.string());
-                    break;
-                case /* string terms_of_service_uri */ 9:
-                    message.termsOfServiceUri = reader.string();
-                    break;
-                case /* string client_uri */ 10:
-                    message.clientUri = reader.string();
-                    break;
-                case /* string logo_uri */ 11:
-                    message.logoUri = reader.string();
-                    break;
-                case /* string user_support_email_address */ 12:
-                    message.userSupportEmailAddress = reader.string();
-                    break;
-                case /* repeated string additional_contacts */ 13:
-                    message.additionalContacts.push(reader.string());
-                    break;
-                case /* indykite.config.v1beta1.ClientSubjectType subject_type */ 14:
-                    message.subjectType = reader.int32();
-                    break;
-                case /* string sector_identifier_uri */ 15:
-                    message.sectorIdentifierUri = reader.string();
-                    break;
-                case /* repeated indykite.config.v1beta1.GrantType grant_types */ 16:
-                    if (wireType === WireType.LengthDelimited)
-                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
-                            message.grantTypes.push(reader.int32());
-                    else
-                        message.grantTypes.push(reader.int32());
-                    break;
-                case /* repeated indykite.config.v1beta1.ResponseType response_types */ 17:
-                    if (wireType === WireType.LengthDelimited)
-                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
-                            message.responseTypes.push(reader.int32());
-                    else
-                        message.responseTypes.push(reader.int32());
-                    break;
-                case /* repeated string scopes */ 18:
-                    message.scopes.push(reader.string());
-                    break;
-                case /* repeated string audiences */ 19:
-                    message.audiences.push(reader.string());
-                    break;
-                case /* indykite.config.v1beta1.TokenEndpointAuthMethod token_endpoint_auth_method */ 20:
-                    message.tokenEndpointAuthMethod = reader.int32();
-                    break;
-                case /* string token_endpoint_auth_signing_alg */ 21:
-                    message.tokenEndpointAuthSigningAlg = reader.string();
-                    break;
-                case /* string userinfo_signed_response_alg */ 22:
-                    message.userinfoSignedResponseAlg = reader.string();
-                    break;
-                case /* bool trusted */ 23:
-                    message.trusted = reader.bool();
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: OAuth2ApplicationConfig, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* string client_id = 1; */
-        if (message.clientId !== "")
-            writer.tag(1, WireType.LengthDelimited).string(message.clientId);
-        /* string display_name = 3; */
-        if (message.displayName !== "")
-            writer.tag(3, WireType.LengthDelimited).string(message.displayName);
-        /* string description = 4; */
-        if (message.description !== "")
-            writer.tag(4, WireType.LengthDelimited).string(message.description);
-        /* repeated string redirect_uris = 5; */
-        for (let i = 0; i < message.redirectUris.length; i++)
-            writer.tag(5, WireType.LengthDelimited).string(message.redirectUris[i]);
-        /* string owner = 6; */
-        if (message.owner !== "")
-            writer.tag(6, WireType.LengthDelimited).string(message.owner);
-        /* string policy_uri = 7; */
-        if (message.policyUri !== "")
-            writer.tag(7, WireType.LengthDelimited).string(message.policyUri);
-        /* repeated string allowed_cors_origins = 8; */
-        for (let i = 0; i < message.allowedCorsOrigins.length; i++)
-            writer.tag(8, WireType.LengthDelimited).string(message.allowedCorsOrigins[i]);
-        /* string terms_of_service_uri = 9; */
-        if (message.termsOfServiceUri !== "")
-            writer.tag(9, WireType.LengthDelimited).string(message.termsOfServiceUri);
-        /* string client_uri = 10; */
-        if (message.clientUri !== "")
-            writer.tag(10, WireType.LengthDelimited).string(message.clientUri);
-        /* string logo_uri = 11; */
-        if (message.logoUri !== "")
-            writer.tag(11, WireType.LengthDelimited).string(message.logoUri);
-        /* string user_support_email_address = 12; */
-        if (message.userSupportEmailAddress !== "")
-            writer.tag(12, WireType.LengthDelimited).string(message.userSupportEmailAddress);
-        /* repeated string additional_contacts = 13; */
-        for (let i = 0; i < message.additionalContacts.length; i++)
-            writer.tag(13, WireType.LengthDelimited).string(message.additionalContacts[i]);
-        /* indykite.config.v1beta1.ClientSubjectType subject_type = 14; */
-        if (message.subjectType !== 0)
-            writer.tag(14, WireType.Varint).int32(message.subjectType);
-        /* string sector_identifier_uri = 15; */
-        if (message.sectorIdentifierUri !== "")
-            writer.tag(15, WireType.LengthDelimited).string(message.sectorIdentifierUri);
-        /* repeated indykite.config.v1beta1.GrantType grant_types = 16; */
-        if (message.grantTypes.length) {
-            writer.tag(16, WireType.LengthDelimited).fork();
-            for (let i = 0; i < message.grantTypes.length; i++)
-                writer.int32(message.grantTypes[i]);
-            writer.join();
-        }
-        /* repeated indykite.config.v1beta1.ResponseType response_types = 17; */
-        if (message.responseTypes.length) {
-            writer.tag(17, WireType.LengthDelimited).fork();
-            for (let i = 0; i < message.responseTypes.length; i++)
-                writer.int32(message.responseTypes[i]);
-            writer.join();
-        }
-        /* repeated string scopes = 18; */
-        for (let i = 0; i < message.scopes.length; i++)
-            writer.tag(18, WireType.LengthDelimited).string(message.scopes[i]);
-        /* repeated string audiences = 19; */
-        for (let i = 0; i < message.audiences.length; i++)
-            writer.tag(19, WireType.LengthDelimited).string(message.audiences[i]);
-        /* indykite.config.v1beta1.TokenEndpointAuthMethod token_endpoint_auth_method = 20; */
-        if (message.tokenEndpointAuthMethod !== 0)
-            writer.tag(20, WireType.Varint).int32(message.tokenEndpointAuthMethod);
-        /* string token_endpoint_auth_signing_alg = 21; */
-        if (message.tokenEndpointAuthSigningAlg !== "")
-            writer.tag(21, WireType.LengthDelimited).string(message.tokenEndpointAuthSigningAlg);
-        /* string userinfo_signed_response_alg = 22; */
-        if (message.userinfoSignedResponseAlg !== "")
-            writer.tag(22, WireType.LengthDelimited).string(message.userinfoSignedResponseAlg);
-        /* bool trusted = 23; */
-        if (message.trusted !== false)
-            writer.tag(23, WireType.Varint).bool(message.trusted);
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message indykite.config.v1beta1.OAuth2ApplicationConfig
- */
-export const OAuth2ApplicationConfig = new OAuth2ApplicationConfig$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class OAuth2Provider$Type extends MessageType<OAuth2Provider> {
-    constructor() {
-        super("indykite.config.v1beta1.OAuth2Provider", [
-            { no: 1, name: "id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
-            { no: 2, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "2", maxLen: "63", pattern: "^[a-z](?:[-a-z0-9]{0,61}[a-z0-9])$" } } } },
-            { no: 3, name: "display_name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "2", maxLen: "254" } } } },
-            { no: 4, name: "description", kind: "message", T: () => StringValue, options: { "validate.rules": { string: { minLen: "2", maxLen: "254" } } } },
-            { no: 5, name: "create_time", kind: "message", T: () => Timestamp },
-            { no: 13, name: "created_by", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 6, name: "update_time", kind: "message", T: () => Timestamp },
-            { no: 14, name: "updated_by", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 7, name: "destroy_time", kind: "message", T: () => Timestamp },
-            { no: 8, name: "delete_time", kind: "message", T: () => Timestamp },
-            { no: 9, name: "etag", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 10, name: "customer_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
-            { no: 11, name: "app_space_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
-            { no: 12, name: "config", kind: "message", T: () => OAuth2ProviderConfig }
-        ]);
-    }
-    create(value?: PartialMessage<OAuth2Provider>): OAuth2Provider {
-        const message = { id: "", name: "", displayName: "", createdBy: "", updatedBy: "", etag: "", customerId: "", appSpaceId: "" };
-        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
-        if (value !== undefined)
-            reflectionMergePartial<OAuth2Provider>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: OAuth2Provider): OAuth2Provider {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* string id */ 1:
-                    message.id = reader.string();
-                    break;
-                case /* string name */ 2:
-                    message.name = reader.string();
-                    break;
-                case /* string display_name */ 3:
-                    message.displayName = reader.string();
-                    break;
-                case /* google.protobuf.StringValue description */ 4:
-                    message.description = StringValue.internalBinaryRead(reader, reader.uint32(), options, message.description);
-                    break;
-                case /* google.protobuf.Timestamp create_time */ 5:
-                    message.createTime = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createTime);
-                    break;
-                case /* string created_by */ 13:
-                    message.createdBy = reader.string();
-                    break;
-                case /* google.protobuf.Timestamp update_time */ 6:
-                    message.updateTime = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.updateTime);
-                    break;
-                case /* string updated_by */ 14:
-                    message.updatedBy = reader.string();
-                    break;
-                case /* google.protobuf.Timestamp destroy_time */ 7:
-                    message.destroyTime = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.destroyTime);
-                    break;
-                case /* google.protobuf.Timestamp delete_time */ 8:
-                    message.deleteTime = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.deleteTime);
-                    break;
-                case /* string etag */ 9:
-                    message.etag = reader.string();
-                    break;
-                case /* string customer_id */ 10:
-                    message.customerId = reader.string();
-                    break;
-                case /* string app_space_id */ 11:
-                    message.appSpaceId = reader.string();
-                    break;
-                case /* indykite.config.v1beta1.OAuth2ProviderConfig config */ 12:
-                    message.config = OAuth2ProviderConfig.internalBinaryRead(reader, reader.uint32(), options, message.config);
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: OAuth2Provider, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* string id = 1; */
-        if (message.id !== "")
-            writer.tag(1, WireType.LengthDelimited).string(message.id);
-        /* string name = 2; */
-        if (message.name !== "")
-            writer.tag(2, WireType.LengthDelimited).string(message.name);
-        /* string display_name = 3; */
-        if (message.displayName !== "")
-            writer.tag(3, WireType.LengthDelimited).string(message.displayName);
-        /* google.protobuf.StringValue description = 4; */
-        if (message.description)
-            StringValue.internalBinaryWrite(message.description, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
-        /* google.protobuf.Timestamp create_time = 5; */
-        if (message.createTime)
-            Timestamp.internalBinaryWrite(message.createTime, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
-        /* string created_by = 13; */
-        if (message.createdBy !== "")
-            writer.tag(13, WireType.LengthDelimited).string(message.createdBy);
-        /* google.protobuf.Timestamp update_time = 6; */
-        if (message.updateTime)
-            Timestamp.internalBinaryWrite(message.updateTime, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
-        /* string updated_by = 14; */
-        if (message.updatedBy !== "")
-            writer.tag(14, WireType.LengthDelimited).string(message.updatedBy);
-        /* google.protobuf.Timestamp destroy_time = 7; */
-        if (message.destroyTime)
-            Timestamp.internalBinaryWrite(message.destroyTime, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
-        /* google.protobuf.Timestamp delete_time = 8; */
-        if (message.deleteTime)
-            Timestamp.internalBinaryWrite(message.deleteTime, writer.tag(8, WireType.LengthDelimited).fork(), options).join();
-        /* string etag = 9; */
-        if (message.etag !== "")
-            writer.tag(9, WireType.LengthDelimited).string(message.etag);
-        /* string customer_id = 10; */
-        if (message.customerId !== "")
-            writer.tag(10, WireType.LengthDelimited).string(message.customerId);
-        /* string app_space_id = 11; */
-        if (message.appSpaceId !== "")
-            writer.tag(11, WireType.LengthDelimited).string(message.appSpaceId);
-        /* indykite.config.v1beta1.OAuth2ProviderConfig config = 12; */
-        if (message.config)
-            OAuth2ProviderConfig.internalBinaryWrite(message.config, writer.tag(12, WireType.LengthDelimited).fork(), options).join();
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message indykite.config.v1beta1.OAuth2Provider
- */
-export const OAuth2Provider = new OAuth2Provider$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class OAuth2ProviderConfig$Type extends MessageType<OAuth2ProviderConfig> {
-    constructor() {
-        super("indykite.config.v1beta1.OAuth2ProviderConfig", [
-            { no: 1, name: "grant_types", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["indykite.config.v1beta1.GrantType", GrantType, "GRANT_TYPE_"], options: { "validate.rules": { repeated: { minItems: "1", unique: true, items: { enum: { definedOnly: true, notIn: [0] } } } } } },
-            { no: 2, name: "response_types", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["indykite.config.v1beta1.ResponseType", ResponseType, "RESPONSE_TYPE_"], options: { "validate.rules": { repeated: { minItems: "1", unique: true, items: { enum: { definedOnly: true, notIn: [0] } } } } } },
-            { no: 3, name: "scopes", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { minItems: "1", unique: true, items: { string: { pattern: "^[\\x21\\x23-\\x5b\\x5d-\\x7e]{1,254}$" } } } } } },
-            { no: 4, name: "token_endpoint_auth_method", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["indykite.config.v1beta1.TokenEndpointAuthMethod", TokenEndpointAuthMethod, "TOKEN_ENDPOINT_AUTH_METHOD_"], options: { "validate.rules": { repeated: { minItems: "1", items: { enum: { definedOnly: true, notIn: [0] } } } } } },
-            { no: 5, name: "token_endpoint_auth_signing_alg", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { minItems: "1", items: { string: { in: ["RS256", "RS384", "RS512", "PS256", "PS384", "PS512", "ES256", "ES384", "ES512", "ES256K", "HS256", "HS384", "HS512", "EdDSA"] } } } } } },
-            { no: 6, name: "request_uris", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { items: { string: { uri: true } } } } } },
-            { no: 7, name: "request_object_signing_alg", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { in: ["RS256", "RS384", "RS512", "PS256", "PS384", "PS512", "ES256", "ES384", "ES512", "ES256K", "HS256", "HS384", "HS512", "EdDSA"], ignoreEmpty: true } } } },
-            { no: 8, name: "front_channel_login_uri", kind: "map", K: 9 /*ScalarType.STRING*/, V: { kind: "scalar", T: 9 /*ScalarType.STRING*/ }, options: { "validate.rules": { map: { minPairs: "1", keys: { string: { maxLen: "32" } }, values: { string: { uri: true } } } } } },
-            { no: 9, name: "front_channel_consent_uri", kind: "map", K: 9 /*ScalarType.STRING*/, V: { kind: "scalar", T: 9 /*ScalarType.STRING*/ }, options: { "validate.rules": { map: { minPairs: "1", keys: { string: { maxLen: "32" } }, values: { string: { uri: true } } } } } }
-        ]);
-    }
-    create(value?: PartialMessage<OAuth2ProviderConfig>): OAuth2ProviderConfig {
-        const message = { grantTypes: [], responseTypes: [], scopes: [], tokenEndpointAuthMethod: [], tokenEndpointAuthSigningAlg: [], requestUris: [], requestObjectSigningAlg: "", frontChannelLoginUri: {}, frontChannelConsentUri: {} };
-        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
-        if (value !== undefined)
-            reflectionMergePartial<OAuth2ProviderConfig>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: OAuth2ProviderConfig): OAuth2ProviderConfig {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* repeated indykite.config.v1beta1.GrantType grant_types */ 1:
-                    if (wireType === WireType.LengthDelimited)
-                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
-                            message.grantTypes.push(reader.int32());
-                    else
-                        message.grantTypes.push(reader.int32());
-                    break;
-                case /* repeated indykite.config.v1beta1.ResponseType response_types */ 2:
-                    if (wireType === WireType.LengthDelimited)
-                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
-                            message.responseTypes.push(reader.int32());
-                    else
-                        message.responseTypes.push(reader.int32());
-                    break;
-                case /* repeated string scopes */ 3:
-                    message.scopes.push(reader.string());
-                    break;
-                case /* repeated indykite.config.v1beta1.TokenEndpointAuthMethod token_endpoint_auth_method */ 4:
-                    if (wireType === WireType.LengthDelimited)
-                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
-                            message.tokenEndpointAuthMethod.push(reader.int32());
-                    else
-                        message.tokenEndpointAuthMethod.push(reader.int32());
-                    break;
-                case /* repeated string token_endpoint_auth_signing_alg */ 5:
-                    message.tokenEndpointAuthSigningAlg.push(reader.string());
-                    break;
-                case /* repeated string request_uris */ 6:
-                    message.requestUris.push(reader.string());
-                    break;
-                case /* string request_object_signing_alg */ 7:
-                    message.requestObjectSigningAlg = reader.string();
-                    break;
-                case /* map<string, string> front_channel_login_uri */ 8:
-                    this.binaryReadMap8(message.frontChannelLoginUri, reader, options);
-                    break;
-                case /* map<string, string> front_channel_consent_uri */ 9:
-                    this.binaryReadMap9(message.frontChannelConsentUri, reader, options);
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    private binaryReadMap8(map: OAuth2ProviderConfig["frontChannelLoginUri"], reader: IBinaryReader, options: BinaryReadOptions): void {
-        let len = reader.uint32(), end = reader.pos + len, key: keyof OAuth2ProviderConfig["frontChannelLoginUri"] | undefined, val: OAuth2ProviderConfig["frontChannelLoginUri"][any] | undefined;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case 1:
-                    key = reader.string();
-                    break;
-                case 2:
-                    val = reader.string();
-                    break;
-                default: throw new globalThis.Error("unknown map entry field for field indykite.config.v1beta1.OAuth2ProviderConfig.front_channel_login_uri");
-            }
-        }
-        map[key ?? ""] = val ?? "";
-    }
-    private binaryReadMap9(map: OAuth2ProviderConfig["frontChannelConsentUri"], reader: IBinaryReader, options: BinaryReadOptions): void {
-        let len = reader.uint32(), end = reader.pos + len, key: keyof OAuth2ProviderConfig["frontChannelConsentUri"] | undefined, val: OAuth2ProviderConfig["frontChannelConsentUri"][any] | undefined;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case 1:
-                    key = reader.string();
-                    break;
-                case 2:
-                    val = reader.string();
-                    break;
-                default: throw new globalThis.Error("unknown map entry field for field indykite.config.v1beta1.OAuth2ProviderConfig.front_channel_consent_uri");
-            }
-        }
-        map[key ?? ""] = val ?? "";
-    }
-    internalBinaryWrite(message: OAuth2ProviderConfig, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated indykite.config.v1beta1.GrantType grant_types = 1; */
-        if (message.grantTypes.length) {
-            writer.tag(1, WireType.LengthDelimited).fork();
-            for (let i = 0; i < message.grantTypes.length; i++)
-                writer.int32(message.grantTypes[i]);
-            writer.join();
-        }
-        /* repeated indykite.config.v1beta1.ResponseType response_types = 2; */
-        if (message.responseTypes.length) {
-            writer.tag(2, WireType.LengthDelimited).fork();
-            for (let i = 0; i < message.responseTypes.length; i++)
-                writer.int32(message.responseTypes[i]);
-            writer.join();
-        }
-        /* repeated string scopes = 3; */
-        for (let i = 0; i < message.scopes.length; i++)
-            writer.tag(3, WireType.LengthDelimited).string(message.scopes[i]);
-        /* repeated indykite.config.v1beta1.TokenEndpointAuthMethod token_endpoint_auth_method = 4; */
-        if (message.tokenEndpointAuthMethod.length) {
-            writer.tag(4, WireType.LengthDelimited).fork();
-            for (let i = 0; i < message.tokenEndpointAuthMethod.length; i++)
-                writer.int32(message.tokenEndpointAuthMethod[i]);
-            writer.join();
-        }
-        /* repeated string token_endpoint_auth_signing_alg = 5; */
-        for (let i = 0; i < message.tokenEndpointAuthSigningAlg.length; i++)
-            writer.tag(5, WireType.LengthDelimited).string(message.tokenEndpointAuthSigningAlg[i]);
-        /* repeated string request_uris = 6; */
-        for (let i = 0; i < message.requestUris.length; i++)
-            writer.tag(6, WireType.LengthDelimited).string(message.requestUris[i]);
-        /* string request_object_signing_alg = 7; */
-        if (message.requestObjectSigningAlg !== "")
-            writer.tag(7, WireType.LengthDelimited).string(message.requestObjectSigningAlg);
-        /* map<string, string> front_channel_login_uri = 8; */
-        for (let k of Object.keys(message.frontChannelLoginUri))
-            writer.tag(8, WireType.LengthDelimited).fork().tag(1, WireType.LengthDelimited).string(k).tag(2, WireType.LengthDelimited).string(message.frontChannelLoginUri[k]).join();
-        /* map<string, string> front_channel_consent_uri = 9; */
-        for (let k of Object.keys(message.frontChannelConsentUri))
-            writer.tag(9, WireType.LengthDelimited).fork().tag(1, WireType.LengthDelimited).string(k).tag(2, WireType.LengthDelimited).string(message.frontChannelConsentUri[k]).join();
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message indykite.config.v1beta1.OAuth2ProviderConfig
- */
-export const OAuth2ProviderConfig = new OAuth2ProviderConfig$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class WebAuthnProviderConfig$Type extends MessageType<WebAuthnProviderConfig> {
-    constructor() {
-        super("indykite.config.v1beta1.WebAuthnProviderConfig", [
-            { no: 1, name: "relying_parties", kind: "map", K: 9 /*ScalarType.STRING*/, V: { kind: "scalar", T: 9 /*ScalarType.STRING*/ }, options: { "validate.rules": { map: { minPairs: "1", keys: { string: { uri: true } }, values: { string: { minLen: "1", maxLen: "256" } } } } } },
-            { no: 2, name: "attestation_preference", kind: "enum", T: () => ["indykite.config.v1beta1.ConveyancePreference", ConveyancePreference, "CONVEYANCE_PREFERENCE_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
-            { no: 3, name: "authenticator_attachment", kind: "enum", T: () => ["indykite.config.v1beta1.AuthenticatorAttachment", AuthenticatorAttachment, "AUTHENTICATOR_ATTACHMENT_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
-            { no: 7, name: "require_resident_key", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 4, name: "user_verification", kind: "enum", T: () => ["indykite.config.v1beta1.UserVerificationRequirement", UserVerificationRequirement, "USER_VERIFICATION_REQUIREMENT_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
-            { no: 5, name: "registration_timeout", kind: "message", T: () => Duration, options: { "validate.rules": { duration: { lte: { seconds: "900" }, gte: {} } } } },
-            { no: 6, name: "authentication_timeout", kind: "message", T: () => Duration, options: { "validate.rules": { duration: { lte: { seconds: "900" }, gte: {} } } } }
-        ]);
-    }
-    create(value?: PartialMessage<WebAuthnProviderConfig>): WebAuthnProviderConfig {
-        const message = { relyingParties: {}, attestationPreference: 0, authenticatorAttachment: 0, requireResidentKey: false, userVerification: 0 };
-        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
-        if (value !== undefined)
-            reflectionMergePartial<WebAuthnProviderConfig>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: WebAuthnProviderConfig): WebAuthnProviderConfig {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* map<string, string> relying_parties */ 1:
-                    this.binaryReadMap1(message.relyingParties, reader, options);
-                    break;
-                case /* indykite.config.v1beta1.ConveyancePreference attestation_preference */ 2:
-                    message.attestationPreference = reader.int32();
-                    break;
-                case /* indykite.config.v1beta1.AuthenticatorAttachment authenticator_attachment */ 3:
-                    message.authenticatorAttachment = reader.int32();
-                    break;
-                case /* bool require_resident_key */ 7:
-                    message.requireResidentKey = reader.bool();
-                    break;
-                case /* indykite.config.v1beta1.UserVerificationRequirement user_verification */ 4:
-                    message.userVerification = reader.int32();
-                    break;
-                case /* google.protobuf.Duration registration_timeout */ 5:
-                    message.registrationTimeout = Duration.internalBinaryRead(reader, reader.uint32(), options, message.registrationTimeout);
-                    break;
-                case /* google.protobuf.Duration authentication_timeout */ 6:
-                    message.authenticationTimeout = Duration.internalBinaryRead(reader, reader.uint32(), options, message.authenticationTimeout);
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    private binaryReadMap1(map: WebAuthnProviderConfig["relyingParties"], reader: IBinaryReader, options: BinaryReadOptions): void {
-        let len = reader.uint32(), end = reader.pos + len, key: keyof WebAuthnProviderConfig["relyingParties"] | undefined, val: WebAuthnProviderConfig["relyingParties"][any] | undefined;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case 1:
-                    key = reader.string();
-                    break;
-                case 2:
-                    val = reader.string();
-                    break;
-                default: throw new globalThis.Error("unknown map entry field for field indykite.config.v1beta1.WebAuthnProviderConfig.relying_parties");
-            }
-        }
-        map[key ?? ""] = val ?? "";
-    }
-    internalBinaryWrite(message: WebAuthnProviderConfig, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* map<string, string> relying_parties = 1; */
-        for (let k of Object.keys(message.relyingParties))
-            writer.tag(1, WireType.LengthDelimited).fork().tag(1, WireType.LengthDelimited).string(k).tag(2, WireType.LengthDelimited).string(message.relyingParties[k]).join();
-        /* indykite.config.v1beta1.ConveyancePreference attestation_preference = 2; */
-        if (message.attestationPreference !== 0)
-            writer.tag(2, WireType.Varint).int32(message.attestationPreference);
-        /* indykite.config.v1beta1.AuthenticatorAttachment authenticator_attachment = 3; */
-        if (message.authenticatorAttachment !== 0)
-            writer.tag(3, WireType.Varint).int32(message.authenticatorAttachment);
-        /* bool require_resident_key = 7; */
-        if (message.requireResidentKey !== false)
-            writer.tag(7, WireType.Varint).bool(message.requireResidentKey);
-        /* indykite.config.v1beta1.UserVerificationRequirement user_verification = 4; */
-        if (message.userVerification !== 0)
-            writer.tag(4, WireType.Varint).int32(message.userVerification);
-        /* google.protobuf.Duration registration_timeout = 5; */
-        if (message.registrationTimeout)
-            Duration.internalBinaryWrite(message.registrationTimeout, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
-        /* google.protobuf.Duration authentication_timeout = 6; */
-        if (message.authenticationTimeout)
-            Duration.internalBinaryWrite(message.authenticationTimeout, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message indykite.config.v1beta1.WebAuthnProviderConfig
- */
-export const WebAuthnProviderConfig = new WebAuthnProviderConfig$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class WebAuthnSiteDefinition$Type extends MessageType<WebAuthnSiteDefinition> {
-    constructor() {
-        super("indykite.config.v1beta1.WebAuthnSiteDefinition", [
-            { no: 1, name: "id", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 2, name: "display_name", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 3, name: "origin", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 4, name: "icon", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
-        ]);
-    }
-    create(value?: PartialMessage<WebAuthnSiteDefinition>): WebAuthnSiteDefinition {
-        const message = { id: "", displayName: "", origin: "", icon: "" };
-        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
-        if (value !== undefined)
-            reflectionMergePartial<WebAuthnSiteDefinition>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: WebAuthnSiteDefinition): WebAuthnSiteDefinition {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* string id */ 1:
-                    message.id = reader.string();
-                    break;
-                case /* string display_name */ 2:
-                    message.displayName = reader.string();
-                    break;
-                case /* string origin */ 3:
-                    message.origin = reader.string();
-                    break;
-                case /* string icon */ 4:
-                    message.icon = reader.string();
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: WebAuthnSiteDefinition, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* string id = 1; */
-        if (message.id !== "")
-            writer.tag(1, WireType.LengthDelimited).string(message.id);
-        /* string display_name = 2; */
-        if (message.displayName !== "")
-            writer.tag(2, WireType.LengthDelimited).string(message.displayName);
-        /* string origin = 3; */
-        if (message.origin !== "")
-            writer.tag(3, WireType.LengthDelimited).string(message.origin);
-        /* string icon = 4; */
-        if (message.icon !== "")
-            writer.tag(4, WireType.LengthDelimited).string(message.icon);
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message indykite.config.v1beta1.WebAuthnSiteDefinition
- */
-export const WebAuthnSiteDefinition = new WebAuthnSiteDefinition$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class AuthFlowConfig$Type extends MessageType<AuthFlowConfig> {
-    constructor() {
-        super("indykite.config.v1beta1.AuthFlowConfig", [
-            { no: 1, name: "source_format", kind: "enum", T: () => ["indykite.config.v1beta1.AuthFlowConfig.Format", AuthFlowConfig_Format, "FORMAT_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
-            { no: 2, name: "source", kind: "scalar", T: 12 /*ScalarType.BYTES*/, options: { "validate.rules": { bytes: { maxLen: "1048576" } } } },
-            { no: 4, name: "default", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
-        ]);
-    }
-    create(value?: PartialMessage<AuthFlowConfig>): AuthFlowConfig {
-        const message = { sourceFormat: 0, source: new Uint8Array(0), default: false };
-        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
-        if (value !== undefined)
-            reflectionMergePartial<AuthFlowConfig>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: AuthFlowConfig): AuthFlowConfig {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* indykite.config.v1beta1.AuthFlowConfig.Format source_format */ 1:
-                    message.sourceFormat = reader.int32();
-                    break;
-                case /* bytes source */ 2:
-                    message.source = reader.bytes();
-                    break;
-                case /* bool default */ 4:
-                    message.default = reader.bool();
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: AuthFlowConfig, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* indykite.config.v1beta1.AuthFlowConfig.Format source_format = 1; */
-        if (message.sourceFormat !== 0)
-            writer.tag(1, WireType.Varint).int32(message.sourceFormat);
-        /* bytes source = 2; */
-        if (message.source.length)
-            writer.tag(2, WireType.LengthDelimited).bytes(message.source);
-        /* bool default = 4; */
-        if (message.default !== false)
-            writer.tag(4, WireType.Varint).bool(message.default);
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message indykite.config.v1beta1.AuthFlowConfig
- */
-export const AuthFlowConfig = new AuthFlowConfig$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class SAFRProviderConfig$Type extends MessageType<SAFRProviderConfig> {
-    constructor() {
-        super("indykite.config.v1beta1.SAFRProviderConfig", [
-            { no: 1, name: "account_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "2", maxLen: "254" } } } },
-            { no: 2, name: "password", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "4", maxLen: "254", ignoreEmpty: true } } } },
-            { no: 3, name: "directory", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "2", maxLen: "254" } } } }
-        ]);
-    }
-    create(value?: PartialMessage<SAFRProviderConfig>): SAFRProviderConfig {
-        const message = { accountId: "", password: "", directory: "" };
-        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
-        if (value !== undefined)
-            reflectionMergePartial<SAFRProviderConfig>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: SAFRProviderConfig): SAFRProviderConfig {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* string account_id */ 1:
-                    message.accountId = reader.string();
-                    break;
-                case /* string password */ 2:
-                    message.password = reader.string();
-                    break;
-                case /* string directory */ 3:
-                    message.directory = reader.string();
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: SAFRProviderConfig, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* string account_id = 1; */
-        if (message.accountId !== "")
-            writer.tag(1, WireType.LengthDelimited).string(message.accountId);
-        /* string password = 2; */
-        if (message.password !== "")
-            writer.tag(2, WireType.LengthDelimited).string(message.password);
-        /* string directory = 3; */
-        if (message.directory !== "")
-            writer.tag(3, WireType.LengthDelimited).string(message.directory);
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message indykite.config.v1beta1.SAFRProviderConfig
- */
-export const SAFRProviderConfig = new SAFRProviderConfig$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class SMSServiceConfig$Type extends MessageType<SMSServiceConfig> {
-    constructor() {
-        super("indykite.config.v1beta1.SMSServiceConfig", []);
-    }
-    create(value?: PartialMessage<SMSServiceConfig>): SMSServiceConfig {
-        const message = {};
-        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
-        if (value !== undefined)
-            reflectionMergePartial<SMSServiceConfig>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: SMSServiceConfig): SMSServiceConfig {
-        return target ?? this.create();
-    }
-    internalBinaryWrite(message: SMSServiceConfig, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message indykite.config.v1beta1.SMSServiceConfig
- */
-export const SMSServiceConfig = new SMSServiceConfig$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class EmailServiceConfig$Type extends MessageType<EmailServiceConfig> {
-    constructor() {
-        super("indykite.config.v1beta1.EmailServiceConfig", [
-            { no: 1, name: "default_from_address", kind: "message", T: () => Email },
-            { no: 8, name: "default", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 4, name: "sendgrid", kind: "message", oneof: "provider", T: () => SendGridProviderConfig, options: { "validate.rules": { message: { required: true } } } },
-            { no: 5, name: "mailjet", kind: "message", oneof: "provider", T: () => MailJetProviderConfig, options: { "validate.rules": { message: { required: true } } } },
-            { no: 6, name: "mailgun", kind: "message", oneof: "provider", T: () => MailgunProviderConfig, options: { "validate.rules": { message: { required: true } } } },
-            { no: 7, name: "amazon", kind: "message", oneof: "provider", T: () => AmazonSESProviderConfig, options: { "validate.rules": { message: { required: true } } } },
-            { no: 9, name: "invitation_message", kind: "message", T: () => EmailDefinition },
-            { no: 10, name: "reset_password_message", kind: "message", T: () => EmailDefinition },
-            { no: 11, name: "verification_message", kind: "message", T: () => EmailDefinition },
-            { no: 13, name: "one_time_password_message", kind: "message", T: () => EmailDefinition },
-            { no: 14, name: "app_space_ready_to_use_message", kind: "message", T: () => EmailDefinition }
-        ]);
-    }
-    create(value?: PartialMessage<EmailServiceConfig>): EmailServiceConfig {
-        const message = { default: false, provider: { oneofKind: undefined } };
-        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
-        if (value !== undefined)
-            reflectionMergePartial<EmailServiceConfig>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: EmailServiceConfig): EmailServiceConfig {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* indykite.config.v1beta1.Email default_from_address */ 1:
-                    message.defaultFromAddress = Email.internalBinaryRead(reader, reader.uint32(), options, message.defaultFromAddress);
-                    break;
-                case /* bool default */ 8:
-                    message.default = reader.bool();
-                    break;
-                case /* indykite.config.v1beta1.SendGridProviderConfig sendgrid */ 4:
-                    message.provider = {
-                        oneofKind: "sendgrid",
-                        sendgrid: SendGridProviderConfig.internalBinaryRead(reader, reader.uint32(), options, (message.provider as any).sendgrid)
-                    };
-                    break;
-                case /* indykite.config.v1beta1.MailJetProviderConfig mailjet */ 5:
-                    message.provider = {
-                        oneofKind: "mailjet",
-                        mailjet: MailJetProviderConfig.internalBinaryRead(reader, reader.uint32(), options, (message.provider as any).mailjet)
-                    };
-                    break;
-                case /* indykite.config.v1beta1.MailgunProviderConfig mailgun */ 6:
-                    message.provider = {
-                        oneofKind: "mailgun",
-                        mailgun: MailgunProviderConfig.internalBinaryRead(reader, reader.uint32(), options, (message.provider as any).mailgun)
-                    };
-                    break;
-                case /* indykite.config.v1beta1.AmazonSESProviderConfig amazon */ 7:
-                    message.provider = {
-                        oneofKind: "amazon",
-                        amazon: AmazonSESProviderConfig.internalBinaryRead(reader, reader.uint32(), options, (message.provider as any).amazon)
-                    };
-                    break;
-                case /* indykite.config.v1beta1.EmailDefinition invitation_message */ 9:
-                    message.invitationMessage = EmailDefinition.internalBinaryRead(reader, reader.uint32(), options, message.invitationMessage);
-                    break;
-                case /* indykite.config.v1beta1.EmailDefinition reset_password_message */ 10:
-                    message.resetPasswordMessage = EmailDefinition.internalBinaryRead(reader, reader.uint32(), options, message.resetPasswordMessage);
-                    break;
-                case /* indykite.config.v1beta1.EmailDefinition verification_message */ 11:
-                    message.verificationMessage = EmailDefinition.internalBinaryRead(reader, reader.uint32(), options, message.verificationMessage);
-                    break;
-                case /* indykite.config.v1beta1.EmailDefinition one_time_password_message */ 13:
-                    message.oneTimePasswordMessage = EmailDefinition.internalBinaryRead(reader, reader.uint32(), options, message.oneTimePasswordMessage);
-                    break;
-                case /* indykite.config.v1beta1.EmailDefinition app_space_ready_to_use_message */ 14:
-                    message.appSpaceReadyToUseMessage = EmailDefinition.internalBinaryRead(reader, reader.uint32(), options, message.appSpaceReadyToUseMessage);
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: EmailServiceConfig, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* indykite.config.v1beta1.Email default_from_address = 1; */
-        if (message.defaultFromAddress)
-            Email.internalBinaryWrite(message.defaultFromAddress, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* bool default = 8; */
-        if (message.default !== false)
-            writer.tag(8, WireType.Varint).bool(message.default);
-        /* indykite.config.v1beta1.SendGridProviderConfig sendgrid = 4; */
-        if (message.provider.oneofKind === "sendgrid")
-            SendGridProviderConfig.internalBinaryWrite(message.provider.sendgrid, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
-        /* indykite.config.v1beta1.MailJetProviderConfig mailjet = 5; */
-        if (message.provider.oneofKind === "mailjet")
-            MailJetProviderConfig.internalBinaryWrite(message.provider.mailjet, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
-        /* indykite.config.v1beta1.MailgunProviderConfig mailgun = 6; */
-        if (message.provider.oneofKind === "mailgun")
-            MailgunProviderConfig.internalBinaryWrite(message.provider.mailgun, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
-        /* indykite.config.v1beta1.AmazonSESProviderConfig amazon = 7; */
-        if (message.provider.oneofKind === "amazon")
-            AmazonSESProviderConfig.internalBinaryWrite(message.provider.amazon, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
-        /* indykite.config.v1beta1.EmailDefinition invitation_message = 9; */
-        if (message.invitationMessage)
-            EmailDefinition.internalBinaryWrite(message.invitationMessage, writer.tag(9, WireType.LengthDelimited).fork(), options).join();
-        /* indykite.config.v1beta1.EmailDefinition reset_password_message = 10; */
-        if (message.resetPasswordMessage)
-            EmailDefinition.internalBinaryWrite(message.resetPasswordMessage, writer.tag(10, WireType.LengthDelimited).fork(), options).join();
-        /* indykite.config.v1beta1.EmailDefinition verification_message = 11; */
-        if (message.verificationMessage)
-            EmailDefinition.internalBinaryWrite(message.verificationMessage, writer.tag(11, WireType.LengthDelimited).fork(), options).join();
-        /* indykite.config.v1beta1.EmailDefinition one_time_password_message = 13; */
-        if (message.oneTimePasswordMessage)
-            EmailDefinition.internalBinaryWrite(message.oneTimePasswordMessage, writer.tag(13, WireType.LengthDelimited).fork(), options).join();
-        /* indykite.config.v1beta1.EmailDefinition app_space_ready_to_use_message = 14; */
-        if (message.appSpaceReadyToUseMessage)
-            EmailDefinition.internalBinaryWrite(message.appSpaceReadyToUseMessage, writer.tag(14, WireType.LengthDelimited).fork(), options).join();
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message indykite.config.v1beta1.EmailServiceConfig
- */
-export const EmailServiceConfig = new EmailServiceConfig$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class Email$Type extends MessageType<Email> {
-    constructor() {
-        super("indykite.config.v1beta1.Email", [
-            { no: 1, name: "address", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "254", email: true } } } },
-            { no: 2, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "1", maxLen: "503", ignoreEmpty: true } } } }
-        ]);
-    }
-    create(value?: PartialMessage<Email>): Email {
-        const message = { address: "", name: "" };
-        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
-        if (value !== undefined)
-            reflectionMergePartial<Email>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: Email): Email {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* string address */ 1:
-                    message.address = reader.string();
-                    break;
-                case /* string name */ 2:
-                    message.name = reader.string();
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: Email, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* string address = 1; */
-        if (message.address !== "")
-            writer.tag(1, WireType.LengthDelimited).string(message.address);
-        /* string name = 2; */
-        if (message.name !== "")
-            writer.tag(2, WireType.LengthDelimited).string(message.name);
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message indykite.config.v1beta1.Email
- */
-export const Email = new Email$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class SendGridProviderConfig$Type extends MessageType<SendGridProviderConfig> {
-    constructor() {
-        super("indykite.config.v1beta1.SendGridProviderConfig", [
-            { no: 1, name: "api_key", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "25", maxLen: "254", ignoreEmpty: true } } } },
-            { no: 2, name: "sandbox_mode", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 3, name: "ip_pool_name", kind: "message", T: () => StringValue, options: { "validate.rules": { string: { minLen: "2", maxLen: "64", ignoreEmpty: true } } } },
-            { no: 4, name: "host", kind: "message", T: () => StringValue, options: { "validate.rules": { string: { minLen: "10", maxLen: "254", uri: true, ignoreEmpty: true } } } }
-        ]);
-    }
-    create(value?: PartialMessage<SendGridProviderConfig>): SendGridProviderConfig {
-        const message = { apiKey: "", sandboxMode: false };
-        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
-        if (value !== undefined)
-            reflectionMergePartial<SendGridProviderConfig>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: SendGridProviderConfig): SendGridProviderConfig {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* string api_key */ 1:
-                    message.apiKey = reader.string();
-                    break;
-                case /* bool sandbox_mode */ 2:
-                    message.sandboxMode = reader.bool();
-                    break;
-                case /* google.protobuf.StringValue ip_pool_name */ 3:
-                    message.ipPoolName = StringValue.internalBinaryRead(reader, reader.uint32(), options, message.ipPoolName);
-                    break;
-                case /* google.protobuf.StringValue host */ 4:
-                    message.host = StringValue.internalBinaryRead(reader, reader.uint32(), options, message.host);
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: SendGridProviderConfig, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* string api_key = 1; */
-        if (message.apiKey !== "")
-            writer.tag(1, WireType.LengthDelimited).string(message.apiKey);
-        /* bool sandbox_mode = 2; */
-        if (message.sandboxMode !== false)
-            writer.tag(2, WireType.Varint).bool(message.sandboxMode);
-        /* google.protobuf.StringValue ip_pool_name = 3; */
-        if (message.ipPoolName)
-            StringValue.internalBinaryWrite(message.ipPoolName, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
-        /* google.protobuf.StringValue host = 4; */
-        if (message.host)
-            StringValue.internalBinaryWrite(message.host, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message indykite.config.v1beta1.SendGridProviderConfig
- */
-export const SendGridProviderConfig = new SendGridProviderConfig$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class MailJetProviderConfig$Type extends MessageType<MailJetProviderConfig> {
-    constructor() {
-        super("indykite.config.v1beta1.MailJetProviderConfig", [
-            { no: 1, name: "api_key", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "25", maxLen: "254", ignoreEmpty: true } } } },
-            { no: 2, name: "sandbox_mode", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 8, name: "url_tags", kind: "map", K: 9 /*ScalarType.STRING*/, V: { kind: "scalar", T: 9 /*ScalarType.STRING*/ } },
-            { no: 4, name: "custom_campaign", kind: "message", T: () => StringValue }
-        ]);
-    }
-    create(value?: PartialMessage<MailJetProviderConfig>): MailJetProviderConfig {
-        const message = { apiKey: "", sandboxMode: false, urlTags: {} };
-        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
-        if (value !== undefined)
-            reflectionMergePartial<MailJetProviderConfig>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: MailJetProviderConfig): MailJetProviderConfig {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* string api_key */ 1:
-                    message.apiKey = reader.string();
-                    break;
-                case /* bool sandbox_mode */ 2:
-                    message.sandboxMode = reader.bool();
-                    break;
-                case /* map<string, string> url_tags */ 8:
-                    this.binaryReadMap8(message.urlTags, reader, options);
-                    break;
-                case /* google.protobuf.StringValue custom_campaign */ 4:
-                    message.customCampaign = StringValue.internalBinaryRead(reader, reader.uint32(), options, message.customCampaign);
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    private binaryReadMap8(map: MailJetProviderConfig["urlTags"], reader: IBinaryReader, options: BinaryReadOptions): void {
-        let len = reader.uint32(), end = reader.pos + len, key: keyof MailJetProviderConfig["urlTags"] | undefined, val: MailJetProviderConfig["urlTags"][any] | undefined;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case 1:
-                    key = reader.string();
-                    break;
-                case 2:
-                    val = reader.string();
-                    break;
-                default: throw new globalThis.Error("unknown map entry field for field indykite.config.v1beta1.MailJetProviderConfig.url_tags");
-            }
-        }
-        map[key ?? ""] = val ?? "";
-    }
-    internalBinaryWrite(message: MailJetProviderConfig, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* string api_key = 1; */
-        if (message.apiKey !== "")
-            writer.tag(1, WireType.LengthDelimited).string(message.apiKey);
-        /* bool sandbox_mode = 2; */
-        if (message.sandboxMode !== false)
-            writer.tag(2, WireType.Varint).bool(message.sandboxMode);
-        /* map<string, string> url_tags = 8; */
-        for (let k of Object.keys(message.urlTags))
-            writer.tag(8, WireType.LengthDelimited).fork().tag(1, WireType.LengthDelimited).string(k).tag(2, WireType.LengthDelimited).string(message.urlTags[k]).join();
-        /* google.protobuf.StringValue custom_campaign = 4; */
-        if (message.customCampaign)
-            StringValue.internalBinaryWrite(message.customCampaign, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message indykite.config.v1beta1.MailJetProviderConfig
- */
-export const MailJetProviderConfig = new MailJetProviderConfig$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class MailgunProviderConfig$Type extends MessageType<MailgunProviderConfig> {
-    constructor() {
-        super("indykite.config.v1beta1.MailgunProviderConfig", [
-            { no: 1, name: "api_key", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "25", maxLen: "254", ignoreEmpty: true } } } },
-            { no: 2, name: "default_from_address", kind: "message", T: () => Email }
-        ]);
-    }
-    create(value?: PartialMessage<MailgunProviderConfig>): MailgunProviderConfig {
-        const message = { apiKey: "" };
-        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
-        if (value !== undefined)
-            reflectionMergePartial<MailgunProviderConfig>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: MailgunProviderConfig): MailgunProviderConfig {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* string api_key */ 1:
-                    message.apiKey = reader.string();
-                    break;
-                case /* indykite.config.v1beta1.Email default_from_address */ 2:
-                    message.defaultFromAddress = Email.internalBinaryRead(reader, reader.uint32(), options, message.defaultFromAddress);
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: MailgunProviderConfig, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* string api_key = 1; */
-        if (message.apiKey !== "")
-            writer.tag(1, WireType.LengthDelimited).string(message.apiKey);
-        /* indykite.config.v1beta1.Email default_from_address = 2; */
-        if (message.defaultFromAddress)
-            Email.internalBinaryWrite(message.defaultFromAddress, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message indykite.config.v1beta1.MailgunProviderConfig
- */
-export const MailgunProviderConfig = new MailgunProviderConfig$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class AmazonSESProviderConfig$Type extends MessageType<AmazonSESProviderConfig> {
-    constructor() {
-        super("indykite.config.v1beta1.AmazonSESProviderConfig", [
-            { no: 1, name: "access_key_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "25", maxLen: "254" } } } },
-            { no: 2, name: "secret_access_key", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "25", maxLen: "254", ignoreEmpty: true } } } },
-            { no: 4, name: "region", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "2", maxLen: "20" } } } },
-            { no: 5, name: "configuration_set_name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "254", ignoreEmpty: true } } } },
-            { no: 6, name: "default_from_address", kind: "message", T: () => Email },
-            { no: 7, name: "feedback_forwarding_email_address", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "503", email: true, ignoreEmpty: true } } } },
-            { no: 8, name: "reply_to_addresses", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { items: { string: { maxLen: "503", email: true } } } } } }
-        ]);
-    }
-    create(value?: PartialMessage<AmazonSESProviderConfig>): AmazonSESProviderConfig {
-        const message = { accessKeyId: "", secretAccessKey: "", region: "", configurationSetName: "", feedbackForwardingEmailAddress: "", replyToAddresses: [] };
-        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
-        if (value !== undefined)
-            reflectionMergePartial<AmazonSESProviderConfig>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: AmazonSESProviderConfig): AmazonSESProviderConfig {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* string access_key_id */ 1:
-                    message.accessKeyId = reader.string();
-                    break;
-                case /* string secret_access_key */ 2:
-                    message.secretAccessKey = reader.string();
-                    break;
-                case /* string region */ 4:
-                    message.region = reader.string();
-                    break;
-                case /* string configuration_set_name */ 5:
-                    message.configurationSetName = reader.string();
-                    break;
-                case /* indykite.config.v1beta1.Email default_from_address */ 6:
-                    message.defaultFromAddress = Email.internalBinaryRead(reader, reader.uint32(), options, message.defaultFromAddress);
-                    break;
-                case /* string feedback_forwarding_email_address */ 7:
-                    message.feedbackForwardingEmailAddress = reader.string();
-                    break;
-                case /* repeated string reply_to_addresses */ 8:
-                    message.replyToAddresses.push(reader.string());
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: AmazonSESProviderConfig, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* string access_key_id = 1; */
-        if (message.accessKeyId !== "")
-            writer.tag(1, WireType.LengthDelimited).string(message.accessKeyId);
-        /* string secret_access_key = 2; */
-        if (message.secretAccessKey !== "")
-            writer.tag(2, WireType.LengthDelimited).string(message.secretAccessKey);
-        /* string region = 4; */
-        if (message.region !== "")
-            writer.tag(4, WireType.LengthDelimited).string(message.region);
-        /* string configuration_set_name = 5; */
-        if (message.configurationSetName !== "")
-            writer.tag(5, WireType.LengthDelimited).string(message.configurationSetName);
-        /* indykite.config.v1beta1.Email default_from_address = 6; */
-        if (message.defaultFromAddress)
-            Email.internalBinaryWrite(message.defaultFromAddress, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
-        /* string feedback_forwarding_email_address = 7; */
-        if (message.feedbackForwardingEmailAddress !== "")
-            writer.tag(7, WireType.LengthDelimited).string(message.feedbackForwardingEmailAddress);
-        /* repeated string reply_to_addresses = 8; */
-        for (let i = 0; i < message.replyToAddresses.length; i++)
-            writer.tag(8, WireType.LengthDelimited).string(message.replyToAddresses[i]);
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message indykite.config.v1beta1.AmazonSESProviderConfig
- */
-export const AmazonSESProviderConfig = new AmazonSESProviderConfig$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class EmailDefinition$Type extends MessageType<EmailDefinition> {
-    constructor() {
-        super("indykite.config.v1beta1.EmailDefinition", [
-            { no: 2, name: "template", kind: "message", oneof: "email", T: () => EmailTemplate, options: { "validate.rules": { message: { required: true } } } },
-            { no: 3, name: "message", kind: "message", oneof: "email", T: () => EmailMessage, options: { "validate.rules": { message: { required: true } } } }
-        ]);
-    }
-    create(value?: PartialMessage<EmailDefinition>): EmailDefinition {
-        const message = { email: { oneofKind: undefined } };
-        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
-        if (value !== undefined)
-            reflectionMergePartial<EmailDefinition>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: EmailDefinition): EmailDefinition {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* indykite.config.v1beta1.EmailTemplate template */ 2:
-                    message.email = {
-                        oneofKind: "template",
-                        template: EmailTemplate.internalBinaryRead(reader, reader.uint32(), options, (message.email as any).template)
-                    };
-                    break;
-                case /* indykite.config.v1beta1.EmailMessage message */ 3:
-                    message.email = {
-                        oneofKind: "message",
-                        message: EmailMessage.internalBinaryRead(reader, reader.uint32(), options, (message.email as any).message)
-                    };
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: EmailDefinition, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* indykite.config.v1beta1.EmailTemplate template = 2; */
-        if (message.email.oneofKind === "template")
-            EmailTemplate.internalBinaryWrite(message.email.template, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* indykite.config.v1beta1.EmailMessage message = 3; */
-        if (message.email.oneofKind === "message")
-            EmailMessage.internalBinaryWrite(message.email.message, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message indykite.config.v1beta1.EmailDefinition
- */
-export const EmailDefinition = new EmailDefinition$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class EmailTemplate$Type extends MessageType<EmailTemplate> {
-    constructor() {
-        super("indykite.config.v1beta1.EmailTemplate", [
-            { no: 1, name: "template_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "1", maxLen: "254" } } } },
-            { no: 20, name: "template_version", kind: "message", T: () => StringValue, options: { "validate.rules": { string: { minLen: "1", maxLen: "254" } } } },
-            { no: 2, name: "from", kind: "message", T: () => Email },
-            { no: 3, name: "reply_to", kind: "message", T: () => Email },
-            { no: 4, name: "to", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Email },
-            { no: 5, name: "cc", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Email },
-            { no: 6, name: "bcc", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Email },
-            { no: 7, name: "subject", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "1", maxLen: "503", ignoreEmpty: true } } } },
-            { no: 8, name: "headers", kind: "map", K: 9 /*ScalarType.STRING*/, V: { kind: "scalar", T: 9 /*ScalarType.STRING*/ } },
-            { no: 11, name: "custom_args", kind: "map", K: 9 /*ScalarType.STRING*/, V: { kind: "scalar", T: 9 /*ScalarType.STRING*/ } },
-            { no: 12, name: "dynamic_template_values", kind: "map", K: 9 /*ScalarType.STRING*/, V: { kind: "message", T: () => Value } },
-            { no: 13, name: "categories", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/ },
-            { no: 14, name: "attachments", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => EmailAttachment },
-            { no: 15, name: "event_payload", kind: "message", T: () => StringValue },
-            { no: 16, name: "template_arn", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
-        ]);
-    }
-    create(value?: PartialMessage<EmailTemplate>): EmailTemplate {
-        const message = { templateId: "", to: [], cc: [], bcc: [], subject: "", headers: {}, customArgs: {}, dynamicTemplateValues: {}, categories: [], attachments: [], templateArn: "" };
-        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
-        if (value !== undefined)
-            reflectionMergePartial<EmailTemplate>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: EmailTemplate): EmailTemplate {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* string template_id */ 1:
-                    message.templateId = reader.string();
-                    break;
-                case /* google.protobuf.StringValue template_version */ 20:
-                    message.templateVersion = StringValue.internalBinaryRead(reader, reader.uint32(), options, message.templateVersion);
-                    break;
-                case /* indykite.config.v1beta1.Email from */ 2:
-                    message.from = Email.internalBinaryRead(reader, reader.uint32(), options, message.from);
-                    break;
-                case /* indykite.config.v1beta1.Email reply_to */ 3:
-                    message.replyTo = Email.internalBinaryRead(reader, reader.uint32(), options, message.replyTo);
-                    break;
-                case /* repeated indykite.config.v1beta1.Email to */ 4:
-                    message.to.push(Email.internalBinaryRead(reader, reader.uint32(), options));
-                    break;
-                case /* repeated indykite.config.v1beta1.Email cc */ 5:
-                    message.cc.push(Email.internalBinaryRead(reader, reader.uint32(), options));
-                    break;
-                case /* repeated indykite.config.v1beta1.Email bcc */ 6:
-                    message.bcc.push(Email.internalBinaryRead(reader, reader.uint32(), options));
-                    break;
-                case /* string subject */ 7:
-                    message.subject = reader.string();
-                    break;
-                case /* map<string, string> headers */ 8:
-                    this.binaryReadMap8(message.headers, reader, options);
-                    break;
-                case /* map<string, string> custom_args */ 11:
-                    this.binaryReadMap11(message.customArgs, reader, options);
-                    break;
-                case /* map<string, indykite.objects.v1beta1.Value> dynamic_template_values */ 12:
-                    this.binaryReadMap12(message.dynamicTemplateValues, reader, options);
-                    break;
-                case /* repeated string categories */ 13:
-                    message.categories.push(reader.string());
-                    break;
-                case /* repeated indykite.config.v1beta1.EmailAttachment attachments */ 14:
-                    message.attachments.push(EmailAttachment.internalBinaryRead(reader, reader.uint32(), options));
-                    break;
-                case /* google.protobuf.StringValue event_payload */ 15:
-                    message.eventPayload = StringValue.internalBinaryRead(reader, reader.uint32(), options, message.eventPayload);
-                    break;
-                case /* string template_arn */ 16:
-                    message.templateArn = reader.string();
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    private binaryReadMap8(map: EmailTemplate["headers"], reader: IBinaryReader, options: BinaryReadOptions): void {
-        let len = reader.uint32(), end = reader.pos + len, key: keyof EmailTemplate["headers"] | undefined, val: EmailTemplate["headers"][any] | undefined;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case 1:
-                    key = reader.string();
-                    break;
-                case 2:
-                    val = reader.string();
-                    break;
-                default: throw new globalThis.Error("unknown map entry field for field indykite.config.v1beta1.EmailTemplate.headers");
-            }
-        }
-        map[key ?? ""] = val ?? "";
-    }
-    private binaryReadMap11(map: EmailTemplate["customArgs"], reader: IBinaryReader, options: BinaryReadOptions): void {
-        let len = reader.uint32(), end = reader.pos + len, key: keyof EmailTemplate["customArgs"] | undefined, val: EmailTemplate["customArgs"][any] | undefined;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case 1:
-                    key = reader.string();
-                    break;
-                case 2:
-                    val = reader.string();
-                    break;
-                default: throw new globalThis.Error("unknown map entry field for field indykite.config.v1beta1.EmailTemplate.custom_args");
-            }
-        }
-        map[key ?? ""] = val ?? "";
-    }
-    private binaryReadMap12(map: EmailTemplate["dynamicTemplateValues"], reader: IBinaryReader, options: BinaryReadOptions): void {
-        let len = reader.uint32(), end = reader.pos + len, key: keyof EmailTemplate["dynamicTemplateValues"] | undefined, val: EmailTemplate["dynamicTemplateValues"][any] | undefined;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case 1:
-                    key = reader.string();
-                    break;
-                case 2:
-                    val = Value.internalBinaryRead(reader, reader.uint32(), options);
-                    break;
-                default: throw new globalThis.Error("unknown map entry field for field indykite.config.v1beta1.EmailTemplate.dynamic_template_values");
-            }
-        }
-        map[key ?? ""] = val ?? Value.create();
-    }
-    internalBinaryWrite(message: EmailTemplate, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* string template_id = 1; */
-        if (message.templateId !== "")
-            writer.tag(1, WireType.LengthDelimited).string(message.templateId);
-        /* google.protobuf.StringValue template_version = 20; */
-        if (message.templateVersion)
-            StringValue.internalBinaryWrite(message.templateVersion, writer.tag(20, WireType.LengthDelimited).fork(), options).join();
-        /* indykite.config.v1beta1.Email from = 2; */
-        if (message.from)
-            Email.internalBinaryWrite(message.from, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* indykite.config.v1beta1.Email reply_to = 3; */
-        if (message.replyTo)
-            Email.internalBinaryWrite(message.replyTo, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
-        /* repeated indykite.config.v1beta1.Email to = 4; */
-        for (let i = 0; i < message.to.length; i++)
-            Email.internalBinaryWrite(message.to[i], writer.tag(4, WireType.LengthDelimited).fork(), options).join();
-        /* repeated indykite.config.v1beta1.Email cc = 5; */
-        for (let i = 0; i < message.cc.length; i++)
-            Email.internalBinaryWrite(message.cc[i], writer.tag(5, WireType.LengthDelimited).fork(), options).join();
-        /* repeated indykite.config.v1beta1.Email bcc = 6; */
-        for (let i = 0; i < message.bcc.length; i++)
-            Email.internalBinaryWrite(message.bcc[i], writer.tag(6, WireType.LengthDelimited).fork(), options).join();
-        /* string subject = 7; */
-        if (message.subject !== "")
-            writer.tag(7, WireType.LengthDelimited).string(message.subject);
-        /* map<string, string> headers = 8; */
-        for (let k of Object.keys(message.headers))
-            writer.tag(8, WireType.LengthDelimited).fork().tag(1, WireType.LengthDelimited).string(k).tag(2, WireType.LengthDelimited).string(message.headers[k]).join();
-        /* map<string, string> custom_args = 11; */
-        for (let k of Object.keys(message.customArgs))
-            writer.tag(11, WireType.LengthDelimited).fork().tag(1, WireType.LengthDelimited).string(k).tag(2, WireType.LengthDelimited).string(message.customArgs[k]).join();
-        /* map<string, indykite.objects.v1beta1.Value> dynamic_template_values = 12; */
-        for (let k of Object.keys(message.dynamicTemplateValues)) {
-            writer.tag(12, WireType.LengthDelimited).fork().tag(1, WireType.LengthDelimited).string(k);
-            writer.tag(2, WireType.LengthDelimited).fork();
-            Value.internalBinaryWrite(message.dynamicTemplateValues[k], writer, options);
-            writer.join().join();
-        }
-        /* repeated string categories = 13; */
-        for (let i = 0; i < message.categories.length; i++)
-            writer.tag(13, WireType.LengthDelimited).string(message.categories[i]);
-        /* repeated indykite.config.v1beta1.EmailAttachment attachments = 14; */
-        for (let i = 0; i < message.attachments.length; i++)
-            EmailAttachment.internalBinaryWrite(message.attachments[i], writer.tag(14, WireType.LengthDelimited).fork(), options).join();
-        /* google.protobuf.StringValue event_payload = 15; */
-        if (message.eventPayload)
-            StringValue.internalBinaryWrite(message.eventPayload, writer.tag(15, WireType.LengthDelimited).fork(), options).join();
-        /* string template_arn = 16; */
-        if (message.templateArn !== "")
-            writer.tag(16, WireType.LengthDelimited).string(message.templateArn);
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message indykite.config.v1beta1.EmailTemplate
- */
-export const EmailTemplate = new EmailTemplate$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class EmailAttachment$Type extends MessageType<EmailAttachment> {
-    constructor() {
-        super("indykite.config.v1beta1.EmailAttachment", [
-            { no: 1, name: "content_type", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 2, name: "content_id", kind: "message", T: () => StringValue },
-            { no: 3, name: "inline", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 4, name: "file_name", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 5, name: "content", kind: "scalar", T: 12 /*ScalarType.BYTES*/ }
-        ]);
-    }
-    create(value?: PartialMessage<EmailAttachment>): EmailAttachment {
-        const message = { contentType: "", inline: false, fileName: "", content: new Uint8Array(0) };
-        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
-        if (value !== undefined)
-            reflectionMergePartial<EmailAttachment>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: EmailAttachment): EmailAttachment {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* string content_type */ 1:
-                    message.contentType = reader.string();
-                    break;
-                case /* google.protobuf.StringValue content_id */ 2:
-                    message.contentId = StringValue.internalBinaryRead(reader, reader.uint32(), options, message.contentId);
-                    break;
-                case /* bool inline */ 3:
-                    message.inline = reader.bool();
-                    break;
-                case /* string file_name */ 4:
-                    message.fileName = reader.string();
-                    break;
-                case /* bytes content */ 5:
-                    message.content = reader.bytes();
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: EmailAttachment, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* string content_type = 1; */
-        if (message.contentType !== "")
-            writer.tag(1, WireType.LengthDelimited).string(message.contentType);
-        /* google.protobuf.StringValue content_id = 2; */
-        if (message.contentId)
-            StringValue.internalBinaryWrite(message.contentId, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* bool inline = 3; */
-        if (message.inline !== false)
-            writer.tag(3, WireType.Varint).bool(message.inline);
-        /* string file_name = 4; */
-        if (message.fileName !== "")
-            writer.tag(4, WireType.LengthDelimited).string(message.fileName);
-        /* bytes content = 5; */
-        if (message.content.length)
-            writer.tag(5, WireType.LengthDelimited).bytes(message.content);
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message indykite.config.v1beta1.EmailAttachment
- */
-export const EmailAttachment = new EmailAttachment$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class EmailMessage$Type extends MessageType<EmailMessage> {
-    constructor() {
-        super("indykite.config.v1beta1.EmailMessage", [
-            { no: 1, name: "from", kind: "message", T: () => Email },
-            { no: 2, name: "reply_to", kind: "message", T: () => Email },
-            { no: 3, name: "to", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Email },
-            { no: 4, name: "cc", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Email },
-            { no: 5, name: "bcc", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Email },
-            { no: 6, name: "subject", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "1", maxLen: "503", ignoreEmpty: true } } } },
-            { no: 7, name: "text_content", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 8, name: "html_content", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 9, name: "headers", kind: "map", K: 9 /*ScalarType.STRING*/, V: { kind: "scalar", T: 9 /*ScalarType.STRING*/ } },
-            { no: 11, name: "custom_args", kind: "map", K: 9 /*ScalarType.STRING*/, V: { kind: "scalar", T: 9 /*ScalarType.STRING*/ } },
-            { no: 10, name: "dynamic_template_values", kind: "map", K: 9 /*ScalarType.STRING*/, V: { kind: "message", T: () => Value } },
-            { no: 12, name: "categories", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/ },
-            { no: 13, name: "attachments", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => EmailAttachment },
-            { no: 14, name: "event_payload", kind: "message", T: () => StringValue }
-        ]);
-    }
-    create(value?: PartialMessage<EmailMessage>): EmailMessage {
-        const message = { to: [], cc: [], bcc: [], subject: "", textContent: "", htmlContent: "", headers: {}, customArgs: {}, dynamicTemplateValues: {}, categories: [], attachments: [] };
-        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
-        if (value !== undefined)
-            reflectionMergePartial<EmailMessage>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: EmailMessage): EmailMessage {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* indykite.config.v1beta1.Email from */ 1:
-                    message.from = Email.internalBinaryRead(reader, reader.uint32(), options, message.from);
-                    break;
-                case /* indykite.config.v1beta1.Email reply_to */ 2:
-                    message.replyTo = Email.internalBinaryRead(reader, reader.uint32(), options, message.replyTo);
-                    break;
-                case /* repeated indykite.config.v1beta1.Email to */ 3:
-                    message.to.push(Email.internalBinaryRead(reader, reader.uint32(), options));
-                    break;
-                case /* repeated indykite.config.v1beta1.Email cc */ 4:
-                    message.cc.push(Email.internalBinaryRead(reader, reader.uint32(), options));
-                    break;
-                case /* repeated indykite.config.v1beta1.Email bcc */ 5:
-                    message.bcc.push(Email.internalBinaryRead(reader, reader.uint32(), options));
-                    break;
-                case /* string subject */ 6:
-                    message.subject = reader.string();
-                    break;
-                case /* string text_content */ 7:
-                    message.textContent = reader.string();
-                    break;
-                case /* string html_content */ 8:
-                    message.htmlContent = reader.string();
-                    break;
-                case /* map<string, string> headers */ 9:
-                    this.binaryReadMap9(message.headers, reader, options);
-                    break;
-                case /* map<string, string> custom_args */ 11:
-                    this.binaryReadMap11(message.customArgs, reader, options);
-                    break;
-                case /* map<string, indykite.objects.v1beta1.Value> dynamic_template_values */ 10:
-                    this.binaryReadMap10(message.dynamicTemplateValues, reader, options);
-                    break;
-                case /* repeated string categories */ 12:
-                    message.categories.push(reader.string());
-                    break;
-                case /* repeated indykite.config.v1beta1.EmailAttachment attachments */ 13:
-                    message.attachments.push(EmailAttachment.internalBinaryRead(reader, reader.uint32(), options));
-                    break;
-                case /* google.protobuf.StringValue event_payload */ 14:
-                    message.eventPayload = StringValue.internalBinaryRead(reader, reader.uint32(), options, message.eventPayload);
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    private binaryReadMap9(map: EmailMessage["headers"], reader: IBinaryReader, options: BinaryReadOptions): void {
-        let len = reader.uint32(), end = reader.pos + len, key: keyof EmailMessage["headers"] | undefined, val: EmailMessage["headers"][any] | undefined;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case 1:
-                    key = reader.string();
-                    break;
-                case 2:
-                    val = reader.string();
-                    break;
-                default: throw new globalThis.Error("unknown map entry field for field indykite.config.v1beta1.EmailMessage.headers");
-            }
-        }
-        map[key ?? ""] = val ?? "";
-    }
-    private binaryReadMap11(map: EmailMessage["customArgs"], reader: IBinaryReader, options: BinaryReadOptions): void {
-        let len = reader.uint32(), end = reader.pos + len, key: keyof EmailMessage["customArgs"] | undefined, val: EmailMessage["customArgs"][any] | undefined;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case 1:
-                    key = reader.string();
-                    break;
-                case 2:
-                    val = reader.string();
-                    break;
-                default: throw new globalThis.Error("unknown map entry field for field indykite.config.v1beta1.EmailMessage.custom_args");
-            }
-        }
-        map[key ?? ""] = val ?? "";
-    }
-    private binaryReadMap10(map: EmailMessage["dynamicTemplateValues"], reader: IBinaryReader, options: BinaryReadOptions): void {
-        let len = reader.uint32(), end = reader.pos + len, key: keyof EmailMessage["dynamicTemplateValues"] | undefined, val: EmailMessage["dynamicTemplateValues"][any] | undefined;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case 1:
-                    key = reader.string();
-                    break;
-                case 2:
-                    val = Value.internalBinaryRead(reader, reader.uint32(), options);
-                    break;
-                default: throw new globalThis.Error("unknown map entry field for field indykite.config.v1beta1.EmailMessage.dynamic_template_values");
-            }
-        }
-        map[key ?? ""] = val ?? Value.create();
-    }
-    internalBinaryWrite(message: EmailMessage, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* indykite.config.v1beta1.Email from = 1; */
-        if (message.from)
-            Email.internalBinaryWrite(message.from, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* indykite.config.v1beta1.Email reply_to = 2; */
-        if (message.replyTo)
-            Email.internalBinaryWrite(message.replyTo, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* repeated indykite.config.v1beta1.Email to = 3; */
-        for (let i = 0; i < message.to.length; i++)
-            Email.internalBinaryWrite(message.to[i], writer.tag(3, WireType.LengthDelimited).fork(), options).join();
-        /* repeated indykite.config.v1beta1.Email cc = 4; */
-        for (let i = 0; i < message.cc.length; i++)
-            Email.internalBinaryWrite(message.cc[i], writer.tag(4, WireType.LengthDelimited).fork(), options).join();
-        /* repeated indykite.config.v1beta1.Email bcc = 5; */
-        for (let i = 0; i < message.bcc.length; i++)
-            Email.internalBinaryWrite(message.bcc[i], writer.tag(5, WireType.LengthDelimited).fork(), options).join();
-        /* string subject = 6; */
-        if (message.subject !== "")
-            writer.tag(6, WireType.LengthDelimited).string(message.subject);
-        /* string text_content = 7; */
-        if (message.textContent !== "")
-            writer.tag(7, WireType.LengthDelimited).string(message.textContent);
-        /* string html_content = 8; */
-        if (message.htmlContent !== "")
-            writer.tag(8, WireType.LengthDelimited).string(message.htmlContent);
-        /* map<string, string> headers = 9; */
-        for (let k of Object.keys(message.headers))
-            writer.tag(9, WireType.LengthDelimited).fork().tag(1, WireType.LengthDelimited).string(k).tag(2, WireType.LengthDelimited).string(message.headers[k]).join();
-        /* map<string, string> custom_args = 11; */
-        for (let k of Object.keys(message.customArgs))
-            writer.tag(11, WireType.LengthDelimited).fork().tag(1, WireType.LengthDelimited).string(k).tag(2, WireType.LengthDelimited).string(message.customArgs[k]).join();
-        /* map<string, indykite.objects.v1beta1.Value> dynamic_template_values = 10; */
-        for (let k of Object.keys(message.dynamicTemplateValues)) {
-            writer.tag(10, WireType.LengthDelimited).fork().tag(1, WireType.LengthDelimited).string(k);
-            writer.tag(2, WireType.LengthDelimited).fork();
-            Value.internalBinaryWrite(message.dynamicTemplateValues[k], writer, options);
-            writer.join().join();
-        }
-        /* repeated string categories = 12; */
-        for (let i = 0; i < message.categories.length; i++)
-            writer.tag(12, WireType.LengthDelimited).string(message.categories[i]);
-        /* repeated indykite.config.v1beta1.EmailAttachment attachments = 13; */
-        for (let i = 0; i < message.attachments.length; i++)
-            EmailAttachment.internalBinaryWrite(message.attachments[i], writer.tag(13, WireType.LengthDelimited).fork(), options).join();
-        /* google.protobuf.StringValue event_payload = 14; */
-        if (message.eventPayload)
-            StringValue.internalBinaryWrite(message.eventPayload, writer.tag(14, WireType.LengthDelimited).fork(), options).join();
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message indykite.config.v1beta1.EmailMessage
- */
-export const EmailMessage = new EmailMessage$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class PasswordProviderConfig$Type extends MessageType<PasswordProviderConfig> {
-    constructor() {
-        super("indykite.config.v1beta1.PasswordProviderConfig", [
-            { no: 1, name: "username_policy", kind: "message", T: () => UsernamePolicy, options: { "validate.rules": { message: { required: true } } } },
-            { no: 2, name: "password_policy", kind: "message", T: () => PasswordPolicy, options: { "validate.rules": { message: { required: true } } } },
-            { no: 3, name: "fail_interval", kind: "message", T: () => Duration },
-            { no: 4, name: "minimum_password_lifetime", kind: "message", T: () => Duration },
-            { no: 5, name: "maximum_password_lifetime", kind: "message", T: () => Duration },
-            { no: 6, name: "password_history", kind: "scalar", T: 3 /*ScalarType.INT64*/ },
-            { no: 7, name: "maximum_consecutive_failures", kind: "scalar", T: 3 /*ScalarType.INT64*/ },
-            { no: 8, name: "lockout_time", kind: "message", T: () => Duration }
-        ]);
-    }
-    create(value?: PartialMessage<PasswordProviderConfig>): PasswordProviderConfig {
-        const message = { passwordHistory: "0", maximumConsecutiveFailures: "0" };
-        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
-        if (value !== undefined)
-            reflectionMergePartial<PasswordProviderConfig>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: PasswordProviderConfig): PasswordProviderConfig {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* indykite.config.v1beta1.UsernamePolicy username_policy */ 1:
-                    message.usernamePolicy = UsernamePolicy.internalBinaryRead(reader, reader.uint32(), options, message.usernamePolicy);
-                    break;
-                case /* indykite.config.v1beta1.PasswordPolicy password_policy */ 2:
-                    message.passwordPolicy = PasswordPolicy.internalBinaryRead(reader, reader.uint32(), options, message.passwordPolicy);
-                    break;
-                case /* google.protobuf.Duration fail_interval */ 3:
-                    message.failInterval = Duration.internalBinaryRead(reader, reader.uint32(), options, message.failInterval);
-                    break;
-                case /* google.protobuf.Duration minimum_password_lifetime */ 4:
-                    message.minimumPasswordLifetime = Duration.internalBinaryRead(reader, reader.uint32(), options, message.minimumPasswordLifetime);
-                    break;
-                case /* google.protobuf.Duration maximum_password_lifetime */ 5:
-                    message.maximumPasswordLifetime = Duration.internalBinaryRead(reader, reader.uint32(), options, message.maximumPasswordLifetime);
-                    break;
-                case /* int64 password_history */ 6:
-                    message.passwordHistory = reader.int64().toString();
-                    break;
-                case /* int64 maximum_consecutive_failures */ 7:
-                    message.maximumConsecutiveFailures = reader.int64().toString();
-                    break;
-                case /* google.protobuf.Duration lockout_time */ 8:
-                    message.lockoutTime = Duration.internalBinaryRead(reader, reader.uint32(), options, message.lockoutTime);
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: PasswordProviderConfig, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* indykite.config.v1beta1.UsernamePolicy username_policy = 1; */
-        if (message.usernamePolicy)
-            UsernamePolicy.internalBinaryWrite(message.usernamePolicy, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* indykite.config.v1beta1.PasswordPolicy password_policy = 2; */
-        if (message.passwordPolicy)
-            PasswordPolicy.internalBinaryWrite(message.passwordPolicy, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* google.protobuf.Duration fail_interval = 3; */
-        if (message.failInterval)
-            Duration.internalBinaryWrite(message.failInterval, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
-        /* google.protobuf.Duration minimum_password_lifetime = 4; */
-        if (message.minimumPasswordLifetime)
-            Duration.internalBinaryWrite(message.minimumPasswordLifetime, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
-        /* google.protobuf.Duration maximum_password_lifetime = 5; */
-        if (message.maximumPasswordLifetime)
-            Duration.internalBinaryWrite(message.maximumPasswordLifetime, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
-        /* int64 password_history = 6; */
-        if (message.passwordHistory !== "0")
-            writer.tag(6, WireType.Varint).int64(message.passwordHistory);
-        /* int64 maximum_consecutive_failures = 7; */
-        if (message.maximumConsecutiveFailures !== "0")
-            writer.tag(7, WireType.Varint).int64(message.maximumConsecutiveFailures);
-        /* google.protobuf.Duration lockout_time = 8; */
-        if (message.lockoutTime)
-            Duration.internalBinaryWrite(message.lockoutTime, writer.tag(8, WireType.LengthDelimited).fork(), options).join();
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message indykite.config.v1beta1.PasswordProviderConfig
- */
-export const PasswordProviderConfig = new PasswordProviderConfig$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class UsernamePolicy$Type extends MessageType<UsernamePolicy> {
-    constructor() {
-        super("indykite.config.v1beta1.UsernamePolicy", [
-            { no: 5, name: "allowed_username_formats", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { maxItems: "3", unique: true, items: { string: { in: ["email", "mobile", "username"] } } } } } },
-            { no: 1, name: "valid_email", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 2, name: "verify_email", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 7, name: "verify_email_grace_period", kind: "message", T: () => Duration, options: { "validate.rules": { duration: { lte: { seconds: "900" }, gte: { seconds: "5" } } } } },
-            { no: 3, name: "allowed_email_domains", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/ },
-            { no: 4, name: "exclusive_email_domains", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/ }
-        ]);
-    }
-    create(value?: PartialMessage<UsernamePolicy>): UsernamePolicy {
-        const message = { allowedUsernameFormats: [], validEmail: false, verifyEmail: false, allowedEmailDomains: [], exclusiveEmailDomains: [] };
-        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
-        if (value !== undefined)
-            reflectionMergePartial<UsernamePolicy>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: UsernamePolicy): UsernamePolicy {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* repeated string allowed_username_formats */ 5:
-                    message.allowedUsernameFormats.push(reader.string());
-                    break;
-                case /* bool valid_email */ 1:
-                    message.validEmail = reader.bool();
-                    break;
-                case /* bool verify_email */ 2:
-                    message.verifyEmail = reader.bool();
-                    break;
-                case /* google.protobuf.Duration verify_email_grace_period */ 7:
-                    message.verifyEmailGracePeriod = Duration.internalBinaryRead(reader, reader.uint32(), options, message.verifyEmailGracePeriod);
-                    break;
-                case /* repeated string allowed_email_domains */ 3:
-                    message.allowedEmailDomains.push(reader.string());
-                    break;
-                case /* repeated string exclusive_email_domains */ 4:
-                    message.exclusiveEmailDomains.push(reader.string());
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: UsernamePolicy, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated string allowed_username_formats = 5; */
-        for (let i = 0; i < message.allowedUsernameFormats.length; i++)
-            writer.tag(5, WireType.LengthDelimited).string(message.allowedUsernameFormats[i]);
-        /* bool valid_email = 1; */
-        if (message.validEmail !== false)
-            writer.tag(1, WireType.Varint).bool(message.validEmail);
-        /* bool verify_email = 2; */
-        if (message.verifyEmail !== false)
-            writer.tag(2, WireType.Varint).bool(message.verifyEmail);
-        /* google.protobuf.Duration verify_email_grace_period = 7; */
-        if (message.verifyEmailGracePeriod)
-            Duration.internalBinaryWrite(message.verifyEmailGracePeriod, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
-        /* repeated string allowed_email_domains = 3; */
-        for (let i = 0; i < message.allowedEmailDomains.length; i++)
-            writer.tag(3, WireType.LengthDelimited).string(message.allowedEmailDomains[i]);
-        /* repeated string exclusive_email_domains = 4; */
-        for (let i = 0; i < message.exclusiveEmailDomains.length; i++)
-            writer.tag(4, WireType.LengthDelimited).string(message.exclusiveEmailDomains[i]);
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message indykite.config.v1beta1.UsernamePolicy
- */
-export const UsernamePolicy = new UsernamePolicy$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class UniquePropertyConstraint$Type extends MessageType<UniquePropertyConstraint> {
-    constructor() {
-        super("indykite.config.v1beta1.UniquePropertyConstraint", [
-            { no: 1, name: "tenant_unique", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 2, name: "canonicalization", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { unique: true, items: { string: { in: ["unicode", "case-insensitive"] } }, ignoreEmpty: true } } } }
-        ]);
-    }
-    create(value?: PartialMessage<UniquePropertyConstraint>): UniquePropertyConstraint {
-        const message = { tenantUnique: false, canonicalization: [] };
-        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
-        if (value !== undefined)
-            reflectionMergePartial<UniquePropertyConstraint>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: UniquePropertyConstraint): UniquePropertyConstraint {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* bool tenant_unique */ 1:
-                    message.tenantUnique = reader.bool();
-                    break;
-                case /* repeated string canonicalization */ 2:
-                    message.canonicalization.push(reader.string());
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: UniquePropertyConstraint, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* bool tenant_unique = 1; */
-        if (message.tenantUnique !== false)
-            writer.tag(1, WireType.Varint).bool(message.tenantUnique);
-        /* repeated string canonicalization = 2; */
-        for (let i = 0; i < message.canonicalization.length; i++)
-            writer.tag(2, WireType.LengthDelimited).string(message.canonicalization[i]);
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message indykite.config.v1beta1.UniquePropertyConstraint
- */
-export const UniquePropertyConstraint = new UniquePropertyConstraint$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class PasswordPolicy$Type extends MessageType<PasswordPolicy> {
-    constructor() {
-        super("indykite.config.v1beta1.PasswordPolicy", [
-            { no: 1, name: "template", kind: "enum", T: () => ["indykite.config.v1beta1.PasswordPolicyTemplate", PasswordPolicyTemplate, "PASSWORD_POLICY_TEMPLATE_"] },
-            { no: 2, name: "minimum_length", kind: "message", T: () => Int64Value }
-        ]);
-    }
-    create(value?: PartialMessage<PasswordPolicy>): PasswordPolicy {
-        const message = { template: 0 };
-        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
-        if (value !== undefined)
-            reflectionMergePartial<PasswordPolicy>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: PasswordPolicy): PasswordPolicy {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* indykite.config.v1beta1.PasswordPolicyTemplate template */ 1:
-                    message.template = reader.int32();
-                    break;
-                case /* google.protobuf.Int64Value minimum_length */ 2:
-                    message.minimumLength = Int64Value.internalBinaryRead(reader, reader.uint32(), options, message.minimumLength);
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: PasswordPolicy, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* indykite.config.v1beta1.PasswordPolicyTemplate template = 1; */
-        if (message.template !== 0)
-            writer.tag(1, WireType.Varint).int32(message.template);
-        /* google.protobuf.Int64Value minimum_length = 2; */
-        if (message.minimumLength)
-            Int64Value.internalBinaryWrite(message.minimumLength, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message indykite.config.v1beta1.PasswordPolicy
- */
-export const PasswordPolicy = new PasswordPolicy$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class AuthorizationPolicyConfig$Type extends MessageType<AuthorizationPolicyConfig> {
     constructor() {
@@ -6807,7 +2437,7 @@ class ConsentConfiguration$Type extends MessageType<ConsentConfiguration> {
     constructor() {
         super("indykite.config.v1beta1.ConsentConfiguration", [
             { no: 1, name: "purpose", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "1024" } } } },
-            { no: 2, name: "data_points", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { minItems: "1", unique: true, items: { string: { minLen: "1", maxLen: "64", pattern: "^[a-zA-Z_][a-zA-Z0-9_]+$" } } } } } },
+            { no: 2, name: "data_points", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { minItems: "1", unique: true, items: { string: { minLen: "1", maxLen: "1024", prefix: "{" } } } } } },
             { no: 3, name: "application_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
             { no: 4, name: "validity_period", kind: "scalar", T: 4 /*ScalarType.UINT64*/, options: { "validate.rules": { uint64: { lte: "63072000", gte: "86400" } } } },
             { no: 5, name: "revoke_after_use", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
@@ -6882,9 +2512,11 @@ class TokenIntrospectConfig$Type extends MessageType<TokenIntrospectConfig> {
     constructor() {
         super("indykite.config.v1beta1.TokenIntrospectConfig", [
             { no: 1, name: "jwt", kind: "message", oneof: "tokenMatcher", T: () => TokenIntrospectConfig_JWT, options: { "validate.rules": { message: { required: true } } } },
+            { no: 2, name: "opaque", kind: "message", oneof: "tokenMatcher", T: () => TokenIntrospectConfig_Opaque, options: { "validate.rules": { message: { required: true } } } },
             { no: 3, name: "offline", kind: "message", oneof: "validation", T: () => TokenIntrospectConfig_Offline, options: { "validate.rules": { message: { required: true } } } },
+            { no: 4, name: "online", kind: "message", oneof: "validation", T: () => TokenIntrospectConfig_Online, options: { "validate.rules": { message: { required: true } } } },
             { no: 7, name: "claims_mapping", kind: "map", K: 9 /*ScalarType.STRING*/, V: { kind: "message", T: () => TokenIntrospectConfig_Claim }, options: { "validate.rules": { map: { keys: { string: { maxLen: "256", pattern: "^[a-zA-Z_][a-zA-Z0-9_]+$" } }, values: { message: { required: true } } } } } },
-            { no: 5, name: "ikg_node_type", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "64", pattern: "^([A-Z][a-z]+)+$" } } } },
+            { no: 5, name: "ikg_node_type", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "2", maxLen: "64", pattern: "^([A-Z][a-z]+)+$" } } } },
             { no: 6, name: "perform_upsert", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
@@ -6906,10 +2538,22 @@ class TokenIntrospectConfig$Type extends MessageType<TokenIntrospectConfig> {
                         jwt: TokenIntrospectConfig_JWT.internalBinaryRead(reader, reader.uint32(), options, (message.tokenMatcher as any).jwt)
                     };
                     break;
+                case /* indykite.config.v1beta1.TokenIntrospectConfig.Opaque opaque */ 2:
+                    message.tokenMatcher = {
+                        oneofKind: "opaque",
+                        opaque: TokenIntrospectConfig_Opaque.internalBinaryRead(reader, reader.uint32(), options, (message.tokenMatcher as any).opaque)
+                    };
+                    break;
                 case /* indykite.config.v1beta1.TokenIntrospectConfig.Offline offline */ 3:
                     message.validation = {
                         oneofKind: "offline",
                         offline: TokenIntrospectConfig_Offline.internalBinaryRead(reader, reader.uint32(), options, (message.validation as any).offline)
+                    };
+                    break;
+                case /* indykite.config.v1beta1.TokenIntrospectConfig.Online online */ 4:
+                    message.validation = {
+                        oneofKind: "online",
+                        online: TokenIntrospectConfig_Online.internalBinaryRead(reader, reader.uint32(), options, (message.validation as any).online)
                     };
                     break;
                 case /* map<string, indykite.config.v1beta1.TokenIntrospectConfig.Claim> claims_mapping */ 7:
@@ -6952,9 +2596,15 @@ class TokenIntrospectConfig$Type extends MessageType<TokenIntrospectConfig> {
         /* indykite.config.v1beta1.TokenIntrospectConfig.JWT jwt = 1; */
         if (message.tokenMatcher.oneofKind === "jwt")
             TokenIntrospectConfig_JWT.internalBinaryWrite(message.tokenMatcher.jwt, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* indykite.config.v1beta1.TokenIntrospectConfig.Opaque opaque = 2; */
+        if (message.tokenMatcher.oneofKind === "opaque")
+            TokenIntrospectConfig_Opaque.internalBinaryWrite(message.tokenMatcher.opaque, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         /* indykite.config.v1beta1.TokenIntrospectConfig.Offline offline = 3; */
         if (message.validation.oneofKind === "offline")
             TokenIntrospectConfig_Offline.internalBinaryWrite(message.validation.offline, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        /* indykite.config.v1beta1.TokenIntrospectConfig.Online online = 4; */
+        if (message.validation.oneofKind === "online")
+            TokenIntrospectConfig_Online.internalBinaryWrite(message.validation.online, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
         /* map<string, indykite.config.v1beta1.TokenIntrospectConfig.Claim> claims_mapping = 7; */
         for (let k of Object.keys(message.claimsMapping)) {
             writer.tag(7, WireType.LengthDelimited).fork().tag(1, WireType.LengthDelimited).string(k);
@@ -7033,6 +2683,32 @@ class TokenIntrospectConfig_JWT$Type extends MessageType<TokenIntrospectConfig_J
  */
 export const TokenIntrospectConfig_JWT = new TokenIntrospectConfig_JWT$Type();
 // @generated message type with reflection information, may provide speed optimized methods
+class TokenIntrospectConfig_Opaque$Type extends MessageType<TokenIntrospectConfig_Opaque> {
+    constructor() {
+        super("indykite.config.v1beta1.TokenIntrospectConfig.Opaque", []);
+    }
+    create(value?: PartialMessage<TokenIntrospectConfig_Opaque>): TokenIntrospectConfig_Opaque {
+        const message = {};
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<TokenIntrospectConfig_Opaque>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: TokenIntrospectConfig_Opaque): TokenIntrospectConfig_Opaque {
+        return target ?? this.create();
+    }
+    internalBinaryWrite(message: TokenIntrospectConfig_Opaque, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message indykite.config.v1beta1.TokenIntrospectConfig.Opaque
+ */
+export const TokenIntrospectConfig_Opaque = new TokenIntrospectConfig_Opaque$Type();
+// @generated message type with reflection information, may provide speed optimized methods
 class TokenIntrospectConfig_Offline$Type extends MessageType<TokenIntrospectConfig_Offline> {
     constructor() {
         super("indykite.config.v1beta1.TokenIntrospectConfig.Offline", [
@@ -7080,6 +2756,60 @@ class TokenIntrospectConfig_Offline$Type extends MessageType<TokenIntrospectConf
  */
 export const TokenIntrospectConfig_Offline = new TokenIntrospectConfig_Offline$Type();
 // @generated message type with reflection information, may provide speed optimized methods
+class TokenIntrospectConfig_Online$Type extends MessageType<TokenIntrospectConfig_Online> {
+    constructor() {
+        super("indykite.config.v1beta1.TokenIntrospectConfig.Online", [
+            { no: 1, name: "userinfo_endpoint", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { uri: true, ignoreEmpty: true } } } },
+            { no: 2, name: "cache_ttl", kind: "message", T: () => Duration, options: { "validate.rules": { duration: { lte: { seconds: "3600" } } } } }
+        ]);
+    }
+    create(value?: PartialMessage<TokenIntrospectConfig_Online>): TokenIntrospectConfig_Online {
+        const message = { userinfoEndpoint: "" };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<TokenIntrospectConfig_Online>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: TokenIntrospectConfig_Online): TokenIntrospectConfig_Online {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string userinfo_endpoint */ 1:
+                    message.userinfoEndpoint = reader.string();
+                    break;
+                case /* google.protobuf.Duration cache_ttl */ 2:
+                    message.cacheTtl = Duration.internalBinaryRead(reader, reader.uint32(), options, message.cacheTtl);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: TokenIntrospectConfig_Online, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string userinfo_endpoint = 1; */
+        if (message.userinfoEndpoint !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.userinfoEndpoint);
+        /* google.protobuf.Duration cache_ttl = 2; */
+        if (message.cacheTtl)
+            Duration.internalBinaryWrite(message.cacheTtl, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message indykite.config.v1beta1.TokenIntrospectConfig.Online
+ */
+export const TokenIntrospectConfig_Online = new TokenIntrospectConfig_Online$Type();
+// @generated message type with reflection information, may provide speed optimized methods
 class TokenIntrospectConfig_Claim$Type extends MessageType<TokenIntrospectConfig_Claim> {
     constructor() {
         super("indykite.config.v1beta1.TokenIntrospectConfig.Claim", [
@@ -7126,3 +2856,111 @@ class TokenIntrospectConfig_Claim$Type extends MessageType<TokenIntrospectConfig
  * @generated MessageType for protobuf message indykite.config.v1beta1.TokenIntrospectConfig.Claim
  */
 export const TokenIntrospectConfig_Claim = new TokenIntrospectConfig_Claim$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ConsentDataPoint$Type extends MessageType<ConsentDataPoint> {
+    constructor() {
+        super("indykite.config.v1beta1.ConsentDataPoint", [
+            { no: 1, name: "query", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "1024" } } } },
+            { no: 2, name: "returns", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => ConsentDataPoint_Return, options: { "validate.rules": { repeated: { minItems: "1", maxItems: "20" } } } }
+        ]);
+    }
+    create(value?: PartialMessage<ConsentDataPoint>): ConsentDataPoint {
+        const message = { query: "", returns: [] };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<ConsentDataPoint>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ConsentDataPoint): ConsentDataPoint {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string query */ 1:
+                    message.query = reader.string();
+                    break;
+                case /* repeated indykite.config.v1beta1.ConsentDataPoint.Return returns */ 2:
+                    message.returns.push(ConsentDataPoint_Return.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ConsentDataPoint, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string query = 1; */
+        if (message.query !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.query);
+        /* repeated indykite.config.v1beta1.ConsentDataPoint.Return returns = 2; */
+        for (let i = 0; i < message.returns.length; i++)
+            ConsentDataPoint_Return.internalBinaryWrite(message.returns[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message indykite.config.v1beta1.ConsentDataPoint
+ */
+export const ConsentDataPoint = new ConsentDataPoint$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ConsentDataPoint_Return$Type extends MessageType<ConsentDataPoint_Return> {
+    constructor() {
+        super("indykite.config.v1beta1.ConsentDataPoint.Return", [
+            { no: 1, name: "variable", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "32" } } } },
+            { no: 2, name: "properties", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { maxItems: "50" } } } }
+        ]);
+    }
+    create(value?: PartialMessage<ConsentDataPoint_Return>): ConsentDataPoint_Return {
+        const message = { variable: "", properties: [] };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<ConsentDataPoint_Return>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ConsentDataPoint_Return): ConsentDataPoint_Return {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string variable */ 1:
+                    message.variable = reader.string();
+                    break;
+                case /* repeated string properties */ 2:
+                    message.properties.push(reader.string());
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ConsentDataPoint_Return, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string variable = 1; */
+        if (message.variable !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.variable);
+        /* repeated string properties = 2; */
+        for (let i = 0; i < message.properties.length; i++)
+            writer.tag(2, WireType.LengthDelimited).string(message.properties[i]);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message indykite.config.v1beta1.ConsentDataPoint.Return
+ */
+export const ConsentDataPoint_Return = new ConsentDataPoint_Return$Type();

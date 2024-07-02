@@ -25,22 +25,6 @@ import type { RevokePermissionsResponse } from "./config_management_api";
 import type { RevokePermissionsRequest } from "./config_management_api";
 import type { AssignPermissionsResponse } from "./config_management_api";
 import type { AssignPermissionsRequest } from "./config_management_api";
-import type { DeleteOAuth2ApplicationResponse } from "./config_management_api";
-import type { DeleteOAuth2ApplicationRequest } from "./config_management_api";
-import type { UpdateOAuth2ApplicationResponse } from "./config_management_api";
-import type { UpdateOAuth2ApplicationRequest } from "./config_management_api";
-import type { ReadOAuth2ApplicationResponse } from "./config_management_api";
-import type { ReadOAuth2ApplicationRequest } from "./config_management_api";
-import type { CreateOAuth2ApplicationResponse } from "./config_management_api";
-import type { CreateOAuth2ApplicationRequest } from "./config_management_api";
-import type { DeleteOAuth2ProviderResponse } from "./config_management_api";
-import type { DeleteOAuth2ProviderRequest } from "./config_management_api";
-import type { UpdateOAuth2ProviderResponse } from "./config_management_api";
-import type { UpdateOAuth2ProviderRequest } from "./config_management_api";
-import type { ReadOAuth2ProviderResponse } from "./config_management_api";
-import type { ReadOAuth2ProviderRequest } from "./config_management_api";
-import type { CreateOAuth2ProviderResponse } from "./config_management_api";
-import type { CreateOAuth2ProviderRequest } from "./config_management_api";
 import type { ListConfigNodeVersionsResponse } from "./config_management_api";
 import type { ListConfigNodeVersionsRequest } from "./config_management_api";
 import type { DeleteConfigNodeResponse } from "./config_management_api";
@@ -51,16 +35,6 @@ import type { ReadConfigNodeResponse } from "./config_management_api";
 import type { ReadConfigNodeRequest } from "./config_management_api";
 import type { CreateConfigNodeResponse } from "./config_management_api";
 import type { CreateConfigNodeRequest } from "./config_management_api";
-import type { DeleteTenantResponse } from "./config_management_api";
-import type { DeleteTenantRequest } from "./config_management_api";
-import type { UpdateTenantResponse } from "./config_management_api";
-import type { UpdateTenantRequest } from "./config_management_api";
-import type { ListTenantsResponse } from "./config_management_api";
-import type { ListTenantsRequest } from "./config_management_api";
-import type { ReadTenantResponse } from "./config_management_api";
-import type { ReadTenantRequest } from "./config_management_api";
-import type { CreateTenantResponse } from "./config_management_api";
-import type { CreateTenantRequest } from "./config_management_api";
 import type { DeleteServiceAccountCredentialResponse } from "./config_management_api";
 import type { DeleteServiceAccountCredentialRequest } from "./config_management_api";
 import type { ReadServiceAccountCredentialResponse } from "./config_management_api";
@@ -131,8 +105,6 @@ export interface IConfigManagementAPIClient {
     readCustomer(input: ReadCustomerRequest, callback: (err: grpc.ServiceError | null, value?: ReadCustomerResponse) => void): grpc.ClientUnaryCall;
     /**
      * CreateApplicationSpace for a customer.
-     * For now, we do not support creating custom Issuers, so implicit Issuer is created automatically with this call.
-     * To get IssuerID, which is required to create Tenant later, use ReadApplicationSpace.
      *
      * @generated from protobuf rpc: CreateApplicationSpace(indykite.config.v1beta1.CreateApplicationSpaceRequest) returns (indykite.config.v1beta1.CreateApplicationSpaceResponse);
      */
@@ -141,7 +113,7 @@ export interface IConfigManagementAPIClient {
     createApplicationSpace(input: CreateApplicationSpaceRequest, options: grpc.CallOptions, callback: (err: grpc.ServiceError | null, value?: CreateApplicationSpaceResponse) => void): grpc.ClientUnaryCall;
     createApplicationSpace(input: CreateApplicationSpaceRequest, callback: (err: grpc.ServiceError | null, value?: CreateApplicationSpaceResponse) => void): grpc.ClientUnaryCall;
     /**
-     * ReadApplicationSpace by ID or name and returns all attributes including Issuer ID.
+     * ReadApplicationSpace by ID or name and returns all attributes.
      *
      * @generated from protobuf rpc: ReadApplicationSpace(indykite.config.v1beta1.ReadApplicationSpaceRequest) returns (indykite.config.v1beta1.ReadApplicationSpaceResponse);
      */
@@ -358,51 +330,7 @@ export interface IConfigManagementAPIClient {
     deleteServiceAccountCredential(input: DeleteServiceAccountCredentialRequest, options: grpc.CallOptions, callback: (err: grpc.ServiceError | null, value?: DeleteServiceAccountCredentialResponse) => void): grpc.ClientUnaryCall;
     deleteServiceAccountCredential(input: DeleteServiceAccountCredentialRequest, callback: (err: grpc.ServiceError | null, value?: DeleteServiceAccountCredentialResponse) => void): grpc.ClientUnaryCall;
     /**
-     * CreateTenant for given Issuer. See CreateApplicationSpace method description to get more knowledge
-     * about Application Space and Issuer relation.
-     *
-     * @generated from protobuf rpc: CreateTenant(indykite.config.v1beta1.CreateTenantRequest) returns (indykite.config.v1beta1.CreateTenantResponse);
-     */
-    createTenant(input: CreateTenantRequest, metadata: grpc.Metadata, options: grpc.CallOptions, callback: (err: grpc.ServiceError | null, value?: CreateTenantResponse) => void): grpc.ClientUnaryCall;
-    createTenant(input: CreateTenantRequest, metadata: grpc.Metadata, callback: (err: grpc.ServiceError | null, value?: CreateTenantResponse) => void): grpc.ClientUnaryCall;
-    createTenant(input: CreateTenantRequest, options: grpc.CallOptions, callback: (err: grpc.ServiceError | null, value?: CreateTenantResponse) => void): grpc.ClientUnaryCall;
-    createTenant(input: CreateTenantRequest, callback: (err: grpc.ServiceError | null, value?: CreateTenantResponse) => void): grpc.ClientUnaryCall;
-    /**
-     * ReadTenant by ID or name and returns all attributes.
-     *
-     * @generated from protobuf rpc: ReadTenant(indykite.config.v1beta1.ReadTenantRequest) returns (indykite.config.v1beta1.ReadTenantResponse);
-     */
-    readTenant(input: ReadTenantRequest, metadata: grpc.Metadata, options: grpc.CallOptions, callback: (err: grpc.ServiceError | null, value?: ReadTenantResponse) => void): grpc.ClientUnaryCall;
-    readTenant(input: ReadTenantRequest, metadata: grpc.Metadata, callback: (err: grpc.ServiceError | null, value?: ReadTenantResponse) => void): grpc.ClientUnaryCall;
-    readTenant(input: ReadTenantRequest, options: grpc.CallOptions, callback: (err: grpc.ServiceError | null, value?: ReadTenantResponse) => void): grpc.ClientUnaryCall;
-    readTenant(input: ReadTenantRequest, callback: (err: grpc.ServiceError | null, value?: ReadTenantResponse) => void): grpc.ClientUnaryCall;
-    /**
-     * ListTenants in a given Application Space with list of names.
-     *
-     * @generated from protobuf rpc: ListTenants(indykite.config.v1beta1.ListTenantsRequest) returns (stream indykite.config.v1beta1.ListTenantsResponse);
-     */
-    listTenants(input: ListTenantsRequest, metadata?: grpc.Metadata, options?: grpc.CallOptions): grpc.ClientReadableStream<ListTenantsResponse>;
-    listTenants(input: ListTenantsRequest, options?: grpc.CallOptions): grpc.ClientReadableStream<ListTenantsResponse>;
-    /**
-     * UpdateTenant by ID with optional etag, to prevent overwriting changes made by others in the same time.
-     *
-     * @generated from protobuf rpc: UpdateTenant(indykite.config.v1beta1.UpdateTenantRequest) returns (indykite.config.v1beta1.UpdateTenantResponse);
-     */
-    updateTenant(input: UpdateTenantRequest, metadata: grpc.Metadata, options: grpc.CallOptions, callback: (err: grpc.ServiceError | null, value?: UpdateTenantResponse) => void): grpc.ClientUnaryCall;
-    updateTenant(input: UpdateTenantRequest, metadata: grpc.Metadata, callback: (err: grpc.ServiceError | null, value?: UpdateTenantResponse) => void): grpc.ClientUnaryCall;
-    updateTenant(input: UpdateTenantRequest, options: grpc.CallOptions, callback: (err: grpc.ServiceError | null, value?: UpdateTenantResponse) => void): grpc.ClientUnaryCall;
-    updateTenant(input: UpdateTenantRequest, callback: (err: grpc.ServiceError | null, value?: UpdateTenantResponse) => void): grpc.ClientUnaryCall;
-    /**
-     * DeleteTenant by ID with optional etag, to prevent deleting Tenant currently changed by others.
-     *
-     * @generated from protobuf rpc: DeleteTenant(indykite.config.v1beta1.DeleteTenantRequest) returns (indykite.config.v1beta1.DeleteTenantResponse);
-     */
-    deleteTenant(input: DeleteTenantRequest, metadata: grpc.Metadata, options: grpc.CallOptions, callback: (err: grpc.ServiceError | null, value?: DeleteTenantResponse) => void): grpc.ClientUnaryCall;
-    deleteTenant(input: DeleteTenantRequest, metadata: grpc.Metadata, callback: (err: grpc.ServiceError | null, value?: DeleteTenantResponse) => void): grpc.ClientUnaryCall;
-    deleteTenant(input: DeleteTenantRequest, options: grpc.CallOptions, callback: (err: grpc.ServiceError | null, value?: DeleteTenantResponse) => void): grpc.ClientUnaryCall;
-    deleteTenant(input: DeleteTenantRequest, callback: (err: grpc.ServiceError | null, value?: DeleteTenantResponse) => void): grpc.ClientUnaryCall;
-    /**
-     * CreateConfigNode on Customer, Application Space or Tenant level.
+     * CreateConfigNode on Customer or Application Space.
      * All generic configuration nodes are created by this endpoint.
      *
      * @generated from protobuf rpc: CreateConfigNode(indykite.config.v1beta1.CreateConfigNodeRequest) returns (indykite.config.v1beta1.CreateConfigNodeResponse);
@@ -447,78 +375,6 @@ export interface IConfigManagementAPIClient {
     listConfigNodeVersions(input: ListConfigNodeVersionsRequest, metadata: grpc.Metadata, callback: (err: grpc.ServiceError | null, value?: ListConfigNodeVersionsResponse) => void): grpc.ClientUnaryCall;
     listConfigNodeVersions(input: ListConfigNodeVersionsRequest, options: grpc.CallOptions, callback: (err: grpc.ServiceError | null, value?: ListConfigNodeVersionsResponse) => void): grpc.ClientUnaryCall;
     listConfigNodeVersions(input: ListConfigNodeVersionsRequest, callback: (err: grpc.ServiceError | null, value?: ListConfigNodeVersionsResponse) => void): grpc.ClientUnaryCall;
-    /**
-     * CreateOAuth2Provider under given Application Space.
-     *
-     * @generated from protobuf rpc: CreateOAuth2Provider(indykite.config.v1beta1.CreateOAuth2ProviderRequest) returns (indykite.config.v1beta1.CreateOAuth2ProviderResponse);
-     */
-    createOAuth2Provider(input: CreateOAuth2ProviderRequest, metadata: grpc.Metadata, options: grpc.CallOptions, callback: (err: grpc.ServiceError | null, value?: CreateOAuth2ProviderResponse) => void): grpc.ClientUnaryCall;
-    createOAuth2Provider(input: CreateOAuth2ProviderRequest, metadata: grpc.Metadata, callback: (err: grpc.ServiceError | null, value?: CreateOAuth2ProviderResponse) => void): grpc.ClientUnaryCall;
-    createOAuth2Provider(input: CreateOAuth2ProviderRequest, options: grpc.CallOptions, callback: (err: grpc.ServiceError | null, value?: CreateOAuth2ProviderResponse) => void): grpc.ClientUnaryCall;
-    createOAuth2Provider(input: CreateOAuth2ProviderRequest, callback: (err: grpc.ServiceError | null, value?: CreateOAuth2ProviderResponse) => void): grpc.ClientUnaryCall;
-    /**
-     * ReadOAuth2Provider by ID and returns all attributes and configuration.
-     *
-     * @generated from protobuf rpc: ReadOAuth2Provider(indykite.config.v1beta1.ReadOAuth2ProviderRequest) returns (indykite.config.v1beta1.ReadOAuth2ProviderResponse);
-     */
-    readOAuth2Provider(input: ReadOAuth2ProviderRequest, metadata: grpc.Metadata, options: grpc.CallOptions, callback: (err: grpc.ServiceError | null, value?: ReadOAuth2ProviderResponse) => void): grpc.ClientUnaryCall;
-    readOAuth2Provider(input: ReadOAuth2ProviderRequest, metadata: grpc.Metadata, callback: (err: grpc.ServiceError | null, value?: ReadOAuth2ProviderResponse) => void): grpc.ClientUnaryCall;
-    readOAuth2Provider(input: ReadOAuth2ProviderRequest, options: grpc.CallOptions, callback: (err: grpc.ServiceError | null, value?: ReadOAuth2ProviderResponse) => void): grpc.ClientUnaryCall;
-    readOAuth2Provider(input: ReadOAuth2ProviderRequest, callback: (err: grpc.ServiceError | null, value?: ReadOAuth2ProviderResponse) => void): grpc.ClientUnaryCall;
-    /**
-     * UpdateOAuth2Provider by ID with optional etag, to prevent overwriting changes made by others in the same time.
-     *
-     * @generated from protobuf rpc: UpdateOAuth2Provider(indykite.config.v1beta1.UpdateOAuth2ProviderRequest) returns (indykite.config.v1beta1.UpdateOAuth2ProviderResponse);
-     */
-    updateOAuth2Provider(input: UpdateOAuth2ProviderRequest, metadata: grpc.Metadata, options: grpc.CallOptions, callback: (err: grpc.ServiceError | null, value?: UpdateOAuth2ProviderResponse) => void): grpc.ClientUnaryCall;
-    updateOAuth2Provider(input: UpdateOAuth2ProviderRequest, metadata: grpc.Metadata, callback: (err: grpc.ServiceError | null, value?: UpdateOAuth2ProviderResponse) => void): grpc.ClientUnaryCall;
-    updateOAuth2Provider(input: UpdateOAuth2ProviderRequest, options: grpc.CallOptions, callback: (err: grpc.ServiceError | null, value?: UpdateOAuth2ProviderResponse) => void): grpc.ClientUnaryCall;
-    updateOAuth2Provider(input: UpdateOAuth2ProviderRequest, callback: (err: grpc.ServiceError | null, value?: UpdateOAuth2ProviderResponse) => void): grpc.ClientUnaryCall;
-    /**
-     * DeleteOAuth2Provider by ID with optional etag, to prevent deleting Provider currently changed by others.
-     *
-     * @generated from protobuf rpc: DeleteOAuth2Provider(indykite.config.v1beta1.DeleteOAuth2ProviderRequest) returns (indykite.config.v1beta1.DeleteOAuth2ProviderResponse);
-     */
-    deleteOAuth2Provider(input: DeleteOAuth2ProviderRequest, metadata: grpc.Metadata, options: grpc.CallOptions, callback: (err: grpc.ServiceError | null, value?: DeleteOAuth2ProviderResponse) => void): grpc.ClientUnaryCall;
-    deleteOAuth2Provider(input: DeleteOAuth2ProviderRequest, metadata: grpc.Metadata, callback: (err: grpc.ServiceError | null, value?: DeleteOAuth2ProviderResponse) => void): grpc.ClientUnaryCall;
-    deleteOAuth2Provider(input: DeleteOAuth2ProviderRequest, options: grpc.CallOptions, callback: (err: grpc.ServiceError | null, value?: DeleteOAuth2ProviderResponse) => void): grpc.ClientUnaryCall;
-    deleteOAuth2Provider(input: DeleteOAuth2ProviderRequest, callback: (err: grpc.ServiceError | null, value?: DeleteOAuth2ProviderResponse) => void): grpc.ClientUnaryCall;
-    /**
-     * CreateOAuth2Application under given OAuth2 Provider.
-     *
-     * @generated from protobuf rpc: CreateOAuth2Application(indykite.config.v1beta1.CreateOAuth2ApplicationRequest) returns (indykite.config.v1beta1.CreateOAuth2ApplicationResponse);
-     */
-    createOAuth2Application(input: CreateOAuth2ApplicationRequest, metadata: grpc.Metadata, options: grpc.CallOptions, callback: (err: grpc.ServiceError | null, value?: CreateOAuth2ApplicationResponse) => void): grpc.ClientUnaryCall;
-    createOAuth2Application(input: CreateOAuth2ApplicationRequest, metadata: grpc.Metadata, callback: (err: grpc.ServiceError | null, value?: CreateOAuth2ApplicationResponse) => void): grpc.ClientUnaryCall;
-    createOAuth2Application(input: CreateOAuth2ApplicationRequest, options: grpc.CallOptions, callback: (err: grpc.ServiceError | null, value?: CreateOAuth2ApplicationResponse) => void): grpc.ClientUnaryCall;
-    createOAuth2Application(input: CreateOAuth2ApplicationRequest, callback: (err: grpc.ServiceError | null, value?: CreateOAuth2ApplicationResponse) => void): grpc.ClientUnaryCall;
-    /**
-     * ReadOAuth2Application by ID and returns all attributes and configuration.
-     *
-     * @generated from protobuf rpc: ReadOAuth2Application(indykite.config.v1beta1.ReadOAuth2ApplicationRequest) returns (indykite.config.v1beta1.ReadOAuth2ApplicationResponse);
-     */
-    readOAuth2Application(input: ReadOAuth2ApplicationRequest, metadata: grpc.Metadata, options: grpc.CallOptions, callback: (err: grpc.ServiceError | null, value?: ReadOAuth2ApplicationResponse) => void): grpc.ClientUnaryCall;
-    readOAuth2Application(input: ReadOAuth2ApplicationRequest, metadata: grpc.Metadata, callback: (err: grpc.ServiceError | null, value?: ReadOAuth2ApplicationResponse) => void): grpc.ClientUnaryCall;
-    readOAuth2Application(input: ReadOAuth2ApplicationRequest, options: grpc.CallOptions, callback: (err: grpc.ServiceError | null, value?: ReadOAuth2ApplicationResponse) => void): grpc.ClientUnaryCall;
-    readOAuth2Application(input: ReadOAuth2ApplicationRequest, callback: (err: grpc.ServiceError | null, value?: ReadOAuth2ApplicationResponse) => void): grpc.ClientUnaryCall;
-    /**
-     * UpdateOAuth2Application by ID with optional etag, to prevent overwriting changes made by others in the same time.
-     *
-     * @generated from protobuf rpc: UpdateOAuth2Application(indykite.config.v1beta1.UpdateOAuth2ApplicationRequest) returns (indykite.config.v1beta1.UpdateOAuth2ApplicationResponse);
-     */
-    updateOAuth2Application(input: UpdateOAuth2ApplicationRequest, metadata: grpc.Metadata, options: grpc.CallOptions, callback: (err: grpc.ServiceError | null, value?: UpdateOAuth2ApplicationResponse) => void): grpc.ClientUnaryCall;
-    updateOAuth2Application(input: UpdateOAuth2ApplicationRequest, metadata: grpc.Metadata, callback: (err: grpc.ServiceError | null, value?: UpdateOAuth2ApplicationResponse) => void): grpc.ClientUnaryCall;
-    updateOAuth2Application(input: UpdateOAuth2ApplicationRequest, options: grpc.CallOptions, callback: (err: grpc.ServiceError | null, value?: UpdateOAuth2ApplicationResponse) => void): grpc.ClientUnaryCall;
-    updateOAuth2Application(input: UpdateOAuth2ApplicationRequest, callback: (err: grpc.ServiceError | null, value?: UpdateOAuth2ApplicationResponse) => void): grpc.ClientUnaryCall;
-    /**
-     * DeleteOAuth2Application by ID with optional etag, to prevent deleting OAuth2 Application currently changed by others.
-     *
-     * @generated from protobuf rpc: DeleteOAuth2Application(indykite.config.v1beta1.DeleteOAuth2ApplicationRequest) returns (indykite.config.v1beta1.DeleteOAuth2ApplicationResponse);
-     */
-    deleteOAuth2Application(input: DeleteOAuth2ApplicationRequest, metadata: grpc.Metadata, options: grpc.CallOptions, callback: (err: grpc.ServiceError | null, value?: DeleteOAuth2ApplicationResponse) => void): grpc.ClientUnaryCall;
-    deleteOAuth2Application(input: DeleteOAuth2ApplicationRequest, metadata: grpc.Metadata, callback: (err: grpc.ServiceError | null, value?: DeleteOAuth2ApplicationResponse) => void): grpc.ClientUnaryCall;
-    deleteOAuth2Application(input: DeleteOAuth2ApplicationRequest, options: grpc.CallOptions, callback: (err: grpc.ServiceError | null, value?: DeleteOAuth2ApplicationResponse) => void): grpc.ClientUnaryCall;
-    deleteOAuth2Application(input: DeleteOAuth2ApplicationRequest, callback: (err: grpc.ServiceError | null, value?: DeleteOAuth2ApplicationResponse) => void): grpc.ClientUnaryCall;
     /**
      * AssignPermissions to a digital twin.
      *
@@ -569,8 +425,6 @@ export class ConfigManagementAPIClient extends grpc.Client implements IConfigMan
     }
     /**
      * CreateApplicationSpace for a customer.
-     * For now, we do not support creating custom Issuers, so implicit Issuer is created automatically with this call.
-     * To get IssuerID, which is required to create Tenant later, use ReadApplicationSpace.
      *
      * @generated from protobuf rpc: CreateApplicationSpace(indykite.config.v1beta1.CreateApplicationSpaceRequest) returns (indykite.config.v1beta1.CreateApplicationSpaceResponse);
      */
@@ -579,7 +433,7 @@ export class ConfigManagementAPIClient extends grpc.Client implements IConfigMan
         return this.makeUnaryRequest<CreateApplicationSpaceRequest, CreateApplicationSpaceResponse>(`/${ConfigManagementAPI.typeName}/${method.name}`, (value: CreateApplicationSpaceRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): CreateApplicationSpaceResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), (options as any), (callback as any));
     }
     /**
-     * ReadApplicationSpace by ID or name and returns all attributes including Issuer ID.
+     * ReadApplicationSpace by ID or name and returns all attributes.
      *
      * @generated from protobuf rpc: ReadApplicationSpace(indykite.config.v1beta1.ReadApplicationSpaceRequest) returns (indykite.config.v1beta1.ReadApplicationSpaceResponse);
      */
@@ -802,59 +656,13 @@ export class ConfigManagementAPIClient extends grpc.Client implements IConfigMan
         return this.makeUnaryRequest<DeleteServiceAccountCredentialRequest, DeleteServiceAccountCredentialResponse>(`/${ConfigManagementAPI.typeName}/${method.name}`, (value: DeleteServiceAccountCredentialRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): DeleteServiceAccountCredentialResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), (options as any), (callback as any));
     }
     /**
-     * CreateTenant for given Issuer. See CreateApplicationSpace method description to get more knowledge
-     * about Application Space and Issuer relation.
-     *
-     * @generated from protobuf rpc: CreateTenant(indykite.config.v1beta1.CreateTenantRequest) returns (indykite.config.v1beta1.CreateTenantResponse);
-     */
-    createTenant(input: CreateTenantRequest, metadata: grpc.Metadata | grpc.CallOptions | ((err: grpc.ServiceError | null, value?: CreateTenantResponse) => void), options?: grpc.CallOptions | ((err: grpc.ServiceError | null, value?: CreateTenantResponse) => void), callback?: ((err: grpc.ServiceError | null, value?: CreateTenantResponse) => void)): grpc.ClientUnaryCall {
-        const method = ConfigManagementAPI.methods[26];
-        return this.makeUnaryRequest<CreateTenantRequest, CreateTenantResponse>(`/${ConfigManagementAPI.typeName}/${method.name}`, (value: CreateTenantRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): CreateTenantResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), (options as any), (callback as any));
-    }
-    /**
-     * ReadTenant by ID or name and returns all attributes.
-     *
-     * @generated from protobuf rpc: ReadTenant(indykite.config.v1beta1.ReadTenantRequest) returns (indykite.config.v1beta1.ReadTenantResponse);
-     */
-    readTenant(input: ReadTenantRequest, metadata: grpc.Metadata | grpc.CallOptions | ((err: grpc.ServiceError | null, value?: ReadTenantResponse) => void), options?: grpc.CallOptions | ((err: grpc.ServiceError | null, value?: ReadTenantResponse) => void), callback?: ((err: grpc.ServiceError | null, value?: ReadTenantResponse) => void)): grpc.ClientUnaryCall {
-        const method = ConfigManagementAPI.methods[27];
-        return this.makeUnaryRequest<ReadTenantRequest, ReadTenantResponse>(`/${ConfigManagementAPI.typeName}/${method.name}`, (value: ReadTenantRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): ReadTenantResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), (options as any), (callback as any));
-    }
-    /**
-     * ListTenants in a given Application Space with list of names.
-     *
-     * @generated from protobuf rpc: ListTenants(indykite.config.v1beta1.ListTenantsRequest) returns (stream indykite.config.v1beta1.ListTenantsResponse);
-     */
-    listTenants(input: ListTenantsRequest, metadata?: grpc.Metadata | grpc.CallOptions, options?: grpc.CallOptions): grpc.ClientReadableStream<ListTenantsResponse> {
-        const method = ConfigManagementAPI.methods[28];
-        return this.makeServerStreamRequest<ListTenantsRequest, ListTenantsResponse>(`/${ConfigManagementAPI.typeName}/${method.name}`, (value: ListTenantsRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): ListTenantsResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), options);
-    }
-    /**
-     * UpdateTenant by ID with optional etag, to prevent overwriting changes made by others in the same time.
-     *
-     * @generated from protobuf rpc: UpdateTenant(indykite.config.v1beta1.UpdateTenantRequest) returns (indykite.config.v1beta1.UpdateTenantResponse);
-     */
-    updateTenant(input: UpdateTenantRequest, metadata: grpc.Metadata | grpc.CallOptions | ((err: grpc.ServiceError | null, value?: UpdateTenantResponse) => void), options?: grpc.CallOptions | ((err: grpc.ServiceError | null, value?: UpdateTenantResponse) => void), callback?: ((err: grpc.ServiceError | null, value?: UpdateTenantResponse) => void)): grpc.ClientUnaryCall {
-        const method = ConfigManagementAPI.methods[29];
-        return this.makeUnaryRequest<UpdateTenantRequest, UpdateTenantResponse>(`/${ConfigManagementAPI.typeName}/${method.name}`, (value: UpdateTenantRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): UpdateTenantResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), (options as any), (callback as any));
-    }
-    /**
-     * DeleteTenant by ID with optional etag, to prevent deleting Tenant currently changed by others.
-     *
-     * @generated from protobuf rpc: DeleteTenant(indykite.config.v1beta1.DeleteTenantRequest) returns (indykite.config.v1beta1.DeleteTenantResponse);
-     */
-    deleteTenant(input: DeleteTenantRequest, metadata: grpc.Metadata | grpc.CallOptions | ((err: grpc.ServiceError | null, value?: DeleteTenantResponse) => void), options?: grpc.CallOptions | ((err: grpc.ServiceError | null, value?: DeleteTenantResponse) => void), callback?: ((err: grpc.ServiceError | null, value?: DeleteTenantResponse) => void)): grpc.ClientUnaryCall {
-        const method = ConfigManagementAPI.methods[30];
-        return this.makeUnaryRequest<DeleteTenantRequest, DeleteTenantResponse>(`/${ConfigManagementAPI.typeName}/${method.name}`, (value: DeleteTenantRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): DeleteTenantResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), (options as any), (callback as any));
-    }
-    /**
-     * CreateConfigNode on Customer, Application Space or Tenant level.
+     * CreateConfigNode on Customer or Application Space.
      * All generic configuration nodes are created by this endpoint.
      *
      * @generated from protobuf rpc: CreateConfigNode(indykite.config.v1beta1.CreateConfigNodeRequest) returns (indykite.config.v1beta1.CreateConfigNodeResponse);
      */
     createConfigNode(input: CreateConfigNodeRequest, metadata: grpc.Metadata | grpc.CallOptions | ((err: grpc.ServiceError | null, value?: CreateConfigNodeResponse) => void), options?: grpc.CallOptions | ((err: grpc.ServiceError | null, value?: CreateConfigNodeResponse) => void), callback?: ((err: grpc.ServiceError | null, value?: CreateConfigNodeResponse) => void)): grpc.ClientUnaryCall {
-        const method = ConfigManagementAPI.methods[31];
+        const method = ConfigManagementAPI.methods[26];
         return this.makeUnaryRequest<CreateConfigNodeRequest, CreateConfigNodeResponse>(`/${ConfigManagementAPI.typeName}/${method.name}`, (value: CreateConfigNodeRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): CreateConfigNodeResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), (options as any), (callback as any));
     }
     /**
@@ -863,7 +671,7 @@ export class ConfigManagementAPIClient extends grpc.Client implements IConfigMan
      * @generated from protobuf rpc: ReadConfigNode(indykite.config.v1beta1.ReadConfigNodeRequest) returns (indykite.config.v1beta1.ReadConfigNodeResponse);
      */
     readConfigNode(input: ReadConfigNodeRequest, metadata: grpc.Metadata | grpc.CallOptions | ((err: grpc.ServiceError | null, value?: ReadConfigNodeResponse) => void), options?: grpc.CallOptions | ((err: grpc.ServiceError | null, value?: ReadConfigNodeResponse) => void), callback?: ((err: grpc.ServiceError | null, value?: ReadConfigNodeResponse) => void)): grpc.ClientUnaryCall {
-        const method = ConfigManagementAPI.methods[32];
+        const method = ConfigManagementAPI.methods[27];
         return this.makeUnaryRequest<ReadConfigNodeRequest, ReadConfigNodeResponse>(`/${ConfigManagementAPI.typeName}/${method.name}`, (value: ReadConfigNodeRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): ReadConfigNodeResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), (options as any), (callback as any));
     }
     /**
@@ -872,7 +680,7 @@ export class ConfigManagementAPIClient extends grpc.Client implements IConfigMan
      * @generated from protobuf rpc: UpdateConfigNode(indykite.config.v1beta1.UpdateConfigNodeRequest) returns (indykite.config.v1beta1.UpdateConfigNodeResponse);
      */
     updateConfigNode(input: UpdateConfigNodeRequest, metadata: grpc.Metadata | grpc.CallOptions | ((err: grpc.ServiceError | null, value?: UpdateConfigNodeResponse) => void), options?: grpc.CallOptions | ((err: grpc.ServiceError | null, value?: UpdateConfigNodeResponse) => void), callback?: ((err: grpc.ServiceError | null, value?: UpdateConfigNodeResponse) => void)): grpc.ClientUnaryCall {
-        const method = ConfigManagementAPI.methods[33];
+        const method = ConfigManagementAPI.methods[28];
         return this.makeUnaryRequest<UpdateConfigNodeRequest, UpdateConfigNodeResponse>(`/${ConfigManagementAPI.typeName}/${method.name}`, (value: UpdateConfigNodeRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): UpdateConfigNodeResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), (options as any), (callback as any));
     }
     /**
@@ -881,7 +689,7 @@ export class ConfigManagementAPIClient extends grpc.Client implements IConfigMan
      * @generated from protobuf rpc: DeleteConfigNode(indykite.config.v1beta1.DeleteConfigNodeRequest) returns (indykite.config.v1beta1.DeleteConfigNodeResponse);
      */
     deleteConfigNode(input: DeleteConfigNodeRequest, metadata: grpc.Metadata | grpc.CallOptions | ((err: grpc.ServiceError | null, value?: DeleteConfigNodeResponse) => void), options?: grpc.CallOptions | ((err: grpc.ServiceError | null, value?: DeleteConfigNodeResponse) => void), callback?: ((err: grpc.ServiceError | null, value?: DeleteConfigNodeResponse) => void)): grpc.ClientUnaryCall {
-        const method = ConfigManagementAPI.methods[34];
+        const method = ConfigManagementAPI.methods[29];
         return this.makeUnaryRequest<DeleteConfigNodeRequest, DeleteConfigNodeResponse>(`/${ConfigManagementAPI.typeName}/${method.name}`, (value: DeleteConfigNodeRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): DeleteConfigNodeResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), (options as any), (callback as any));
     }
     /**
@@ -890,80 +698,8 @@ export class ConfigManagementAPIClient extends grpc.Client implements IConfigMan
      * @generated from protobuf rpc: ListConfigNodeVersions(indykite.config.v1beta1.ListConfigNodeVersionsRequest) returns (indykite.config.v1beta1.ListConfigNodeVersionsResponse);
      */
     listConfigNodeVersions(input: ListConfigNodeVersionsRequest, metadata: grpc.Metadata | grpc.CallOptions | ((err: grpc.ServiceError | null, value?: ListConfigNodeVersionsResponse) => void), options?: grpc.CallOptions | ((err: grpc.ServiceError | null, value?: ListConfigNodeVersionsResponse) => void), callback?: ((err: grpc.ServiceError | null, value?: ListConfigNodeVersionsResponse) => void)): grpc.ClientUnaryCall {
-        const method = ConfigManagementAPI.methods[35];
+        const method = ConfigManagementAPI.methods[30];
         return this.makeUnaryRequest<ListConfigNodeVersionsRequest, ListConfigNodeVersionsResponse>(`/${ConfigManagementAPI.typeName}/${method.name}`, (value: ListConfigNodeVersionsRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): ListConfigNodeVersionsResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), (options as any), (callback as any));
-    }
-    /**
-     * CreateOAuth2Provider under given Application Space.
-     *
-     * @generated from protobuf rpc: CreateOAuth2Provider(indykite.config.v1beta1.CreateOAuth2ProviderRequest) returns (indykite.config.v1beta1.CreateOAuth2ProviderResponse);
-     */
-    createOAuth2Provider(input: CreateOAuth2ProviderRequest, metadata: grpc.Metadata | grpc.CallOptions | ((err: grpc.ServiceError | null, value?: CreateOAuth2ProviderResponse) => void), options?: grpc.CallOptions | ((err: grpc.ServiceError | null, value?: CreateOAuth2ProviderResponse) => void), callback?: ((err: grpc.ServiceError | null, value?: CreateOAuth2ProviderResponse) => void)): grpc.ClientUnaryCall {
-        const method = ConfigManagementAPI.methods[36];
-        return this.makeUnaryRequest<CreateOAuth2ProviderRequest, CreateOAuth2ProviderResponse>(`/${ConfigManagementAPI.typeName}/${method.name}`, (value: CreateOAuth2ProviderRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): CreateOAuth2ProviderResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), (options as any), (callback as any));
-    }
-    /**
-     * ReadOAuth2Provider by ID and returns all attributes and configuration.
-     *
-     * @generated from protobuf rpc: ReadOAuth2Provider(indykite.config.v1beta1.ReadOAuth2ProviderRequest) returns (indykite.config.v1beta1.ReadOAuth2ProviderResponse);
-     */
-    readOAuth2Provider(input: ReadOAuth2ProviderRequest, metadata: grpc.Metadata | grpc.CallOptions | ((err: grpc.ServiceError | null, value?: ReadOAuth2ProviderResponse) => void), options?: grpc.CallOptions | ((err: grpc.ServiceError | null, value?: ReadOAuth2ProviderResponse) => void), callback?: ((err: grpc.ServiceError | null, value?: ReadOAuth2ProviderResponse) => void)): grpc.ClientUnaryCall {
-        const method = ConfigManagementAPI.methods[37];
-        return this.makeUnaryRequest<ReadOAuth2ProviderRequest, ReadOAuth2ProviderResponse>(`/${ConfigManagementAPI.typeName}/${method.name}`, (value: ReadOAuth2ProviderRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): ReadOAuth2ProviderResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), (options as any), (callback as any));
-    }
-    /**
-     * UpdateOAuth2Provider by ID with optional etag, to prevent overwriting changes made by others in the same time.
-     *
-     * @generated from protobuf rpc: UpdateOAuth2Provider(indykite.config.v1beta1.UpdateOAuth2ProviderRequest) returns (indykite.config.v1beta1.UpdateOAuth2ProviderResponse);
-     */
-    updateOAuth2Provider(input: UpdateOAuth2ProviderRequest, metadata: grpc.Metadata | grpc.CallOptions | ((err: grpc.ServiceError | null, value?: UpdateOAuth2ProviderResponse) => void), options?: grpc.CallOptions | ((err: grpc.ServiceError | null, value?: UpdateOAuth2ProviderResponse) => void), callback?: ((err: grpc.ServiceError | null, value?: UpdateOAuth2ProviderResponse) => void)): grpc.ClientUnaryCall {
-        const method = ConfigManagementAPI.methods[38];
-        return this.makeUnaryRequest<UpdateOAuth2ProviderRequest, UpdateOAuth2ProviderResponse>(`/${ConfigManagementAPI.typeName}/${method.name}`, (value: UpdateOAuth2ProviderRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): UpdateOAuth2ProviderResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), (options as any), (callback as any));
-    }
-    /**
-     * DeleteOAuth2Provider by ID with optional etag, to prevent deleting Provider currently changed by others.
-     *
-     * @generated from protobuf rpc: DeleteOAuth2Provider(indykite.config.v1beta1.DeleteOAuth2ProviderRequest) returns (indykite.config.v1beta1.DeleteOAuth2ProviderResponse);
-     */
-    deleteOAuth2Provider(input: DeleteOAuth2ProviderRequest, metadata: grpc.Metadata | grpc.CallOptions | ((err: grpc.ServiceError | null, value?: DeleteOAuth2ProviderResponse) => void), options?: grpc.CallOptions | ((err: grpc.ServiceError | null, value?: DeleteOAuth2ProviderResponse) => void), callback?: ((err: grpc.ServiceError | null, value?: DeleteOAuth2ProviderResponse) => void)): grpc.ClientUnaryCall {
-        const method = ConfigManagementAPI.methods[39];
-        return this.makeUnaryRequest<DeleteOAuth2ProviderRequest, DeleteOAuth2ProviderResponse>(`/${ConfigManagementAPI.typeName}/${method.name}`, (value: DeleteOAuth2ProviderRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): DeleteOAuth2ProviderResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), (options as any), (callback as any));
-    }
-    /**
-     * CreateOAuth2Application under given OAuth2 Provider.
-     *
-     * @generated from protobuf rpc: CreateOAuth2Application(indykite.config.v1beta1.CreateOAuth2ApplicationRequest) returns (indykite.config.v1beta1.CreateOAuth2ApplicationResponse);
-     */
-    createOAuth2Application(input: CreateOAuth2ApplicationRequest, metadata: grpc.Metadata | grpc.CallOptions | ((err: grpc.ServiceError | null, value?: CreateOAuth2ApplicationResponse) => void), options?: grpc.CallOptions | ((err: grpc.ServiceError | null, value?: CreateOAuth2ApplicationResponse) => void), callback?: ((err: grpc.ServiceError | null, value?: CreateOAuth2ApplicationResponse) => void)): grpc.ClientUnaryCall {
-        const method = ConfigManagementAPI.methods[40];
-        return this.makeUnaryRequest<CreateOAuth2ApplicationRequest, CreateOAuth2ApplicationResponse>(`/${ConfigManagementAPI.typeName}/${method.name}`, (value: CreateOAuth2ApplicationRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): CreateOAuth2ApplicationResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), (options as any), (callback as any));
-    }
-    /**
-     * ReadOAuth2Application by ID and returns all attributes and configuration.
-     *
-     * @generated from protobuf rpc: ReadOAuth2Application(indykite.config.v1beta1.ReadOAuth2ApplicationRequest) returns (indykite.config.v1beta1.ReadOAuth2ApplicationResponse);
-     */
-    readOAuth2Application(input: ReadOAuth2ApplicationRequest, metadata: grpc.Metadata | grpc.CallOptions | ((err: grpc.ServiceError | null, value?: ReadOAuth2ApplicationResponse) => void), options?: grpc.CallOptions | ((err: grpc.ServiceError | null, value?: ReadOAuth2ApplicationResponse) => void), callback?: ((err: grpc.ServiceError | null, value?: ReadOAuth2ApplicationResponse) => void)): grpc.ClientUnaryCall {
-        const method = ConfigManagementAPI.methods[41];
-        return this.makeUnaryRequest<ReadOAuth2ApplicationRequest, ReadOAuth2ApplicationResponse>(`/${ConfigManagementAPI.typeName}/${method.name}`, (value: ReadOAuth2ApplicationRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): ReadOAuth2ApplicationResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), (options as any), (callback as any));
-    }
-    /**
-     * UpdateOAuth2Application by ID with optional etag, to prevent overwriting changes made by others in the same time.
-     *
-     * @generated from protobuf rpc: UpdateOAuth2Application(indykite.config.v1beta1.UpdateOAuth2ApplicationRequest) returns (indykite.config.v1beta1.UpdateOAuth2ApplicationResponse);
-     */
-    updateOAuth2Application(input: UpdateOAuth2ApplicationRequest, metadata: grpc.Metadata | grpc.CallOptions | ((err: grpc.ServiceError | null, value?: UpdateOAuth2ApplicationResponse) => void), options?: grpc.CallOptions | ((err: grpc.ServiceError | null, value?: UpdateOAuth2ApplicationResponse) => void), callback?: ((err: grpc.ServiceError | null, value?: UpdateOAuth2ApplicationResponse) => void)): grpc.ClientUnaryCall {
-        const method = ConfigManagementAPI.methods[42];
-        return this.makeUnaryRequest<UpdateOAuth2ApplicationRequest, UpdateOAuth2ApplicationResponse>(`/${ConfigManagementAPI.typeName}/${method.name}`, (value: UpdateOAuth2ApplicationRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): UpdateOAuth2ApplicationResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), (options as any), (callback as any));
-    }
-    /**
-     * DeleteOAuth2Application by ID with optional etag, to prevent deleting OAuth2 Application currently changed by others.
-     *
-     * @generated from protobuf rpc: DeleteOAuth2Application(indykite.config.v1beta1.DeleteOAuth2ApplicationRequest) returns (indykite.config.v1beta1.DeleteOAuth2ApplicationResponse);
-     */
-    deleteOAuth2Application(input: DeleteOAuth2ApplicationRequest, metadata: grpc.Metadata | grpc.CallOptions | ((err: grpc.ServiceError | null, value?: DeleteOAuth2ApplicationResponse) => void), options?: grpc.CallOptions | ((err: grpc.ServiceError | null, value?: DeleteOAuth2ApplicationResponse) => void), callback?: ((err: grpc.ServiceError | null, value?: DeleteOAuth2ApplicationResponse) => void)): grpc.ClientUnaryCall {
-        const method = ConfigManagementAPI.methods[43];
-        return this.makeUnaryRequest<DeleteOAuth2ApplicationRequest, DeleteOAuth2ApplicationResponse>(`/${ConfigManagementAPI.typeName}/${method.name}`, (value: DeleteOAuth2ApplicationRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): DeleteOAuth2ApplicationResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), (options as any), (callback as any));
     }
     /**
      * AssignPermissions to a digital twin.
@@ -971,7 +707,7 @@ export class ConfigManagementAPIClient extends grpc.Client implements IConfigMan
      * @generated from protobuf rpc: AssignPermissions(indykite.config.v1beta1.AssignPermissionsRequest) returns (indykite.config.v1beta1.AssignPermissionsResponse);
      */
     assignPermissions(input: AssignPermissionsRequest, metadata: grpc.Metadata | grpc.CallOptions | ((err: grpc.ServiceError | null, value?: AssignPermissionsResponse) => void), options?: grpc.CallOptions | ((err: grpc.ServiceError | null, value?: AssignPermissionsResponse) => void), callback?: ((err: grpc.ServiceError | null, value?: AssignPermissionsResponse) => void)): grpc.ClientUnaryCall {
-        const method = ConfigManagementAPI.methods[44];
+        const method = ConfigManagementAPI.methods[31];
         return this.makeUnaryRequest<AssignPermissionsRequest, AssignPermissionsResponse>(`/${ConfigManagementAPI.typeName}/${method.name}`, (value: AssignPermissionsRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): AssignPermissionsResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), (options as any), (callback as any));
     }
     /**
@@ -980,7 +716,7 @@ export class ConfigManagementAPIClient extends grpc.Client implements IConfigMan
      * @generated from protobuf rpc: RevokePermissions(indykite.config.v1beta1.RevokePermissionsRequest) returns (indykite.config.v1beta1.RevokePermissionsResponse);
      */
     revokePermissions(input: RevokePermissionsRequest, metadata: grpc.Metadata | grpc.CallOptions | ((err: grpc.ServiceError | null, value?: RevokePermissionsResponse) => void), options?: grpc.CallOptions | ((err: grpc.ServiceError | null, value?: RevokePermissionsResponse) => void), callback?: ((err: grpc.ServiceError | null, value?: RevokePermissionsResponse) => void)): grpc.ClientUnaryCall {
-        const method = ConfigManagementAPI.methods[45];
+        const method = ConfigManagementAPI.methods[32];
         return this.makeUnaryRequest<RevokePermissionsRequest, RevokePermissionsResponse>(`/${ConfigManagementAPI.typeName}/${method.name}`, (value: RevokePermissionsRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): RevokePermissionsResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), (options as any), (callback as any));
     }
     /**
@@ -989,7 +725,7 @@ export class ConfigManagementAPIClient extends grpc.Client implements IConfigMan
      * @generated from protobuf rpc: ListPermissions(indykite.config.v1beta1.ListPermissionsRequest) returns (indykite.config.v1beta1.ListPermissionsResponse);
      */
     listPermissions(input: ListPermissionsRequest, metadata: grpc.Metadata | grpc.CallOptions | ((err: grpc.ServiceError | null, value?: ListPermissionsResponse) => void), options?: grpc.CallOptions | ((err: grpc.ServiceError | null, value?: ListPermissionsResponse) => void), callback?: ((err: grpc.ServiceError | null, value?: ListPermissionsResponse) => void)): grpc.ClientUnaryCall {
-        const method = ConfigManagementAPI.methods[46];
+        const method = ConfigManagementAPI.methods[33];
         return this.makeUnaryRequest<ListPermissionsRequest, ListPermissionsResponse>(`/${ConfigManagementAPI.typeName}/${method.name}`, (value: ListPermissionsRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): ListPermissionsResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), (options as any), (callback as any));
     }
 }
