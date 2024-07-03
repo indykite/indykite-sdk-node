@@ -9,7 +9,10 @@ describe('when the instance is created', () => {
       displayName: 'Instance Name',
       description: { value: 'Instance description' },
       purpose: 'Purpose',
-      dataPoints: ['lastname', 'firstname', 'email'],
+      dataPoints: [
+        '"query": "", "returns": [ { "variable": "", ' +
+          '"properties": ["name", "email", "location"]}',
+      ],
       applicationId: 'gid:AAAAFTYjY2yhCkjdo0IfPre0-Ck',
       validityPeriod: '86400',
       revokeAfterUse: false,

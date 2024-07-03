@@ -26,7 +26,6 @@ describe('createInstance', () => {
             oneofKind: undefined,
           },
           version: '1',
-          tenantId: '',
         });
       } catch (err) {
         caughtError = err as SdkError;

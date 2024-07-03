@@ -15,7 +15,6 @@ describe('deserialize', () => {
           displayName: 'Display Name',
           etag: 'etag',
           id: 'app-space-id',
-          issuerId: 'issuer-id',
           name: 'app-space-name',
           description: StringValue.create({ value: 'Lorem ipsum' }),
           createdBy: 'Lorem ipsum - creator',
@@ -34,7 +33,6 @@ describe('deserialize', () => {
       expect(appSpace.displayName).toBe('Display Name');
       expect(appSpace.etag).toBe('etag');
       expect(appSpace.id).toBe('app-space-id');
-      expect(appSpace.issuerId).toBe('issuer-id');
       expect(appSpace.name).toBe('app-space-name');
       expect(appSpace.description).toBe('Lorem ipsum');
       expect(appSpace.createTime?.toString()).toBe(new Date(2022, 2, 17, 12, 17).toString());
@@ -57,7 +55,6 @@ describe('deserialize', () => {
           displayName: 'Display Name',
           etag: 'etag',
           id: 'app-space-id',
-          issuerId: 'issuer-id',
           name: 'app-space-name',
           createdBy: 'Lorem ipsum - creator',
           updatedBy: 'Lorem ipsum - updater',
@@ -75,7 +72,6 @@ describe('deserialize', () => {
       expect(appSpace.displayName).toBe('Display Name');
       expect(appSpace.etag).toBe('etag');
       expect(appSpace.id).toBe('app-space-id');
-      expect(appSpace.issuerId).toBe('issuer-id');
       expect(appSpace.name).toBe('app-space-name');
       expect(appSpace.description).toBeUndefined();
       expect(appSpace.createTime?.toString()).toBe(new Date(2022, 2, 17, 12, 17).toString());

@@ -1,6 +1,7 @@
 import {
   DataAccessRequest,
   DataAccessResponse,
+  DataAccessResponse_Node,
   GrantConsentRequest,
   GrantConsentResponse,
   ListConsentsRequest,
@@ -44,7 +45,7 @@ describe('grantConsent', () => {
   const validityPeriod = '86400';
 
   describe('when the response is successful', () => {
-    const consentId = 'consent-123';
+    const propertiesGrantedCount = '3';
 
     beforeEach(async () => {
       const mockFunc = jest.fn(
@@ -55,7 +56,7 @@ describe('grantConsent', () => {
             | CallOptions
             | ((error: ServiceError | null, response?: GrantConsentResponse) => void),
         ): SurfaceCall => {
-          if (typeof callback === 'function') callback(null, { consentId });
+          if (typeof callback === 'function') callback(null, { propertiesGrantedCount });
           return {} as SurfaceCall;
         },
       );
@@ -65,7 +66,7 @@ describe('grantConsent', () => {
 
     it('should grant a consent', async () => {
       const result = await sdk.grantConsent(user, consentId, validityPeriod);
-      expect(result).toEqual({ consentId });
+      expect(result).toEqual({ propertiesGrantedCount });
     });
   });
 
@@ -341,16 +342,31 @@ describe('dataAccess', () => {
   const consentId = generateRandomGID();
 
   describe('when the response is successful', () => {
-    const nodes = [
-      {
-        id: 'gid:node-123',
-        externalId: 'sdfryeh',
-        type: 'Person',
-        properties: [],
-        tags: [],
-        isIdentity: true,
-      } as Node,
-    ];
+    const response = {
+      persons:[
+        {
+          id: 'gid:node-123',
+          externalId: 'sdfryeh',
+          type: 'Person',
+          properties: [],
+          tags: [],
+          isIdentity: true,
+        } as Node,
+      ],
+      nodes: [
+        {
+          personId: 'gid:node-123',
+          nodes: {
+            id: 'gid:node-234',
+            externalId: 'njmkiol',
+            type: 'Car',
+            properties: [],
+            tags: [],
+            isIdentity: true,
+          } as Node,
+        } as DataAccessResponse_Node,
+      ]
+    } as DataAccessResponse
 
     beforeEach(async () => {
       const mockFunc = jest.fn(
@@ -361,7 +377,7 @@ describe('dataAccess', () => {
             | CallOptions
             | ((error: ServiceError | null, response?: DataAccessResponse) => void),
         ): SurfaceCall => {
-          if (typeof callback === 'function') callback(null, { nodes });
+          if (typeof callback === 'function') callback(null, response);
           return {} as SurfaceCall;
         },
       );
@@ -371,7 +387,7 @@ describe('dataAccess', () => {
 
     it('should access data', async () => {
       const result = await sdk.dataAccess(consentId, applicationId, user);
-      expect(result).toEqual(nodes);
+      expect(result).toEqual(response);
     });
   });
 

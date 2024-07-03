@@ -22,8 +22,6 @@ export class ApplicationSpace {
     public etag?: string,
     // #3 Human readable name of configuration.
     public displayName?: string,
-    // #11 IssuerId associated with this Application Space.
-    public issuerId?: string,
     // #4 Description of the configuration.
     public description?: string,
     // #5 Output only. The time at which the configuration was created.
@@ -67,7 +65,6 @@ export class ApplicationSpace {
         response.appSpace.customerId,
         response.appSpace.etag,
         response.appSpace.displayName,
-        response.appSpace.issuerId,
         response.appSpace.description?.value ?? undefined,
         Utils.timestampToDate(response.appSpace.createTime),
         Utils.timestampToDate(response.appSpace.updateTime),
@@ -89,7 +86,6 @@ export class ApplicationSpace {
       customerId,
       response.etag,
       displayName,
-      undefined, // issuerId
       description,
       Utils.timestampToDate(response.createTime),
       Utils.timestampToDate(response.updateTime),

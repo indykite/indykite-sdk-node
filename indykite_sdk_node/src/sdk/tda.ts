@@ -1,5 +1,6 @@
 import {
   DataAccessRequest,
+  DataAccessResponse,
   GrantConsentRequest,
   GrantConsentResponse,
   ListConsentsRequest,
@@ -10,7 +11,7 @@ import {
 import { SdkError, SdkErrorCode } from './error';
 import { SdkClient } from './client/client';
 import { TrustedDataAccessAPIClient } from '../grpc/indykite/tda/v1beta1/trusted_data_access_api.grpc-client';
-import { Node, User } from '../grpc/indykite/knowledge/objects/v1beta1/ikg';
+import { User } from '../grpc/indykite/knowledge/objects/v1beta1/ikg';
 import { Consent } from '../grpc/indykite/tda/v1beta1/model';
 
 /**
@@ -142,7 +143,7 @@ export class TrustedDataAccessClient {
    *   console.log(JSON.stringify(result, null, 2));
    * }
    */
-  dataAccess(consentId: string, applicationId?: string, user?: User): Promise<Node[]> {
+  dataAccess(consentId: string, applicationId?: string, user?: User): Promise<DataAccessResponse> {
     const request: DataAccessRequest = {
       consentId,
       applicationId,
@@ -154,7 +155,7 @@ export class TrustedDataAccessClient {
         else if (!response) {
           reject(new SdkError(SdkErrorCode.SDK_CODE_1, 'Missing data access response'));
         } else {
-          resolve(response.nodes);
+          resolve(response);
         }
       });
     });
