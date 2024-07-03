@@ -1,4 +1,11 @@
 # Changelog
+## [0.7.6](https://github.com/indykite/indykite-sdk-node/compare/v0.7.5...v0.7.6) (2024-07-03)
+
+
+### Features
+
+* tda + consent modifications ([9523dfa](https://github.com/indykite/indykite-sdk-node/commit/9523dfad0e96f5e4dbe646f5509acb3cdc097fb9))
+
 ## [0.7.5](https://github.com/indykite/indykite-sdk-node/compare/v0.7.4...v0.7.5) (2024-06-07)
 
 
