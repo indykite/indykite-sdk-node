@@ -328,7 +328,6 @@ describe('readConfigNode', () => {
                     oneofKind: undefined,
                   },
                   version: '1',
-                  tenantId: '',
                 },
               });
             }
@@ -370,7 +369,6 @@ describe('readConfigNode', () => {
           createdBy: 'Lorem ipsum - creator',
           updatedBy: 'Lorem ipsum - updater',
           version: '1',
-          tenantId: '',
         },
       });
     });
@@ -867,7 +865,6 @@ describe('listConfigNodeVersions', () => {
                       oneofKind: undefined,
                     },
                     version: '1',
-                    tenantId: '',
                   },
                 ],
               });

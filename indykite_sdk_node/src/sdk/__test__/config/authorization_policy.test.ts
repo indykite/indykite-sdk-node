@@ -284,7 +284,6 @@ describe('readAuthorizationPolicyConfiguration', () => {
                   updateTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 6, 21, 11, 14))),
                   customerId: 'customer-id',
                   appSpaceId: 'app-space-id',
-                  tenantId: 'tenant-id',
                   name: 'instance-name',
                   config: {
                     oneofKind: 'authorizationPolicyConfig',

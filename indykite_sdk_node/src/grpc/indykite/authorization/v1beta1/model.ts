@@ -27,7 +27,6 @@ import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MESSAGE_TYPE } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 import { Value } from "../../objects/v1beta1/struct";
-import { DigitalTwinIdentifier } from "../../identity/v1beta2/model";
 /**
  * Subject to check if is authorized.
  *
@@ -38,13 +37,6 @@ export interface Subject {
      * @generated from protobuf oneof: subject
      */
     subject: {
-        oneofKind: "digitalTwinIdentifier";
-        /**
-         * @deprecated
-         * @generated from protobuf field: indykite.identity.v1beta2.DigitalTwinIdentifier digital_twin_identifier = 1 [deprecated = true];
-         */
-        digitalTwinIdentifier: DigitalTwinIdentifier;
-    } | {
         oneofKind: "digitalTwinId";
         /**
          * @generated from protobuf field: indykite.authorization.v1beta1.DigitalTwin digital_twin_id = 2;
@@ -158,7 +150,6 @@ export interface InputParam {
 class Subject$Type extends MessageType<Subject> {
     constructor() {
         super("indykite.authorization.v1beta1.Subject", [
-            { no: 1, name: "digital_twin_identifier", kind: "message", oneof: "subject", T: () => DigitalTwinIdentifier, options: { "validate.rules": { message: { required: true } }, "gnostic.openapi.v3.property": { deprecated: true } } },
             { no: 2, name: "digital_twin_id", kind: "message", oneof: "subject", T: () => DigitalTwin, options: { "validate.rules": { message: { required: true } } } },
             { no: 3, name: "digital_twin_property", kind: "message", oneof: "subject", T: () => Property, options: { "validate.rules": { message: { required: true } } } },
             { no: 4, name: "indykite_access_token", kind: "scalar", oneof: "subject", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "20" } } } },
@@ -177,12 +168,6 @@ class Subject$Type extends MessageType<Subject> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* indykite.identity.v1beta2.DigitalTwinIdentifier digital_twin_identifier = 1 [deprecated = true];*/ 1:
-                    message.subject = {
-                        oneofKind: "digitalTwinIdentifier",
-                        digitalTwinIdentifier: DigitalTwinIdentifier.internalBinaryRead(reader, reader.uint32(), options, (message.subject as any).digitalTwinIdentifier)
-                    };
-                    break;
                 case /* indykite.authorization.v1beta1.DigitalTwin digital_twin_id */ 2:
                     message.subject = {
                         oneofKind: "digitalTwinId",
@@ -219,9 +204,6 @@ class Subject$Type extends MessageType<Subject> {
         return message;
     }
     internalBinaryWrite(message: Subject, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* indykite.identity.v1beta2.DigitalTwinIdentifier digital_twin_identifier = 1 [deprecated = true]; */
-        if (message.subject.oneofKind === "digitalTwinIdentifier")
-            DigitalTwinIdentifier.internalBinaryWrite(message.subject.digitalTwinIdentifier, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         /* indykite.authorization.v1beta1.DigitalTwin digital_twin_id = 2; */
         if (message.subject.oneofKind === "digitalTwinId")
             DigitalTwin.internalBinaryWrite(message.subject.digitalTwinId, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
