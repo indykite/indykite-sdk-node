@@ -9,6 +9,7 @@ import { SdkError, SdkErrorCode, SkdErrorText } from '../../error';
 import { Utils } from '../../utils/utils';
 import { AuthorizationPolicy } from './authorization_policy';
 import { ConsentNode } from './consent_configuration';
+import { TokenIntrospect } from './token_introspect';
 
 /**
  * Docs: https://buf.build/indykite/indykiteapis/docs/main:indykite.config.v1beta1#indykite.config.v1beta1.ConfigNode
@@ -83,4 +84,4 @@ export class ConfigNode {
   }
 }
 
-export type ConfigNodeType = ConfigNode | AuthorizationPolicy | ConsentNode;
+export type ConfigNodeType = ConfigNode | AuthorizationPolicy | ConsentNode | TokenIntrospect;

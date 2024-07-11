@@ -26,6 +26,8 @@ import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MESSAGE_TYPE } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
+import { Property } from "../../knowledge/objects/v1beta1/ikg";
+import { Timestamp } from "../../../google/protobuf/timestamp";
 /**
  * @generated from protobuf message indykite.tda.v1beta1.Consent
  */
@@ -40,6 +42,49 @@ export interface Consent {
      * @generated from protobuf field: repeated string properties = 2;
      */
     properties: string[];
+}
+/**
+ * TrustedDataNode represents a node and contains nodes with properties what are trusted by the root node.
+ *
+ * @generated from protobuf message indykite.tda.v1beta1.TrustedDataNode
+ */
+export interface TrustedDataNode {
+    /**
+     * @generated from protobuf field: string id = 1;
+     */
+    id: string; // read-only
+    /**
+     * @generated from protobuf field: string external_id = 2;
+     */
+    externalId: string;
+    /**
+     * @generated from protobuf field: string type = 3;
+     */
+    type: string;
+    /**
+     * @generated from protobuf field: repeated string tags = 4;
+     */
+    tags: string[];
+    /**
+     * @generated from protobuf field: google.protobuf.Timestamp create_time = 5;
+     */
+    createTime?: Timestamp; // read-only
+    /**
+     * @generated from protobuf field: google.protobuf.Timestamp update_time = 6;
+     */
+    updateTime?: Timestamp; // read-only
+    /**
+     * @generated from protobuf field: repeated indykite.knowledge.objects.v1beta1.Property properties = 7;
+     */
+    properties: Property[];
+    /**
+     * @generated from protobuf field: bool is_identity = 8;
+     */
+    isIdentity: boolean;
+    /**
+     * @generated from protobuf field: repeated indykite.tda.v1beta1.TrustedDataNode nodes = 9;
+     */
+    nodes: TrustedDataNode[];
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class Consent$Type extends MessageType<Consent> {
@@ -95,3 +140,106 @@ class Consent$Type extends MessageType<Consent> {
  * @generated MessageType for protobuf message indykite.tda.v1beta1.Consent
  */
 export const Consent = new Consent$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class TrustedDataNode$Type extends MessageType<TrustedDataNode> {
+    constructor() {
+        super("indykite.tda.v1beta1.TrustedDataNode", [
+            { no: 1, name: "id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "256", prefix: "gid:", ignoreEmpty: true } } } },
+            { no: 2, name: "external_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "1", maxLen: "256" } } } },
+            { no: 3, name: "type", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "64", pattern: "^([A-Z][a-z]+)+$" } } } },
+            { no: 4, name: "tags", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { maxItems: "32", unique: true, items: { string: { maxLen: "64", pattern: "^([A-Z][a-z]+)+$" } } } } } },
+            { no: 5, name: "create_time", kind: "message", T: () => Timestamp },
+            { no: 6, name: "update_time", kind: "message", T: () => Timestamp },
+            { no: 7, name: "properties", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Property, options: { "validate.rules": { repeated: { maxItems: "50" } } } },
+            { no: 8, name: "is_identity", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 9, name: "nodes", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => TrustedDataNode }
+        ]);
+    }
+    create(value?: PartialMessage<TrustedDataNode>): TrustedDataNode {
+        const message = { id: "", externalId: "", type: "", tags: [], properties: [], isIdentity: false, nodes: [] };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<TrustedDataNode>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: TrustedDataNode): TrustedDataNode {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string id */ 1:
+                    message.id = reader.string();
+                    break;
+                case /* string external_id */ 2:
+                    message.externalId = reader.string();
+                    break;
+                case /* string type */ 3:
+                    message.type = reader.string();
+                    break;
+                case /* repeated string tags */ 4:
+                    message.tags.push(reader.string());
+                    break;
+                case /* google.protobuf.Timestamp create_time */ 5:
+                    message.createTime = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createTime);
+                    break;
+                case /* google.protobuf.Timestamp update_time */ 6:
+                    message.updateTime = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.updateTime);
+                    break;
+                case /* repeated indykite.knowledge.objects.v1beta1.Property properties */ 7:
+                    message.properties.push(Property.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                case /* bool is_identity */ 8:
+                    message.isIdentity = reader.bool();
+                    break;
+                case /* repeated indykite.tda.v1beta1.TrustedDataNode nodes */ 9:
+                    message.nodes.push(TrustedDataNode.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: TrustedDataNode, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string id = 1; */
+        if (message.id !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.id);
+        /* string external_id = 2; */
+        if (message.externalId !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.externalId);
+        /* string type = 3; */
+        if (message.type !== "")
+            writer.tag(3, WireType.LengthDelimited).string(message.type);
+        /* repeated string tags = 4; */
+        for (let i = 0; i < message.tags.length; i++)
+            writer.tag(4, WireType.LengthDelimited).string(message.tags[i]);
+        /* google.protobuf.Timestamp create_time = 5; */
+        if (message.createTime)
+            Timestamp.internalBinaryWrite(message.createTime, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
+        /* google.protobuf.Timestamp update_time = 6; */
+        if (message.updateTime)
+            Timestamp.internalBinaryWrite(message.updateTime, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
+        /* repeated indykite.knowledge.objects.v1beta1.Property properties = 7; */
+        for (let i = 0; i < message.properties.length; i++)
+            Property.internalBinaryWrite(message.properties[i], writer.tag(7, WireType.LengthDelimited).fork(), options).join();
+        /* bool is_identity = 8; */
+        if (message.isIdentity !== false)
+            writer.tag(8, WireType.Varint).bool(message.isIdentity);
+        /* repeated indykite.tda.v1beta1.TrustedDataNode nodes = 9; */
+        for (let i = 0; i < message.nodes.length; i++)
+            TrustedDataNode.internalBinaryWrite(message.nodes[i], writer.tag(9, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message indykite.tda.v1beta1.TrustedDataNode
+ */
+export const TrustedDataNode = new TrustedDataNode$Type();

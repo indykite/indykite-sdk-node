@@ -4,6 +4,7 @@ import { Utils } from '../../utils/utils';
 import { AUTHORIZATION_POLICY_CONFIG, AuthorizationPolicyFactory } from './authorization_policy';
 import { ConfigNodeType, ConfigNode as ConfigNodeSDK } from './config_node';
 import { CONSENT_CONFIG, ConsentConfigFactory } from './consent_configuration/factory';
+import { TOKEN_INTROSPECT_CONFIG, TokenIntrospectFactory } from './token_introspect/factory';
 
 export class ConfigNodeFactory {
   static createInstance(config: ConfigNode | undefined): ConfigNodeType {
@@ -36,6 +37,13 @@ export class ConfigNodeFactory {
       }
       case CONSENT_CONFIG: {
         const flow = ConsentConfigFactory.createInstance(config.name, config.config.consentConfig);
+        return Object.assign(flow, meta);
+      }
+      case TOKEN_INTROSPECT_CONFIG: {
+        const flow = TokenIntrospectFactory.createInstance(
+          config.name,
+          config.config.tokenIntrospectConfig,
+        );
         return Object.assign(flow, meta);
       }
     }
