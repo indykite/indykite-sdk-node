@@ -27,7 +27,7 @@ import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MESSAGE_TYPE } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
-import { Node } from "../../knowledge/objects/v1beta1/ikg";
+import { TrustedDataNode } from "./model";
 import { Consent } from "./model";
 import { User } from "../../knowledge/objects/v1beta1/ikg";
 /**
@@ -84,26 +84,9 @@ export interface DataAccessRequest {
  */
 export interface DataAccessResponse {
     /**
-     * @generated from protobuf field: repeated indykite.knowledge.objects.v1beta1.Node persons = 1;
+     * @generated from protobuf field: repeated indykite.tda.v1beta1.TrustedDataNode nodes = 1;
      */
-    persons: Node[];
-    /**
-     * @generated from protobuf field: repeated indykite.tda.v1beta1.DataAccessResponse.Node nodes = 2;
-     */
-    nodes: DataAccessResponse_Node[];
-}
-/**
- * @generated from protobuf message indykite.tda.v1beta1.DataAccessResponse.Node
- */
-export interface DataAccessResponse_Node {
-    /**
-     * @generated from protobuf field: string person_id = 1;
-     */
-    personId: string;
-    /**
-     * @generated from protobuf field: indykite.knowledge.objects.v1beta1.Node node = 2;
-     */
-    node?: Node;
+    nodes: TrustedDataNode[];
 }
 /**
  * The request to grant consent
@@ -328,12 +311,11 @@ export const DataAccessRequest = new DataAccessRequest$Type();
 class DataAccessResponse$Type extends MessageType<DataAccessResponse> {
     constructor() {
         super("indykite.tda.v1beta1.DataAccessResponse", [
-            { no: 1, name: "persons", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Node },
-            { no: 2, name: "nodes", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => DataAccessResponse_Node }
+            { no: 1, name: "nodes", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => TrustedDataNode }
         ]);
     }
     create(value?: PartialMessage<DataAccessResponse>): DataAccessResponse {
-        const message = { persons: [], nodes: [] };
+        const message = { nodes: [] };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<DataAccessResponse>(this, message, value);
@@ -344,11 +326,8 @@ class DataAccessResponse$Type extends MessageType<DataAccessResponse> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* repeated indykite.knowledge.objects.v1beta1.Node persons */ 1:
-                    message.persons.push(Node.internalBinaryRead(reader, reader.uint32(), options));
-                    break;
-                case /* repeated indykite.tda.v1beta1.DataAccessResponse.Node nodes */ 2:
-                    message.nodes.push(DataAccessResponse_Node.internalBinaryRead(reader, reader.uint32(), options));
+                case /* repeated indykite.tda.v1beta1.TrustedDataNode nodes */ 1:
+                    message.nodes.push(TrustedDataNode.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -362,12 +341,9 @@ class DataAccessResponse$Type extends MessageType<DataAccessResponse> {
         return message;
     }
     internalBinaryWrite(message: DataAccessResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated indykite.knowledge.objects.v1beta1.Node persons = 1; */
-        for (let i = 0; i < message.persons.length; i++)
-            Node.internalBinaryWrite(message.persons[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* repeated indykite.tda.v1beta1.DataAccessResponse.Node nodes = 2; */
+        /* repeated indykite.tda.v1beta1.TrustedDataNode nodes = 1; */
         for (let i = 0; i < message.nodes.length; i++)
-            DataAccessResponse_Node.internalBinaryWrite(message.nodes[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+            TrustedDataNode.internalBinaryWrite(message.nodes[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -378,60 +354,6 @@ class DataAccessResponse$Type extends MessageType<DataAccessResponse> {
  * @generated MessageType for protobuf message indykite.tda.v1beta1.DataAccessResponse
  */
 export const DataAccessResponse = new DataAccessResponse$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class DataAccessResponse_Node$Type extends MessageType<DataAccessResponse_Node> {
-    constructor() {
-        super("indykite.tda.v1beta1.DataAccessResponse.Node", [
-            { no: 1, name: "person_id", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 2, name: "node", kind: "message", T: () => Node }
-        ]);
-    }
-    create(value?: PartialMessage<DataAccessResponse_Node>): DataAccessResponse_Node {
-        const message = { personId: "" };
-        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
-        if (value !== undefined)
-            reflectionMergePartial<DataAccessResponse_Node>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DataAccessResponse_Node): DataAccessResponse_Node {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* string person_id */ 1:
-                    message.personId = reader.string();
-                    break;
-                case /* indykite.knowledge.objects.v1beta1.Node node */ 2:
-                    message.node = Node.internalBinaryRead(reader, reader.uint32(), options, message.node);
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: DataAccessResponse_Node, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* string person_id = 1; */
-        if (message.personId !== "")
-            writer.tag(1, WireType.LengthDelimited).string(message.personId);
-        /* indykite.knowledge.objects.v1beta1.Node node = 2; */
-        if (message.node)
-            Node.internalBinaryWrite(message.node, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message indykite.tda.v1beta1.DataAccessResponse.Node
- */
-export const DataAccessResponse_Node = new DataAccessResponse_Node$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class GrantConsentRequest$Type extends MessageType<GrantConsentRequest> {
     constructor() {

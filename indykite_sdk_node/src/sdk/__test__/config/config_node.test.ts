@@ -17,7 +17,7 @@ import { Utils } from '../../utils/utils';
 import { StringValue } from '../../../grpc/google/protobuf/wrappers';
 import { serviceAccountTokenMock } from '../../utils/test_utils';
 import { AuthorizationPolicyConfig_Status } from '../../../grpc/indykite/config/v1beta1/model';
-import { AuthorizationPolicy, ConsentNode } from '../../model';
+import { AuthorizationPolicy, ConsentNode, TokenIntrospect } from '../../model';
 
 let createConfigExample: CreateConfigNodeRequest;
 let updateConfigExample: UpdateConfigNodeRequest;
@@ -60,6 +60,50 @@ beforeEach(() => {
   consentExample.id = 'configNode-id';
   consentExample.etag = 'etag-token';
   deleteConfigExample = ConfigClient.newDeleteConfigNodeRequest(consentExample);
+
+  const tokenExample: TokenIntrospect = new TokenIntrospect({
+    name: 'instance-name',
+    displayName: 'Instance Name',
+    description: { value: 'Instance description' },
+    tokenMatcher: {
+      oneofKind: 'jwt',
+      jwt: {
+        issuer: 'https://example.com',
+        audience: 'audience-id',
+      },
+    },
+    validation: {
+      oneofKind: 'offline',
+      offline: {
+        publicJwks: [
+          Buffer.from(
+            JSON.stringify({
+              kid: 'abc',
+              use: 'sig',
+              alg: 'RS256',
+              n: '--nothing-real-just-random-xyqwerasf--',
+              kty: 'RSA',
+            }),
+          ),
+          Buffer.from(
+            JSON.stringify({
+              kid: 'jkl',
+              use: 'sig',
+              alg: 'RS256',
+              n: '--nothing-real-just-random-435asdf43--',
+              kty: 'RSA',
+            }),
+          ),
+        ],
+      },
+    },
+    claimsMapping: {
+      email: { selector: 'mail' },
+      name: { selector: 'full_name' },
+    },
+    ikgNodeType: 'Person',
+    performUpsert: true,
+  });
 
   const policy = `
   {
@@ -107,6 +151,7 @@ beforeEach(() => {
 
   ConfigClient.newUpdateConfigNodeRequest(configAuthorizationPolicyExample);
   ConfigClient.newUpdateConfigNodeRequest(consentExample);
+  ConfigClient.newUpdateConfigNodeRequest(tokenExample);
 });
 
 afterEach(() => {

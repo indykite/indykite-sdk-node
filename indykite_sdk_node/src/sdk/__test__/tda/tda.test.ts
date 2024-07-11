@@ -1,7 +1,6 @@
 import {
   DataAccessRequest,
   DataAccessResponse,
-  DataAccessResponse_Node,
   GrantConsentRequest,
   GrantConsentResponse,
   ListConsentsRequest,
@@ -10,8 +9,8 @@ import {
   RevokeConsentResponse,
 } from '../../../grpc/indykite/tda/v1beta1/trusted_data_access_api';
 import { TrustedDataAccessClient } from '../../tda';
-import { Node, User } from '../../../grpc/indykite/knowledge/objects/v1beta1/ikg';
-import { Consent } from '../../../grpc/indykite/tda/v1beta1/model';
+import { User } from '../../../grpc/indykite/knowledge/objects/v1beta1/ikg';
+import { Consent, TrustedDataNode } from '../../../grpc/indykite/tda/v1beta1/model';
 import { applicationTokenMock, generateRandomGID } from '../../utils/test_utils';
 import { CallOptions, Metadata, ServiceError } from '@grpc/grpc-js';
 import { SurfaceCall } from '@grpc/grpc-js/build/src/call';
@@ -343,30 +342,22 @@ describe('dataAccess', () => {
 
   describe('when the response is successful', () => {
     const response = {
-      persons:[
+      nodes: [
         {
           id: 'gid:node-123',
           externalId: 'sdfryeh',
           type: 'Person',
-          properties: [],
-          tags: [],
           isIdentity: true,
-        } as Node,
+          nodes: [
+            {
+              id: 'gid:node-234',
+              externalId: 'njmkiol',
+              type: 'Car',
+            } as TrustedDataNode,
+          ],
+        } as TrustedDataNode,
       ],
-      nodes: [
-        {
-          personId: 'gid:node-123',
-          nodes: {
-            id: 'gid:node-234',
-            externalId: 'njmkiol',
-            type: 'Car',
-            properties: [],
-            tags: [],
-            isIdentity: true,
-          } as Node,
-        } as DataAccessResponse_Node,
-      ]
-    } as DataAccessResponse
+    } as DataAccessResponse;
 
     beforeEach(async () => {
       const mockFunc = jest.fn(

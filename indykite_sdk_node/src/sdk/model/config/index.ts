@@ -6,6 +6,7 @@ export * from './application';
 export * from './authorization_policy';
 export * from './config_node';
 export * from './consent_configuration';
+export * from './token_introspect';
 export * from './customer';
 export * from './factory';
 export * from './service_account';

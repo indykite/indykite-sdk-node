@@ -73,6 +73,8 @@ import {
   ConfigNodeType,
   CONSENT_CONFIG,
   ConsentNode,
+  TOKEN_INTROSPECT_CONFIG,
+  TokenIntrospect,
   Customer,
   ServiceAccount,
   ServiceAccountCredential,
@@ -1642,6 +1644,12 @@ export class ConfigClient {
       request.config = {
         oneofKind: CONSENT_CONFIG,
         consentConfig: configNode.marshal(),
+      };
+    }
+    if (configNode instanceof TokenIntrospect) {
+      request.config = {
+        oneofKind: TOKEN_INTROSPECT_CONFIG,
+        tokenIntrospectConfig: configNode.marshal(),
       };
     }
     return request;

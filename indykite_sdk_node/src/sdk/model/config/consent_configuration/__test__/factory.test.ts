@@ -7,7 +7,10 @@ describe('createInstance', () => {
   beforeEach(() => {
     client = ConsentConfigFactory.createInstance('instance-name', {
       purpose: 'Purpose',
-      dataPoints: ['lastname', 'firstname', 'email'],
+      dataPoints: [
+        '"query": "", "returns": [ { "variable": "", ' +
+          '"properties": ["name", "email", "location"]}',
+      ],
       applicationId: 'gid:AAAAFTYjY2yhCkjdo0IfPre0-Ck',
       validityPeriod: '86400',
       revokeAfterUse: false,
@@ -18,7 +21,10 @@ describe('createInstance', () => {
     expect(client).toEqual(
       new ConsentNode({
         purpose: 'Purpose',
-        dataPoints: ['lastname', 'firstname', 'email'],
+        dataPoints: [
+          '"query": "", "returns": [ { "variable": "", ' +
+            '"properties": ["name", "email", "location"]}',
+        ],
         applicationId: 'gid:AAAAFTYjY2yhCkjdo0IfPre0-Ck',
         name: 'instance-name',
         validityPeriod: '86400',
