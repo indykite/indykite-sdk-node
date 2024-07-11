@@ -1,4 +1,11 @@
 # Changelog
+## [0.7.7](https://github.com/indykite/indykite-sdk-node/compare/v0.7.6...v0.7.7) (2024-07-11)
+
+
+### Features
+
+* add token introspect + tda response update ([7301e67](https://github.com/indykite/indykite-sdk-node/commit/7301e6724a7154588bb92c3b96ad6791a84d26e6))
+
 ## [0.7.6](https://github.com/indykite/indykite-sdk-node/compare/v0.7.5...v0.7.6) (2024-07-03)
 
 
