@@ -1,5 +1,8 @@
 import { StringValue } from '../../../../grpc/google/protobuf/wrappers';
-import { ConsentConfiguration } from '../../../../grpc/indykite/config/v1beta1/model';
+import {
+  ConsentConfiguration,
+  ExternalTokenStatus,
+} from '../../../../grpc/indykite/config/v1beta1/model';
 import { ConfigNode } from '../config_node';
 
 type IOptions = {
@@ -11,6 +14,7 @@ type IOptions = {
   description?: StringValue;
   validityPeriod: string;
   revokeAfterUse: boolean;
+  tokenStatus: ExternalTokenStatus;
 };
 
 /**
@@ -22,6 +26,7 @@ export class ConsentNode extends ConfigNode {
   public applicationId: string;
   public validityPeriod: string;
   public revokeAfterUse: boolean;
+  public tokenStatus: ExternalTokenStatus;
 
   constructor(options: IOptions) {
     super(options.name);
@@ -33,6 +38,7 @@ export class ConsentNode extends ConfigNode {
     this.applicationId = options.applicationId;
     this.validityPeriod = options.validityPeriod;
     this.revokeAfterUse = options.revokeAfterUse;
+    this.tokenStatus = options.tokenStatus;
   }
 
   marshal(): ConsentConfiguration {
@@ -42,6 +48,7 @@ export class ConsentNode extends ConfigNode {
       applicationId: this.applicationId,
       validityPeriod: this.validityPeriod,
       revokeAfterUse: this.revokeAfterUse,
+      tokenStatus: this.tokenStatus,
     };
   }
 }

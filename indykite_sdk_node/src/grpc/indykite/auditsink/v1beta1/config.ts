@@ -27,6 +27,7 @@ import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MESSAGE_TYPE } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 import { Timestamp } from "../../../google/protobuf/timestamp";
+import { IngestPipelineConfig } from "../../config/v1beta1/model";
 import { ConsentConfiguration } from "../../config/v1beta1/model";
 /**
  * @generated from protobuf message indykite.auditsink.v1beta1.ContainersPath
@@ -232,6 +233,12 @@ export interface ConfigDetail {
          * @generated from protobuf field: indykite.config.v1beta1.ConsentConfiguration consent_config = 18;
          */
         consentConfig: ConsentConfiguration;
+    } | {
+        oneofKind: "ingestPipelineConfig";
+        /**
+         * @generated from protobuf field: indykite.config.v1beta1.IngestPipelineConfig ingest_pipeline_config = 20;
+         */
+        ingestPipelineConfig: IngestPipelineConfig;
     } | {
         oneofKind: undefined;
     };
@@ -637,7 +644,11 @@ export enum ConfigType {
      *
      * @generated from protobuf enum value: CONFIG_TYPE_CONSENT = 29;
      */
-    CONSENT = 29
+    CONSENT = 29,
+    /**
+     * @generated from protobuf enum value: CONFIG_TYPE_INGEST_PIPELINE = 31;
+     */
+    INGEST_PIPELINE = 31
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class ContainersPath$Type extends MessageType<ContainersPath> {
@@ -1106,7 +1117,8 @@ class ConfigDetail$Type extends MessageType<ConfigDetail> {
             { no: 12, name: "audit_sink_config", kind: "message", oneof: "configuration", T: () => AuditSinkConfig },
             { no: 15, name: "authorization_policy_config", kind: "message", oneof: "configuration", T: () => AuthorizationPolicyConfig },
             { no: 19, name: "token_introspect_config", kind: "message", oneof: "configuration", T: () => TokenIntrospectConfig },
-            { no: 18, name: "consent_config", kind: "message", oneof: "configuration", T: () => ConsentConfiguration }
+            { no: 18, name: "consent_config", kind: "message", oneof: "configuration", T: () => ConsentConfiguration },
+            { no: 20, name: "ingest_pipeline_config", kind: "message", oneof: "configuration", T: () => IngestPipelineConfig }
         ]);
     }
     create(value?: PartialMessage<ConfigDetail>): ConfigDetail {
@@ -1169,6 +1181,12 @@ class ConfigDetail$Type extends MessageType<ConfigDetail> {
                         consentConfig: ConsentConfiguration.internalBinaryRead(reader, reader.uint32(), options, (message.configuration as any).consentConfig)
                     };
                     break;
+                case /* indykite.config.v1beta1.IngestPipelineConfig ingest_pipeline_config */ 20:
+                    message.configuration = {
+                        oneofKind: "ingestPipelineConfig",
+                        ingestPipelineConfig: IngestPipelineConfig.internalBinaryRead(reader, reader.uint32(), options, (message.configuration as any).ingestPipelineConfig)
+                    };
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -1211,6 +1229,9 @@ class ConfigDetail$Type extends MessageType<ConfigDetail> {
         /* indykite.config.v1beta1.ConsentConfiguration consent_config = 18; */
         if (message.configuration.oneofKind === "consentConfig")
             ConsentConfiguration.internalBinaryWrite(message.configuration.consentConfig, writer.tag(18, WireType.LengthDelimited).fork(), options).join();
+        /* indykite.config.v1beta1.IngestPipelineConfig ingest_pipeline_config = 20; */
+        if (message.configuration.oneofKind === "ingestPipelineConfig")
+            IngestPipelineConfig.internalBinaryWrite(message.configuration.ingestPipelineConfig, writer.tag(20, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

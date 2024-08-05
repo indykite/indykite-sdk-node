@@ -1,3 +1,4 @@
+import { ExternalTokenStatus } from '../../../../../grpc/indykite/config/v1beta1/model';
 import { ConsentNode } from '../consent_configuration';
 
 describe('when the instance is created', () => {
@@ -16,6 +17,7 @@ describe('when the instance is created', () => {
       applicationId: 'gid:AAAAFTYjY2yhCkjdo0IfPre0-Ck',
       validityPeriod: '86400',
       revokeAfterUse: false,
+      tokenStatus: ExternalTokenStatus.DISALLOW,
     });
   });
 
@@ -27,5 +29,6 @@ describe('when the instance is created', () => {
     expect(client.applicationId).toBe('gid:AAAAFTYjY2yhCkjdo0IfPre0-Ck');
     expect(client.validityPeriod).toBe('86400');
     expect(client.revokeAfterUse).toBe(false);
+    expect(client.tokenStatus).toBe(ExternalTokenStatus.DISALLOW);
   });
 });

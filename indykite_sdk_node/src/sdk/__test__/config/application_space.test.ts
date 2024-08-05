@@ -67,11 +67,12 @@ describe('createApplicationSpace', () => {
       });
 
       it('sends correct request', () => {
-        expect(createApplicationSpaceSpy).toBeCalledWith(
+        expect(createApplicationSpaceSpy).toHaveBeenCalledWith(
           {
             customerId: 'customer-id',
             name: 'new-app-space',
             bookmarks: [],
+            region: 'europe-west1',
           },
           expect.any(Function),
         );
@@ -111,13 +112,14 @@ describe('createApplicationSpace', () => {
       });
 
       it('sends correct request', () => {
-        expect(createApplicationSpaceSpy).toBeCalledWith(
+        expect(createApplicationSpaceSpy).toHaveBeenCalledWith(
           {
             customerId: 'customer-id',
             name: 'new-app-space',
             displayName: StringValue.create({ value: 'New App Space' }),
             description: StringValue.create({ value: 'App space description' }),
             bookmarks: [],
+            region: 'europe-west1',
           },
           expect.any(Function),
         );
@@ -258,6 +260,7 @@ describe('readApplicationSpaceById', () => {
                   deleteTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 2, 15, 13, 14))),
                   destroyTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 2, 15, 13, 15))),
                   ikgStatus: AppSpaceIKGStatus.APP_SPACE_IKG_STATUS_STATUS_INVALID,
+                  region: 'europe-west1',
                 },
               });
             }
@@ -272,7 +275,7 @@ describe('readApplicationSpaceById', () => {
     });
 
     it('sends correct request', () => {
-      expect(readApplicationSpaceSpy).toBeCalledWith(
+      expect(readApplicationSpaceSpy).toHaveBeenCalledWith(
         {
           identifier: {
             oneofKind: 'id',
@@ -304,6 +307,7 @@ describe('readApplicationSpaceById', () => {
         new Date(Date.UTC(2022, 2, 15, 13, 15)).toString(),
       );
       expect(appSpace.ikgStatus).toBe(AppSpaceIKGStatus.APP_SPACE_IKG_STATUS_STATUS_INVALID);
+      expect(appSpace.region).toBe('europe-west1');
     });
   });
 
@@ -416,6 +420,7 @@ describe('readApplicationSpaceByName', () => {
                   deleteTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 2, 15, 13, 14))),
                   destroyTime: Utils.dateToTimestamp(new Date(Date.UTC(2022, 2, 15, 13, 15))),
                   ikgStatus: AppSpaceIKGStatus.APP_SPACE_IKG_STATUS_STATUS_INVALID,
+                  region: 'europe-west1',
                 },
               });
             }
@@ -434,7 +439,7 @@ describe('readApplicationSpaceByName', () => {
     });
 
     it('sends correct request', () => {
-      expect(readApplicationSpaceSpy).toBeCalledWith(
+      expect(readApplicationSpaceSpy).toHaveBeenCalledWith(
         {
           identifier: {
             oneofKind: 'name',
@@ -469,6 +474,7 @@ describe('readApplicationSpaceByName', () => {
         new Date(Date.UTC(2022, 2, 15, 13, 15)).toString(),
       );
       expect(appSpace.ikgStatus).toBe(AppSpaceIKGStatus.APP_SPACE_IKG_STATUS_STATUS_INVALID);
+      expect(appSpace.region).toBe('europe-west1');
     });
   });
 
@@ -614,7 +620,7 @@ describe('listApplicationSpaces', () => {
     });
 
     it('check expect call', async () => {
-      expect(listApplicationSpacesSpy).toBeCalledWith({
+      expect(listApplicationSpacesSpy).toHaveBeenCalledWith({
         customerId: 'customer-id-request',
         match: ['app-space-name'],
         bookmarks: [],
@@ -758,7 +764,7 @@ describe('updateApplicationSpace', () => {
       });
 
       it('sends correct request', () => {
-        expect(updateApplicationSpaceSpy).toBeCalledWith(
+        expect(updateApplicationSpaceSpy).toHaveBeenCalledWith(
           {
             id: 'app-space-id',
             bookmarks: [],
@@ -796,7 +802,7 @@ describe('updateApplicationSpace', () => {
       });
 
       it('sends correct request', () => {
-        expect(updateApplicationSpaceSpy).toBeCalledWith(
+        expect(updateApplicationSpaceSpy).toHaveBeenCalledWith(
           {
             id: 'app-space-id',
             etag: { value: '555' },
@@ -998,7 +1004,7 @@ describe('deleteApplicationSpace', () => {
     });
 
     it('sends correct request', () => {
-      expect(deleteApplicationSpaceSpy).toBeCalledWith(
+      expect(deleteApplicationSpaceSpy).toHaveBeenCalledWith(
         {
           id: 'app-space-id',
           etag: { value: '555' },

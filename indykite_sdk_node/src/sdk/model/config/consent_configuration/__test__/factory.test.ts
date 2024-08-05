@@ -1,3 +1,4 @@
+import { ExternalTokenStatus } from '../../../../../grpc/indykite/config/v1beta1/model';
 import { ConsentConfigFactory } from '../factory';
 import { ConsentNode } from '../consent_configuration';
 
@@ -14,6 +15,7 @@ describe('createInstance', () => {
       applicationId: 'gid:AAAAFTYjY2yhCkjdo0IfPre0-Ck',
       validityPeriod: '86400',
       revokeAfterUse: false,
+      tokenStatus: ExternalTokenStatus.DISALLOW,
     });
   });
 
@@ -29,6 +31,7 @@ describe('createInstance', () => {
         name: 'instance-name',
         validityPeriod: '86400',
         revokeAfterUse: false,
+        tokenStatus: ExternalTokenStatus.DISALLOW,
       }),
     );
   });

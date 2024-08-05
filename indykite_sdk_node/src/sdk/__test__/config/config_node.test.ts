@@ -16,7 +16,10 @@ import { SdkError, SdkErrorCode } from '../../error';
 import { Utils } from '../../utils/utils';
 import { StringValue } from '../../../grpc/google/protobuf/wrappers';
 import { serviceAccountTokenMock } from '../../utils/test_utils';
-import { AuthorizationPolicyConfig_Status } from '../../../grpc/indykite/config/v1beta1/model';
+import {
+  AuthorizationPolicyConfig_Status,
+  ExternalTokenStatus,
+} from '../../../grpc/indykite/config/v1beta1/model';
 import { AuthorizationPolicy, ConsentNode, TokenIntrospect } from '../../model';
 
 let createConfigExample: CreateConfigNodeRequest;
@@ -55,6 +58,7 @@ beforeEach(() => {
     applicationId: 'new-configNode-id',
     validityPeriod: '86400',
     revokeAfterUse: false,
+    tokenStatus: ExternalTokenStatus.DISALLOW,
   });
 
   consentExample.id = 'configNode-id';

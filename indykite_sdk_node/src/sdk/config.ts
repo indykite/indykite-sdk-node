@@ -205,11 +205,13 @@ export class ConfigClient {
     displayName?: string,
     description?: string,
     bookmarks: string[] = [],
+    region: string = 'europe-west1',
   ): CreateApplicationSpaceRequest {
     return {
       customerId,
       name,
       bookmarks,
+      region,
       displayName: displayName ? StringValue.create({ value: displayName }) : undefined,
       description: description ? StringValue.create({ value: description }) : undefined,
     } as CreateApplicationSpaceRequest;
@@ -224,6 +226,9 @@ export class ConfigClient {
    *      CUSTOMER_ID,
    *      'app-space-name',
    *      "My Application Space",
+   *      "Description",
+   *      [],
+   *      "europe-west1" | "us-east1"
    *    )
    *  );
    * const appSpace = await sdk.createApplicationSpace(appSpaceRequest);
