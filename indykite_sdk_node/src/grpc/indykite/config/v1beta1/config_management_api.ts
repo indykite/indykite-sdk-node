@@ -28,6 +28,7 @@ import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MESSAGE_TYPE } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 import { ConfigNode } from "./model";
+import { IngestPipelineConfig } from "./model";
 import { TokenIntrospectConfig } from "./model";
 import { ConsentConfiguration } from "./model";
 import { AuthorizationPolicyConfig } from "./model";
@@ -121,6 +122,10 @@ export interface CreateApplicationSpaceRequest {
      * @generated from protobuf field: repeated string bookmarks = 5;
      */
     bookmarks: string[];
+    /**
+     * @generated from protobuf field: string region = 6;
+     */
+    region: string;
 }
 /**
  * @generated from protobuf message indykite.config.v1beta1.CreateApplicationSpaceResponse
@@ -1532,6 +1537,12 @@ export interface CreateConfigNodeRequest {
          */
         tokenIntrospectConfig: TokenIntrospectConfig;
     } | {
+        oneofKind: "ingestPipelineConfig";
+        /**
+         * @generated from protobuf field: indykite.config.v1beta1.IngestPipelineConfig ingest_pipeline_config = 31;
+         */
+        ingestPipelineConfig: IngestPipelineConfig;
+    } | {
         oneofKind: undefined;
     };
     /**
@@ -1686,6 +1697,12 @@ export interface UpdateConfigNodeRequest {
          * @generated from protobuf field: indykite.config.v1beta1.TokenIntrospectConfig token_introspect_config = 30;
          */
         tokenIntrospectConfig: TokenIntrospectConfig;
+    } | {
+        oneofKind: "ingestPipelineConfig";
+        /**
+         * @generated from protobuf field: indykite.config.v1beta1.IngestPipelineConfig ingest_pipeline_config = 31;
+         */
+        ingestPipelineConfig: IngestPipelineConfig;
     } | {
         oneofKind: undefined;
     };
@@ -1944,10 +1961,6 @@ export interface ListPermissionsResponse {
      * @generated from protobuf field: repeated indykite.config.v1beta1.ListPermissionsResponse.ServiceAccount service_accounts = 2;
      */
     serviceAccounts: ListPermissionsResponse_ServiceAccount[];
-    /**
-     * @generated from protobuf field: repeated indykite.config.v1beta1.ListPermissionsResponse.Invitation invitations = 3;
-     */
-    invitations: ListPermissionsResponse_Invitation[];
 }
 /**
  * @generated from protobuf message indykite.config.v1beta1.ListPermissionsResponse.PermissionRole
@@ -1983,23 +1996,6 @@ export interface ListPermissionsResponse_ServiceAccount {
      * @generated from protobuf field: string name = 1;
      */
     name: string;
-    /**
-     * @generated from protobuf field: string id = 2;
-     */
-    id: string;
-    /**
-     * @generated from protobuf field: repeated indykite.config.v1beta1.ListPermissionsResponse.PermissionRole roles = 3;
-     */
-    roles: ListPermissionsResponse_PermissionRole[];
-}
-/**
- * @generated from protobuf message indykite.config.v1beta1.ListPermissionsResponse.Invitation
- */
-export interface ListPermissionsResponse_Invitation {
-    /**
-     * @generated from protobuf field: string invitee = 1;
-     */
-    invitee: string;
     /**
      * @generated from protobuf field: string id = 2;
      */
@@ -2131,11 +2127,12 @@ class CreateApplicationSpaceRequest$Type extends MessageType<CreateApplicationSp
             { no: 2, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "2", maxLen: "63", pattern: "^[a-z](?:[-a-z0-9]{0,61}[a-z0-9])$" } } } },
             { no: 3, name: "display_name", kind: "message", T: () => StringValue, options: { "validate.rules": { string: { minLen: "2", maxLen: "254" } } } },
             { no: 4, name: "description", kind: "message", T: () => StringValue, options: { "validate.rules": { string: { minLen: "2", maxLen: "254" } } } },
-            { no: 5, name: "bookmarks", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { items: { string: { minLen: "40", pattern: "^[a-zA-Z0-9_-]{40,}$" } } } } } }
+            { no: 5, name: "bookmarks", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { items: { string: { minLen: "40", pattern: "^[a-zA-Z0-9_-]{40,}$" } } } } } },
+            { no: 6, name: "region", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "2", maxLen: "63", in: ["europe-west1", "us-east1"], ignoreEmpty: true } } } }
         ]);
     }
     create(value?: PartialMessage<CreateApplicationSpaceRequest>): CreateApplicationSpaceRequest {
-        const message = { customerId: "", name: "", bookmarks: [] };
+        const message = { customerId: "", name: "", bookmarks: [], region: "" };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<CreateApplicationSpaceRequest>(this, message, value);
@@ -2160,6 +2157,9 @@ class CreateApplicationSpaceRequest$Type extends MessageType<CreateApplicationSp
                     break;
                 case /* repeated string bookmarks */ 5:
                     message.bookmarks.push(reader.string());
+                    break;
+                case /* string region */ 6:
+                    message.region = reader.string();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -2188,6 +2188,9 @@ class CreateApplicationSpaceRequest$Type extends MessageType<CreateApplicationSp
         /* repeated string bookmarks = 5; */
         for (let i = 0; i < message.bookmarks.length; i++)
             writer.tag(5, WireType.LengthDelimited).string(message.bookmarks[i]);
+        /* string region = 6; */
+        if (message.region !== "")
+            writer.tag(6, WireType.LengthDelimited).string(message.region);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -5459,6 +5462,7 @@ class CreateConfigNodeRequest$Type extends MessageType<CreateConfigNodeRequest> 
             { no: 25, name: "authorization_policy_config", kind: "message", oneof: "config", T: () => AuthorizationPolicyConfig, options: { "validate.rules": { message: { required: true } } } },
             { no: 29, name: "consent_config", kind: "message", oneof: "config", T: () => ConsentConfiguration, options: { "validate.rules": { message: { required: true } } } },
             { no: 30, name: "token_introspect_config", kind: "message", oneof: "config", T: () => TokenIntrospectConfig, options: { "validate.rules": { message: { required: true } } } },
+            { no: 31, name: "ingest_pipeline_config", kind: "message", oneof: "config", T: () => IngestPipelineConfig, options: { "validate.rules": { message: { required: true } } } },
             { no: 7, name: "bookmarks", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { items: { string: { minLen: "40", pattern: "^[a-zA-Z0-9_-]{40,}$" } } } } } }
         ]);
     }
@@ -5510,6 +5514,12 @@ class CreateConfigNodeRequest$Type extends MessageType<CreateConfigNodeRequest> 
                         tokenIntrospectConfig: TokenIntrospectConfig.internalBinaryRead(reader, reader.uint32(), options, (message.config as any).tokenIntrospectConfig)
                     };
                     break;
+                case /* indykite.config.v1beta1.IngestPipelineConfig ingest_pipeline_config */ 31:
+                    message.config = {
+                        oneofKind: "ingestPipelineConfig",
+                        ingestPipelineConfig: IngestPipelineConfig.internalBinaryRead(reader, reader.uint32(), options, (message.config as any).ingestPipelineConfig)
+                    };
+                    break;
                 case /* repeated string bookmarks */ 7:
                     message.bookmarks.push(reader.string());
                     break;
@@ -5549,6 +5559,9 @@ class CreateConfigNodeRequest$Type extends MessageType<CreateConfigNodeRequest> 
         /* indykite.config.v1beta1.TokenIntrospectConfig token_introspect_config = 30; */
         if (message.config.oneofKind === "tokenIntrospectConfig")
             TokenIntrospectConfig.internalBinaryWrite(message.config.tokenIntrospectConfig, writer.tag(30, WireType.LengthDelimited).fork(), options).join();
+        /* indykite.config.v1beta1.IngestPipelineConfig ingest_pipeline_config = 31; */
+        if (message.config.oneofKind === "ingestPipelineConfig")
+            IngestPipelineConfig.internalBinaryWrite(message.config.ingestPipelineConfig, writer.tag(31, WireType.LengthDelimited).fork(), options).join();
         /* repeated string bookmarks = 7; */
         for (let i = 0; i < message.bookmarks.length; i++)
             writer.tag(7, WireType.LengthDelimited).string(message.bookmarks[i]);
@@ -5778,6 +5791,7 @@ class UpdateConfigNodeRequest$Type extends MessageType<UpdateConfigNodeRequest> 
             { no: 25, name: "authorization_policy_config", kind: "message", oneof: "config", T: () => AuthorizationPolicyConfig, options: { "validate.rules": { message: { required: true } } } },
             { no: 29, name: "consent_config", kind: "message", oneof: "config", T: () => ConsentConfiguration, options: { "validate.rules": { message: { required: true } } } },
             { no: 30, name: "token_introspect_config", kind: "message", oneof: "config", T: () => TokenIntrospectConfig, options: { "validate.rules": { message: { required: true } } } },
+            { no: 31, name: "ingest_pipeline_config", kind: "message", oneof: "config", T: () => IngestPipelineConfig, options: { "validate.rules": { message: { required: true } } } },
             { no: 5, name: "bookmarks", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { items: { string: { minLen: "40", pattern: "^[a-zA-Z0-9_-]{40,}$" } } } } } }
         ]);
     }
@@ -5829,6 +5843,12 @@ class UpdateConfigNodeRequest$Type extends MessageType<UpdateConfigNodeRequest> 
                         tokenIntrospectConfig: TokenIntrospectConfig.internalBinaryRead(reader, reader.uint32(), options, (message.config as any).tokenIntrospectConfig)
                     };
                     break;
+                case /* indykite.config.v1beta1.IngestPipelineConfig ingest_pipeline_config */ 31:
+                    message.config = {
+                        oneofKind: "ingestPipelineConfig",
+                        ingestPipelineConfig: IngestPipelineConfig.internalBinaryRead(reader, reader.uint32(), options, (message.config as any).ingestPipelineConfig)
+                    };
+                    break;
                 case /* repeated string bookmarks */ 5:
                     message.bookmarks.push(reader.string());
                     break;
@@ -5868,6 +5888,9 @@ class UpdateConfigNodeRequest$Type extends MessageType<UpdateConfigNodeRequest> 
         /* indykite.config.v1beta1.TokenIntrospectConfig token_introspect_config = 30; */
         if (message.config.oneofKind === "tokenIntrospectConfig")
             TokenIntrospectConfig.internalBinaryWrite(message.config.tokenIntrospectConfig, writer.tag(30, WireType.LengthDelimited).fork(), options).join();
+        /* indykite.config.v1beta1.IngestPipelineConfig ingest_pipeline_config = 31; */
+        if (message.config.oneofKind === "ingestPipelineConfig")
+            IngestPipelineConfig.internalBinaryWrite(message.config.ingestPipelineConfig, writer.tag(31, WireType.LengthDelimited).fork(), options).join();
         /* repeated string bookmarks = 5; */
         for (let i = 0; i < message.bookmarks.length; i++)
             writer.tag(5, WireType.LengthDelimited).string(message.bookmarks[i]);
@@ -6184,7 +6207,7 @@ class AssignPermissionsRequest$Type extends MessageType<AssignPermissionsRequest
     constructor() {
         super("indykite.config.v1beta1.AssignPermissionsRequest", [
             { no: 1, name: "target_identifier", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
-            { no: 2, name: "role", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { in: ["all_editor", "all_viewer", "customer_viewer"] } } } },
+            { no: 2, name: "role", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { in: ["all_editor", "all_viewer"] } } } },
             { no: 3, name: "customer_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
             { no: 4, name: "object_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
             { no: 5, name: "bookmarks", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { items: { string: { minLen: "40", pattern: "^[a-zA-Z0-9_-]{40,}$" } } } } } }
@@ -6313,7 +6336,7 @@ class RevokePermissionsRequest$Type extends MessageType<RevokePermissionsRequest
     constructor() {
         super("indykite.config.v1beta1.RevokePermissionsRequest", [
             { no: 1, name: "target_identifier", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
-            { no: 2, name: "role", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { in: ["all_editor", "all_viewer", "customer_viewer"] } } } },
+            { no: 2, name: "role", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { in: ["all_editor", "all_viewer"] } } } },
             { no: 3, name: "customer_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
             { no: 4, name: "object_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
             { no: 5, name: "bookmarks", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { items: { string: { minLen: "40", pattern: "^[a-zA-Z0-9_-]{40,}$" } } } } } }
@@ -6496,12 +6519,11 @@ class ListPermissionsResponse$Type extends MessageType<ListPermissionsResponse> 
     constructor() {
         super("indykite.config.v1beta1.ListPermissionsResponse", [
             { no: 1, name: "users", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => ListPermissionsResponse_User },
-            { no: 2, name: "service_accounts", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => ListPermissionsResponse_ServiceAccount },
-            { no: 3, name: "invitations", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => ListPermissionsResponse_Invitation }
+            { no: 2, name: "service_accounts", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => ListPermissionsResponse_ServiceAccount }
         ]);
     }
     create(value?: PartialMessage<ListPermissionsResponse>): ListPermissionsResponse {
-        const message = { users: [], serviceAccounts: [], invitations: [] };
+        const message = { users: [], serviceAccounts: [] };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<ListPermissionsResponse>(this, message, value);
@@ -6517,9 +6539,6 @@ class ListPermissionsResponse$Type extends MessageType<ListPermissionsResponse> 
                     break;
                 case /* repeated indykite.config.v1beta1.ListPermissionsResponse.ServiceAccount service_accounts */ 2:
                     message.serviceAccounts.push(ListPermissionsResponse_ServiceAccount.internalBinaryRead(reader, reader.uint32(), options));
-                    break;
-                case /* repeated indykite.config.v1beta1.ListPermissionsResponse.Invitation invitations */ 3:
-                    message.invitations.push(ListPermissionsResponse_Invitation.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -6539,9 +6558,6 @@ class ListPermissionsResponse$Type extends MessageType<ListPermissionsResponse> 
         /* repeated indykite.config.v1beta1.ListPermissionsResponse.ServiceAccount service_accounts = 2; */
         for (let i = 0; i < message.serviceAccounts.length; i++)
             ListPermissionsResponse_ServiceAccount.internalBinaryWrite(message.serviceAccounts[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* repeated indykite.config.v1beta1.ListPermissionsResponse.Invitation invitations = 3; */
-        for (let i = 0; i < message.invitations.length; i++)
-            ListPermissionsResponse_Invitation.internalBinaryWrite(message.invitations[i], writer.tag(3, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -6721,67 +6737,6 @@ class ListPermissionsResponse_ServiceAccount$Type extends MessageType<ListPermis
  * @generated MessageType for protobuf message indykite.config.v1beta1.ListPermissionsResponse.ServiceAccount
  */
 export const ListPermissionsResponse_ServiceAccount = new ListPermissionsResponse_ServiceAccount$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class ListPermissionsResponse_Invitation$Type extends MessageType<ListPermissionsResponse_Invitation> {
-    constructor() {
-        super("indykite.config.v1beta1.ListPermissionsResponse.Invitation", [
-            { no: 1, name: "invitee", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 2, name: "id", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 3, name: "roles", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => ListPermissionsResponse_PermissionRole }
-        ]);
-    }
-    create(value?: PartialMessage<ListPermissionsResponse_Invitation>): ListPermissionsResponse_Invitation {
-        const message = { invitee: "", id: "", roles: [] };
-        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
-        if (value !== undefined)
-            reflectionMergePartial<ListPermissionsResponse_Invitation>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ListPermissionsResponse_Invitation): ListPermissionsResponse_Invitation {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* string invitee */ 1:
-                    message.invitee = reader.string();
-                    break;
-                case /* string id */ 2:
-                    message.id = reader.string();
-                    break;
-                case /* repeated indykite.config.v1beta1.ListPermissionsResponse.PermissionRole roles */ 3:
-                    message.roles.push(ListPermissionsResponse_PermissionRole.internalBinaryRead(reader, reader.uint32(), options));
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: ListPermissionsResponse_Invitation, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* string invitee = 1; */
-        if (message.invitee !== "")
-            writer.tag(1, WireType.LengthDelimited).string(message.invitee);
-        /* string id = 2; */
-        if (message.id !== "")
-            writer.tag(2, WireType.LengthDelimited).string(message.id);
-        /* repeated indykite.config.v1beta1.ListPermissionsResponse.PermissionRole roles = 3; */
-        for (let i = 0; i < message.roles.length; i++)
-            ListPermissionsResponse_PermissionRole.internalBinaryWrite(message.roles[i], writer.tag(3, WireType.LengthDelimited).fork(), options).join();
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message indykite.config.v1beta1.ListPermissionsResponse.Invitation
- */
-export const ListPermissionsResponse_Invitation = new ListPermissionsResponse_Invitation$Type();
 /**
  * @generated ServiceType for protobuf service indykite.config.v1beta1.ConfigManagementAPI
  */

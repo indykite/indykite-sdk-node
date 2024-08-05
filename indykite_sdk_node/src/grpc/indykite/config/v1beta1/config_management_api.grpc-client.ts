@@ -394,7 +394,7 @@ export interface IConfigManagementAPIClient {
     revokePermissions(input: RevokePermissionsRequest, options: grpc.CallOptions, callback: (err: grpc.ServiceError | null, value?: RevokePermissionsResponse) => void): grpc.ClientUnaryCall;
     revokePermissions(input: RevokePermissionsRequest, callback: (err: grpc.ServiceError | null, value?: RevokePermissionsResponse) => void): grpc.ClientUnaryCall;
     /**
-     * ListPermissions of Digital twins and Invitations related to a customer.
+     * ListPermissions of Digital twins and service accounts related to a customer.
      *
      * @generated from protobuf rpc: ListPermissions(indykite.config.v1beta1.ListPermissionsRequest) returns (indykite.config.v1beta1.ListPermissionsResponse);
      */
@@ -720,7 +720,7 @@ export class ConfigManagementAPIClient extends grpc.Client implements IConfigMan
         return this.makeUnaryRequest<RevokePermissionsRequest, RevokePermissionsResponse>(`/${ConfigManagementAPI.typeName}/${method.name}`, (value: RevokePermissionsRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): RevokePermissionsResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), (options as any), (callback as any));
     }
     /**
-     * ListPermissions of Digital twins and Invitations related to a customer.
+     * ListPermissions of Digital twins and service accounts related to a customer.
      *
      * @generated from protobuf rpc: ListPermissions(indykite.config.v1beta1.ListPermissionsRequest) returns (indykite.config.v1beta1.ListPermissionsResponse);
      */

@@ -24,6 +24,7 @@ describe('deserialize', () => {
           deleteTime: Utils.dateToTimestamp(new Date(2022, 2, 17, 12, 19)),
           destroyTime: Utils.dateToTimestamp(new Date(2022, 2, 17, 12, 20)),
           ikgStatus: AppSpaceIKGStatus.APP_SPACE_IKG_STATUS_STATUS_INVALID,
+          region: 'europe-west1',
         },
       });
     });
@@ -42,6 +43,7 @@ describe('deserialize', () => {
       expect(appSpace.createdBy).toBe('Lorem ipsum - creator');
       expect(appSpace.updatedBy).toBe('Lorem ipsum - updater');
       expect(appSpace.ikgStatus).toBe(AppSpaceIKGStatus.APP_SPACE_IKG_STATUS_STATUS_INVALID);
+      expect(appSpace.region).toBe('europe-west1');
     });
   });
 
@@ -63,6 +65,7 @@ describe('deserialize', () => {
           deleteTime: Utils.dateToTimestamp(new Date(2022, 2, 17, 12, 19)),
           destroyTime: Utils.dateToTimestamp(new Date(2022, 2, 17, 12, 20)),
           ikgStatus: AppSpaceIKGStatus.APP_SPACE_IKG_STATUS_STATUS_INVALID,
+          region: 'europe-west1',
         },
       });
     });
@@ -81,6 +84,7 @@ describe('deserialize', () => {
       expect(appSpace.createdBy).toBe('Lorem ipsum - creator');
       expect(appSpace.updatedBy).toBe('Lorem ipsum - updater');
       expect(appSpace.ikgStatus).toBe(AppSpaceIKGStatus.APP_SPACE_IKG_STATUS_STATUS_INVALID);
+      expect(appSpace.region).toBe('europe-west1');
     });
   });
 

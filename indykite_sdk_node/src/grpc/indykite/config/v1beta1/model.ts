@@ -219,6 +219,10 @@ export interface ApplicationSpace {
      * @generated from protobuf field: indykite.config.v1beta1.AppSpaceIKGStatus ikg_status = 14;
      */
     ikgStatus: AppSpaceIKGStatus;
+    /**
+     * @generated from protobuf field: string region = 15;
+     */
+    region: string;
 }
 /**
  * Application represents the customer application.
@@ -759,6 +763,12 @@ export interface ConfigNode {
          */
         tokenIntrospectConfig: TokenIntrospectConfig;
     } | {
+        oneofKind: "ingestPipelineConfig";
+        /**
+         * @generated from protobuf field: indykite.config.v1beta1.IngestPipelineConfig ingest_pipeline_config = 32;
+         */
+        ingestPipelineConfig: IngestPipelineConfig;
+    } | {
         oneofKind: undefined;
     };
     /**
@@ -909,6 +919,10 @@ export interface ConsentConfiguration {
      * @generated from protobuf field: bool revoke_after_use = 5;
      */
     revokeAfterUse: boolean;
+    /**
+     * @generated from protobuf field: indykite.config.v1beta1.ExternalTokenStatus token_status = 7;
+     */
+    tokenStatus: ExternalTokenStatus;
 }
 /**
  * Token Introspect configuration for AppSpace.
@@ -1094,6 +1108,23 @@ export interface ConsentDataPoint_Return {
     properties: string[];
 }
 /**
+ * @generated from protobuf message indykite.config.v1beta1.IngestPipelineConfig
+ */
+export interface IngestPipelineConfig {
+    /**
+     * @generated from protobuf field: repeated string sources = 1;
+     */
+    sources: string[];
+    /**
+     * @generated from protobuf field: repeated indykite.config.v1beta1.IngestPipelineOperation operations = 2;
+     */
+    operations: IngestPipelineOperation[];
+    /**
+     * @generated from protobuf field: string app_agent_token = 3;
+     */
+    appAgentToken: string;
+}
+/**
  * @generated from protobuf enum indykite.config.v1beta1.AppSpaceIKGStatus
  */
 export enum AppSpaceIKGStatus {
@@ -1117,6 +1148,60 @@ export enum AppSpaceIKGStatus {
      * @generated from protobuf enum value: APP_SPACE_IKG_STATUS_STATUS_PAUSED = 4;
      */
     APP_SPACE_IKG_STATUS_STATUS_PAUSED = 4
+}
+/**
+ * @generated from protobuf enum indykite.config.v1beta1.ExternalTokenStatus
+ */
+export enum ExternalTokenStatus {
+    /**
+     * @generated from protobuf enum value: EXTERNAL_TOKEN_STATUS_INVALID = 0;
+     */
+    INVALID = 0,
+    /**
+     * @generated from protobuf enum value: EXTERNAL_TOKEN_STATUS_ENFORCE = 1;
+     */
+    ENFORCE = 1,
+    /**
+     * @generated from protobuf enum value: EXTERNAL_TOKEN_STATUS_ALLOW = 2;
+     */
+    ALLOW = 2,
+    /**
+     * @generated from protobuf enum value: EXTERNAL_TOKEN_STATUS_DISALLOW = 3;
+     */
+    DISALLOW = 3
+}
+/**
+ * @generated from protobuf enum indykite.config.v1beta1.IngestPipelineOperation
+ */
+export enum IngestPipelineOperation {
+    /**
+     * @generated from protobuf enum value: INGEST_PIPELINE_OPERATION_INVALID = 0;
+     */
+    INVALID = 0,
+    /**
+     * @generated from protobuf enum value: INGEST_PIPELINE_OPERATION_UPSERT_NODE = 1;
+     */
+    UPSERT_NODE = 1,
+    /**
+     * @generated from protobuf enum value: INGEST_PIPELINE_OPERATION_UPSERT_RELATIONSHIP = 2;
+     */
+    UPSERT_RELATIONSHIP = 2,
+    /**
+     * @generated from protobuf enum value: INGEST_PIPELINE_OPERATION_DELETE_NODE = 3;
+     */
+    DELETE_NODE = 3,
+    /**
+     * @generated from protobuf enum value: INGEST_PIPELINE_OPERATION_DELETE_RELATIONSHIP = 4;
+     */
+    DELETE_RELATIONSHIP = 4,
+    /**
+     * @generated from protobuf enum value: INGEST_PIPELINE_OPERATION_DELETE_NODE_PROPERTY = 5;
+     */
+    DELETE_NODE_PROPERTY = 5,
+    /**
+     * @generated from protobuf enum value: INGEST_PIPELINE_OPERATION_DELETE_RELATIONSHIP_PROPERTY = 6;
+     */
+    DELETE_RELATIONSHIP_PROPERTY = 6
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class UniqueNameIdentifier$Type extends MessageType<UniqueNameIdentifier> {
@@ -1305,11 +1390,12 @@ class ApplicationSpace$Type extends MessageType<ApplicationSpace> {
             { no: 8, name: "delete_time", kind: "message", T: () => Timestamp },
             { no: 9, name: "etag", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 10, name: "customer_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
-            { no: 14, name: "ikg_status", kind: "enum", T: () => ["indykite.config.v1beta1.AppSpaceIKGStatus", AppSpaceIKGStatus] }
+            { no: 14, name: "ikg_status", kind: "enum", T: () => ["indykite.config.v1beta1.AppSpaceIKGStatus", AppSpaceIKGStatus] },
+            { no: 15, name: "region", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
         ]);
     }
     create(value?: PartialMessage<ApplicationSpace>): ApplicationSpace {
-        const message = { id: "", name: "", displayName: "", createdBy: "", updatedBy: "", etag: "", customerId: "", ikgStatus: 0 };
+        const message = { id: "", name: "", displayName: "", createdBy: "", updatedBy: "", etag: "", customerId: "", ikgStatus: 0, region: "" };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<ApplicationSpace>(this, message, value);
@@ -1358,6 +1444,9 @@ class ApplicationSpace$Type extends MessageType<ApplicationSpace> {
                     break;
                 case /* indykite.config.v1beta1.AppSpaceIKGStatus ikg_status */ 14:
                     message.ikgStatus = reader.int32();
+                    break;
+                case /* string region */ 15:
+                    message.region = reader.string();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -1410,6 +1499,9 @@ class ApplicationSpace$Type extends MessageType<ApplicationSpace> {
         /* indykite.config.v1beta1.AppSpaceIKGStatus ikg_status = 14; */
         if (message.ikgStatus !== 0)
             writer.tag(14, WireType.Varint).int32(message.ikgStatus);
+        /* string region = 15; */
+        if (message.region !== "")
+            writer.tag(15, WireType.LengthDelimited).string(message.region);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -2075,6 +2167,7 @@ class ConfigNode$Type extends MessageType<ConfigNode> {
             { no: 23, name: "authorization_policy_config", kind: "message", oneof: "config", T: () => AuthorizationPolicyConfig, options: { "validate.rules": { message: { required: true } } } },
             { no: 30, name: "consent_config", kind: "message", oneof: "config", T: () => ConsentConfiguration, options: { "validate.rules": { message: { required: true } } } },
             { no: 31, name: "token_introspect_config", kind: "message", oneof: "config", T: () => TokenIntrospectConfig, options: { "validate.rules": { message: { required: true } } } },
+            { no: 32, name: "ingest_pipeline_config", kind: "message", oneof: "config", T: () => IngestPipelineConfig, options: { "validate.rules": { message: { required: true } } } },
             { no: 29, name: "version", kind: "scalar", T: 3 /*ScalarType.INT64*/ }
         ]);
     }
@@ -2153,6 +2246,12 @@ class ConfigNode$Type extends MessageType<ConfigNode> {
                         tokenIntrospectConfig: TokenIntrospectConfig.internalBinaryRead(reader, reader.uint32(), options, (message.config as any).tokenIntrospectConfig)
                     };
                     break;
+                case /* indykite.config.v1beta1.IngestPipelineConfig ingest_pipeline_config */ 32:
+                    message.config = {
+                        oneofKind: "ingestPipelineConfig",
+                        ingestPipelineConfig: IngestPipelineConfig.internalBinaryRead(reader, reader.uint32(), options, (message.config as any).ingestPipelineConfig)
+                    };
+                    break;
                 case /* int64 version */ 29:
                     message.version = reader.int64().toString();
                     break;
@@ -2219,6 +2318,9 @@ class ConfigNode$Type extends MessageType<ConfigNode> {
         /* indykite.config.v1beta1.TokenIntrospectConfig token_introspect_config = 31; */
         if (message.config.oneofKind === "tokenIntrospectConfig")
             TokenIntrospectConfig.internalBinaryWrite(message.config.tokenIntrospectConfig, writer.tag(31, WireType.LengthDelimited).fork(), options).join();
+        /* indykite.config.v1beta1.IngestPipelineConfig ingest_pipeline_config = 32; */
+        if (message.config.oneofKind === "ingestPipelineConfig")
+            IngestPipelineConfig.internalBinaryWrite(message.config.ingestPipelineConfig, writer.tag(32, WireType.LengthDelimited).fork(), options).join();
         /* int64 version = 29; */
         if (message.version !== "0")
             writer.tag(29, WireType.Varint).int64(message.version);
@@ -2440,11 +2542,12 @@ class ConsentConfiguration$Type extends MessageType<ConsentConfiguration> {
             { no: 2, name: "data_points", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { minItems: "1", unique: true, items: { string: { minLen: "1", maxLen: "1024", prefix: "{" } } } } } },
             { no: 3, name: "application_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
             { no: 4, name: "validity_period", kind: "scalar", T: 4 /*ScalarType.UINT64*/, options: { "validate.rules": { uint64: { lte: "63072000", gte: "86400" } } } },
-            { no: 5, name: "revoke_after_use", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+            { no: 5, name: "revoke_after_use", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 7, name: "token_status", kind: "enum", T: () => ["indykite.config.v1beta1.ExternalTokenStatus", ExternalTokenStatus, "EXTERNAL_TOKEN_STATUS_"] }
         ]);
     }
     create(value?: PartialMessage<ConsentConfiguration>): ConsentConfiguration {
-        const message = { purpose: "", dataPoints: [], applicationId: "", validityPeriod: "0", revokeAfterUse: false };
+        const message = { purpose: "", dataPoints: [], applicationId: "", validityPeriod: "0", revokeAfterUse: false, tokenStatus: 0 };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<ConsentConfiguration>(this, message, value);
@@ -2469,6 +2572,9 @@ class ConsentConfiguration$Type extends MessageType<ConsentConfiguration> {
                     break;
                 case /* bool revoke_after_use */ 5:
                     message.revokeAfterUse = reader.bool();
+                    break;
+                case /* indykite.config.v1beta1.ExternalTokenStatus token_status */ 7:
+                    message.tokenStatus = reader.int32();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -2497,6 +2603,9 @@ class ConsentConfiguration$Type extends MessageType<ConsentConfiguration> {
         /* bool revoke_after_use = 5; */
         if (message.revokeAfterUse !== false)
             writer.tag(5, WireType.Varint).bool(message.revokeAfterUse);
+        /* indykite.config.v1beta1.ExternalTokenStatus token_status = 7; */
+        if (message.tokenStatus !== 0)
+            writer.tag(7, WireType.Varint).int32(message.tokenStatus);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -2964,3 +3073,72 @@ class ConsentDataPoint_Return$Type extends MessageType<ConsentDataPoint_Return> 
  * @generated MessageType for protobuf message indykite.config.v1beta1.ConsentDataPoint.Return
  */
 export const ConsentDataPoint_Return = new ConsentDataPoint_Return$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class IngestPipelineConfig$Type extends MessageType<IngestPipelineConfig> {
+    constructor() {
+        super("indykite.config.v1beta1.IngestPipelineConfig", [
+            { no: 1, name: "sources", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { minItems: "1", maxItems: "10" } } } },
+            { no: 2, name: "operations", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["indykite.config.v1beta1.IngestPipelineOperation", IngestPipelineOperation, "INGEST_PIPELINE_OPERATION_"], options: { "validate.rules": { repeated: { minItems: "1", maxItems: "6" } } } },
+            { no: 3, name: "app_agent_token", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { pattern: "^[A-Za-z0-9-_]+?\\.[A-Za-z0-9-_]+?\\.[A-Za-z0-9-_]+?$" } } } }
+        ]);
+    }
+    create(value?: PartialMessage<IngestPipelineConfig>): IngestPipelineConfig {
+        const message = { sources: [], operations: [], appAgentToken: "" };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<IngestPipelineConfig>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: IngestPipelineConfig): IngestPipelineConfig {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* repeated string sources */ 1:
+                    message.sources.push(reader.string());
+                    break;
+                case /* repeated indykite.config.v1beta1.IngestPipelineOperation operations */ 2:
+                    if (wireType === WireType.LengthDelimited)
+                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
+                            message.operations.push(reader.int32());
+                    else
+                        message.operations.push(reader.int32());
+                    break;
+                case /* string app_agent_token */ 3:
+                    message.appAgentToken = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: IngestPipelineConfig, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* repeated string sources = 1; */
+        for (let i = 0; i < message.sources.length; i++)
+            writer.tag(1, WireType.LengthDelimited).string(message.sources[i]);
+        /* repeated indykite.config.v1beta1.IngestPipelineOperation operations = 2; */
+        if (message.operations.length) {
+            writer.tag(2, WireType.LengthDelimited).fork();
+            for (let i = 0; i < message.operations.length; i++)
+                writer.int32(message.operations[i]);
+            writer.join();
+        }
+        /* string app_agent_token = 3; */
+        if (message.appAgentToken !== "")
+            writer.tag(3, WireType.LengthDelimited).string(message.appAgentToken);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message indykite.config.v1beta1.IngestPipelineConfig
+ */
+export const IngestPipelineConfig = new IngestPipelineConfig$Type();

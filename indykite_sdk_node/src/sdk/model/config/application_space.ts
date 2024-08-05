@@ -41,6 +41,8 @@ export class ApplicationSpace {
     public updatedBy?: string,
     // #14 Output only. The status of the DB instance behind the Application Space.
     public ikgStatus?: AppSpaceIKGStatus,
+    // #15 region in [europe-west1, us-east1]
+    public region?: string,
   ) {}
 
   static deserialize(
@@ -73,6 +75,7 @@ export class ApplicationSpace {
         response.appSpace.createdBy,
         response.appSpace.updatedBy,
         response.appSpace.ikgStatus,
+        response.appSpace.region,
       );
     }
 

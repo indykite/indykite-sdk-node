@@ -171,6 +171,12 @@ export interface User {
          */
         externalId: User_ExternalID;
     } | {
+        oneofKind: "thirdPartyToken";
+        /**
+         * @generated from protobuf field: string third_party_token = 6;
+         */
+        thirdPartyToken: string;
+    } | {
         oneofKind: undefined;
     };
 }
@@ -560,7 +566,8 @@ class User$Type extends MessageType<User> {
         super("indykite.knowledge.objects.v1beta1.User", [
             { no: 1, name: "user_id", kind: "scalar", oneof: "user", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "254", pattern: "^[A-Za-z0-9-_:]{22,254}$" } } } },
             { no: 3, name: "property", kind: "message", oneof: "user", T: () => User_Property, options: { "validate.rules": { message: { required: true } } } },
-            { no: 5, name: "external_id", kind: "message", oneof: "user", T: () => User_ExternalID, options: { "validate.rules": { message: { required: true } } } }
+            { no: 5, name: "external_id", kind: "message", oneof: "user", T: () => User_ExternalID, options: { "validate.rules": { message: { required: true } } } },
+            { no: 6, name: "third_party_token", kind: "scalar", oneof: "user", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "1" } } } }
         ]);
     }
     create(value?: PartialMessage<User>): User {
@@ -593,6 +600,12 @@ class User$Type extends MessageType<User> {
                         externalId: User_ExternalID.internalBinaryRead(reader, reader.uint32(), options, (message.user as any).externalId)
                     };
                     break;
+                case /* string third_party_token */ 6:
+                    message.user = {
+                        oneofKind: "thirdPartyToken",
+                        thirdPartyToken: reader.string()
+                    };
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -614,6 +627,9 @@ class User$Type extends MessageType<User> {
         /* indykite.knowledge.objects.v1beta1.User.ExternalID external_id = 5; */
         if (message.user.oneofKind === "externalId")
             User_ExternalID.internalBinaryWrite(message.user.externalId, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
+        /* string third_party_token = 6; */
+        if (message.user.oneofKind === "thirdPartyToken")
+            writer.tag(6, WireType.LengthDelimited).string(message.user.thirdPartyToken);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
