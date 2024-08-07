@@ -1,4 +1,11 @@
 # Changelog
+## [0.7.8](https://github.com/indykite/indykite-sdk-node/compare/v0.7.7...v0.7.8) (2024-08-07)
+
+
+### Features
+
+* add field in app space and consent ([bfb1582](https://github.com/indykite/indykite-sdk-node/commit/bfb1582fadf6056be9ffdc4e43293d2cdb38b834))
+
 ## [0.7.7](https://github.com/indykite/indykite-sdk-node/compare/v0.7.6...v0.7.7) (2024-07-11)
 
 
