@@ -1,4 +1,11 @@
 # Changelog
+## [0.7.9](https://github.com/indykite/indykite-sdk-node/compare/v0.7.8...v0.7.9) (2024-09-25)
+
+
+### Features
+
+* add resolver and data-refs ([8299b40](https://github.com/indykite/indykite-sdk-node/commit/8299b40e9a51b0e1dcb2be593c0c3335f968ad81))
+
 ## [0.7.8](https://github.com/indykite/indykite-sdk-node/compare/v0.7.7...v0.7.8) (2024-08-07)
 
 
