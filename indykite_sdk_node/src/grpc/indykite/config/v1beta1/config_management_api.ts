@@ -28,6 +28,8 @@ import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MESSAGE_TYPE } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 import { ConfigNode } from "./model";
+import { ExternalDataResolverConfig } from "./model";
+import { IdentityMatchingPipelineConfig } from "./model";
 import { IngestPipelineConfig } from "./model";
 import { TokenIntrospectConfig } from "./model";
 import { ConsentConfiguration } from "./model";
@@ -1543,6 +1545,18 @@ export interface CreateConfigNodeRequest {
          */
         ingestPipelineConfig: IngestPipelineConfig;
     } | {
+        oneofKind: "identityMatchingPipelineConfig";
+        /**
+         * @generated from protobuf field: indykite.config.v1beta1.IdentityMatchingPipelineConfig identity_matching_pipeline_config = 32;
+         */
+        identityMatchingPipelineConfig: IdentityMatchingPipelineConfig;
+    } | {
+        oneofKind: "externalDataResolverConfig";
+        /**
+         * @generated from protobuf field: indykite.config.v1beta1.ExternalDataResolverConfig external_data_resolver_config = 33;
+         */
+        externalDataResolverConfig: ExternalDataResolverConfig;
+    } | {
         oneofKind: undefined;
     };
     /**
@@ -1703,6 +1717,18 @@ export interface UpdateConfigNodeRequest {
          * @generated from protobuf field: indykite.config.v1beta1.IngestPipelineConfig ingest_pipeline_config = 31;
          */
         ingestPipelineConfig: IngestPipelineConfig;
+    } | {
+        oneofKind: "identityMatchingPipelineConfig";
+        /**
+         * @generated from protobuf field: indykite.config.v1beta1.IdentityMatchingPipelineConfig identity_matching_pipeline_config = 33;
+         */
+        identityMatchingPipelineConfig: IdentityMatchingPipelineConfig;
+    } | {
+        oneofKind: "externalDataResolverConfig";
+        /**
+         * @generated from protobuf field: indykite.config.v1beta1.ExternalDataResolverConfig external_data_resolver_config = 34;
+         */
+        externalDataResolverConfig: ExternalDataResolverConfig;
     } | {
         oneofKind: undefined;
     };
@@ -5463,6 +5489,8 @@ class CreateConfigNodeRequest$Type extends MessageType<CreateConfigNodeRequest> 
             { no: 29, name: "consent_config", kind: "message", oneof: "config", T: () => ConsentConfiguration, options: { "validate.rules": { message: { required: true } } } },
             { no: 30, name: "token_introspect_config", kind: "message", oneof: "config", T: () => TokenIntrospectConfig, options: { "validate.rules": { message: { required: true } } } },
             { no: 31, name: "ingest_pipeline_config", kind: "message", oneof: "config", T: () => IngestPipelineConfig, options: { "validate.rules": { message: { required: true } } } },
+            { no: 32, name: "identity_matching_pipeline_config", kind: "message", oneof: "config", T: () => IdentityMatchingPipelineConfig, options: { "validate.rules": { message: { required: true } } } },
+            { no: 33, name: "external_data_resolver_config", kind: "message", oneof: "config", T: () => ExternalDataResolverConfig, options: { "validate.rules": { message: { required: true } } } },
             { no: 7, name: "bookmarks", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { items: { string: { minLen: "40", pattern: "^[a-zA-Z0-9_-]{40,}$" } } } } } }
         ]);
     }
@@ -5520,6 +5548,18 @@ class CreateConfigNodeRequest$Type extends MessageType<CreateConfigNodeRequest> 
                         ingestPipelineConfig: IngestPipelineConfig.internalBinaryRead(reader, reader.uint32(), options, (message.config as any).ingestPipelineConfig)
                     };
                     break;
+                case /* indykite.config.v1beta1.IdentityMatchingPipelineConfig identity_matching_pipeline_config */ 32:
+                    message.config = {
+                        oneofKind: "identityMatchingPipelineConfig",
+                        identityMatchingPipelineConfig: IdentityMatchingPipelineConfig.internalBinaryRead(reader, reader.uint32(), options, (message.config as any).identityMatchingPipelineConfig)
+                    };
+                    break;
+                case /* indykite.config.v1beta1.ExternalDataResolverConfig external_data_resolver_config */ 33:
+                    message.config = {
+                        oneofKind: "externalDataResolverConfig",
+                        externalDataResolverConfig: ExternalDataResolverConfig.internalBinaryRead(reader, reader.uint32(), options, (message.config as any).externalDataResolverConfig)
+                    };
+                    break;
                 case /* repeated string bookmarks */ 7:
                     message.bookmarks.push(reader.string());
                     break;
@@ -5562,6 +5602,12 @@ class CreateConfigNodeRequest$Type extends MessageType<CreateConfigNodeRequest> 
         /* indykite.config.v1beta1.IngestPipelineConfig ingest_pipeline_config = 31; */
         if (message.config.oneofKind === "ingestPipelineConfig")
             IngestPipelineConfig.internalBinaryWrite(message.config.ingestPipelineConfig, writer.tag(31, WireType.LengthDelimited).fork(), options).join();
+        /* indykite.config.v1beta1.IdentityMatchingPipelineConfig identity_matching_pipeline_config = 32; */
+        if (message.config.oneofKind === "identityMatchingPipelineConfig")
+            IdentityMatchingPipelineConfig.internalBinaryWrite(message.config.identityMatchingPipelineConfig, writer.tag(32, WireType.LengthDelimited).fork(), options).join();
+        /* indykite.config.v1beta1.ExternalDataResolverConfig external_data_resolver_config = 33; */
+        if (message.config.oneofKind === "externalDataResolverConfig")
+            ExternalDataResolverConfig.internalBinaryWrite(message.config.externalDataResolverConfig, writer.tag(33, WireType.LengthDelimited).fork(), options).join();
         /* repeated string bookmarks = 7; */
         for (let i = 0; i < message.bookmarks.length; i++)
             writer.tag(7, WireType.LengthDelimited).string(message.bookmarks[i]);
@@ -5792,6 +5838,8 @@ class UpdateConfigNodeRequest$Type extends MessageType<UpdateConfigNodeRequest> 
             { no: 29, name: "consent_config", kind: "message", oneof: "config", T: () => ConsentConfiguration, options: { "validate.rules": { message: { required: true } } } },
             { no: 30, name: "token_introspect_config", kind: "message", oneof: "config", T: () => TokenIntrospectConfig, options: { "validate.rules": { message: { required: true } } } },
             { no: 31, name: "ingest_pipeline_config", kind: "message", oneof: "config", T: () => IngestPipelineConfig, options: { "validate.rules": { message: { required: true } } } },
+            { no: 33, name: "identity_matching_pipeline_config", kind: "message", oneof: "config", T: () => IdentityMatchingPipelineConfig, options: { "validate.rules": { message: { required: true } } } },
+            { no: 34, name: "external_data_resolver_config", kind: "message", oneof: "config", T: () => ExternalDataResolverConfig, options: { "validate.rules": { message: { required: true } } } },
             { no: 5, name: "bookmarks", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { items: { string: { minLen: "40", pattern: "^[a-zA-Z0-9_-]{40,}$" } } } } } }
         ]);
     }
@@ -5849,6 +5897,18 @@ class UpdateConfigNodeRequest$Type extends MessageType<UpdateConfigNodeRequest> 
                         ingestPipelineConfig: IngestPipelineConfig.internalBinaryRead(reader, reader.uint32(), options, (message.config as any).ingestPipelineConfig)
                     };
                     break;
+                case /* indykite.config.v1beta1.IdentityMatchingPipelineConfig identity_matching_pipeline_config */ 33:
+                    message.config = {
+                        oneofKind: "identityMatchingPipelineConfig",
+                        identityMatchingPipelineConfig: IdentityMatchingPipelineConfig.internalBinaryRead(reader, reader.uint32(), options, (message.config as any).identityMatchingPipelineConfig)
+                    };
+                    break;
+                case /* indykite.config.v1beta1.ExternalDataResolverConfig external_data_resolver_config */ 34:
+                    message.config = {
+                        oneofKind: "externalDataResolverConfig",
+                        externalDataResolverConfig: ExternalDataResolverConfig.internalBinaryRead(reader, reader.uint32(), options, (message.config as any).externalDataResolverConfig)
+                    };
+                    break;
                 case /* repeated string bookmarks */ 5:
                     message.bookmarks.push(reader.string());
                     break;
@@ -5891,6 +5951,12 @@ class UpdateConfigNodeRequest$Type extends MessageType<UpdateConfigNodeRequest> 
         /* indykite.config.v1beta1.IngestPipelineConfig ingest_pipeline_config = 31; */
         if (message.config.oneofKind === "ingestPipelineConfig")
             IngestPipelineConfig.internalBinaryWrite(message.config.ingestPipelineConfig, writer.tag(31, WireType.LengthDelimited).fork(), options).join();
+        /* indykite.config.v1beta1.IdentityMatchingPipelineConfig identity_matching_pipeline_config = 33; */
+        if (message.config.oneofKind === "identityMatchingPipelineConfig")
+            IdentityMatchingPipelineConfig.internalBinaryWrite(message.config.identityMatchingPipelineConfig, writer.tag(33, WireType.LengthDelimited).fork(), options).join();
+        /* indykite.config.v1beta1.ExternalDataResolverConfig external_data_resolver_config = 34; */
+        if (message.config.oneofKind === "externalDataResolverConfig")
+            ExternalDataResolverConfig.internalBinaryWrite(message.config.externalDataResolverConfig, writer.tag(34, WireType.LengthDelimited).fork(), options).join();
         /* repeated string bookmarks = 5; */
         for (let i = 0; i < message.bookmarks.length; i++)
             writer.tag(5, WireType.LengthDelimited).string(message.bookmarks[i]);

@@ -26,6 +26,10 @@ import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MESSAGE_TYPE } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
+import { Map } from "../../objects/v1beta2/value";
+import { Array$ } from "../../objects/v1beta2/value";
+import { Duration } from "../../../google/protobuf/duration";
+import { Timestamp } from "../../../google/protobuf/timestamp";
 import { Value } from "../../objects/v1beta1/struct";
 /**
  * Subject to check if is authorized.
@@ -49,11 +53,11 @@ export interface Subject {
          */
         digitalTwinProperty: Property;
     } | {
-        oneofKind: "indykiteAccessToken";
+        oneofKind: "accessToken";
         /**
-         * @generated from protobuf field: string indykite_access_token = 4;
+         * @generated from protobuf field: string access_token = 4;
          */
-        indykiteAccessToken: string;
+        accessToken: string;
     } | {
         oneofKind: "externalId";
         /**
@@ -143,6 +147,38 @@ export interface InputParam {
          */
         doubleValue: number;
     } | {
+        oneofKind: "timeValue";
+        /**
+         * A timestamp value.
+         *
+         * @generated from protobuf field: google.protobuf.Timestamp time_value = 5;
+         */
+        timeValue: Timestamp;
+    } | {
+        oneofKind: "durationValue";
+        /**
+         * A duration value.
+         *
+         * @generated from protobuf field: google.protobuf.Duration duration_value = 6;
+         */
+        durationValue: Duration;
+    } | {
+        oneofKind: "arrayValue";
+        /**
+         * An array value.
+         *
+         * @generated from protobuf field: indykite.objects.v1beta2.Array array_value = 7;
+         */
+        arrayValue: Array$;
+    } | {
+        oneofKind: "mapValue";
+        /**
+         * A map value.
+         *
+         * @generated from protobuf field: indykite.objects.v1beta2.Map map_value = 8;
+         */
+        mapValue: Map;
+    } | {
         oneofKind: undefined;
     };
 }
@@ -152,7 +188,7 @@ class Subject$Type extends MessageType<Subject> {
         super("indykite.authorization.v1beta1.Subject", [
             { no: 2, name: "digital_twin_id", kind: "message", oneof: "subject", T: () => DigitalTwin, options: { "validate.rules": { message: { required: true } } } },
             { no: 3, name: "digital_twin_property", kind: "message", oneof: "subject", T: () => Property, options: { "validate.rules": { message: { required: true } } } },
-            { no: 4, name: "indykite_access_token", kind: "scalar", oneof: "subject", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "20" } } } },
+            { no: 4, name: "access_token", kind: "scalar", oneof: "subject", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "20" } } } },
             { no: 5, name: "external_id", kind: "message", oneof: "subject", T: () => ExternalID, options: { "validate.rules": { message: { required: true } } } }
         ]);
     }
@@ -180,10 +216,10 @@ class Subject$Type extends MessageType<Subject> {
                         digitalTwinProperty: Property.internalBinaryRead(reader, reader.uint32(), options, (message.subject as any).digitalTwinProperty)
                     };
                     break;
-                case /* string indykite_access_token */ 4:
+                case /* string access_token */ 4:
                     message.subject = {
-                        oneofKind: "indykiteAccessToken",
-                        indykiteAccessToken: reader.string()
+                        oneofKind: "accessToken",
+                        accessToken: reader.string()
                     };
                     break;
                 case /* indykite.authorization.v1beta1.ExternalID external_id */ 5:
@@ -210,9 +246,9 @@ class Subject$Type extends MessageType<Subject> {
         /* indykite.authorization.v1beta1.Property digital_twin_property = 3; */
         if (message.subject.oneofKind === "digitalTwinProperty")
             Property.internalBinaryWrite(message.subject.digitalTwinProperty, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
-        /* string indykite_access_token = 4; */
-        if (message.subject.oneofKind === "indykiteAccessToken")
-            writer.tag(4, WireType.LengthDelimited).string(message.subject.indykiteAccessToken);
+        /* string access_token = 4; */
+        if (message.subject.oneofKind === "accessToken")
+            writer.tag(4, WireType.LengthDelimited).string(message.subject.accessToken);
         /* indykite.authorization.v1beta1.ExternalID external_id = 5; */
         if (message.subject.oneofKind === "externalId")
             ExternalID.internalBinaryWrite(message.subject.externalId, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
@@ -388,7 +424,11 @@ class InputParam$Type extends MessageType<InputParam> {
             { no: 1, name: "string_value", kind: "scalar", oneof: "value", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "1", maxLen: "50" } } } },
             { no: 2, name: "bool_value", kind: "scalar", oneof: "value", T: 8 /*ScalarType.BOOL*/ },
             { no: 3, name: "integer_value", kind: "scalar", oneof: "value", T: 3 /*ScalarType.INT64*/ },
-            { no: 4, name: "double_value", kind: "scalar", oneof: "value", T: 1 /*ScalarType.DOUBLE*/ }
+            { no: 4, name: "double_value", kind: "scalar", oneof: "value", T: 1 /*ScalarType.DOUBLE*/ },
+            { no: 5, name: "time_value", kind: "message", oneof: "value", T: () => Timestamp },
+            { no: 6, name: "duration_value", kind: "message", oneof: "value", T: () => Duration },
+            { no: 7, name: "array_value", kind: "message", oneof: "value", T: () => Array$ },
+            { no: 8, name: "map_value", kind: "message", oneof: "value", T: () => Map }
         ]);
     }
     create(value?: PartialMessage<InputParam>): InputParam {
@@ -427,6 +467,30 @@ class InputParam$Type extends MessageType<InputParam> {
                         doubleValue: reader.double()
                     };
                     break;
+                case /* google.protobuf.Timestamp time_value */ 5:
+                    message.value = {
+                        oneofKind: "timeValue",
+                        timeValue: Timestamp.internalBinaryRead(reader, reader.uint32(), options, (message.value as any).timeValue)
+                    };
+                    break;
+                case /* google.protobuf.Duration duration_value */ 6:
+                    message.value = {
+                        oneofKind: "durationValue",
+                        durationValue: Duration.internalBinaryRead(reader, reader.uint32(), options, (message.value as any).durationValue)
+                    };
+                    break;
+                case /* indykite.objects.v1beta2.Array array_value */ 7:
+                    message.value = {
+                        oneofKind: "arrayValue",
+                        arrayValue: Array$.internalBinaryRead(reader, reader.uint32(), options, (message.value as any).arrayValue)
+                    };
+                    break;
+                case /* indykite.objects.v1beta2.Map map_value */ 8:
+                    message.value = {
+                        oneofKind: "mapValue",
+                        mapValue: Map.internalBinaryRead(reader, reader.uint32(), options, (message.value as any).mapValue)
+                    };
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -451,6 +515,18 @@ class InputParam$Type extends MessageType<InputParam> {
         /* double double_value = 4; */
         if (message.value.oneofKind === "doubleValue")
             writer.tag(4, WireType.Bit64).double(message.value.doubleValue);
+        /* google.protobuf.Timestamp time_value = 5; */
+        if (message.value.oneofKind === "timeValue")
+            Timestamp.internalBinaryWrite(message.value.timeValue, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
+        /* google.protobuf.Duration duration_value = 6; */
+        if (message.value.oneofKind === "durationValue")
+            Duration.internalBinaryWrite(message.value.durationValue, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
+        /* indykite.objects.v1beta2.Array array_value = 7; */
+        if (message.value.oneofKind === "arrayValue")
+            Array$.internalBinaryWrite(message.value.arrayValue, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
+        /* indykite.objects.v1beta2.Map map_value = 8; */
+        if (message.value.oneofKind === "mapValue")
+            Map.internalBinaryWrite(message.value.mapValue, writer.tag(8, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

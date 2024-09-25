@@ -115,7 +115,12 @@ IngestClient.createInstance().then((sdk) => {
         properties: [
           {
             type: 'customProp',
-            value: '48',
+            externalValue: {
+              resolver: {
+                oneofKind: 'id',
+                id: 'gid:AAAACf8ZbwrfSUA-tnXjiShw-hQ',
+              },
+            },
             metadata: {
               assuranceLevel: 1,
               verificationTime: Utils.dateToTimestamp(new Date()),

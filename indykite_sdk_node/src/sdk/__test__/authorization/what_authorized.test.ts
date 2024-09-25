@@ -271,8 +271,8 @@ describe('isAuthorizedByToken', () => {
     });
 
     it('sends a correct request', () => {
-      expect(sdk['client'].whatAuthorized).toBeCalledTimes(1);
-      expect(sdk['client'].whatAuthorized).toBeCalledWith(
+      expect(sdk['client'].whatAuthorized).toHaveBeenCalledTimes(1);
+      expect(sdk['client'].whatAuthorized).toHaveBeenCalledWith(
         {
           inputParams: {
             someInputParam: {
@@ -285,8 +285,8 @@ describe('isAuthorizedByToken', () => {
           policyTags: ['some-tag'],
           subject: {
             subject: {
-              oneofKind: 'indykiteAccessToken',
-              indykiteAccessToken: 'access-token',
+              oneofKind: 'accessToken',
+              accessToken: 'access-token',
             },
           },
           resourceTypes: [
@@ -462,8 +462,8 @@ describe('isAuthorizedByProperty', () => {
     });
 
     it('sends a correct request', () => {
-      expect(sdk['client'].whatAuthorized).toBeCalledTimes(1);
-      expect(sdk['client'].whatAuthorized).toBeCalledWith(
+      expect(sdk['client'].whatAuthorized).toHaveBeenCalledTimes(1);
+      expect(sdk['client'].whatAuthorized).toHaveBeenCalledWith(
         {
           inputParams: {},
           policyTags: [],
@@ -654,8 +654,8 @@ describe('isAuthorizedByExternalID', () => {
     });
 
     it('sends a correct request', () => {
-      expect(sdk['client'].whatAuthorized).toBeCalledTimes(1);
-      expect(sdk['client'].whatAuthorized).toBeCalledWith(
+      expect(sdk['client'].whatAuthorized).toHaveBeenCalledTimes(1);
+      expect(sdk['client'].whatAuthorized).toHaveBeenCalledWith(
         {
           inputParams: {},
           policyTags: [],

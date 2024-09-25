@@ -4,6 +4,10 @@ import { Utils } from '../../utils/utils';
 import { AUTHORIZATION_POLICY_CONFIG, AuthorizationPolicyFactory } from './authorization_policy';
 import { ConfigNodeType, ConfigNode as ConfigNodeSDK } from './config_node';
 import { CONSENT_CONFIG, ConsentConfigFactory } from './consent_configuration/factory';
+import {
+  EXTERNAL_DATA_RESOLVER_CONFIG,
+  ExternalDataResolverFactory,
+} from './external_data_resolver/factory';
 import { TOKEN_INTROSPECT_CONFIG, TokenIntrospectFactory } from './token_introspect/factory';
 
 export class ConfigNodeFactory {
@@ -43,6 +47,13 @@ export class ConfigNodeFactory {
         const flow = TokenIntrospectFactory.createInstance(
           config.name,
           config.config.tokenIntrospectConfig,
+        );
+        return Object.assign(flow, meta);
+      }
+      case EXTERNAL_DATA_RESOLVER_CONFIG: {
+        const flow = ExternalDataResolverFactory.createInstance(
+          config.name,
+          config.config.externalDataResolverConfig,
         );
         return Object.assign(flow, meta);
       }

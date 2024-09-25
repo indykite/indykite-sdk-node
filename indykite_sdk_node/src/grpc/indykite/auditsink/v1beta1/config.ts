@@ -26,9 +26,9 @@ import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MESSAGE_TYPE } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
+import { StringValue } from "../../../google/protobuf/wrappers";
+import { Duration } from "../../../google/protobuf/duration";
 import { Timestamp } from "../../../google/protobuf/timestamp";
-import { IngestPipelineConfig } from "../../config/v1beta1/model";
-import { ConsentConfiguration } from "../../config/v1beta1/model";
 /**
  * @generated from protobuf message indykite.auditsink.v1beta1.ContainersPath
  */
@@ -228,17 +228,29 @@ export interface ConfigDetail {
          */
         tokenIntrospectConfig: TokenIntrospectConfig;
     } | {
+        oneofKind: "externalDataResolverConfig";
+        /**
+         * @generated from protobuf field: indykite.auditsink.v1beta1.ExternalDataResolverConfig external_data_resolver_config = 22;
+         */
+        externalDataResolverConfig: ExternalDataResolverConfig;
+    } | {
         oneofKind: "consentConfig";
         /**
-         * @generated from protobuf field: indykite.config.v1beta1.ConsentConfiguration consent_config = 18;
+         * @generated from protobuf field: indykite.auditsink.v1beta1.ConsentConfiguration consent_config = 18;
          */
         consentConfig: ConsentConfiguration;
     } | {
         oneofKind: "ingestPipelineConfig";
         /**
-         * @generated from protobuf field: indykite.config.v1beta1.IngestPipelineConfig ingest_pipeline_config = 20;
+         * @generated from protobuf field: indykite.auditsink.v1beta1.IngestPipelineConfig ingest_pipeline_config = 20;
          */
         ingestPipelineConfig: IngestPipelineConfig;
+    } | {
+        oneofKind: "identityMatchingPipelineConfig";
+        /**
+         * @generated from protobuf field: indykite.auditsink.v1beta1.IdentityMatchingPipelineConfig identity_matching_pipeline_config = 21;
+         */
+        identityMatchingPipelineConfig: IdentityMatchingPipelineConfig;
     } | {
         oneofKind: undefined;
     };
@@ -345,6 +357,58 @@ export interface AuditSinkConfig_Kafka {
      * @generated from protobuf field: string password = 6;
      */
     password: string;
+}
+/**
+ * @generated from protobuf message indykite.auditsink.v1beta1.ExternalDataResolverConfig
+ */
+export interface ExternalDataResolverConfig {
+    /**
+     * Full URL to endpoint that will be called.
+     *
+     * @generated from protobuf field: string url = 1;
+     */
+    url: string;
+    /**
+     * HTTP method to be used for the request.
+     *
+     * @generated from protobuf field: string method = 2;
+     */
+    method: string;
+    /**
+     * @generated from protobuf field: map<string, string> headers = 3;
+     */
+    headers: {
+        [key: string]: string;
+    };
+    /**
+     * @generated from protobuf field: indykite.auditsink.v1beta1.ExternalDataResolverConfig.ContentType request_type = 4;
+     */
+    requestType: ExternalDataResolverConfig_ContentType;
+    /**
+     * @generated from protobuf field: string request_payload = 5;
+     */
+    requestPayload: string;
+    /**
+     * @generated from protobuf field: indykite.auditsink.v1beta1.ExternalDataResolverConfig.ContentType response_type = 6;
+     */
+    responseType: ExternalDataResolverConfig_ContentType;
+    /**
+     * @generated from protobuf field: string response_selector = 7;
+     */
+    responseSelector: string;
+}
+/**
+ * @generated from protobuf enum indykite.auditsink.v1beta1.ExternalDataResolverConfig.ContentType
+ */
+export enum ExternalDataResolverConfig_ContentType {
+    /**
+     * @generated from protobuf enum value: CONTENT_TYPE_INVALID = 0;
+     */
+    INVALID = 0,
+    /**
+     * @generated from protobuf enum value: CONTENT_TYPE_JSON = 1;
+     */
+    JSON = 1
 }
 /**
  * @generated from protobuf message indykite.auditsink.v1beta1.AuthorizationPolicyConfig
@@ -488,6 +552,12 @@ export interface TokenIntrospectConfig {
          */
         jwt: TokenIntrospectConfig_JWT;
     } | {
+        oneofKind: "opaque";
+        /**
+         * @generated from protobuf field: indykite.auditsink.v1beta1.TokenIntrospectConfig.Opaque opaque = 2;
+         */
+        opaque: TokenIntrospectConfig_Opaque;
+    } | {
         oneofKind: undefined;
     };
     /**
@@ -499,6 +569,12 @@ export interface TokenIntrospectConfig {
          * @generated from protobuf field: indykite.auditsink.v1beta1.TokenIntrospectConfig.Offline offline = 3;
          */
         offline: TokenIntrospectConfig_Offline;
+    } | {
+        oneofKind: "online";
+        /**
+         * @generated from protobuf field: indykite.auditsink.v1beta1.TokenIntrospectConfig.Online online = 4;
+         */
+        online: TokenIntrospectConfig_Online;
     } | {
         oneofKind: undefined;
     };
@@ -548,6 +624,14 @@ export interface TokenIntrospectConfig_JWT {
     audience: string;
 }
 /**
+ * Opaque specifies the configuration is for opaque tokens.
+ * Currently we will support max 1 opaque token configuration per app space.
+ *
+ * @generated from protobuf message indykite.auditsink.v1beta1.TokenIntrospectConfig.Opaque
+ */
+export interface TokenIntrospectConfig_Opaque {
+}
+/**
  * Offline validation works only with JWT.
  *
  * @generated from protobuf message indykite.auditsink.v1beta1.TokenIntrospectConfig.Offline
@@ -561,6 +645,35 @@ export interface TokenIntrospectConfig_Offline {
      * @generated from protobuf field: repeated bytes public_jwks = 1;
      */
     publicJwks: Uint8Array[];
+}
+/**
+ * Online validation works with both JWT and Opaque tokens.
+ * It will call userinfo endpoint to validate token and fetch user claims.
+ *
+ * @generated from protobuf message indykite.auditsink.v1beta1.TokenIntrospectConfig.Online
+ */
+export interface TokenIntrospectConfig_Online {
+    /**
+     * URI of userinfo endpoint which will be used to validate access token.
+     * And also fetch user claims when opaque token is received.
+     *
+     * It can remain empty, if JWT token matcher is used.
+     * Then the URI under "userinfo_endpoint" in .well-known/openid-configuration endpoint is used.
+     *
+     * @generated from protobuf field: string userinfo_endpoint = 1;
+     */
+    userinfoEndpoint: string;
+    /**
+     * Cache TTL of token validity can be used to minimize calls to userinfo endpoint.
+     * The final cache TTL will be set to lower limit of this value and exp claim of JWT token.
+     * If not set, token will not be cached and call to userinfo endpoint will be made on every request.
+     *
+     * However, token validity will be checked first if possible (JWT tokens).
+     * If token is expired, userinfo endpoint will not be called, nor cache checked.
+     *
+     * @generated from protobuf field: google.protobuf.Duration cache_ttl = 2;
+     */
+    cacheTtl?: Duration;
 }
 /**
  * Claim specify details about claim that will be mapped to IKG.
@@ -579,6 +692,209 @@ export interface TokenIntrospectConfig_Claim {
      * @generated from protobuf field: string selector = 1;
      */
     selector: string;
+}
+/**
+ * @generated from protobuf message indykite.auditsink.v1beta1.ConsentConfiguration
+ */
+export interface ConsentConfiguration {
+    /**
+     * Purpose is a human readable description of the purpose of the consent.
+     *
+     * @generated from protobuf field: string purpose = 1;
+     */
+    purpose: string;
+    /**
+     * Data points is a list of properties related to the Digital twin that the consent is for.
+     *
+     * @generated from protobuf field: repeated string data_points = 2;
+     */
+    dataPoints: string[];
+    /**
+     * @generated from protobuf field: string application_id = 3;
+     */
+    applicationId: string;
+    /**
+     * ValidityPeriod is the time in seconds that the consent is valid for.
+     * The minimum value is 1 day and the maximum value is 2 years.
+     *
+     * @generated from protobuf field: uint64 validity_period = 4;
+     */
+    validityPeriod: string;
+    /**
+     * Revoke after use is a boolean that determines if the consent should be revoked after it has been used.
+     *
+     * @generated from protobuf field: bool revoke_after_use = 5;
+     */
+    revokeAfterUse: boolean;
+    /**
+     * @generated from protobuf field: indykite.auditsink.v1beta1.ExternalTokenStatus token_status = 7;
+     */
+    tokenStatus: ExternalTokenStatus;
+}
+/**
+ * @generated from protobuf message indykite.auditsink.v1beta1.IngestPipelineConfig
+ */
+export interface IngestPipelineConfig {
+    /**
+     * @generated from protobuf field: repeated string sources = 1;
+     */
+    sources: string[];
+    /**
+     * @generated from protobuf field: repeated indykite.auditsink.v1beta1.IngestPipelineOperation operations = 2;
+     */
+    operations: IngestPipelineOperation[];
+    /**
+     * @generated from protobuf field: string app_agent_token = 3;
+     */
+    appAgentToken: string;
+}
+/**
+ * @generated from protobuf message indykite.auditsink.v1beta1.IdentityMatchingPipelineConfig
+ */
+export interface IdentityMatchingPipelineConfig {
+    /**
+     * NodeFilter contain a list of source types and a list target node types that will be evaluated.
+     *
+     * @generated from protobuf field: indykite.auditsink.v1beta1.IdentityMatchingPipelineConfig.NodeFilter node_filter = 1;
+     */
+    nodeFilter?: IdentityMatchingPipelineConfig_NodeFilter;
+    /**
+     * SimilarityScoreCutoff defines the threshold (in range [0,1]), above which identities will be automatically matched.
+     *
+     * @generated from protobuf field: float similarity_score_cutoff = 2;
+     */
+    similarityScoreCutoff: number;
+    /**
+     * PropertyMappingStatus is the status assigned to the pipeline's step that maps node types' properties.
+     *
+     * @generated from protobuf field: indykite.auditsink.v1beta1.IdentityMatchingPipelineConfig.Status property_mapping_status = 3;
+     */
+    propertyMappingStatus: IdentityMatchingPipelineConfig_Status;
+    /**
+     * Output only. Any error message from the property mapping analysis explaining the current property_mapping_status.
+     *
+     * @generated from protobuf field: google.protobuf.StringValue property_mapping_message = 8;
+     */
+    propertyMappingMessage?: StringValue;
+    /**
+     * EntityMappingStatus is the status assigned to the pipeline's step that matches node identities.
+     *
+     * @generated from protobuf field: indykite.auditsink.v1beta1.IdentityMatchingPipelineConfig.Status entity_matching_status = 4;
+     */
+    entityMatchingStatus: IdentityMatchingPipelineConfig_Status;
+    /**
+     * Output only. Any error message from the entity matching analysis explaining the current entity_matching_status.
+     *
+     * @generated from protobuf field: google.protobuf.StringValue entity_matching_message = 9;
+     */
+    entityMatchingMessage?: StringValue;
+    /**
+     * PropertyMappings contains the rules the pipeline will use to match source nodes with target nodes.
+     *
+     * @generated from protobuf field: repeated indykite.auditsink.v1beta1.IdentityMatchingPipelineConfig.PropertyMapping property_mappings = 5;
+     */
+    propertyMappings: IdentityMatchingPipelineConfig_PropertyMapping[];
+    /**
+     * RerunInterval is the time between scheduled re-runs.
+     *
+     * @generated from protobuf field: string rerun_interval = 6;
+     */
+    rerunInterval: string;
+    /**
+     * Output only. The time at which the pipeline was last run.
+     *
+     * @generated from protobuf field: google.protobuf.Timestamp last_run_time = 7;
+     */
+    lastRunTime?: Timestamp;
+    /**
+     * Output only. The gcs url where the analysis report is stored.
+     *
+     * @generated from protobuf field: google.protobuf.StringValue report_url = 10;
+     */
+    reportUrl?: StringValue;
+    /**
+     * Output only. The format in which the report is stored.
+     *
+     * @generated from protobuf field: google.protobuf.StringValue report_type = 11;
+     */
+    reportType?: StringValue;
+}
+/**
+ * @generated from protobuf message indykite.auditsink.v1beta1.IdentityMatchingPipelineConfig.NodeFilter
+ */
+export interface IdentityMatchingPipelineConfig_NodeFilter {
+    /**
+     * SourceNodeTypes is a list of node types that will be compared against the nodes with type in TargetNodeTypes.
+     *
+     * @generated from protobuf field: repeated string source_node_types = 1;
+     */
+    sourceNodeTypes: string[];
+    /**
+     * TargetNodeTypes is a list of node types that will be compared against the nodes with type in SourceNodeTypes.
+     *
+     * @generated from protobuf field: repeated string target_node_types = 2;
+     */
+    targetNodeTypes: string[];
+}
+/**
+ * @generated from protobuf message indykite.auditsink.v1beta1.IdentityMatchingPipelineConfig.PropertyMapping
+ */
+export interface IdentityMatchingPipelineConfig_PropertyMapping {
+    /**
+     * SourceNodeType is the type of the node that will be compared to nodes of TargetNodeType.
+     *
+     * @generated from protobuf field: string source_node_type = 1;
+     */
+    sourceNodeType: string;
+    /**
+     * SourceNodeProperty is a property of the source node that will be compared to TargetNodeProperty.
+     *
+     * @generated from protobuf field: string source_node_property = 2;
+     */
+    sourceNodeProperty: string;
+    /**
+     * TargetNodeType is the type of the node that will be compared to nodes of SourceNodeType.
+     *
+     * @generated from protobuf field: string target_node_type = 3;
+     */
+    targetNodeType: string;
+    /**
+     * TargetNodeProperty is a property of the source node that will be compared to SourceNodeProperty.
+     *
+     * @generated from protobuf field: string target_node_property = 4;
+     */
+    targetNodeProperty: string;
+    /**
+     * SimilarityScoreCutoff defines the threshold (in range [0,1]), above which identities will be automatically matched.
+     *
+     * @generated from protobuf field: float similarity_score_cutoff = 5;
+     */
+    similarityScoreCutoff: number;
+}
+/**
+ * @generated from protobuf enum indykite.auditsink.v1beta1.IdentityMatchingPipelineConfig.Status
+ */
+export enum IdentityMatchingPipelineConfig_Status {
+    /**
+     * @generated from protobuf enum value: STATUS_INVALID = 0;
+     */
+    INVALID = 0,
+    /**
+     * @generated from protobuf enum value: STATUS_PENDING = 1;
+     */
+    PENDING = 1,
+    /**
+     * @generated from protobuf enum value: STATUS_IN_PROGRESS = 2;
+     */
+    IN_PROGRESS = 2,
+    /**
+     * @generated from protobuf enum value: STATUS_SUCCESS = 3;
+     */
+    SUCCESS = 3,
+    /**
+     * @generated from protobuf enum value: STATUS_ERROR = 4;
+     */
+    ERROR = 4
 }
 /**
  * ConfigType is equivalent to internal DocumentType, for easier maintenance keep same numbers.
@@ -648,7 +964,69 @@ export enum ConfigType {
     /**
      * @generated from protobuf enum value: CONFIG_TYPE_INGEST_PIPELINE = 31;
      */
-    INGEST_PIPELINE = 31
+    INGEST_PIPELINE = 31,
+    /**
+     * @generated from protobuf enum value: CONFIG_TYPE_IDENTITY_MATCHING_PIPELINE = 32;
+     */
+    IDENTITY_MATCHING_PIPELINE = 32,
+    /**
+     * @generated from protobuf enum value: CONFIG_TYPE_EXTERNAL_DATA_RESOLVER = 33;
+     */
+    EXTERNAL_DATA_RESOLVER = 33
+}
+/**
+ * @generated from protobuf enum indykite.auditsink.v1beta1.ExternalTokenStatus
+ */
+export enum ExternalTokenStatus {
+    /**
+     * @generated from protobuf enum value: EXTERNAL_TOKEN_STATUS_INVALID = 0;
+     */
+    INVALID = 0,
+    /**
+     * @generated from protobuf enum value: EXTERNAL_TOKEN_STATUS_ENFORCE = 1;
+     */
+    ENFORCE = 1,
+    /**
+     * @generated from protobuf enum value: EXTERNAL_TOKEN_STATUS_ALLOW = 2;
+     */
+    ALLOW = 2,
+    /**
+     * @generated from protobuf enum value: EXTERNAL_TOKEN_STATUS_DISALLOW = 3;
+     */
+    DISALLOW = 3
+}
+/**
+ * @generated from protobuf enum indykite.auditsink.v1beta1.IngestPipelineOperation
+ */
+export enum IngestPipelineOperation {
+    /**
+     * @generated from protobuf enum value: INGEST_PIPELINE_OPERATION_INVALID = 0;
+     */
+    INVALID = 0,
+    /**
+     * @generated from protobuf enum value: INGEST_PIPELINE_OPERATION_UPSERT_NODE = 1;
+     */
+    UPSERT_NODE = 1,
+    /**
+     * @generated from protobuf enum value: INGEST_PIPELINE_OPERATION_UPSERT_RELATIONSHIP = 2;
+     */
+    UPSERT_RELATIONSHIP = 2,
+    /**
+     * @generated from protobuf enum value: INGEST_PIPELINE_OPERATION_DELETE_NODE = 3;
+     */
+    DELETE_NODE = 3,
+    /**
+     * @generated from protobuf enum value: INGEST_PIPELINE_OPERATION_DELETE_RELATIONSHIP = 4;
+     */
+    DELETE_RELATIONSHIP = 4,
+    /**
+     * @generated from protobuf enum value: INGEST_PIPELINE_OPERATION_DELETE_NODE_PROPERTY = 5;
+     */
+    DELETE_NODE_PROPERTY = 5,
+    /**
+     * @generated from protobuf enum value: INGEST_PIPELINE_OPERATION_DELETE_RELATIONSHIP_PROPERTY = 6;
+     */
+    DELETE_RELATIONSHIP_PROPERTY = 6
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class ContainersPath$Type extends MessageType<ContainersPath> {
@@ -1117,8 +1495,10 @@ class ConfigDetail$Type extends MessageType<ConfigDetail> {
             { no: 12, name: "audit_sink_config", kind: "message", oneof: "configuration", T: () => AuditSinkConfig },
             { no: 15, name: "authorization_policy_config", kind: "message", oneof: "configuration", T: () => AuthorizationPolicyConfig },
             { no: 19, name: "token_introspect_config", kind: "message", oneof: "configuration", T: () => TokenIntrospectConfig },
+            { no: 22, name: "external_data_resolver_config", kind: "message", oneof: "configuration", T: () => ExternalDataResolverConfig },
             { no: 18, name: "consent_config", kind: "message", oneof: "configuration", T: () => ConsentConfiguration },
-            { no: 20, name: "ingest_pipeline_config", kind: "message", oneof: "configuration", T: () => IngestPipelineConfig }
+            { no: 20, name: "ingest_pipeline_config", kind: "message", oneof: "configuration", T: () => IngestPipelineConfig },
+            { no: 21, name: "identity_matching_pipeline_config", kind: "message", oneof: "configuration", T: () => IdentityMatchingPipelineConfig }
         ]);
     }
     create(value?: PartialMessage<ConfigDetail>): ConfigDetail {
@@ -1175,16 +1555,28 @@ class ConfigDetail$Type extends MessageType<ConfigDetail> {
                         tokenIntrospectConfig: TokenIntrospectConfig.internalBinaryRead(reader, reader.uint32(), options, (message.configuration as any).tokenIntrospectConfig)
                     };
                     break;
-                case /* indykite.config.v1beta1.ConsentConfiguration consent_config */ 18:
+                case /* indykite.auditsink.v1beta1.ExternalDataResolverConfig external_data_resolver_config */ 22:
+                    message.configuration = {
+                        oneofKind: "externalDataResolverConfig",
+                        externalDataResolverConfig: ExternalDataResolverConfig.internalBinaryRead(reader, reader.uint32(), options, (message.configuration as any).externalDataResolverConfig)
+                    };
+                    break;
+                case /* indykite.auditsink.v1beta1.ConsentConfiguration consent_config */ 18:
                     message.configuration = {
                         oneofKind: "consentConfig",
                         consentConfig: ConsentConfiguration.internalBinaryRead(reader, reader.uint32(), options, (message.configuration as any).consentConfig)
                     };
                     break;
-                case /* indykite.config.v1beta1.IngestPipelineConfig ingest_pipeline_config */ 20:
+                case /* indykite.auditsink.v1beta1.IngestPipelineConfig ingest_pipeline_config */ 20:
                     message.configuration = {
                         oneofKind: "ingestPipelineConfig",
                         ingestPipelineConfig: IngestPipelineConfig.internalBinaryRead(reader, reader.uint32(), options, (message.configuration as any).ingestPipelineConfig)
+                    };
+                    break;
+                case /* indykite.auditsink.v1beta1.IdentityMatchingPipelineConfig identity_matching_pipeline_config */ 21:
+                    message.configuration = {
+                        oneofKind: "identityMatchingPipelineConfig",
+                        identityMatchingPipelineConfig: IdentityMatchingPipelineConfig.internalBinaryRead(reader, reader.uint32(), options, (message.configuration as any).identityMatchingPipelineConfig)
                     };
                     break;
                 default:
@@ -1226,12 +1618,18 @@ class ConfigDetail$Type extends MessageType<ConfigDetail> {
         /* indykite.auditsink.v1beta1.TokenIntrospectConfig token_introspect_config = 19; */
         if (message.configuration.oneofKind === "tokenIntrospectConfig")
             TokenIntrospectConfig.internalBinaryWrite(message.configuration.tokenIntrospectConfig, writer.tag(19, WireType.LengthDelimited).fork(), options).join();
-        /* indykite.config.v1beta1.ConsentConfiguration consent_config = 18; */
+        /* indykite.auditsink.v1beta1.ExternalDataResolverConfig external_data_resolver_config = 22; */
+        if (message.configuration.oneofKind === "externalDataResolverConfig")
+            ExternalDataResolverConfig.internalBinaryWrite(message.configuration.externalDataResolverConfig, writer.tag(22, WireType.LengthDelimited).fork(), options).join();
+        /* indykite.auditsink.v1beta1.ConsentConfiguration consent_config = 18; */
         if (message.configuration.oneofKind === "consentConfig")
             ConsentConfiguration.internalBinaryWrite(message.configuration.consentConfig, writer.tag(18, WireType.LengthDelimited).fork(), options).join();
-        /* indykite.config.v1beta1.IngestPipelineConfig ingest_pipeline_config = 20; */
+        /* indykite.auditsink.v1beta1.IngestPipelineConfig ingest_pipeline_config = 20; */
         if (message.configuration.oneofKind === "ingestPipelineConfig")
             IngestPipelineConfig.internalBinaryWrite(message.configuration.ingestPipelineConfig, writer.tag(20, WireType.LengthDelimited).fork(), options).join();
+        /* indykite.auditsink.v1beta1.IdentityMatchingPipelineConfig identity_matching_pipeline_config = 21; */
+        if (message.configuration.oneofKind === "identityMatchingPipelineConfig")
+            IdentityMatchingPipelineConfig.internalBinaryWrite(message.configuration.identityMatchingPipelineConfig, writer.tag(21, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -1511,6 +1909,111 @@ class AuditSinkConfig_Kafka$Type extends MessageType<AuditSinkConfig_Kafka> {
  */
 export const AuditSinkConfig_Kafka = new AuditSinkConfig_Kafka$Type();
 // @generated message type with reflection information, may provide speed optimized methods
+class ExternalDataResolverConfig$Type extends MessageType<ExternalDataResolverConfig> {
+    constructor() {
+        super("indykite.auditsink.v1beta1.ExternalDataResolverConfig", [
+            { no: 1, name: "url", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 2, name: "method", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 3, name: "headers", kind: "map", K: 9 /*ScalarType.STRING*/, V: { kind: "scalar", T: 9 /*ScalarType.STRING*/ } },
+            { no: 4, name: "request_type", kind: "enum", T: () => ["indykite.auditsink.v1beta1.ExternalDataResolverConfig.ContentType", ExternalDataResolverConfig_ContentType, "CONTENT_TYPE_"] },
+            { no: 5, name: "request_payload", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 6, name: "response_type", kind: "enum", T: () => ["indykite.auditsink.v1beta1.ExternalDataResolverConfig.ContentType", ExternalDataResolverConfig_ContentType, "CONTENT_TYPE_"] },
+            { no: 7, name: "response_selector", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+        ]);
+    }
+    create(value?: PartialMessage<ExternalDataResolverConfig>): ExternalDataResolverConfig {
+        const message = { url: "", method: "", headers: {}, requestType: 0, requestPayload: "", responseType: 0, responseSelector: "" };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<ExternalDataResolverConfig>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ExternalDataResolverConfig): ExternalDataResolverConfig {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string url */ 1:
+                    message.url = reader.string();
+                    break;
+                case /* string method */ 2:
+                    message.method = reader.string();
+                    break;
+                case /* map<string, string> headers */ 3:
+                    this.binaryReadMap3(message.headers, reader, options);
+                    break;
+                case /* indykite.auditsink.v1beta1.ExternalDataResolverConfig.ContentType request_type */ 4:
+                    message.requestType = reader.int32();
+                    break;
+                case /* string request_payload */ 5:
+                    message.requestPayload = reader.string();
+                    break;
+                case /* indykite.auditsink.v1beta1.ExternalDataResolverConfig.ContentType response_type */ 6:
+                    message.responseType = reader.int32();
+                    break;
+                case /* string response_selector */ 7:
+                    message.responseSelector = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    private binaryReadMap3(map: ExternalDataResolverConfig["headers"], reader: IBinaryReader, options: BinaryReadOptions): void {
+        let len = reader.uint32(), end = reader.pos + len, key: keyof ExternalDataResolverConfig["headers"] | undefined, val: ExternalDataResolverConfig["headers"][any] | undefined;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case 1:
+                    key = reader.string();
+                    break;
+                case 2:
+                    val = reader.string();
+                    break;
+                default: throw new globalThis.Error("unknown map entry field for field indykite.auditsink.v1beta1.ExternalDataResolverConfig.headers");
+            }
+        }
+        map[key ?? ""] = val ?? "";
+    }
+    internalBinaryWrite(message: ExternalDataResolverConfig, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string url = 1; */
+        if (message.url !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.url);
+        /* string method = 2; */
+        if (message.method !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.method);
+        /* map<string, string> headers = 3; */
+        for (let k of Object.keys(message.headers))
+            writer.tag(3, WireType.LengthDelimited).fork().tag(1, WireType.LengthDelimited).string(k).tag(2, WireType.LengthDelimited).string(message.headers[k]).join();
+        /* indykite.auditsink.v1beta1.ExternalDataResolverConfig.ContentType request_type = 4; */
+        if (message.requestType !== 0)
+            writer.tag(4, WireType.Varint).int32(message.requestType);
+        /* string request_payload = 5; */
+        if (message.requestPayload !== "")
+            writer.tag(5, WireType.LengthDelimited).string(message.requestPayload);
+        /* indykite.auditsink.v1beta1.ExternalDataResolverConfig.ContentType response_type = 6; */
+        if (message.responseType !== 0)
+            writer.tag(6, WireType.Varint).int32(message.responseType);
+        /* string response_selector = 7; */
+        if (message.responseSelector !== "")
+            writer.tag(7, WireType.LengthDelimited).string(message.responseSelector);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message indykite.auditsink.v1beta1.ExternalDataResolverConfig
+ */
+export const ExternalDataResolverConfig = new ExternalDataResolverConfig$Type();
+// @generated message type with reflection information, may provide speed optimized methods
 class AuthorizationPolicyConfig$Type extends MessageType<AuthorizationPolicyConfig> {
     constructor() {
         super("indykite.auditsink.v1beta1.AuthorizationPolicyConfig", [
@@ -1740,7 +2243,9 @@ class TokenIntrospectConfig$Type extends MessageType<TokenIntrospectConfig> {
     constructor() {
         super("indykite.auditsink.v1beta1.TokenIntrospectConfig", [
             { no: 1, name: "jwt", kind: "message", oneof: "tokenMatcher", T: () => TokenIntrospectConfig_JWT },
+            { no: 2, name: "opaque", kind: "message", oneof: "tokenMatcher", T: () => TokenIntrospectConfig_Opaque },
             { no: 3, name: "offline", kind: "message", oneof: "validation", T: () => TokenIntrospectConfig_Offline },
+            { no: 4, name: "online", kind: "message", oneof: "validation", T: () => TokenIntrospectConfig_Online },
             { no: 7, name: "claims_mapping", kind: "map", K: 9 /*ScalarType.STRING*/, V: { kind: "message", T: () => TokenIntrospectConfig_Claim } },
             { no: 5, name: "ikg_node_type", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 6, name: "perform_upsert", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
@@ -1764,10 +2269,22 @@ class TokenIntrospectConfig$Type extends MessageType<TokenIntrospectConfig> {
                         jwt: TokenIntrospectConfig_JWT.internalBinaryRead(reader, reader.uint32(), options, (message.tokenMatcher as any).jwt)
                     };
                     break;
+                case /* indykite.auditsink.v1beta1.TokenIntrospectConfig.Opaque opaque */ 2:
+                    message.tokenMatcher = {
+                        oneofKind: "opaque",
+                        opaque: TokenIntrospectConfig_Opaque.internalBinaryRead(reader, reader.uint32(), options, (message.tokenMatcher as any).opaque)
+                    };
+                    break;
                 case /* indykite.auditsink.v1beta1.TokenIntrospectConfig.Offline offline */ 3:
                     message.validation = {
                         oneofKind: "offline",
                         offline: TokenIntrospectConfig_Offline.internalBinaryRead(reader, reader.uint32(), options, (message.validation as any).offline)
+                    };
+                    break;
+                case /* indykite.auditsink.v1beta1.TokenIntrospectConfig.Online online */ 4:
+                    message.validation = {
+                        oneofKind: "online",
+                        online: TokenIntrospectConfig_Online.internalBinaryRead(reader, reader.uint32(), options, (message.validation as any).online)
                     };
                     break;
                 case /* map<string, indykite.auditsink.v1beta1.TokenIntrospectConfig.Claim> claims_mapping */ 7:
@@ -1810,9 +2327,15 @@ class TokenIntrospectConfig$Type extends MessageType<TokenIntrospectConfig> {
         /* indykite.auditsink.v1beta1.TokenIntrospectConfig.JWT jwt = 1; */
         if (message.tokenMatcher.oneofKind === "jwt")
             TokenIntrospectConfig_JWT.internalBinaryWrite(message.tokenMatcher.jwt, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* indykite.auditsink.v1beta1.TokenIntrospectConfig.Opaque opaque = 2; */
+        if (message.tokenMatcher.oneofKind === "opaque")
+            TokenIntrospectConfig_Opaque.internalBinaryWrite(message.tokenMatcher.opaque, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         /* indykite.auditsink.v1beta1.TokenIntrospectConfig.Offline offline = 3; */
         if (message.validation.oneofKind === "offline")
             TokenIntrospectConfig_Offline.internalBinaryWrite(message.validation.offline, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        /* indykite.auditsink.v1beta1.TokenIntrospectConfig.Online online = 4; */
+        if (message.validation.oneofKind === "online")
+            TokenIntrospectConfig_Online.internalBinaryWrite(message.validation.online, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
         /* map<string, indykite.auditsink.v1beta1.TokenIntrospectConfig.Claim> claims_mapping = 7; */
         for (let k of Object.keys(message.claimsMapping)) {
             writer.tag(7, WireType.LengthDelimited).fork().tag(1, WireType.LengthDelimited).string(k);
@@ -1891,6 +2414,32 @@ class TokenIntrospectConfig_JWT$Type extends MessageType<TokenIntrospectConfig_J
  */
 export const TokenIntrospectConfig_JWT = new TokenIntrospectConfig_JWT$Type();
 // @generated message type with reflection information, may provide speed optimized methods
+class TokenIntrospectConfig_Opaque$Type extends MessageType<TokenIntrospectConfig_Opaque> {
+    constructor() {
+        super("indykite.auditsink.v1beta1.TokenIntrospectConfig.Opaque", []);
+    }
+    create(value?: PartialMessage<TokenIntrospectConfig_Opaque>): TokenIntrospectConfig_Opaque {
+        const message = {};
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<TokenIntrospectConfig_Opaque>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: TokenIntrospectConfig_Opaque): TokenIntrospectConfig_Opaque {
+        return target ?? this.create();
+    }
+    internalBinaryWrite(message: TokenIntrospectConfig_Opaque, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message indykite.auditsink.v1beta1.TokenIntrospectConfig.Opaque
+ */
+export const TokenIntrospectConfig_Opaque = new TokenIntrospectConfig_Opaque$Type();
+// @generated message type with reflection information, may provide speed optimized methods
 class TokenIntrospectConfig_Offline$Type extends MessageType<TokenIntrospectConfig_Offline> {
     constructor() {
         super("indykite.auditsink.v1beta1.TokenIntrospectConfig.Offline", [
@@ -1938,6 +2487,60 @@ class TokenIntrospectConfig_Offline$Type extends MessageType<TokenIntrospectConf
  */
 export const TokenIntrospectConfig_Offline = new TokenIntrospectConfig_Offline$Type();
 // @generated message type with reflection information, may provide speed optimized methods
+class TokenIntrospectConfig_Online$Type extends MessageType<TokenIntrospectConfig_Online> {
+    constructor() {
+        super("indykite.auditsink.v1beta1.TokenIntrospectConfig.Online", [
+            { no: 1, name: "userinfo_endpoint", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 2, name: "cache_ttl", kind: "message", T: () => Duration }
+        ]);
+    }
+    create(value?: PartialMessage<TokenIntrospectConfig_Online>): TokenIntrospectConfig_Online {
+        const message = { userinfoEndpoint: "" };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<TokenIntrospectConfig_Online>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: TokenIntrospectConfig_Online): TokenIntrospectConfig_Online {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string userinfo_endpoint */ 1:
+                    message.userinfoEndpoint = reader.string();
+                    break;
+                case /* google.protobuf.Duration cache_ttl */ 2:
+                    message.cacheTtl = Duration.internalBinaryRead(reader, reader.uint32(), options, message.cacheTtl);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: TokenIntrospectConfig_Online, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string userinfo_endpoint = 1; */
+        if (message.userinfoEndpoint !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.userinfoEndpoint);
+        /* google.protobuf.Duration cache_ttl = 2; */
+        if (message.cacheTtl)
+            Duration.internalBinaryWrite(message.cacheTtl, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message indykite.auditsink.v1beta1.TokenIntrospectConfig.Online
+ */
+export const TokenIntrospectConfig_Online = new TokenIntrospectConfig_Online$Type();
+// @generated message type with reflection information, may provide speed optimized methods
 class TokenIntrospectConfig_Claim$Type extends MessageType<TokenIntrospectConfig_Claim> {
     constructor() {
         super("indykite.auditsink.v1beta1.TokenIntrospectConfig.Claim", [
@@ -1984,3 +2587,400 @@ class TokenIntrospectConfig_Claim$Type extends MessageType<TokenIntrospectConfig
  * @generated MessageType for protobuf message indykite.auditsink.v1beta1.TokenIntrospectConfig.Claim
  */
 export const TokenIntrospectConfig_Claim = new TokenIntrospectConfig_Claim$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ConsentConfiguration$Type extends MessageType<ConsentConfiguration> {
+    constructor() {
+        super("indykite.auditsink.v1beta1.ConsentConfiguration", [
+            { no: 1, name: "purpose", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 2, name: "data_points", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/ },
+            { no: 3, name: "application_id", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 4, name: "validity_period", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 5, name: "revoke_after_use", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 7, name: "token_status", kind: "enum", T: () => ["indykite.auditsink.v1beta1.ExternalTokenStatus", ExternalTokenStatus, "EXTERNAL_TOKEN_STATUS_"] }
+        ]);
+    }
+    create(value?: PartialMessage<ConsentConfiguration>): ConsentConfiguration {
+        const message = { purpose: "", dataPoints: [], applicationId: "", validityPeriod: "0", revokeAfterUse: false, tokenStatus: 0 };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<ConsentConfiguration>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ConsentConfiguration): ConsentConfiguration {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string purpose */ 1:
+                    message.purpose = reader.string();
+                    break;
+                case /* repeated string data_points */ 2:
+                    message.dataPoints.push(reader.string());
+                    break;
+                case /* string application_id */ 3:
+                    message.applicationId = reader.string();
+                    break;
+                case /* uint64 validity_period */ 4:
+                    message.validityPeriod = reader.uint64().toString();
+                    break;
+                case /* bool revoke_after_use */ 5:
+                    message.revokeAfterUse = reader.bool();
+                    break;
+                case /* indykite.auditsink.v1beta1.ExternalTokenStatus token_status */ 7:
+                    message.tokenStatus = reader.int32();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ConsentConfiguration, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string purpose = 1; */
+        if (message.purpose !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.purpose);
+        /* repeated string data_points = 2; */
+        for (let i = 0; i < message.dataPoints.length; i++)
+            writer.tag(2, WireType.LengthDelimited).string(message.dataPoints[i]);
+        /* string application_id = 3; */
+        if (message.applicationId !== "")
+            writer.tag(3, WireType.LengthDelimited).string(message.applicationId);
+        /* uint64 validity_period = 4; */
+        if (message.validityPeriod !== "0")
+            writer.tag(4, WireType.Varint).uint64(message.validityPeriod);
+        /* bool revoke_after_use = 5; */
+        if (message.revokeAfterUse !== false)
+            writer.tag(5, WireType.Varint).bool(message.revokeAfterUse);
+        /* indykite.auditsink.v1beta1.ExternalTokenStatus token_status = 7; */
+        if (message.tokenStatus !== 0)
+            writer.tag(7, WireType.Varint).int32(message.tokenStatus);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message indykite.auditsink.v1beta1.ConsentConfiguration
+ */
+export const ConsentConfiguration = new ConsentConfiguration$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class IngestPipelineConfig$Type extends MessageType<IngestPipelineConfig> {
+    constructor() {
+        super("indykite.auditsink.v1beta1.IngestPipelineConfig", [
+            { no: 1, name: "sources", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/ },
+            { no: 2, name: "operations", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["indykite.auditsink.v1beta1.IngestPipelineOperation", IngestPipelineOperation, "INGEST_PIPELINE_OPERATION_"] },
+            { no: 3, name: "app_agent_token", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+        ]);
+    }
+    create(value?: PartialMessage<IngestPipelineConfig>): IngestPipelineConfig {
+        const message = { sources: [], operations: [], appAgentToken: "" };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<IngestPipelineConfig>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: IngestPipelineConfig): IngestPipelineConfig {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* repeated string sources */ 1:
+                    message.sources.push(reader.string());
+                    break;
+                case /* repeated indykite.auditsink.v1beta1.IngestPipelineOperation operations */ 2:
+                    if (wireType === WireType.LengthDelimited)
+                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
+                            message.operations.push(reader.int32());
+                    else
+                        message.operations.push(reader.int32());
+                    break;
+                case /* string app_agent_token */ 3:
+                    message.appAgentToken = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: IngestPipelineConfig, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* repeated string sources = 1; */
+        for (let i = 0; i < message.sources.length; i++)
+            writer.tag(1, WireType.LengthDelimited).string(message.sources[i]);
+        /* repeated indykite.auditsink.v1beta1.IngestPipelineOperation operations = 2; */
+        if (message.operations.length) {
+            writer.tag(2, WireType.LengthDelimited).fork();
+            for (let i = 0; i < message.operations.length; i++)
+                writer.int32(message.operations[i]);
+            writer.join();
+        }
+        /* string app_agent_token = 3; */
+        if (message.appAgentToken !== "")
+            writer.tag(3, WireType.LengthDelimited).string(message.appAgentToken);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message indykite.auditsink.v1beta1.IngestPipelineConfig
+ */
+export const IngestPipelineConfig = new IngestPipelineConfig$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class IdentityMatchingPipelineConfig$Type extends MessageType<IdentityMatchingPipelineConfig> {
+    constructor() {
+        super("indykite.auditsink.v1beta1.IdentityMatchingPipelineConfig", [
+            { no: 1, name: "node_filter", kind: "message", T: () => IdentityMatchingPipelineConfig_NodeFilter },
+            { no: 2, name: "similarity_score_cutoff", kind: "scalar", T: 2 /*ScalarType.FLOAT*/ },
+            { no: 3, name: "property_mapping_status", kind: "enum", T: () => ["indykite.auditsink.v1beta1.IdentityMatchingPipelineConfig.Status", IdentityMatchingPipelineConfig_Status, "STATUS_"] },
+            { no: 8, name: "property_mapping_message", kind: "message", T: () => StringValue },
+            { no: 4, name: "entity_matching_status", kind: "enum", T: () => ["indykite.auditsink.v1beta1.IdentityMatchingPipelineConfig.Status", IdentityMatchingPipelineConfig_Status, "STATUS_"] },
+            { no: 9, name: "entity_matching_message", kind: "message", T: () => StringValue },
+            { no: 5, name: "property_mappings", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => IdentityMatchingPipelineConfig_PropertyMapping },
+            { no: 6, name: "rerun_interval", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 7, name: "last_run_time", kind: "message", T: () => Timestamp },
+            { no: 10, name: "report_url", kind: "message", T: () => StringValue },
+            { no: 11, name: "report_type", kind: "message", T: () => StringValue }
+        ]);
+    }
+    create(value?: PartialMessage<IdentityMatchingPipelineConfig>): IdentityMatchingPipelineConfig {
+        const message = { similarityScoreCutoff: 0, propertyMappingStatus: 0, entityMatchingStatus: 0, propertyMappings: [], rerunInterval: "" };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<IdentityMatchingPipelineConfig>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: IdentityMatchingPipelineConfig): IdentityMatchingPipelineConfig {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* indykite.auditsink.v1beta1.IdentityMatchingPipelineConfig.NodeFilter node_filter */ 1:
+                    message.nodeFilter = IdentityMatchingPipelineConfig_NodeFilter.internalBinaryRead(reader, reader.uint32(), options, message.nodeFilter);
+                    break;
+                case /* float similarity_score_cutoff */ 2:
+                    message.similarityScoreCutoff = reader.float();
+                    break;
+                case /* indykite.auditsink.v1beta1.IdentityMatchingPipelineConfig.Status property_mapping_status */ 3:
+                    message.propertyMappingStatus = reader.int32();
+                    break;
+                case /* google.protobuf.StringValue property_mapping_message */ 8:
+                    message.propertyMappingMessage = StringValue.internalBinaryRead(reader, reader.uint32(), options, message.propertyMappingMessage);
+                    break;
+                case /* indykite.auditsink.v1beta1.IdentityMatchingPipelineConfig.Status entity_matching_status */ 4:
+                    message.entityMatchingStatus = reader.int32();
+                    break;
+                case /* google.protobuf.StringValue entity_matching_message */ 9:
+                    message.entityMatchingMessage = StringValue.internalBinaryRead(reader, reader.uint32(), options, message.entityMatchingMessage);
+                    break;
+                case /* repeated indykite.auditsink.v1beta1.IdentityMatchingPipelineConfig.PropertyMapping property_mappings */ 5:
+                    message.propertyMappings.push(IdentityMatchingPipelineConfig_PropertyMapping.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                case /* string rerun_interval */ 6:
+                    message.rerunInterval = reader.string();
+                    break;
+                case /* google.protobuf.Timestamp last_run_time */ 7:
+                    message.lastRunTime = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.lastRunTime);
+                    break;
+                case /* google.protobuf.StringValue report_url */ 10:
+                    message.reportUrl = StringValue.internalBinaryRead(reader, reader.uint32(), options, message.reportUrl);
+                    break;
+                case /* google.protobuf.StringValue report_type */ 11:
+                    message.reportType = StringValue.internalBinaryRead(reader, reader.uint32(), options, message.reportType);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: IdentityMatchingPipelineConfig, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* indykite.auditsink.v1beta1.IdentityMatchingPipelineConfig.NodeFilter node_filter = 1; */
+        if (message.nodeFilter)
+            IdentityMatchingPipelineConfig_NodeFilter.internalBinaryWrite(message.nodeFilter, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* float similarity_score_cutoff = 2; */
+        if (message.similarityScoreCutoff !== 0)
+            writer.tag(2, WireType.Bit32).float(message.similarityScoreCutoff);
+        /* indykite.auditsink.v1beta1.IdentityMatchingPipelineConfig.Status property_mapping_status = 3; */
+        if (message.propertyMappingStatus !== 0)
+            writer.tag(3, WireType.Varint).int32(message.propertyMappingStatus);
+        /* google.protobuf.StringValue property_mapping_message = 8; */
+        if (message.propertyMappingMessage)
+            StringValue.internalBinaryWrite(message.propertyMappingMessage, writer.tag(8, WireType.LengthDelimited).fork(), options).join();
+        /* indykite.auditsink.v1beta1.IdentityMatchingPipelineConfig.Status entity_matching_status = 4; */
+        if (message.entityMatchingStatus !== 0)
+            writer.tag(4, WireType.Varint).int32(message.entityMatchingStatus);
+        /* google.protobuf.StringValue entity_matching_message = 9; */
+        if (message.entityMatchingMessage)
+            StringValue.internalBinaryWrite(message.entityMatchingMessage, writer.tag(9, WireType.LengthDelimited).fork(), options).join();
+        /* repeated indykite.auditsink.v1beta1.IdentityMatchingPipelineConfig.PropertyMapping property_mappings = 5; */
+        for (let i = 0; i < message.propertyMappings.length; i++)
+            IdentityMatchingPipelineConfig_PropertyMapping.internalBinaryWrite(message.propertyMappings[i], writer.tag(5, WireType.LengthDelimited).fork(), options).join();
+        /* string rerun_interval = 6; */
+        if (message.rerunInterval !== "")
+            writer.tag(6, WireType.LengthDelimited).string(message.rerunInterval);
+        /* google.protobuf.Timestamp last_run_time = 7; */
+        if (message.lastRunTime)
+            Timestamp.internalBinaryWrite(message.lastRunTime, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
+        /* google.protobuf.StringValue report_url = 10; */
+        if (message.reportUrl)
+            StringValue.internalBinaryWrite(message.reportUrl, writer.tag(10, WireType.LengthDelimited).fork(), options).join();
+        /* google.protobuf.StringValue report_type = 11; */
+        if (message.reportType)
+            StringValue.internalBinaryWrite(message.reportType, writer.tag(11, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message indykite.auditsink.v1beta1.IdentityMatchingPipelineConfig
+ */
+export const IdentityMatchingPipelineConfig = new IdentityMatchingPipelineConfig$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class IdentityMatchingPipelineConfig_NodeFilter$Type extends MessageType<IdentityMatchingPipelineConfig_NodeFilter> {
+    constructor() {
+        super("indykite.auditsink.v1beta1.IdentityMatchingPipelineConfig.NodeFilter", [
+            { no: 1, name: "source_node_types", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/ },
+            { no: 2, name: "target_node_types", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/ }
+        ]);
+    }
+    create(value?: PartialMessage<IdentityMatchingPipelineConfig_NodeFilter>): IdentityMatchingPipelineConfig_NodeFilter {
+        const message = { sourceNodeTypes: [], targetNodeTypes: [] };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<IdentityMatchingPipelineConfig_NodeFilter>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: IdentityMatchingPipelineConfig_NodeFilter): IdentityMatchingPipelineConfig_NodeFilter {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* repeated string source_node_types */ 1:
+                    message.sourceNodeTypes.push(reader.string());
+                    break;
+                case /* repeated string target_node_types */ 2:
+                    message.targetNodeTypes.push(reader.string());
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: IdentityMatchingPipelineConfig_NodeFilter, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* repeated string source_node_types = 1; */
+        for (let i = 0; i < message.sourceNodeTypes.length; i++)
+            writer.tag(1, WireType.LengthDelimited).string(message.sourceNodeTypes[i]);
+        /* repeated string target_node_types = 2; */
+        for (let i = 0; i < message.targetNodeTypes.length; i++)
+            writer.tag(2, WireType.LengthDelimited).string(message.targetNodeTypes[i]);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message indykite.auditsink.v1beta1.IdentityMatchingPipelineConfig.NodeFilter
+ */
+export const IdentityMatchingPipelineConfig_NodeFilter = new IdentityMatchingPipelineConfig_NodeFilter$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class IdentityMatchingPipelineConfig_PropertyMapping$Type extends MessageType<IdentityMatchingPipelineConfig_PropertyMapping> {
+    constructor() {
+        super("indykite.auditsink.v1beta1.IdentityMatchingPipelineConfig.PropertyMapping", [
+            { no: 1, name: "source_node_type", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 2, name: "source_node_property", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 3, name: "target_node_type", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 4, name: "target_node_property", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 5, name: "similarity_score_cutoff", kind: "scalar", T: 2 /*ScalarType.FLOAT*/ }
+        ]);
+    }
+    create(value?: PartialMessage<IdentityMatchingPipelineConfig_PropertyMapping>): IdentityMatchingPipelineConfig_PropertyMapping {
+        const message = { sourceNodeType: "", sourceNodeProperty: "", targetNodeType: "", targetNodeProperty: "", similarityScoreCutoff: 0 };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<IdentityMatchingPipelineConfig_PropertyMapping>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: IdentityMatchingPipelineConfig_PropertyMapping): IdentityMatchingPipelineConfig_PropertyMapping {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string source_node_type */ 1:
+                    message.sourceNodeType = reader.string();
+                    break;
+                case /* string source_node_property */ 2:
+                    message.sourceNodeProperty = reader.string();
+                    break;
+                case /* string target_node_type */ 3:
+                    message.targetNodeType = reader.string();
+                    break;
+                case /* string target_node_property */ 4:
+                    message.targetNodeProperty = reader.string();
+                    break;
+                case /* float similarity_score_cutoff */ 5:
+                    message.similarityScoreCutoff = reader.float();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: IdentityMatchingPipelineConfig_PropertyMapping, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string source_node_type = 1; */
+        if (message.sourceNodeType !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.sourceNodeType);
+        /* string source_node_property = 2; */
+        if (message.sourceNodeProperty !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.sourceNodeProperty);
+        /* string target_node_type = 3; */
+        if (message.targetNodeType !== "")
+            writer.tag(3, WireType.LengthDelimited).string(message.targetNodeType);
+        /* string target_node_property = 4; */
+        if (message.targetNodeProperty !== "")
+            writer.tag(4, WireType.LengthDelimited).string(message.targetNodeProperty);
+        /* float similarity_score_cutoff = 5; */
+        if (message.similarityScoreCutoff !== 0)
+            writer.tag(5, WireType.Bit32).float(message.similarityScoreCutoff);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message indykite.auditsink.v1beta1.IdentityMatchingPipelineConfig.PropertyMapping
+ */
+export const IdentityMatchingPipelineConfig_PropertyMapping = new IdentityMatchingPipelineConfig_PropertyMapping$Type();

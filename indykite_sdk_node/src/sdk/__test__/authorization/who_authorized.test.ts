@@ -82,8 +82,8 @@ describe('whoAuthorized', () => {
     });
 
     it('sends a correct request', () => {
-      expect(sdk['client'].whoAuthorized).toBeCalledTimes(1);
-      expect(sdk['client'].whoAuthorized).toBeCalledWith(
+      expect(sdk['client'].whoAuthorized).toHaveBeenCalledTimes(1);
+      expect(sdk['client'].whoAuthorized).toHaveBeenCalledWith(
         {
           inputParams: {},
           policyTags: [],

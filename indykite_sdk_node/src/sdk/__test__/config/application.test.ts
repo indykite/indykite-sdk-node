@@ -94,7 +94,7 @@ describe('createApplication', () => {
       });
 
       it('sends correct request', () => {
-        expect(createApplicationSpy).toBeCalledWith(
+        expect(createApplicationSpy).toHaveBeenCalledWith(
           {
             appSpaceId: 'app-space-id',
             name: 'application-name',
@@ -735,7 +735,7 @@ describe('updateApplication', () => {
       });
 
       it('sends correct request', () => {
-        expect(updateApplicationSpy).toBeCalledWith(
+        expect(updateApplicationSpy).toHaveBeenCalledWith(
           {
             id: 'application-id',
             bookmarks: [],
@@ -774,7 +774,7 @@ describe('updateApplication', () => {
       });
 
       it('sends correct request', () => {
-        expect(updateApplicationSpy).toBeCalledWith(
+        expect(updateApplicationSpy).toHaveBeenCalledWith(
           {
             id: 'application-id',
             etag: { value: '555' },
@@ -975,7 +975,7 @@ describe('deleteApplication', () => {
     });
 
     it('sends correct request', () => {
-      expect(deleteApplicationSpy).toBeCalledWith(
+      expect(deleteApplicationSpy).toHaveBeenCalledWith(
         {
           id: 'application-id',
           etag: { value: 'etag-token' },

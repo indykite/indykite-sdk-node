@@ -26,7 +26,7 @@ describe('when a new client is created', () => {
     });
 
     it('creates a new instance', () => {
-      expect(SdkClient.createIdentityInstance).toBeCalledWith(
+      expect(SdkClient.createIdentityInstance).toHaveBeenCalledWith(
         AuthorizationAPIClient,
         JSON.stringify(applicationTokenMock),
       );
@@ -50,7 +50,7 @@ describe('when a new client is created', () => {
     });
 
     it('throws an error', () => {
-      expect(SdkClient.createIdentityInstance).toBeCalledWith(
+      expect(SdkClient.createIdentityInstance).toHaveBeenCalledWith(
         AuthorizationAPIClient,
         JSON.stringify(applicationTokenMock),
       );
