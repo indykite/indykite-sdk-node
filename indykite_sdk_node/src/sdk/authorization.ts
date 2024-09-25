@@ -24,7 +24,7 @@ export type InputParameters = string | boolean | number;
 
 export const DIGITAL_TWIN_ID = 'digitalTwinId';
 export const DIGITAL_TWIN_PROPERTY = 'digitalTwinProperty';
-export const DIGITAL_TWIN_ACCESS_TOKEN = 'indykiteAccessToken';
+export const DIGITAL_TWIN_ACCESS_TOKEN = 'accessToken';
 export const DIGITAL_TWIN_EXTERNAL_ID = 'externalId';
 
 /**
@@ -220,7 +220,7 @@ export class AuthorizationClient {
       subject: {
         subject: {
           oneofKind: DIGITAL_TWIN_ACCESS_TOKEN,
-          indykiteAccessToken: token,
+          accessToken: token,
         },
       },
       inputParams,
@@ -445,7 +445,7 @@ export class AuthorizationClient {
       subject: {
         subject: {
           oneofKind: DIGITAL_TWIN_ACCESS_TOKEN,
-          indykiteAccessToken: token,
+          accessToken: token,
         },
       },
       inputParams,

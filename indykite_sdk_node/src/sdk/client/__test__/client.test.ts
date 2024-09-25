@@ -17,7 +17,7 @@ import {
   StatusObject,
 } from '@grpc/grpc-js';
 import { LIB_VERSION } from '../../../version';
-import { IdentityManagementAPIClient } from '../../../grpc/indykite/identity/v1beta2/identity_management_api.grpc-client';
+import { IngestAPIClient } from '../../../grpc/indykite/ingest/v1beta3/ingest_api.grpc-client';
 import * as ClientInterceptors from '@grpc/grpc-js/build/src/client-interceptors';
 import { CallMetadataOptions } from '@grpc/grpc-js/build/src/call-credentials';
 import { Status } from '@grpc/grpc-js/build/src/constants';
@@ -38,7 +38,7 @@ const appCredential = {
   },
 };
 
-class IdentityManagementAPIClientMock extends IdentityManagementAPIClient {
+class IngestAPIClientMock extends IngestAPIClient {
   endpoint: string;
   channelCredentials: ChannelCredentials;
   interceptors: Interceptor[];
@@ -237,11 +237,8 @@ describe('call credential', () => {
     ) => ClientInterceptors.InterceptingCall;
 
     beforeEach(async () => {
-      const sdk = await SdkClient.createServiceInstance(
-        IdentityManagementAPIClientMock,
-        appCredential,
-      );
-      const client = sdk.client as IdentityManagementAPIClientMock;
+      const sdk = await SdkClient.createServiceInstance(IngestAPIClientMock, appCredential);
+      const client = sdk.client as IngestAPIClientMock;
       expect(client.interceptors).toHaveLength(2);
       [credentialsInterceptor, unauthenticatedStatusInterceptor] = client.interceptors;
     });

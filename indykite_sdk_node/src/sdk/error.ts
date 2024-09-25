@@ -5,6 +5,8 @@ export enum SdkErrorCode {
   SDK_CODE_4 = 4,
   SDK_CODE_5 = 5,
   SDK_CODE_6 = 6,
+  SDK_CODE_7 = 7,
+  SDK_CODE_8 = 8,
 }
 
 export class SkdErrorText {
@@ -16,6 +18,8 @@ export class SkdErrorText {
     `Update returned with different id: request.id=${id1}, response.id=${id2 ?? 'undefined'}.`;
   static SDK_CODE_5 = (s: string) => `No data in ${s} response`;
   static SDK_CODE_6 = (s: string) => `No ${s} record response`;
+  static SDK_CODE_7 = (s: string) => `You cannot have ${s} `;
+  static SDK_CODE_8 = (s: string) => `Missing parameter: ${s} `;
 }
 
 export class SdkError extends Error {

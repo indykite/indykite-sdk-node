@@ -302,8 +302,8 @@ describe('isAuthorizedByToken', () => {
     });
 
     it('sends a correct request', () => {
-      expect(sdk['client'].isAuthorized).toBeCalledTimes(1);
-      expect(sdk['client'].isAuthorized).toBeCalledWith(
+      expect(sdk['client'].isAuthorized).toHaveBeenCalledTimes(1);
+      expect(sdk['client'].isAuthorized).toHaveBeenCalledWith(
         {
           inputParams: {
             someInputParam: {
@@ -316,8 +316,8 @@ describe('isAuthorizedByToken', () => {
           policyTags: ['some-tag'],
           subject: {
             subject: {
-              oneofKind: 'indykiteAccessToken',
-              indykiteAccessToken: 'access-token',
+              oneofKind: 'accessToken',
+              accessToken: 'access-token',
             },
           },
           resources: [

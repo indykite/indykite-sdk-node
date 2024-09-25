@@ -73,6 +73,8 @@ import {
   ConfigNodeType,
   CONSENT_CONFIG,
   ConsentNode,
+  EXTERNAL_DATA_RESOLVER_CONFIG,
+  ExternalDataResolver,
   TOKEN_INTROSPECT_CONFIG,
   TokenIntrospect,
   Customer,
@@ -1655,6 +1657,12 @@ export class ConfigClient {
       request.config = {
         oneofKind: TOKEN_INTROSPECT_CONFIG,
         tokenIntrospectConfig: configNode.marshal(),
+      };
+    }
+    if (configNode instanceof ExternalDataResolver) {
+      request.config = {
+        oneofKind: EXTERNAL_DATA_RESOLVER_CONFIG,
+        externalDataResolverConfig: configNode.marshal(),
       };
     }
     return request;

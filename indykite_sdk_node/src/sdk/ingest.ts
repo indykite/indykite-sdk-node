@@ -29,7 +29,12 @@ import {
   Record as RecordModel,
   Relationship,
 } from '../grpc/indykite/ingest/v1beta3/model';
-import { Metadata, Node, Property } from '../grpc/indykite/knowledge/objects/v1beta1/ikg';
+import {
+  ExternalValue,
+  Metadata,
+  Node,
+  Property,
+} from '../grpc/indykite/knowledge/objects/v1beta1/ikg';
 import { Value } from '../grpc/indykite/objects/v1beta2/value';
 import { Timestamp } from '../grpc/google/protobuf/timestamp';
 
@@ -69,7 +74,8 @@ export interface IngestRelationshipProperty {
 /* eslint-disable  @typescript-eslint/no-explicit-any */
 export interface IngestProperty {
   type: string;
-  value: any;
+  value?: any;
+  externalValue?: ExternalValue;
   metadata?: IngestMetadata;
 }
 
@@ -90,7 +96,8 @@ export interface DeleteRelationship {
 /* eslint-disable  @typescript-eslint/no-explicit-any */
 export interface DeleteProperty {
   type: string;
-  value: any;
+  value?: any;
+  externalValue?: ExternalValue;
   metadata?: Metadata;
 }
 
@@ -197,11 +204,30 @@ export class IngestRecordUpsert extends IngestRecord {
           }
           metadata['customMetadata'] = listCustom;
         }
-        properties.push({
-          type: property.type,
-          value: Value.fromJson(Utils.objectToJsonValue(property.value)),
-          metadata: property.metadata ? metadata : undefined,
-        });
+        if (property.value && property.externalValue) {
+          throw new SdkError(
+            SdkErrorCode.SDK_CODE_7,
+            SkdErrorText.SDK_CODE_7('both value and externalValue'),
+          );
+        }
+        if (property.value) {
+          properties.push({
+            type: property.type,
+            value: Value.fromJson(Utils.objectToJsonValue(property.value)),
+            metadata: property.metadata ? metadata : undefined,
+          });
+        } else if (property.externalValue) {
+          properties.push({
+            type: property.type,
+            externalValue: property.externalValue,
+            metadata: property.metadata ? metadata : undefined,
+          });
+        } else {
+          throw new SdkError(
+            SdkErrorCode.SDK_CODE_8,
+            SkdErrorText.SDK_CODE_8('value or externalValue'),
+          );
+        }
       }
     }
     operation.upsert.data = {
@@ -255,11 +281,30 @@ export class IngestRecordUpsert extends IngestRecord {
             }
             metadata['customMetadata'] = listCustom;
           }
-          properties.push({
-            type: property.type,
-            value: Value.fromJson(Utils.objectToJsonValue(property.value)),
-            metadata: property.metadata ? metadata : undefined,
-          });
+          if (property.value && property.externalValue) {
+            throw new SdkError(
+              SdkErrorCode.SDK_CODE_7,
+              SkdErrorText.SDK_CODE_7('both value and externalValue'),
+            );
+          }
+          if (property.value) {
+            properties.push({
+              type: property.type,
+              value: Value.fromJson(Utils.objectToJsonValue(property.value)),
+              metadata: property.metadata ? metadata : undefined,
+            });
+          } else if (property.externalValue) {
+            properties.push({
+              type: property.type,
+              externalValue: property.externalValue,
+              metadata: property.metadata ? metadata : undefined,
+            });
+          } else {
+            throw new SdkError(
+              SdkErrorCode.SDK_CODE_8,
+              SkdErrorText.SDK_CODE_8('value or externalValue'),
+            );
+          }
         }
       }
 
@@ -509,7 +554,7 @@ export class BatchNode {
   }
 
   prepare(): Node {
-    let properties!: Property[];
+    const properties: Property[] = [];
     if (this.node.properties) {
       for (const property of this.node.properties) {
         const metadata = {} as Metadata;
@@ -529,12 +574,29 @@ export class BatchNode {
           }
           metadata['customMetadata'] = listCustom;
         }
-        if (properties) {
+        if (property.value && property.externalValue) {
+          throw new SdkError(
+            SdkErrorCode.SDK_CODE_7,
+            SkdErrorText.SDK_CODE_7(' both value and externalValue'),
+          );
+        }
+        if (property.value) {
           properties.push({
             type: property.type,
             value: Value.fromJson(Utils.objectToJsonValue(property.value)),
             metadata: property.metadata ? metadata : undefined,
           });
+        } else if (property.externalValue) {
+          properties.push({
+            type: property.type,
+            externalValue: property.externalValue,
+            metadata: property.metadata ? metadata : undefined,
+          });
+        } else {
+          throw new SdkError(
+            SdkErrorCode.SDK_CODE_8,
+            SkdErrorText.SDK_CODE_8('value or externalValue'),
+          );
         }
       }
     }
@@ -714,11 +776,30 @@ export class BatchRelationship {
           }
           metadata['customMetadata'] = listCustom;
         }
-        propertyData = {
-          type: property.type,
-          value: Value.fromJson(Utils.objectToJsonValue(property.value)),
-          metadata: property.metadata ? metadata : undefined,
-        };
+        if (property.value && property.externalValue) {
+          throw new SdkError(
+            SdkErrorCode.SDK_CODE_7,
+            SkdErrorText.SDK_CODE_7('both value and externalValue'),
+          );
+        }
+        if (property.value) {
+          propertyData = {
+            type: property.type,
+            value: Value.fromJson(Utils.objectToJsonValue(property.value)),
+            metadata: property.metadata ? metadata : undefined,
+          };
+        } else if (property.externalValue) {
+          propertyData = {
+            type: property.type,
+            externalValue: property.externalValue,
+            metadata: property.metadata ? metadata : undefined,
+          };
+        } else {
+          throw new SdkError(
+            SdkErrorCode.SDK_CODE_8,
+            SkdErrorText.SDK_CODE_8('value or externalValue'),
+          );
+        }
         properties.push(propertyData);
       }
     }
@@ -858,6 +939,22 @@ export class IngestClient {
    *       targetMatch: { externalId: 'lotA', type: 'ParkingLot' },
    *       type: 'CAN_PARK',
    *     }),
+   *     IngestRecord.upsert('recordId-6').node({
+   *       externalId: 'person6',
+   *       type: 'Person',
+   *       properties: [{
+   *         type: "customProp",
+   *         externalValue: {resolver: {id: "gid:ioidcnvoej"}},
+   *         metadata: {
+   *            assuranceLevel: 1,
+   *            verificationTime: Utils.dateToTimestamp(new Date()),
+   *            source: "Myself",
+   *            customMetadata: {
+   *                "customdata": 'SomeCustomData'
+   *            },
+   *          }
+   *       }],
+   *     }),
    *   ],
    *   { objectMode: true },
    * );
@@ -971,6 +1068,22 @@ export class IngestClient {
    *       properties: [{
    *         type: "email",
    *         value: 'person@yahoo.com',
+   *       }],
+   *     },
+   *     {
+   *       externalId: 'person3',
+   *       type: 'Person',
+   *       properties: [{
+   *         type: "customProp",
+   *         externalValue: {resolver: {id: "gid:ioidcnvoej"}},
+   *         metadata: {
+   *            assuranceLevel: 1,
+   *            verificationTime: Utils.dateToTimestamp(new Date()),
+   *            source: "Myself",
+   *            customMetadata: {
+   *                "customdata": 'SomeCustomData'
+   *            },
+   *          }
    *       }],
    *     }
    * ]);

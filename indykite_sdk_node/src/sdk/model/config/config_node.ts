@@ -9,6 +9,7 @@ import { SdkError, SdkErrorCode, SkdErrorText } from '../../error';
 import { Utils } from '../../utils/utils';
 import { AuthorizationPolicy } from './authorization_policy';
 import { ConsentNode } from './consent_configuration';
+import { ExternalDataResolver } from './external_data_resolver';
 import { TokenIntrospect } from './token_introspect';
 
 /**
@@ -84,4 +85,9 @@ export class ConfigNode {
   }
 }
 
-export type ConfigNodeType = ConfigNode | AuthorizationPolicy | ConsentNode | TokenIntrospect;
+export type ConfigNodeType =
+  | ConfigNode
+  | AuthorizationPolicy
+  | ConsentNode
+  | TokenIntrospect
+  | ExternalDataResolver;

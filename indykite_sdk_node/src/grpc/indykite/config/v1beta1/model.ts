@@ -769,6 +769,18 @@ export interface ConfigNode {
          */
         ingestPipelineConfig: IngestPipelineConfig;
     } | {
+        oneofKind: "identityMatchingPipelineConfig";
+        /**
+         * @generated from protobuf field: indykite.config.v1beta1.IdentityMatchingPipelineConfig identity_matching_pipeline_config = 33;
+         */
+        identityMatchingPipelineConfig: IdentityMatchingPipelineConfig;
+    } | {
+        oneofKind: "externalDataResolverConfig";
+        /**
+         * @generated from protobuf field: indykite.config.v1beta1.ExternalDataResolverConfig external_data_resolver_config = 34;
+         */
+        externalDataResolverConfig: ExternalDataResolverConfig;
+    } | {
         oneofKind: undefined;
     };
     /**
@@ -1123,6 +1135,230 @@ export interface IngestPipelineConfig {
      * @generated from protobuf field: string app_agent_token = 3;
      */
     appAgentToken: string;
+}
+/**
+ * @generated from protobuf message indykite.config.v1beta1.IdentityMatchingPipelineConfig
+ */
+export interface IdentityMatchingPipelineConfig {
+    /**
+     * NodeFilter contain a list of source types and a list target node types that will be evaluated.
+     *
+     * @generated from protobuf field: indykite.config.v1beta1.IdentityMatchingPipelineConfig.NodeFilter node_filter = 1;
+     */
+    nodeFilter?: IdentityMatchingPipelineConfig_NodeFilter;
+    /**
+     * SimilarityScoreCutoff defines the threshold (in range [0,1]), above which identities will be automatically matched.
+     *
+     * @generated from protobuf field: float similarity_score_cutoff = 2;
+     */
+    similarityScoreCutoff: number;
+    /**
+     * PropertyMappingStatus is the status assigned to the pipeline's step that maps node types' properties.
+     *
+     * @generated from protobuf field: indykite.config.v1beta1.IdentityMatchingPipelineConfig.Status property_mapping_status = 3;
+     */
+    propertyMappingStatus: IdentityMatchingPipelineConfig_Status;
+    /**
+     * Output only. Any error message from the property mapping analysis explaining the current property_mapping_status.
+     *
+     * @generated from protobuf field: google.protobuf.StringValue property_mapping_message = 8;
+     */
+    propertyMappingMessage?: StringValue;
+    /**
+     * EntityMappingStatus is the status assigned to the pipeline's step that matches node identities.
+     *
+     * @generated from protobuf field: indykite.config.v1beta1.IdentityMatchingPipelineConfig.Status entity_matching_status = 4;
+     */
+    entityMatchingStatus: IdentityMatchingPipelineConfig_Status;
+    /**
+     * Output only. Any error message from the entity matching analysis explaining the current entity_matching_status.
+     *
+     * @generated from protobuf field: google.protobuf.StringValue entity_matching_message = 9;
+     */
+    entityMatchingMessage?: StringValue;
+    /**
+     * PropertyMappings contains the rules the pipeline will use to match source nodes with target nodes.
+     *
+     * @generated from protobuf field: repeated indykite.config.v1beta1.IdentityMatchingPipelineConfig.PropertyMapping property_mappings = 5;
+     */
+    propertyMappings: IdentityMatchingPipelineConfig_PropertyMapping[];
+    /**
+     * RerunInterval is the time between scheduled re-runs.
+     *
+     * @generated from protobuf field: string rerun_interval = 6;
+     */
+    rerunInterval: string;
+    /**
+     * Output only. The time at which the pipeline was last run.
+     *
+     * @generated from protobuf field: google.protobuf.Timestamp last_run_time = 7;
+     */
+    lastRunTime?: Timestamp;
+    /**
+     * Output only. The gcs url where the analysis report is stored.
+     *
+     * @generated from protobuf field: google.protobuf.StringValue report_url = 10;
+     */
+    reportUrl?: StringValue;
+    /**
+     * Output only. The format in which the report is stored.
+     *
+     * @generated from protobuf field: google.protobuf.StringValue report_type = 11;
+     */
+    reportType?: StringValue;
+}
+/**
+ * @generated from protobuf message indykite.config.v1beta1.IdentityMatchingPipelineConfig.NodeFilter
+ */
+export interface IdentityMatchingPipelineConfig_NodeFilter {
+    /**
+     * SourceNodeTypes is a list of node types that will be compared against the nodes with type in TargetNodeTypes.
+     *
+     * @generated from protobuf field: repeated string source_node_types = 1;
+     */
+    sourceNodeTypes: string[];
+    /**
+     * TargetNodeTypes is a list of node types that will be compared against the nodes with type in SourceNodeTypes.
+     *
+     * @generated from protobuf field: repeated string target_node_types = 2;
+     */
+    targetNodeTypes: string[];
+}
+/**
+ * @generated from protobuf message indykite.config.v1beta1.IdentityMatchingPipelineConfig.PropertyMapping
+ */
+export interface IdentityMatchingPipelineConfig_PropertyMapping {
+    /**
+     * SourceNodeType is the type of the node that will be compared to nodes of TargetNodeType.
+     *
+     * @generated from protobuf field: string source_node_type = 1;
+     */
+    sourceNodeType: string;
+    /**
+     * SourceNodeProperty is a property of the source node that will be compared to TargetNodeProperty.
+     *
+     * @generated from protobuf field: string source_node_property = 2;
+     */
+    sourceNodeProperty: string;
+    /**
+     * TargetNodeType is the type of the node that will be compared to nodes of SourceNodeType.
+     *
+     * @generated from protobuf field: string target_node_type = 3;
+     */
+    targetNodeType: string;
+    /**
+     * TargetNodeProperty is a property of the source node that will be compared to SourceNodeProperty.
+     *
+     * @generated from protobuf field: string target_node_property = 4;
+     */
+    targetNodeProperty: string;
+    /**
+     * SimilarityScoreCutoff defines the threshold (in range [0,1]), above which identities will be automatically matched.
+     *
+     * @generated from protobuf field: float similarity_score_cutoff = 5;
+     */
+    similarityScoreCutoff: number;
+}
+/**
+ * @generated from protobuf enum indykite.config.v1beta1.IdentityMatchingPipelineConfig.Status
+ */
+export enum IdentityMatchingPipelineConfig_Status {
+    /**
+     * @generated from protobuf enum value: STATUS_INVALID = 0;
+     */
+    INVALID = 0,
+    /**
+     * @generated from protobuf enum value: STATUS_PENDING = 1;
+     */
+    PENDING = 1,
+    /**
+     * @generated from protobuf enum value: STATUS_IN_PROGRESS = 2;
+     */
+    IN_PROGRESS = 2,
+    /**
+     * @generated from protobuf enum value: STATUS_SUCCESS = 3;
+     */
+    SUCCESS = 3,
+    /**
+     * @generated from protobuf enum value: STATUS_ERROR = 4;
+     */
+    ERROR = 4
+}
+/**
+ * @generated from protobuf message indykite.config.v1beta1.ExternalDataResolverConfig
+ */
+export interface ExternalDataResolverConfig {
+    /**
+     * Full URL to endpoint that will be called.
+     *
+     * @generated from protobuf field: string url = 1;
+     */
+    url: string;
+    /**
+     * HTTP method to be used for the request.
+     *
+     * @generated from protobuf field: string method = 2;
+     */
+    method: string;
+    /**
+     * Headers to be sent with the request, including authorization if needed.
+     * Be aware that Content-Type is overridden based on request_type and Accept by response_type.
+     *
+     * @generated from protobuf field: map<string, indykite.config.v1beta1.ExternalDataResolverConfig.Header> headers = 3;
+     */
+    headers: {
+        [key: string]: ExternalDataResolverConfig_Header;
+    };
+    /**
+     * Request type specify format of request body payload and how to set Content-Type header.
+     * If content-type header is set by Headers, that header will be overridden.
+     *
+     * @generated from protobuf field: indykite.config.v1beta1.ExternalDataResolverConfig.ContentType request_type = 4;
+     */
+    requestType: ExternalDataResolverConfig_ContentType;
+    /**
+     * Request payload to be sent to the endpoint. It should be in proper format based on request type.
+     * It is going through the template builder to be properly formatted and filled with data.
+     *
+     * @generated from protobuf field: bytes request_payload = 5;
+     */
+    requestPayload: Uint8Array;
+    /**
+     * Response Type specify expected Content-Type header of response. If mismatch with real response, it will fail.
+     * This also sets Accept header in request. If Accept header is set by Headers, that header will be overridden.
+     *
+     * @generated from protobuf field: indykite.config.v1beta1.ExternalDataResolverConfig.ContentType response_type = 6;
+     */
+    responseType: ExternalDataResolverConfig_ContentType;
+    /**
+     * Selector to extract data from response. Should be in requested format based on Response Type.
+     *
+     * @generated from protobuf field: string response_selector = 7;
+     */
+    responseSelector: string;
+}
+/**
+ * @generated from protobuf message indykite.config.v1beta1.ExternalDataResolverConfig.Header
+ */
+export interface ExternalDataResolverConfig_Header {
+    /**
+     * @generated from protobuf field: repeated string values = 1;
+     */
+    values: string[];
+}
+/**
+ * @generated from protobuf enum indykite.config.v1beta1.ExternalDataResolverConfig.ContentType
+ */
+export enum ExternalDataResolverConfig_ContentType {
+    /**
+     * @generated from protobuf enum value: CONTENT_TYPE_INVALID = 0;
+     */
+    INVALID = 0,
+    /**
+     * @generated from protobuf enum value: CONTENT_TYPE_JSON = 1;
+     */
+    JSON = 1,
+    CONTENT_TYPE_JSON
 }
 /**
  * @generated from protobuf enum indykite.config.v1beta1.AppSpaceIKGStatus
@@ -2168,6 +2404,8 @@ class ConfigNode$Type extends MessageType<ConfigNode> {
             { no: 30, name: "consent_config", kind: "message", oneof: "config", T: () => ConsentConfiguration, options: { "validate.rules": { message: { required: true } } } },
             { no: 31, name: "token_introspect_config", kind: "message", oneof: "config", T: () => TokenIntrospectConfig, options: { "validate.rules": { message: { required: true } } } },
             { no: 32, name: "ingest_pipeline_config", kind: "message", oneof: "config", T: () => IngestPipelineConfig, options: { "validate.rules": { message: { required: true } } } },
+            { no: 33, name: "identity_matching_pipeline_config", kind: "message", oneof: "config", T: () => IdentityMatchingPipelineConfig, options: { "validate.rules": { message: { required: true } } } },
+            { no: 34, name: "external_data_resolver_config", kind: "message", oneof: "config", T: () => ExternalDataResolverConfig, options: { "validate.rules": { message: { required: true } } } },
             { no: 29, name: "version", kind: "scalar", T: 3 /*ScalarType.INT64*/ }
         ]);
     }
@@ -2252,6 +2490,18 @@ class ConfigNode$Type extends MessageType<ConfigNode> {
                         ingestPipelineConfig: IngestPipelineConfig.internalBinaryRead(reader, reader.uint32(), options, (message.config as any).ingestPipelineConfig)
                     };
                     break;
+                case /* indykite.config.v1beta1.IdentityMatchingPipelineConfig identity_matching_pipeline_config */ 33:
+                    message.config = {
+                        oneofKind: "identityMatchingPipelineConfig",
+                        identityMatchingPipelineConfig: IdentityMatchingPipelineConfig.internalBinaryRead(reader, reader.uint32(), options, (message.config as any).identityMatchingPipelineConfig)
+                    };
+                    break;
+                case /* indykite.config.v1beta1.ExternalDataResolverConfig external_data_resolver_config */ 34:
+                    message.config = {
+                        oneofKind: "externalDataResolverConfig",
+                        externalDataResolverConfig: ExternalDataResolverConfig.internalBinaryRead(reader, reader.uint32(), options, (message.config as any).externalDataResolverConfig)
+                    };
+                    break;
                 case /* int64 version */ 29:
                     message.version = reader.int64().toString();
                     break;
@@ -2321,6 +2571,12 @@ class ConfigNode$Type extends MessageType<ConfigNode> {
         /* indykite.config.v1beta1.IngestPipelineConfig ingest_pipeline_config = 32; */
         if (message.config.oneofKind === "ingestPipelineConfig")
             IngestPipelineConfig.internalBinaryWrite(message.config.ingestPipelineConfig, writer.tag(32, WireType.LengthDelimited).fork(), options).join();
+        /* indykite.config.v1beta1.IdentityMatchingPipelineConfig identity_matching_pipeline_config = 33; */
+        if (message.config.oneofKind === "identityMatchingPipelineConfig")
+            IdentityMatchingPipelineConfig.internalBinaryWrite(message.config.identityMatchingPipelineConfig, writer.tag(33, WireType.LengthDelimited).fork(), options).join();
+        /* indykite.config.v1beta1.ExternalDataResolverConfig external_data_resolver_config = 34; */
+        if (message.config.oneofKind === "externalDataResolverConfig")
+            ExternalDataResolverConfig.internalBinaryWrite(message.config.externalDataResolverConfig, writer.tag(34, WireType.LengthDelimited).fork(), options).join();
         /* int64 version = 29; */
         if (message.version !== "0")
             writer.tag(29, WireType.Varint).int64(message.version);
@@ -3077,7 +3333,7 @@ export const ConsentDataPoint_Return = new ConsentDataPoint_Return$Type();
 class IngestPipelineConfig$Type extends MessageType<IngestPipelineConfig> {
     constructor() {
         super("indykite.config.v1beta1.IngestPipelineConfig", [
-            { no: 1, name: "sources", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { minItems: "1", maxItems: "10" } } } },
+            { no: 1, name: "sources", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { minItems: "1", maxItems: "10", items: { string: { pattern: "^[a-zA-Z0-9._-]{1,227}$" } } } } } },
             { no: 2, name: "operations", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["indykite.config.v1beta1.IngestPipelineOperation", IngestPipelineOperation, "INGEST_PIPELINE_OPERATION_"], options: { "validate.rules": { repeated: { minItems: "1", maxItems: "6" } } } },
             { no: 3, name: "app_agent_token", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { pattern: "^[A-Za-z0-9-_]+?\\.[A-Za-z0-9-_]+?\\.[A-Za-z0-9-_]+?$" } } } }
         ]);
@@ -3142,3 +3398,405 @@ class IngestPipelineConfig$Type extends MessageType<IngestPipelineConfig> {
  * @generated MessageType for protobuf message indykite.config.v1beta1.IngestPipelineConfig
  */
 export const IngestPipelineConfig = new IngestPipelineConfig$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class IdentityMatchingPipelineConfig$Type extends MessageType<IdentityMatchingPipelineConfig> {
+    constructor() {
+        super("indykite.config.v1beta1.IdentityMatchingPipelineConfig", [
+            { no: 1, name: "node_filter", kind: "message", T: () => IdentityMatchingPipelineConfig_NodeFilter },
+            { no: 2, name: "similarity_score_cutoff", kind: "scalar", T: 2 /*ScalarType.FLOAT*/, options: { "validate.rules": { float: { lte: 1, gte: 0 } } } },
+            { no: 3, name: "property_mapping_status", kind: "enum", T: () => ["indykite.config.v1beta1.IdentityMatchingPipelineConfig.Status", IdentityMatchingPipelineConfig_Status, "STATUS_"], options: { "validate.rules": { enum: { definedOnly: true, notIn: [0] } } } },
+            { no: 8, name: "property_mapping_message", kind: "message", T: () => StringValue },
+            { no: 4, name: "entity_matching_status", kind: "enum", T: () => ["indykite.config.v1beta1.IdentityMatchingPipelineConfig.Status", IdentityMatchingPipelineConfig_Status, "STATUS_"], options: { "validate.rules": { enum: { definedOnly: true, notIn: [0] } } } },
+            { no: 9, name: "entity_matching_message", kind: "message", T: () => StringValue },
+            { no: 5, name: "property_mappings", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => IdentityMatchingPipelineConfig_PropertyMapping },
+            { no: 6, name: "rerun_interval", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 7, name: "last_run_time", kind: "message", T: () => Timestamp },
+            { no: 10, name: "report_url", kind: "message", T: () => StringValue },
+            { no: 11, name: "report_type", kind: "message", T: () => StringValue }
+        ]);
+    }
+    create(value?: PartialMessage<IdentityMatchingPipelineConfig>): IdentityMatchingPipelineConfig {
+        const message = { similarityScoreCutoff: 0, propertyMappingStatus: 0, entityMatchingStatus: 0, propertyMappings: [], rerunInterval: "" };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<IdentityMatchingPipelineConfig>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: IdentityMatchingPipelineConfig): IdentityMatchingPipelineConfig {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* indykite.config.v1beta1.IdentityMatchingPipelineConfig.NodeFilter node_filter */ 1:
+                    message.nodeFilter = IdentityMatchingPipelineConfig_NodeFilter.internalBinaryRead(reader, reader.uint32(), options, message.nodeFilter);
+                    break;
+                case /* float similarity_score_cutoff */ 2:
+                    message.similarityScoreCutoff = reader.float();
+                    break;
+                case /* indykite.config.v1beta1.IdentityMatchingPipelineConfig.Status property_mapping_status */ 3:
+                    message.propertyMappingStatus = reader.int32();
+                    break;
+                case /* google.protobuf.StringValue property_mapping_message */ 8:
+                    message.propertyMappingMessage = StringValue.internalBinaryRead(reader, reader.uint32(), options, message.propertyMappingMessage);
+                    break;
+                case /* indykite.config.v1beta1.IdentityMatchingPipelineConfig.Status entity_matching_status */ 4:
+                    message.entityMatchingStatus = reader.int32();
+                    break;
+                case /* google.protobuf.StringValue entity_matching_message */ 9:
+                    message.entityMatchingMessage = StringValue.internalBinaryRead(reader, reader.uint32(), options, message.entityMatchingMessage);
+                    break;
+                case /* repeated indykite.config.v1beta1.IdentityMatchingPipelineConfig.PropertyMapping property_mappings */ 5:
+                    message.propertyMappings.push(IdentityMatchingPipelineConfig_PropertyMapping.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                case /* string rerun_interval */ 6:
+                    message.rerunInterval = reader.string();
+                    break;
+                case /* google.protobuf.Timestamp last_run_time */ 7:
+                    message.lastRunTime = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.lastRunTime);
+                    break;
+                case /* google.protobuf.StringValue report_url */ 10:
+                    message.reportUrl = StringValue.internalBinaryRead(reader, reader.uint32(), options, message.reportUrl);
+                    break;
+                case /* google.protobuf.StringValue report_type */ 11:
+                    message.reportType = StringValue.internalBinaryRead(reader, reader.uint32(), options, message.reportType);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: IdentityMatchingPipelineConfig, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* indykite.config.v1beta1.IdentityMatchingPipelineConfig.NodeFilter node_filter = 1; */
+        if (message.nodeFilter)
+            IdentityMatchingPipelineConfig_NodeFilter.internalBinaryWrite(message.nodeFilter, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* float similarity_score_cutoff = 2; */
+        if (message.similarityScoreCutoff !== 0)
+            writer.tag(2, WireType.Bit32).float(message.similarityScoreCutoff);
+        /* indykite.config.v1beta1.IdentityMatchingPipelineConfig.Status property_mapping_status = 3; */
+        if (message.propertyMappingStatus !== 0)
+            writer.tag(3, WireType.Varint).int32(message.propertyMappingStatus);
+        /* google.protobuf.StringValue property_mapping_message = 8; */
+        if (message.propertyMappingMessage)
+            StringValue.internalBinaryWrite(message.propertyMappingMessage, writer.tag(8, WireType.LengthDelimited).fork(), options).join();
+        /* indykite.config.v1beta1.IdentityMatchingPipelineConfig.Status entity_matching_status = 4; */
+        if (message.entityMatchingStatus !== 0)
+            writer.tag(4, WireType.Varint).int32(message.entityMatchingStatus);
+        /* google.protobuf.StringValue entity_matching_message = 9; */
+        if (message.entityMatchingMessage)
+            StringValue.internalBinaryWrite(message.entityMatchingMessage, writer.tag(9, WireType.LengthDelimited).fork(), options).join();
+        /* repeated indykite.config.v1beta1.IdentityMatchingPipelineConfig.PropertyMapping property_mappings = 5; */
+        for (let i = 0; i < message.propertyMappings.length; i++)
+            IdentityMatchingPipelineConfig_PropertyMapping.internalBinaryWrite(message.propertyMappings[i], writer.tag(5, WireType.LengthDelimited).fork(), options).join();
+        /* string rerun_interval = 6; */
+        if (message.rerunInterval !== "")
+            writer.tag(6, WireType.LengthDelimited).string(message.rerunInterval);
+        /* google.protobuf.Timestamp last_run_time = 7; */
+        if (message.lastRunTime)
+            Timestamp.internalBinaryWrite(message.lastRunTime, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
+        /* google.protobuf.StringValue report_url = 10; */
+        if (message.reportUrl)
+            StringValue.internalBinaryWrite(message.reportUrl, writer.tag(10, WireType.LengthDelimited).fork(), options).join();
+        /* google.protobuf.StringValue report_type = 11; */
+        if (message.reportType)
+            StringValue.internalBinaryWrite(message.reportType, writer.tag(11, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message indykite.config.v1beta1.IdentityMatchingPipelineConfig
+ */
+export const IdentityMatchingPipelineConfig = new IdentityMatchingPipelineConfig$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class IdentityMatchingPipelineConfig_NodeFilter$Type extends MessageType<IdentityMatchingPipelineConfig_NodeFilter> {
+    constructor() {
+        super("indykite.config.v1beta1.IdentityMatchingPipelineConfig.NodeFilter", [
+            { no: 1, name: "source_node_types", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { minItems: "1", unique: true } } } },
+            { no: 2, name: "target_node_types", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { minItems: "1", unique: true } } } }
+        ]);
+    }
+    create(value?: PartialMessage<IdentityMatchingPipelineConfig_NodeFilter>): IdentityMatchingPipelineConfig_NodeFilter {
+        const message = { sourceNodeTypes: [], targetNodeTypes: [] };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<IdentityMatchingPipelineConfig_NodeFilter>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: IdentityMatchingPipelineConfig_NodeFilter): IdentityMatchingPipelineConfig_NodeFilter {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* repeated string source_node_types */ 1:
+                    message.sourceNodeTypes.push(reader.string());
+                    break;
+                case /* repeated string target_node_types */ 2:
+                    message.targetNodeTypes.push(reader.string());
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: IdentityMatchingPipelineConfig_NodeFilter, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* repeated string source_node_types = 1; */
+        for (let i = 0; i < message.sourceNodeTypes.length; i++)
+            writer.tag(1, WireType.LengthDelimited).string(message.sourceNodeTypes[i]);
+        /* repeated string target_node_types = 2; */
+        for (let i = 0; i < message.targetNodeTypes.length; i++)
+            writer.tag(2, WireType.LengthDelimited).string(message.targetNodeTypes[i]);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message indykite.config.v1beta1.IdentityMatchingPipelineConfig.NodeFilter
+ */
+export const IdentityMatchingPipelineConfig_NodeFilter = new IdentityMatchingPipelineConfig_NodeFilter$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class IdentityMatchingPipelineConfig_PropertyMapping$Type extends MessageType<IdentityMatchingPipelineConfig_PropertyMapping> {
+    constructor() {
+        super("indykite.config.v1beta1.IdentityMatchingPipelineConfig.PropertyMapping", [
+            { no: 1, name: "source_node_type", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 2, name: "source_node_property", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 3, name: "target_node_type", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 4, name: "target_node_property", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 5, name: "similarity_score_cutoff", kind: "scalar", T: 2 /*ScalarType.FLOAT*/, options: { "validate.rules": { float: { lte: 1, gte: 0, ignoreEmpty: true } } } }
+        ]);
+    }
+    create(value?: PartialMessage<IdentityMatchingPipelineConfig_PropertyMapping>): IdentityMatchingPipelineConfig_PropertyMapping {
+        const message = { sourceNodeType: "", sourceNodeProperty: "", targetNodeType: "", targetNodeProperty: "", similarityScoreCutoff: 0 };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<IdentityMatchingPipelineConfig_PropertyMapping>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: IdentityMatchingPipelineConfig_PropertyMapping): IdentityMatchingPipelineConfig_PropertyMapping {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string source_node_type */ 1:
+                    message.sourceNodeType = reader.string();
+                    break;
+                case /* string source_node_property */ 2:
+                    message.sourceNodeProperty = reader.string();
+                    break;
+                case /* string target_node_type */ 3:
+                    message.targetNodeType = reader.string();
+                    break;
+                case /* string target_node_property */ 4:
+                    message.targetNodeProperty = reader.string();
+                    break;
+                case /* float similarity_score_cutoff */ 5:
+                    message.similarityScoreCutoff = reader.float();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: IdentityMatchingPipelineConfig_PropertyMapping, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string source_node_type = 1; */
+        if (message.sourceNodeType !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.sourceNodeType);
+        /* string source_node_property = 2; */
+        if (message.sourceNodeProperty !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.sourceNodeProperty);
+        /* string target_node_type = 3; */
+        if (message.targetNodeType !== "")
+            writer.tag(3, WireType.LengthDelimited).string(message.targetNodeType);
+        /* string target_node_property = 4; */
+        if (message.targetNodeProperty !== "")
+            writer.tag(4, WireType.LengthDelimited).string(message.targetNodeProperty);
+        /* float similarity_score_cutoff = 5; */
+        if (message.similarityScoreCutoff !== 0)
+            writer.tag(5, WireType.Bit32).float(message.similarityScoreCutoff);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message indykite.config.v1beta1.IdentityMatchingPipelineConfig.PropertyMapping
+ */
+export const IdentityMatchingPipelineConfig_PropertyMapping = new IdentityMatchingPipelineConfig_PropertyMapping$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ExternalDataResolverConfig$Type extends MessageType<ExternalDataResolverConfig> {
+    constructor() {
+        super("indykite.config.v1beta1.ExternalDataResolverConfig", [
+            { no: 1, name: "url", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { uri: true } } } },
+            { no: 2, name: "method", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { in: ["GET", "POST", "PUT", "PATCH"] } } } },
+            { no: 3, name: "headers", kind: "map", K: 9 /*ScalarType.STRING*/, V: { kind: "message", T: () => ExternalDataResolverConfig_Header }, options: { "validate.rules": { map: { keys: { string: { minLen: "1", maxLen: "255", pattern: "^[a-zA-Z0-9-]+$" } }, values: { message: { required: true } } } } } },
+            { no: 4, name: "request_type", kind: "enum", T: () => ["indykite.config.v1beta1.ExternalDataResolverConfig.ContentType", ExternalDataResolverConfig_ContentType, "CONTENT_TYPE_"], options: { "validate.rules": { enum: { definedOnly: true, notIn: [0] } } } },
+            { no: 5, name: "request_payload", kind: "scalar", T: 12 /*ScalarType.BYTES*/ },
+            { no: 6, name: "response_type", kind: "enum", T: () => ["indykite.config.v1beta1.ExternalDataResolverConfig.ContentType", ExternalDataResolverConfig_ContentType, "CONTENT_TYPE_"], options: { "validate.rules": { enum: { definedOnly: true, notIn: [0] } } } },
+            { no: 7, name: "response_selector", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "1", maxLen: "255" } } } }
+        ]);
+    }
+    create(value?: PartialMessage<ExternalDataResolverConfig>): ExternalDataResolverConfig {
+        const message = { url: "", method: "", headers: {}, requestType: 0, requestPayload: new Uint8Array(0), responseType: 0, responseSelector: "" };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<ExternalDataResolverConfig>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ExternalDataResolverConfig): ExternalDataResolverConfig {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string url */ 1:
+                    message.url = reader.string();
+                    break;
+                case /* string method */ 2:
+                    message.method = reader.string();
+                    break;
+                case /* map<string, indykite.config.v1beta1.ExternalDataResolverConfig.Header> headers */ 3:
+                    this.binaryReadMap3(message.headers, reader, options);
+                    break;
+                case /* indykite.config.v1beta1.ExternalDataResolverConfig.ContentType request_type */ 4:
+                    message.requestType = reader.int32();
+                    break;
+                case /* bytes request_payload */ 5:
+                    message.requestPayload = reader.bytes();
+                    break;
+                case /* indykite.config.v1beta1.ExternalDataResolverConfig.ContentType response_type */ 6:
+                    message.responseType = reader.int32();
+                    break;
+                case /* string response_selector */ 7:
+                    message.responseSelector = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    private binaryReadMap3(map: ExternalDataResolverConfig["headers"], reader: IBinaryReader, options: BinaryReadOptions): void {
+        let len = reader.uint32(), end = reader.pos + len, key: keyof ExternalDataResolverConfig["headers"] | undefined, val: ExternalDataResolverConfig["headers"][any] | undefined;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case 1:
+                    key = reader.string();
+                    break;
+                case 2:
+                    val = ExternalDataResolverConfig_Header.internalBinaryRead(reader, reader.uint32(), options);
+                    break;
+                default: throw new globalThis.Error("unknown map entry field for field indykite.config.v1beta1.ExternalDataResolverConfig.headers");
+            }
+        }
+        map[key ?? ""] = val ?? ExternalDataResolverConfig_Header.create();
+    }
+    internalBinaryWrite(message: ExternalDataResolverConfig, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string url = 1; */
+        if (message.url !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.url);
+        /* string method = 2; */
+        if (message.method !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.method);
+        /* map<string, indykite.config.v1beta1.ExternalDataResolverConfig.Header> headers = 3; */
+        for (let k of Object.keys(message.headers)) {
+            writer.tag(3, WireType.LengthDelimited).fork().tag(1, WireType.LengthDelimited).string(k);
+            writer.tag(2, WireType.LengthDelimited).fork();
+            ExternalDataResolverConfig_Header.internalBinaryWrite(message.headers[k], writer, options);
+            writer.join().join();
+        }
+        /* indykite.config.v1beta1.ExternalDataResolverConfig.ContentType request_type = 4; */
+        if (message.requestType !== 0)
+            writer.tag(4, WireType.Varint).int32(message.requestType);
+        /* bytes request_payload = 5; */
+        if (message.requestPayload.length)
+            writer.tag(5, WireType.LengthDelimited).bytes(message.requestPayload);
+        /* indykite.config.v1beta1.ExternalDataResolverConfig.ContentType response_type = 6; */
+        if (message.responseType !== 0)
+            writer.tag(6, WireType.Varint).int32(message.responseType);
+        /* string response_selector = 7; */
+        if (message.responseSelector !== "")
+            writer.tag(7, WireType.LengthDelimited).string(message.responseSelector);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message indykite.config.v1beta1.ExternalDataResolverConfig
+ */
+export const ExternalDataResolverConfig = new ExternalDataResolverConfig$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ExternalDataResolverConfig_Header$Type extends MessageType<ExternalDataResolverConfig_Header> {
+    constructor() {
+        super("indykite.config.v1beta1.ExternalDataResolverConfig.Header", [
+            { no: 1, name: "values", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { minItems: "1", items: { string: { minLen: "1", maxLen: "255" } } } } } }
+        ]);
+    }
+    create(value?: PartialMessage<ExternalDataResolverConfig_Header>): ExternalDataResolverConfig_Header {
+        const message = { values: [] };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<ExternalDataResolverConfig_Header>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ExternalDataResolverConfig_Header): ExternalDataResolverConfig_Header {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* repeated string values */ 1:
+                    message.values.push(reader.string());
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ExternalDataResolverConfig_Header, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* repeated string values = 1; */
+        for (let i = 0; i < message.values.length; i++)
+            writer.tag(1, WireType.LengthDelimited).string(message.values[i]);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message indykite.config.v1beta1.ExternalDataResolverConfig.Header
+ */
+export const ExternalDataResolverConfig_Header = new ExternalDataResolverConfig_Header$Type();

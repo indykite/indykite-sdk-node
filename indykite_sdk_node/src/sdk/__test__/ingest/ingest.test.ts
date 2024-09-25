@@ -505,7 +505,12 @@ describe('IngestRecord builder', () => {
               properties: [
                 {
                   type: 'propertyType',
-                  value: 'propertyValue',
+                  externalValue: {
+                    resolver: {
+                      oneofKind: 'id',
+                      id: 'gid:AAAACf8ZbwrfSUA-tnXjiShw-hQ',
+                    },
+                  },
                   metadata: {
                     assuranceLevel: 1,
                     verificationTime: datetmp,
@@ -539,10 +544,10 @@ describe('IngestRecord builder', () => {
                     properties: [
                       {
                         type: 'propertyType',
-                        value: {
-                          type: {
-                            oneofKind: 'stringValue',
-                            stringValue: 'propertyValue',
+                        externalValue: {
+                          resolver: {
+                            oneofKind: 'id',
+                            id: 'gid:AAAACf8ZbwrfSUA-tnXjiShw-hQ',
                           },
                         },
                         metadata: {
@@ -582,7 +587,12 @@ describe('IngestRecord builder', () => {
               properties: [
                 {
                   type: 'propertyType',
-                  value: 'propertyValue',
+                  externalValue: {
+                    resolver: {
+                      oneofKind: 'id',
+                      id: 'gid:AAAACf8ZbwrfSUA-tnXjiShw-hQ',
+                    },
+                  },
                 },
               ],
             })
@@ -608,10 +618,10 @@ describe('IngestRecord builder', () => {
                     properties: [
                       {
                         type: 'propertyType',
-                        value: {
-                          type: {
-                            oneofKind: 'stringValue',
-                            stringValue: 'propertyValue',
+                        externalValue: {
+                          resolver: {
+                            oneofKind: 'id',
+                            id: 'gid:AAAACf8ZbwrfSUA-tnXjiShw-hQ',
                           },
                         },
                       },
@@ -1233,6 +1243,7 @@ describe('IngestRecord builder', () => {
 describe('batchUpsertNodes', () => {
   let response: BatchUpsertNodesResponse | undefined;
   let nodes: IngestNodeRecord[];
+  const now = Utils.dateToTimestamp(new Date());
 
   beforeEach(() => {
     nodes = [
@@ -1245,7 +1256,7 @@ describe('batchUpsertNodes', () => {
             value: '42',
             metadata: {
               assuranceLevel: 1,
-              verificationTime: Utils.dateToTimestamp(new Date()),
+              verificationTime: now,
               source: 'Myself',
               customMetadata: {
                 customdata: 'SomeCustomData',
@@ -1325,7 +1336,30 @@ describe('batchUpsertNodes', () => {
           nodes: [
             {
               externalId: 'person3',
-              properties: [],
+              properties: [
+                {
+                  type: 'customProp',
+                  value: {
+                    type: {
+                      oneofKind: 'stringValue',
+                      stringValue: '42',
+                    },
+                  },
+                  metadata: {
+                    assuranceLevel: 1,
+                    verificationTime: now,
+                    source: 'Myself',
+                    customMetadata: {
+                      customdata: {
+                        type: {
+                          oneofKind: 'stringValue',
+                          stringValue: 'SomeCustomData',
+                        },
+                      },
+                    },
+                  },
+                },
+              ],
               type: 'Person',
               id: '',
               isIdentity: false,
@@ -1333,7 +1367,17 @@ describe('batchUpsertNodes', () => {
             },
             {
               externalId: 'person4',
-              properties: [],
+              properties: [
+                {
+                  type: 'email',
+                  value: {
+                    type: {
+                      oneofKind: 'stringValue',
+                      stringValue: 'person4@yahoo.com',
+                    },
+                  },
+                },
+              ],
               type: 'Person',
               id: '',
               isIdentity: false,

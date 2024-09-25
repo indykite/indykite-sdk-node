@@ -20,11 +20,19 @@ import {
   AuthorizationPolicyConfig_Status,
   ExternalTokenStatus,
 } from '../../../grpc/indykite/config/v1beta1/model';
-import { AuthorizationPolicy, ConsentNode, TokenIntrospect } from '../../model';
+import {
+  AuthorizationPolicy,
+  ConsentNode,
+  ExternalDataResolver,
+  TokenIntrospect,
+} from '../../model';
 
 let createConfigExample: CreateConfigNodeRequest;
 let updateConfigExample: UpdateConfigNodeRequest;
 let deleteConfigExample: DeleteConfigNodeRequest;
+
+const encoder = new TextEncoder();
+const payload = encoder.encode(JSON.stringify({ key: 'value' }));
 
 beforeEach(() => {
   createConfigExample = CreateConfigNodeRequest.fromJson({
@@ -147,6 +155,22 @@ beforeEach(() => {
     "active": true
   }
 `;
+  const resolverExample: ExternalDataResolver = new ExternalDataResolver({
+    name: 'instance-name',
+    displayName: 'Instance Name',
+    description: { value: 'Instance description' },
+    url: 'https://example.com/source2',
+    method: 'POST',
+    headers: {
+      Authorization: { values: ['Bearer edolkUTY'] },
+      'Content-Type': { values: ['application/json'] },
+    },
+    requestType: 1,
+    requestPayload: payload,
+    responseType: 1,
+    responseSelector: '.',
+  });
+
   const configAuthorizationPolicyExample: AuthorizationPolicy = new AuthorizationPolicy({
     name: 'authorization-policy',
     policy,
@@ -156,6 +180,7 @@ beforeEach(() => {
   ConfigClient.newUpdateConfigNodeRequest(configAuthorizationPolicyExample);
   ConfigClient.newUpdateConfigNodeRequest(consentExample);
   ConfigClient.newUpdateConfigNodeRequest(tokenExample);
+  ConfigClient.newUpdateConfigNodeRequest(resolverExample);
 });
 
 afterEach(() => {

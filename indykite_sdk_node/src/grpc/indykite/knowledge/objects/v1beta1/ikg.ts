@@ -102,6 +102,29 @@ export interface Relationship {
     };
 }
 /**
+ * @generated from protobuf message indykite.knowledge.objects.v1beta1.ExternalValue
+ */
+export interface ExternalValue {
+    /**
+     * @generated from protobuf oneof: resolver
+     */
+    resolver: {
+        oneofKind: "id";
+        /**
+         * @generated from protobuf field: string id = 1;
+         */
+        id: string;
+    } | {
+        oneofKind: "name";
+        /**
+         * @generated from protobuf field: string name = 2;
+         */
+        name: string;
+    } | {
+        oneofKind: undefined;
+    };
+}
+/**
  * @generated from protobuf message indykite.knowledge.objects.v1beta1.Property
  */
 export interface Property {
@@ -113,6 +136,10 @@ export interface Property {
      * @generated from protobuf field: indykite.objects.v1beta2.Value value = 2;
      */
     value?: Value;
+    /**
+     * @generated from protobuf field: indykite.knowledge.objects.v1beta1.ExternalValue external_value = 4;
+     */
+    externalValue?: ExternalValue;
     /**
      * @generated from protobuf field: indykite.knowledge.objects.v1beta1.Metadata metadata = 3;
      */
@@ -412,11 +439,72 @@ class Relationship$Type extends MessageType<Relationship> {
  */
 export const Relationship = new Relationship$Type();
 // @generated message type with reflection information, may provide speed optimized methods
+class ExternalValue$Type extends MessageType<ExternalValue> {
+    constructor() {
+        super("indykite.knowledge.objects.v1beta1.ExternalValue", [
+            { no: 1, name: "id", kind: "scalar", oneof: "resolver", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "22", maxLen: "256", prefix: "gid:", ignoreEmpty: true } } } },
+            { no: 2, name: "name", kind: "scalar", oneof: "resolver", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "1", maxLen: "256" } } } }
+        ]);
+    }
+    create(value?: PartialMessage<ExternalValue>): ExternalValue {
+        const message = { resolver: { oneofKind: undefined } };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<ExternalValue>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ExternalValue): ExternalValue {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string id */ 1:
+                    message.resolver = {
+                        oneofKind: "id",
+                        id: reader.string()
+                    };
+                    break;
+                case /* string name */ 2:
+                    message.resolver = {
+                        oneofKind: "name",
+                        name: reader.string()
+                    };
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ExternalValue, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string id = 1; */
+        if (message.resolver.oneofKind === "id")
+            writer.tag(1, WireType.LengthDelimited).string(message.resolver.id);
+        /* string name = 2; */
+        if (message.resolver.oneofKind === "name")
+            writer.tag(2, WireType.LengthDelimited).string(message.resolver.name);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message indykite.knowledge.objects.v1beta1.ExternalValue
+ */
+export const ExternalValue = new ExternalValue$Type();
+// @generated message type with reflection information, may provide speed optimized methods
 class Property$Type extends MessageType<Property> {
     constructor() {
         super("indykite.knowledge.objects.v1beta1.Property", [
             { no: 1, name: "type", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "256", pattern: "^[a-zA-Z_][a-zA-Z0-9_]+$" } } } },
             { no: 2, name: "value", kind: "message", T: () => Value },
+            { no: 4, name: "external_value", kind: "message", T: () => ExternalValue },
             { no: 3, name: "metadata", kind: "message", T: () => Metadata }
         ]);
     }
@@ -437,6 +525,9 @@ class Property$Type extends MessageType<Property> {
                     break;
                 case /* indykite.objects.v1beta2.Value value */ 2:
                     message.value = Value.internalBinaryRead(reader, reader.uint32(), options, message.value);
+                    break;
+                case /* indykite.knowledge.objects.v1beta1.ExternalValue external_value */ 4:
+                    message.externalValue = ExternalValue.internalBinaryRead(reader, reader.uint32(), options, message.externalValue);
                     break;
                 case /* indykite.knowledge.objects.v1beta1.Metadata metadata */ 3:
                     message.metadata = Metadata.internalBinaryRead(reader, reader.uint32(), options, message.metadata);
@@ -459,6 +550,9 @@ class Property$Type extends MessageType<Property> {
         /* indykite.objects.v1beta2.Value value = 2; */
         if (message.value)
             Value.internalBinaryWrite(message.value, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* indykite.knowledge.objects.v1beta1.ExternalValue external_value = 4; */
+        if (message.externalValue)
+            ExternalValue.internalBinaryWrite(message.externalValue, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
         /* indykite.knowledge.objects.v1beta1.Metadata metadata = 3; */
         if (message.metadata)
             Metadata.internalBinaryWrite(message.metadata, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
